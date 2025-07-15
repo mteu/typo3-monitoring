@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xliff version="1.2" xmlns="urn:oasis:names:tc:xliff:document:1.2">
+	<file source-language="en" datatype="plaintext" original="EXT:monitoring/Resources/Private/Language/locallang.mod.xlf">
+		<header/>
+		<body>
+			<trans-unit id="module.labels.title">
+				<source>Monitoring</source>
+			</trans-unit>
+			<trans-unit id="module.labels.description">
+				<source>Zeigt eine Übersicht mit jeweiligem Status zum aktiven Monitoring.</source>
+			</trans-unit>
+		</body>
+	</file>
+</xliff>

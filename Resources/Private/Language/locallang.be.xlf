@@ -1,0 +1,92 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xliff version="1.2" xmlns="urn:oasis:names:tc:xliff:document:1.2">
+	<file source-language="en" datatype="plaintext" original="EXT:monitoring/Resources/Private/Language/locallang.be.xlf">
+		<header/>
+		<body>
+			<trans-unit id="module.title">
+				<source>TYPO3 Monitoring</source>
+			</trans-unit>
+			<trans-unit id="module.description">
+				<source>This API seeks to give an insight into the health status of various components within and around this TYPO3 instance.</source>
+			</trans-unit>
+			<trans-unit id="providers.title">
+				<source>Available Providers</source>
+			</trans-unit>
+			<trans-unit id="providers.modal.title">
+				<source>MonitoringProviders</source>
+			</trans-unit>
+			<trans-unit id="providers.modal.content">
+				<source>Providers must implement %s to become available.</source>
+			</trans-unit>
+			<trans-unit id="cache.flush.button">
+				<source>Flush Caches</source>
+			</trans-unit>
+			<trans-unit id="authorizers.title">
+				<source>Registered Authorizers</source>
+			</trans-unit>
+			<trans-unit id="authorizers.description">
+				<source>Monitoring requests will be authorized following this Authorizer order:</source>
+			</trans-unit>
+			<trans-unit id="auth.token.button">
+				<source>Show Authorization Token</source>
+			</trans-unit>
+			<trans-unit id="auth.token.modal.title">
+				<source>Authorization Token</source>
+			</trans-unit>
+			<trans-unit id="status.cached">
+				<source>Cached</source>
+			</trans-unit>
+			<trans-unit id="status.healthy">
+				<source>healthy</source>
+			</trans-unit>
+			<trans-unit id="status.unhealthy">
+				<source>unhealthy</source>
+			</trans-unit>
+			<trans-unit id="status.inactive">
+				<source>inactive</source>
+			</trans-unit>
+			<trans-unit id="provider.cache.lifetime">
+				<source>The monitoring result is cached with an active cache lifetime of %s minutes.</source>
+			</trans-unit>
+			<trans-unit id="provider.cache.expires_at">
+				<source>Expires at %s</source>
+			</trans-unit>
+			<trans-unit id="datetime.format">
+				<source>Y-m-d H:i:s</source>
+			</trans-unit>
+			<trans-unit id="provider.disabled.message">
+				<source>This provider is explicitly disabled at the moment.</source>
+			</trans-unit>
+			<trans-unit id="providers.no_providers_found">
+				<source>No monitoring providers found.</source>
+			</trans-unit>
+			<trans-unit id="authorizers.no_authorizers_found">
+				<source>No monitoring authorizers found.</source>
+			</trans-unit>
+			<trans-unit id="detail.header.component">
+				<source>Component</source>
+			</trans-unit>
+			<trans-unit id="detail.header.status">
+				<source>Status</source>
+			</trans-unit>
+			<trans-unit id="detail.header.reason">
+				<source>Reason</source>
+			</trans-unit>
+			<trans-unit id="provider.cache.flush.button">
+				<source>Flush Cache</source>
+			</trans-unit>
+			<trans-unit id="provider.cache.flush.success.title">
+				<source>Cache Flushed</source>
+			</trans-unit>
+			<trans-unit id="provider.cache.flush.success.message">
+				<source>Cache for provider "%s" has been flushed successfully.</source>
+			</trans-unit>
+			<trans-unit id="provider.cache.flush.error.title">
+				<source>Cache Flush Failed</source>
+			</trans-unit>
+			<trans-unit id="provider.cache.flush.error.message">
+				<source>Failed to flush cache for provider "%s".</source>
+			</trans-unit>
+		</body>
+	</file>
+</xliff>

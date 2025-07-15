@@ -1,0 +1,7 @@
+presets:
+  - typo3-commit-guidelines
+  - typo3-extension
+
+releaseOptions:
+  commitMessage: '[RELEASE] v{%version%}'
+  signTag: true

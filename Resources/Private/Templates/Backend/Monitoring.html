@@ -1,0 +1,41 @@
+<html
+    data-namespace-typo3-fluid="true"
+    xmlns:core="http://typo3.org/ns/TYPO3/CMS/Core/ViewHelpers"
+    xmlns:be="http://typo3.org/ns/TYPO3/CMS/Backend/ViewHelpers"
+    xmlns:f="http://typo3.org/ns/TYPO3/CMS/Fluid/ViewHelpers"
+
+>
+
+<f:layout name="Module" />
+
+<f:section name="Content">
+
+    <f:flashMessages queueIdentifier="{flashMessageQueueIdentifier}" />
+
+    <h1>
+        <f:translate key="LLL:EXT:monitoring/Resources/Private/Language/locallang.be.xlf:module.title" />
+    </h1>
+    <p>
+        <f:translate key="LLL:EXT:monitoring/Resources/Private/Language/locallang.be.xlf:module.description" />
+    </p>
+
+    <f:if condition="{providers}">
+        <f:then>
+            <f:render partial="Backend/Provider/List" arguments="{providers: providers, providerInterface: providerInterface}" />
+        </f:then>
+        <f:else>
+            <p><f:translate key="LLL:EXT:monitoring/Resources/Private/Language/locallang.be.xlf:providers.no_providers_found" /></p>
+        </f:else>
+    </f:if>
+
+    <f:if condition="{authorizers}">
+        <f:then>
+            <f:render partial="Backend/Authorizer/List" arguments="{authorizers: authorizers, authToken: authToken, endpoint: endpoint}" />
+        </f:then>
+        <f:else>
+            <p><f:translate key="LLL:EXT:monitoring/Resources/Private/Language/locallang.be.xlf:authorizers.no_authorizers_found" /></p>
+        </f:else>
+    </f:if>
+</f:section>
+
+</html>

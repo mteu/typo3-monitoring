@@ -1,0 +1,91 @@
+<html
+    data-namespace-typo3-fluid="true"
+    xmlns:core="http://typo3.org/ns/TYPO3/CMS/Core/ViewHelpers"
+    xmlns:f="http://typo3.org/ns/TYPO3/CMS/Fluid/ViewHelpers"
+    xmlns:monitoring="http://typo3.org/ns/mteu/Monitoring/ViewHelper/Backend"
+>
+
+<f:layout name="Module" />
+
+<h3 class="panel-heading">
+    <div class="panel-heading-row">
+        <button class="panel-button" type="button" data-bs-toggle="collapse" data-bs-target="#collapsible-panel-complex-{iterator.index}" aria-expanded="false" title="{class}">
+            <span class="caret"></span>
+            <div class="panel-title">
+                {class -> monitoring:className()}
+                <f:if condition="{provider.isCached}">
+                    <span class="badge badge-default">
+                        <f:translate key="LLL:EXT:monitoring/Resources/Private/Language/locallang.be.xlf:status.cached" />
+                    </span>
+                </f:if>
+
+            </div>
+        </button>
+
+        <f:if condition="{provider.isActive}">
+            <f:then>
+                <div class="panel-badge">
+                    <span class="badge {f:if(condition: provider.isHealthy, then: 'badge-success', else: 'badge-danger')}">
+                        <f:if condition="{provider.isHealthy}">
+                            <f:then><f:translate key="LLL:EXT:monitoring/Resources/Private/Language/locallang.be.xlf:status.healthy" /></f:then>
+                            <f:else><f:translate key="LLL:EXT:monitoring/Resources/Private/Language/locallang.be.xlf:status.unhealthy" /></f:else>
+                        </f:if>
+                    </span>
+                </div>
+            </f:then>
+            <f:else>
+                <span class="badge {f:if(condition: provider.isActive, then: 'badge-success', else: 'badge-default')}">
+                    <f:translate key="LLL:EXT:monitoring/Resources/Private/Language/locallang.be.xlf:status.inactive" />
+                </span>
+            </f:else>
+        </f:if>
+
+    </div>
+</h3>
+<div class="panel-collapse collapse" id="collapsible-panel-complex-{iterator.index}" aria-expanded="false">
+    <div class="panel-body">
+        <p>
+            {provider.description}
+        </p>
+
+        <f:if condition="{provider.subResults}">
+            <f:render partial="Backend/Results/List" arguments="{details: provider.subResults}" />
+        </f:if>
+
+        <f:if condition="{provider.isCached}">
+            <f:render section="CachingDetails" arguments="{provider: provider}" />
+        </f:if>
+
+        <f:if condition="{provider.isActive}">
+            <f:else>
+                <p><core:icon identifier="content-info" size="small" /> <f:translate key="LLL:EXT:monitoring/Resources/Private/Language/locallang.be.xlf:provider.disabled.message" /></p>
+            </f:else>
+        </f:if>
+    </div>
+</div>
+
+<f:section name="CachingDetails">
+    <div class="card">
+        <div class="card-body">
+            <p class="card-text">
+                <f:translate key="LLL:EXT:monitoring/Resources/Private/Language/locallang.be.xlf:provider.cache.lifetime" arguments="{0: '{provider.cacheLifetime / 60}'}" />
+                <f:if condition="{provider.cacheExpiresAt}">
+                    <f:variable name="dateFormat"><f:translate key="LLL:EXT:monitoring/Resources/Private/Language/locallang.be.xlf:datetime.format" /></f:variable>
+                    <f:variable name="formattedDate"><f:format.date format="{dateFormat}">{provider.cacheExpiresAt}</f:format.date></f:variable>
+                    <f:translate key="LLL:EXT:monitoring/Resources/Private/Language/locallang.be.xlf:provider.cache.expires_at" arguments="{0: formattedDate}" />
+                </f:if>
+            </p>
+        </div>
+        <div class="card-footer">
+            <f:link.page additionalParams="{action: 'flushProviderCache', providerClass: class, class: 'btn btn-default'}">
+                <span class="text-primary inside">
+                    <f:translate key="LLL:EXT:monitoring/Resources/Private/Language/locallang.be.xlf:provider.cache.flush.button" />
+                </span>
+            </f:link.page>
+        </div>
+    </div>
+
+
+
+</f:section>
+</html>

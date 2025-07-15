@@ -1,0 +1,29 @@
+<html
+    data-namespace-typo3-fluid="true"
+    xmlns:core="http://typo3.org/ns/TYPO3/CMS/Core/ViewHelpers"
+    xmlns:f="http://typo3.org/ns/TYPO3/CMS/Fluid/ViewHelpers"
+>
+
+<f:layout name="Module" />
+
+<h2>
+    <f:translate key="LLL:EXT:monitoring/Resources/Private/Language/locallang.be.xlf:providers.title" />
+    <button
+        type="button"
+        class="btn btn-outline-info t3js-modal-trigger"
+        data-severity="info"
+        data-title="{f:translate(key: 'LLL:EXT:monitoring/Resources/Private/Language/locallang.be.xlf:providers.modal.title')}"
+        data-content="{f:translate(key: 'LLL:EXT:monitoring/Resources/Private/Language/locallang.be.xlf:providers.modal.content', arguments: {0: providerInterface})}
+    ">
+        <core:icon identifier="content-info"></core:icon>
+    </button>
+</h2>
+
+
+<div class="panel panel-default">
+    <f:for each="{providers}" as="provider" key="class" iteration="iterator">
+        <f:render partial="Backend/Provider/Item" arguments="{_all}" />
+    </f:for>
+</div>
+
+</html>
