@@ -1,0 +1,22 @@
+<html
+    data-namespace-typo3-fluid="true"
+    xmlns:monitoring="http://typo3.org/ns/mteu/Monitoring/ViewHelper/Backend"
+    xmlns:f="http://typo3.org/ns/TYPO3/CMS/Fluid/ViewHelpers"
+
+>
+
+<f:layout name="Module" />
+
+<h2><f:translate key="LLL:EXT:monitoring/Resources/Private/Language/locallang.be.xlf:authorizers.title" /></h2>
+<p><f:translate key="LLL:EXT:monitoring/Resources/Private/Language/locallang.be.xlf:authorizers.description" /></p>
+<ol>
+    <f:for each="{authorizers}" as="priority" key="authorizer">
+        <li title="{authorizer} with a priority of {priority}">{authorizer -> monitoring:className()}</li>
+    </f:for>
+</ol>
+<f:if condition="{authToken} && {endpoint}">
+    <button type="button" class="btn btn-default t3js-modal-trigger" data-title="{f:translate(key: 'LLL:EXT:monitoring/Resources/Private/Language/locallang.be.xlf:auth.token.modal.title')}" data-content="curl -s -H '{authHeaderName}: {authToken}' {endpoint} | jq '.'"><f:translate key="LLL:EXT:monitoring/Resources/Private/Language/locallang.be.xlf:auth.token.button" /></button>
+</f:if>
+
+
+</html>

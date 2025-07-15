@@ -1,0 +1,36 @@
+parameters:
+	paths:
+		-	Classes
+		-	Configuration
+		- Tests
+	level: max
+
+#	docblock:
+#		copyrightIdentifier: 'Copyright (C) 2025'
+#		requiredLicenseIdentifier: 'GPL-2.0'
+
+	ergebnis:
+		noExtends:
+			classesAllowedToBeExtended:
+				- Exception
+				- mteu\Monitoring\Result\AbstractMonitoringResult
+				- Symfony\Component\Console\Command\Command
+				- TYPO3Fluid\Fluid\Core\ViewHelper\AbstractViewHelper
+				- TYPO3\TestingFramework\Core\Unit\UnitTestCase
+
+	ignoreErrors:
+		-
+			identifier: ternary.shortNotAllowed
+		-
+			identifier: symplify.requiredInterfaceContractNamespace
+		-
+			identifier: ergebnis.noNamedArgument
+		-
+			identifier: ergebnis.noConstructorParameterWithDefaultValue
+		-
+			identifier: ergebnis.noParameterWithNullableTypeDeclaration
+		-
+			identifier: ergebnis.noNullableReturnTypeDeclaration
+		-
+			identifier: ergebnis.noParameterWithNullDefaultValue
+

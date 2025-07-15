@@ -1,0 +1,4 @@
+# cat=monitor//10; type=string; label=Route
+monitoring.endpoint=/monitor/health
+# cat=monitor//20; type=string; label=Secret
+monitoring.secret=
