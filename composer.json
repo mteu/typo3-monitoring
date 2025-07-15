@@ -72,7 +72,7 @@
 		],
 		"fix:composer": "@composer normalize",
 		"fix:editorconfig": "ec --fix",
-		"fix:php": "php-cs-fixer fix --config .php-cs-fixer.php",
+		"fix:php": "php-cs-fixer fix --config php-cs-fixer.php",
 		"lint": [
 			"@lint:composer",
 			"@lint:editorconfig",
@@ -82,9 +82,9 @@
 		],
 		"lint:composer": "@composer normalize --dry-run",
 		"lint:editorconfig": "ec",
-		"lint:php": "php-cs-fixer fix --config .php-cs-fixer.php",
+		"lint:php": "php-cs-fixer fix --config php-cs-fixer.php",
 		"lint:typoscript": "typoscript-lint -c typoscript-lint.yml",
-		"lint:yaml": "yaml-lint $(find packages/* -type d -maxdepth 0)",
+		"lint:yaml": "yaml-lint --format=github --exclude='.build' *.yaml *.yml",
 		"sbom:generate": "@composer CycloneDX:make-sbom --spec-version=1.6 --output-format=JSON --output-file=.sbom/cdx.json",
 		"sca": [
 			"@sca:php",
@@ -104,6 +104,12 @@
 			"@test:unit",
 			"@test:functional"
 		],
+		"test:coverage": [
+			"@test:coverage:unit",
+			"@test:coverage:merge"
+		],
+		"test:coverage:merge": "phpcov merge --html .build/coverage/merged_html  --clover .build/coverage/merged.clover.xml --text php://stdout .build/coverage/ ",
+		"test:coverage:unit": "phpunit -c phpunit.unit.xml",
 		"test:functional": "phpunit -c phpunit.functional.xml",
 		"test:unit": "phpunit -c phpunit.unit.xml",
 		"validate-dependencies": "composer-dependency-analyser"
