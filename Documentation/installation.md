@@ -35,26 +35,26 @@ composer install
 
 ## ⚙️ Post-Installation Setup
 
-### 1. Activate the Extension
+### 0. Activate the Extension (in non-composer mode)
 
 If not already activated, enable the extension in the TYPO3 backend:
 
 1. Go to **Admin Tools → Extensions**
-2. Find `typo3_monitoring` in the list
+2. Find `monitoring` in the list
 3. Click the **Activate** button
 
-### 2. Configure Extension Settings
+### 1. Configure Extension Settings
 
 Configure the extension in the TYPO3 backend:
 
 1. Navigate to **Admin Tools → Settings → Extension Configuration**
-2. Select `typo3_monitoring`
+2. Select `monitoring`
 3. Configure the following settings:
    - **Endpoint**: The URL path for monitoring (default: `/monitor/health`)
    - **Secret**: A secure secret for HMAC authentication (required for token
      auth)
 
-### 3. Clear Caches
+### 2. Clear Caches
 
 Clear the TYPO3 caches to ensure the configuration takes effect:
 
@@ -119,24 +119,6 @@ Verify the backend module is available:
 #### Permission Errors
 - Check file permissions on the extension directory
 - Ensure the web server can read the extension files
-
-### Enable Debug Mode
-
-For debugging, you can enable TYPO3's debug mode:
-
-```php
-// In typo3conf/LocalConfiguration.php
-$GLOBALS['TYPO3_CONF_VARS']['BE']['debug'] = true;
-$GLOBALS['TYPO3_CONF_VARS']['FE']['debug'] = true;
-```
-
-### Check Logs
-
-Monitor TYPO3 logs for any errors:
-
-- Backend logs: `var/log/typo3_*.log`
-- Web server logs: Check your web server's error log
-- PHP logs: Check PHP error log configuration
 
 ## 👆 Next Steps
 

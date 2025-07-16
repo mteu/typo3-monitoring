@@ -63,6 +63,7 @@ depending on how the check was initiated:
                                    ↓
                     ┌────────────────────────────────┐
                     │      Provider Execution        │
+                    │  (invokes the actual checks)   │
                     │                                │
                     │         (extendable)           │
                     └────────────────────────────────┘

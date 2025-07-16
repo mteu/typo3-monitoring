@@ -24,6 +24,7 @@ declare(strict_types=1);
 namespace mteu\Monitoring\Middleware;
 
 use mteu\Monitoring\Authorization\Authorizer;
+use mteu\Monitoring\Configuration\Extension;
 use mteu\Monitoring\Provider\MonitoringProvider;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
@@ -32,7 +33,6 @@ use Psr\Http\Server\RequestHandlerInterface;
 use Symfony\Component\DependencyInjection\Attribute\AutowireIterator;
 use TYPO3\CMS\Core\Configuration\Exception\ExtensionConfigurationExtensionNotConfiguredException;
 use TYPO3\CMS\Core\Configuration\Exception\ExtensionConfigurationPathDoesNotExistException;
-use TYPO3\CMS\Core\Configuration\ExtensionConfiguration;
 use TYPO3\CMS\Core\Http\JsonResponse;
 
 /**
@@ -50,7 +50,7 @@ final readonly class MonitoringMiddleware implements MiddlewareInterface
      * @throws ExtensionConfigurationExtensionNotConfiguredException
      */
     public function __construct(
-        private ExtensionConfiguration $extensionConfiguration,
+        private Extension $extensionConfiguration,
 
         /** @var iterable<MonitoringProvider> $monitoringProviders */
         #[AutowireIterator(tag: 'monitoring.provider')]
@@ -60,7 +60,7 @@ final readonly class MonitoringMiddleware implements MiddlewareInterface
         #[AutowireIterator(tag: 'monitoring.authorizer', defaultPriorityMethod: 'getPriority')]
         private iterable $authorizers,
     ) {
-        $this->endpoint = $this->getEndpointFromConfiguration();
+        $this->endpoint = $this->extensionConfiguration->getEndpointFromConfiguration();
     }
 
     public function process(ServerRequestInterface $request, RequestHandlerInterface $handler): ResponseInterface
@@ -103,18 +103,6 @@ final readonly class MonitoringMiddleware implements MiddlewareInterface
             ],
             $this->isHealthy() ? 200 : 503,
         );
-    }
-
-    /**
-     * @throws ExtensionConfigurationExtensionNotConfiguredException
-     * @throws ExtensionConfigurationPathDoesNotExistException
-     */
-    private function getEndpointFromConfiguration(): string
-    {
-        /** @var string $endpoint */
-        $endpoint = $this->extensionConfiguration->get('typo3_monitoring', 'monitoring/endpoint');
-
-        return $endpoint;
     }
 
     private function isValid(ServerRequestInterface $request): bool
