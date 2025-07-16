@@ -1,4 +1,4 @@
-# cat=monitor//10; type=string; label=Route
-monitoring.endpoint=/monitor/health
-# cat=monitor//20; type=string; label=Secret
-monitoring.secret=
+# cat=api//10; type=string; label=Route
+api.endpoint=/monitor/health
+# cat=api//20; type=string; label=Secret
+api.secret=

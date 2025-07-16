@@ -26,6 +26,7 @@ namespace mteu\Monitoring\Backend\Controller;
 use mteu\Monitoring\Authorization\Authorizer;
 use mteu\Monitoring\Authorization\TokenAuthorizer;
 use mteu\Monitoring\Cache\MonitoringCacheManager;
+use mteu\Monitoring\Configuration\Extension;
 use mteu\Monitoring\Handler\MonitoringExecutionHandler;
 use mteu\Monitoring\Provider\CacheableMonitoringProvider;
 use mteu\Monitoring\Provider\MonitoringProvider;
@@ -74,7 +75,7 @@ final class MonitoringController
     public function __construct(
         private readonly ModuleTemplateFactory $moduleTemplateFactory,
         private readonly HashService $hashService,
-        private readonly ExtensionConfiguration $extensionConfiguration,
+        private readonly Extension $extensionConfiguration,
         private readonly FlashMessageService $flashMessageService,
         private readonly LanguageServiceFactory $languageServiceFactory,
         /** @var MonitoringProvider[] $monitoringProviders */
@@ -86,14 +87,14 @@ final class MonitoringController
         private readonly MonitoringExecutionHandler $executionHandler,
         private readonly MonitoringCacheManager $cacheManager
     ) {
-        $endpoint = $this->extensionConfiguration->get('typo3_monitoring', 'monitoring/endpoint');
+        $endpoint = $this->extensionConfiguration->getEndpointFromConfiguration();
 
-        if (is_string($endpoint) && $endpoint !== '') {
+        if ($endpoint !== '') {
             $this->endpoint = $endpoint;
         }
 
-        $secret = $this->extensionConfiguration->get('typo3_monitoring', 'monitoring/secret');
-        if (is_string($secret) && $secret !== '') {
+        $secret = $this->extensionConfiguration->getSecretFromConfiguration();
+        if ($secret !== '') {
             $this->secret = $secret;
         }
     }

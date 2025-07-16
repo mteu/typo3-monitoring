@@ -15,25 +15,25 @@ The extension is configured through TYPO3's Extension Configuration system.
 ### Configuration Options
 
 #### Monitoring Endpoint
-- **Path**: `monitoring.endpoint`
+- **Path**: `api.endpoint`
 - **Default**: `/monitor/health`
 - **Description**: The URL path where the monitoring endpoint will be available
 
 Example:
 ```
-monitoring.endpoint = /monitor/health
+api.endpoint = /monitor/health
 ```
 
 This makes the endpoint available at: `https://yoursite.com/monitor/health`
 
 #### Authentication Secret
-- **Path**: `monitoring.secret`
+- **Path**: `api.secret`
 - **Default**: Empty
 - **Description**: Secret key used for HMAC authentication
 
 Example:
 ```
-monitoring.secret = your-secure-secret-key-here
+api.secret = your-secure-secret-key-here
 ```
 
 **Important**: Keep this secret secure and use a strong, random value.
@@ -50,8 +50,8 @@ You can also configure the extension programmatically:
     return [
         // ..
         'EXTENSIONS' => [
-            'typo3_monitoring' => [
-                'monitoring' => [
+            'monitoring' => [
+                'api' => [
                     'endpoint' => '/monitor/health',
                     'secret' => 'foobarsecret',
                 ],

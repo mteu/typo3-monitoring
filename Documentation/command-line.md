@@ -39,11 +39,11 @@ Checking Monitoring status
 
 The command returns standard exit codes:
 
-| Exit Code | Constant | Meaning |
-|-----------|----------|---------|
-| 0 | `Command::SUCCESS` | All providers are healthy |
-| 1 | `Command::FAILURE` | One or more providers are unhealthy |
-| 2 | `Command::INVALID` | No active providers found |
+| Exit Code | Constant           | Meaning                             |
+|-----------|--------------------|-------------------------------------|
+| 0         | `Command::SUCCESS` | All providers are healthy           |
+| 1         | `Command::FAILURE` | One or more providers are unhealthy |
+| 2         | `Command::INVALID` | No active providers found           |
 
 #### Output Format
 
