@@ -25,7 +25,7 @@ use mteu\Monitoring\Provider\MonitoringProvider;
 use mteu\Monitoring\Result\MonitoringResult;
 use Symfony\Component\DependencyInjection\Attribute\AutoconfigureTag;
 
-#[AutoconfigureTag('monitoring.provider')]
+#[AutoconfigureTag(tag: 'monitoring.provider')]
 final class MyServiceProvider implements MonitoringProvider
 {
     public function getName(): string
@@ -100,7 +100,7 @@ use mteu\Monitoring\Result\MonitoringResult;
 use mteu\Monitoring\Trait\SlugifyCacheKeyTrait;
 use Symfony\Component\DependencyInjection\Attribute\AutoconfigureTag;
 
-#[AutoconfigureTag('monitoring.provider')]
+#[AutoconfigureTag(tag: 'monitoring.provider')]
 final class ExpensiveServiceProvider implements CacheableMonitoringProvider
 {
     use SlugifyCacheKeyTrait;
@@ -173,7 +173,7 @@ use Symfony\Component\DependencyInjection\Attribute\AutoconfigureTag;
 use TYPO3\CMS\Core\Database\ConnectionPool;
 use TYPO3\CMS\Core\Configuration\ExtensionConfiguration;
 
-#[AutoconfigureTag('monitoring.provider')]
+#[AutoconfigureTag(tag: 'monitoring.provider')]
 final class DatabaseConnectionProvider implements MonitoringProvider
 {
     public function __construct(
@@ -239,7 +239,7 @@ use mteu\Monitoring\Result\MonitoringResult;
 use mteu\Monitoring\Result\Result;
 use Symfony\Component\DependencyInjection\Attribute\AutoconfigureTag;
 
-#[AutoconfigureTag('monitoring.provider')]
+#[AutoconfigureTag(tag: 'monitoring.provider')]
 final class MultiComponentProvider implements MonitoringProvider
 {
     public function getName(): string
@@ -305,71 +305,7 @@ final class MultiComponentProvider implements MonitoringProvider
 
 ### Health Check Patterns
 
-#### Service Availability Check
-
-```php
-private function checkServiceAvailability(): bool
-{
-    $context = stream_context_create([
-        'http' => [
-            'timeout' => 5,
-            'method' => 'GET'
-        ]
-    ]);
-
-    $result = @file_get_contents('http://my-service/health', false, $context);
-    return $result !== false;
-}
-```
-
-#### File System Check
-
-```php
-private function checkFileSystem(): bool
-{
-    $testFile = '/tmp/monitoring_test_' . uniqid();
-
-    try {
-        // Test write
-        file_put_contents($testFile, 'test');
-
-        // Test read
-        $content = file_get_contents($testFile);
-
-        // Cleanup
-        @unlink($testFile);
-
-        return $content === 'test';
-    } catch (\Exception) {
-        @unlink($testFile);
-        return false;
-    }
-}
-```
-
-#### External API Check
-
-```php
-private function checkExternalApi(): bool
-{
-    $ch = curl_init();
-    curl_setopt_array($ch, [
-        CURLOPT_URL => 'https://api.example.com/status',
-        CURLOPT_RETURNTRANSFER => true,
-        CURLOPT_TIMEOUT => 10,
-        CURLOPT_SSL_VERIFYPEER => true,
-        CURLOPT_HTTPHEADER => [
-            'Authorization: Bearer ' . $this->getApiToken()
-        ]
-    ]);
-
-    $response = curl_exec($ch);
-    $httpCode = curl_getinfo($ch, CURLINFO_HTTP_CODE);
-    curl_close($ch);
-
-    return $httpCode === 200 && $response !== false;
-}
-```
+@todo
 
 ### Error Handling
 
@@ -459,7 +395,7 @@ public function isActive(): bool
 ### Common Issues
 
 #### Provider Not Discovered
-- Check the `#[AutoconfigureTag('monitoring.provider')]` attribute
+- Check the `#[AutoconfigureTag(tag: 'monitoring.provider')]` attribute
 - Verify the class implements `MonitoringProvider`
 - Clear TYPO3 caches
 
