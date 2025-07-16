@@ -4,8 +4,7 @@
 [![PHP Version Require](https://poser.pugx.org/mteu/typo3-monitoring/require/php)](https://packagist.org/packages/mteu/typo3-monitoring)
 · [![CGL](https://github.com/mteu/typo3-monitoring/actions/workflows/cgl.yaml/badge.svg)](https://github.com/mteu/typo3-monitoring/actions/workflows/cgl.yaml)
 [![Tests](https://github.com/mteu/typo3-monitoring/actions/workflows/tests.yaml/badge.svg?branch=main)](https://github.com/mteu/typo3-monitoring/actions/workflows/tests.yaml)
-[![Coverage Status](https://coveralls.io/repos/github/mteu/typo3-monitoring/badge.svg?branch=main)](https://coveralls.io/github/mteu/typo3-monitoring?branch=main)
-[![Maintainability](https://api.codeclimate.com/v1/badges/edd606b0c4de053a2762/maintainability)](https://codeclimate.com/github/mteu/typo3-monitoring/maintainability)
+[![Maintainability](https://qlty.sh/gh/mteu/projects/typo3-monitoring/maintainability.svg)](https://qlty.sh/gh/mteu/projects/typo3-monitoring)
 
 <img src="Resources/Public/Icons/Extension.svg" width="64" height="64" alt="Extension Icon">
 
