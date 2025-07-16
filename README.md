@@ -1,21 +1,23 @@
 <div align="center">
 
-[![License](https://img.shields.io/badge/license-GPL--2.0--or--later-blue.svg)]
-(LICENSE)
-[![TYPO3](https://img.shields.io/badge/TYPO3-13.4+-orange.svg)]
-(https://typo3.org)
-[![PHP](https://img.shields.io/badge/PHP-8.4+-blue.svg)](https://php.net)
+[![TYPO3](https://img.shields.io/badge/TYPO3-13.4+-orange.svg)](https://typo3.org)
+[![PHP Version Require](https://poser.pugx.org/mteu/typo3-monitoring/require/php)](https://packagist.org/packages/mteu/typo3-monitoring)
+[![License](https://img.shields.io/badge/license-GPL--2.0--or--later-blue.svg)](LICENSE)
 
-# TYPO3 Monitoring
+[![CGL](https://github.com/mteu/typo3-monitoring/actions/workflows/cgl.yaml/badge.svg)](https://github.com/mteu/typo3-monitoring/actions/workflows/cgl.yaml)
+[![Tests](https://github.com/mteu/typo3-monitoring/actions/workflows/tests.yaml/badge.svg?branch=main)](https://github.com/mteu/typo3-monitoring/actions/workflows/tests.yaml)
+[![Coverage Status](https://coveralls.io/repos/github/mteu/typo3-monitoring/badge.svg?branch=main)](https://coveralls.io/github/mteu/typo3-monitoring?branch=main)
+[![Maintainability](https://api.codeclimate.com/v1/badges/edd606b0c4de053a2762/maintainability)](https://codeclimate.com/github/mteu/typo3-monitoring/maintainability)
+
+<hr />
 
 ![](Resources/Public/Icons/Extension.svg)
-
-
+# TYPO3 Monitoring
 </div>
 
-This TYPO3 CMS extension provides . External monitoring systems can check the
-health state of custom TYPO3 components through a secure JSON API and a CLI command
-for post-deployment checks.
+This packages provides the TYPO3 CMS Extension `EXT:monitoring` which extends the CMS with a monitoring system that
+gives an insight into the health state of custom TYPO3 components through an API endpoint and a CLI command for
+post-deployment checks.
 
 > [!WARNING]
 > This package is still in early development and must be considered unfit for production use. Bear with me.
@@ -46,10 +48,11 @@ composer require mteu/typo3-monitoring
 
 1. Configure the extension in the TYPO3 backend:
    - Go to **Admin Tools → Settings → Extension Configuration**
-   - Select `typo3_monitoring`
+   - Select `monitoring`
    - Set the monitoring endpoint path (default: `/monitor/health`)
    - Configure a secret for HMAC authentication
- or better yet programmatically:
+
+2. Or better yet configure the settings programmatically:
     ```php
     # config/system/settings.php
 
@@ -58,8 +61,8 @@ composer require mteu/typo3-monitoring
     return [
         // ..
         'EXTENSIONS' => [
-            'typo3_monitoring' => [
-                'monitoring' => [
+            'monitoring' => [
+                'api' => [
                     'endpoint' => '/monitor/health',
                     'secret' => 'foobarsecret',
                 ],
@@ -69,7 +72,7 @@ composer require mteu/typo3-monitoring
    ];
     ```
 
-2. Access your monitoring endpoint while authenticated as backend user:
+3. Access your monitoring endpoint while authenticated as backend user with the role of Admin or System Maintainer:
    ```
    https://<your-site>/monitor/health
    ```
@@ -187,38 +190,24 @@ final class MyAuthorizer implements Authorizer
 }
 ```
 
-## 📝 Requirements
-
-- PHP 8.4+
-- TYPO3 13.4+
-- HTTPS enabled (for production use)
-
 ## 🤝 Contributing
-
-Contributions! Yes, please!
-
-1. Fork the repository
-2. Create a feature branch
-3. Follow the existing code style
-4. Add tests for new functionality
-5. Submit a pull request
+Contributions are very welcome! Please have a look at the [Contribution Guide](CONTRIBUTING.md). It lays out the
+workflow of submitting new features or bugfixes.
 
 ## 📙 Documentation
-Please have a look at the official extension [documentation](Documentation/index.md).
+Please have a look at the official extension [documentation](Documentation/index.md). It provides a detailed look into
+the possibilities you have in extending and customizing this extension for your specific TYPO3 components.
 
 ## 🔒 Security
 Please refer to our [security policy](SECURITY.md) if you discover a security vulnerability in
 this extension. Be warned, though. I cannot afford bounty. This is private project.
 
 ## 💛 Acknowledgements
-This extension is inspired by [`cpsit/monitoring`](https://github.com/CPS-IT/monitoring)
-and its generic approach to offer an extensible .
-I've transformed the underlying concept and transformed in to a TYPO3 specific
-implementation.
+This extension is inspired by [`cpsit/monitoring`](https://github.com/CPS-IT/monitoring) and its generic approach to offer an extensible provider
+interface. I've transformed and extended the underlying concept into a TYPO3 specific implementation.
 
 ## ⭐ License
 This extension is licensed under the [GPL-2.0-or-later](LICENSE.md) license.
 
 ## 💬 Support
-For issues and feature requests, please use the
-[GitHub issue tracker](https://github.com/mteu/typo3-monitoring/issues).
+For issues and feature requests, please use the [GitHub issue tracker](https://github.com/mteu/typo3-monitoring/issues).
