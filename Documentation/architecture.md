@@ -1,11 +1,7 @@
-## 🧱 Architecture Overview
-This TYPO3 CMS extension (`mteu/typo3-monitoring`) is designed with a modular
-and highly extensible architecture designed for flexibility, security, and ease
-of integration. Monitoring checks can be routed through multiple entry points,
-processed via an extendable provider system, and returned in a consistent,
-robust format.
+# Architecture Overview
 
-### Request Flow
+
+## Request Flow
 The monitoring process begins with an entry routing, where requests are accepted
 through one of three main channels:
 
@@ -39,12 +35,12 @@ depending on how the check was initiated:
 - **Command-Line Output**: Displayed directly in the terminal for CLI users.
 - **Backend Dashboard**: Presented via the TYPO3 backend module.
 
-### Component Summary
+## Component Summary
 
 - [`MonitoringMiddleware`](middleware.md) handling HTTP requests and orchestrates the entire monitoring workflow.
 - [`Authorization Layer`](authorization.md) applying configured authorizers to validate and secure access.
-- [`Provider System`](provider.md) executing custom or built-in monitoring logic through discoverable providers.
-- [`Result Handling`](result_handling.md) aggregating provider outputs and formats the response accordingly.
+- [`Provider System`](providers.md) executing custom or built-in monitoring logic through discoverable providers.
+- Result Handling aggregating provider outputs and formats the response accordingly.
 
 ```
       ┌────────────────────────────────────────────────────────────┐

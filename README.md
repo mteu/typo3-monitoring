@@ -2,21 +2,19 @@
 
 [![TYPO3](https://img.shields.io/badge/TYPO3-13.4+-orange.svg)](https://typo3.org)
 [![PHP Version Require](https://poser.pugx.org/mteu/typo3-monitoring/require/php)](https://packagist.org/packages/mteu/typo3-monitoring)
-[![License](https://img.shields.io/badge/license-GPL--2.0--or--later-blue.svg)](LICENSE)
-
-[![CGL](https://github.com/mteu/typo3-monitoring/actions/workflows/cgl.yaml/badge.svg)](https://github.com/mteu/typo3-monitoring/actions/workflows/cgl.yaml)
+· [![CGL](https://github.com/mteu/typo3-monitoring/actions/workflows/cgl.yaml/badge.svg)](https://github.com/mteu/typo3-monitoring/actions/workflows/cgl.yaml)
 [![Tests](https://github.com/mteu/typo3-monitoring/actions/workflows/tests.yaml/badge.svg?branch=main)](https://github.com/mteu/typo3-monitoring/actions/workflows/tests.yaml)
 [![Coverage Status](https://coveralls.io/repos/github/mteu/typo3-monitoring/badge.svg?branch=main)](https://coveralls.io/github/mteu/typo3-monitoring?branch=main)
 [![Maintainability](https://api.codeclimate.com/v1/badges/edd606b0c4de053a2762/maintainability)](https://codeclimate.com/github/mteu/typo3-monitoring/maintainability)
 
-<hr />
+<img src="Resources/Public/Icons/Extension.svg" width="64" height="64" alt="Extension Icon">
 
-![](Resources/Public/Icons/Extension.svg)
 # TYPO3 Monitoring
+
 </div>
 
 This packages provides the TYPO3 CMS Extension `EXT:monitoring` which extends the CMS with a monitoring system that
-gives an insight into the health state of custom TYPO3 components through an API endpoint and a CLI command for
+gives an insight into the health state of custom TYPO3 components through an API endpoint and a CLI command, e.g. for
 post-deployment checks.
 
 > [!WARNING]
@@ -25,7 +23,7 @@ post-deployment checks.
 
 ## 🚀 Features
 
-- Highly [extensible monitoring system](Documentation/architecture.md) with automatic service discovery for custom
+- [Extensible monitoring system](Documentation/architecture.md) with automatic service discovery (using DI) for custom
   authorization and monitoring checks.
 - Supports caching for expensive monitoring operations
 - Delivers health reports in three ways:
@@ -195,7 +193,7 @@ Contributions are very welcome! Please have a look at the [Contribution Guide](C
 workflow of submitting new features or bugfixes.
 
 ## 📙 Documentation
-Please have a look at the official extension [documentation](Documentation/index.md). It provides a detailed look into
+Please have a look at the official extension [documentation](Documentation/README.md). It provides a detailed look into
 the possibilities you have in extending and customizing this extension for your specific TYPO3 components.
 
 ## 🔒 Security

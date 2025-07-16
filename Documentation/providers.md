@@ -1,9 +1,5 @@
 # Provider Development Guide
 
-This guide covers the creation custom monitoring providers for this extension.
-
-## 🔍 Overview
-
 Providers are the core components that perform actual monitoring checks.
 Once they implement the `MonitoringProvider` interface they are automatically
 discovered through the dependency injection container.
@@ -22,7 +18,7 @@ declare(strict_types=1);
 namespace My\Extension\Provider;
 
 use mteu\Monitoring\Provider\MonitoringProvider;
-use mteu\Monitoring\Result\MonitoringResult;
+use mteu\Monitoring\Result\Result;
 use Symfony\Component\DependencyInjection\Attribute\AutoconfigureTag;
 
 #[AutoconfigureTag(tag: 'monitoring.provider')]
@@ -48,7 +44,7 @@ final class MyServiceProvider implements MonitoringProvider
         return $this->execute()->isHealthy();
     }
 
-    public function execute(): MonitoringResult
+    public function execute(): Result
     {
         try {
             // Perform your monitoring check here
@@ -97,6 +93,7 @@ namespace My\Extension\Provider;
 
 use mteu\Monitoring\Provider\CacheableMonitoringProvider;
 use mteu\Monitoring\Result\MonitoringResult;
+use mteu\Monitoring\Result\Result;
 use mteu\Monitoring\Trait\SlugifyCacheKeyTrait;
 use Symfony\Component\DependencyInjection\Attribute\AutoconfigureTag;
 
@@ -125,14 +122,14 @@ final class ExpensiveServiceProvider implements CacheableMonitoringProvider
         return $this->execute()->isHealthy();
     }
 
-    public function execute(): MonitoringResult
+    public function execute(): Result
     {
         // Expensive operation that will be cached
         $result = $this->performExpensiveCheck();
 
         return new MonitoringResult(
             name: $this->getName(),
-            isHealthy: $result
+            isHealthy: $result,
         );
     }
 
@@ -169,6 +166,7 @@ namespace My\Extension\Provider;
 
 use mteu\Monitoring\Provider\MonitoringProvider;
 use mteu\Monitoring\Result\MonitoringResult;
+use mteu\Monitoring\Result\Result;
 use Symfony\Component\DependencyInjection\Attribute\AutoconfigureTag;
 use TYPO3\CMS\Core\Database\ConnectionPool;
 use TYPO3\CMS\Core\Configuration\ExtensionConfiguration;
@@ -201,7 +199,7 @@ final class DatabaseConnectionProvider implements MonitoringProvider
         return $this->execute()->isHealthy();
     }
 
-    public function execute(): MonitoringResult
+    public function execute(): Result
     {
         try {
             $connection = $this->connectionPool->getConnectionForTable('pages');
@@ -210,7 +208,7 @@ final class DatabaseConnectionProvider implements MonitoringProvider
 
             return new MonitoringResult(
                 name: $this->getName(),
-                isHealthy: true
+                isHealthy: true,
             );
         } catch (\Exception $e) {
             return new MonitoringResult(
@@ -262,7 +260,7 @@ final class MultiComponentProvider implements MonitoringProvider
         return $this->execute()->isHealthy();
     }
 
-    public function execute(): MonitoringResult
+    public function execute(): Result
     {
         $subResults = [];
 
@@ -302,6 +300,7 @@ final class MultiComponentProvider implements MonitoringProvider
 ```
 
 ## 📝 Provider Patterns
+Here's quick glance at what custom providers might be able to achieve.
 
 ### Health Check Patterns
 
@@ -312,7 +311,7 @@ final class MultiComponentProvider implements MonitoringProvider
 Always implement proper error handling:
 
 ```php
-public function execute(): MonitoringResult
+public function execute(): Result
 {
     try {
         $isHealthy = $this->performCheck();
@@ -390,48 +389,7 @@ public function isActive(): bool
 - Monitor the monitoring system itself
 - Implement alerting for critical failures
 
-## 🔧 Troubleshooting
-
-### Common Issues
-
-#### Provider Not Discovered
-- Check the `#[AutoconfigureTag(tag: 'monitoring.provider')]` attribute
-- Verify the class implements `MonitoringProvider`
-- Clear TYPO3 caches
-
-#### Caching Issues
-- Check cache configuration
-- Verify cache key generation
-- Clear monitoring cache
-
-#### Performance Issues
-- Implement caching for expensive operations
-- Use appropriate timeouts
-- Monitor execution time
-
-### Debug Mode
-
-Enable debug mode to see detailed provider information:
-
-```php
-// In your provider
-public function execute(): MonitoringResult
-{
-    $startTime = microtime(true);
-
-    // Your monitoring logic
-
-    $executionTime = microtime(true) - $startTime;
-
-    return new MonitoringResult(
-        name: $this->getName(),
-        isHealthy: $isHealthy,
-        reason: $isHealthy ? null : "Failed in {$executionTime}s"
-    );
-}
-```
-
-## 👆 Next Steps
+## ➡️ Next Steps
 
 After creating providers:
 
