@@ -30,7 +30,7 @@
 
     <f:if condition="{authorizers}">
         <f:then>
-            <f:render partial="Backend/Authorizer/List" arguments="{authorizers: authorizers, authToken: authToken, endpoint: endpoint}" />
+            <f:render partial="Backend/Authorizer/List" arguments="{authorizers: authorizers, authHeaderName: authHeaderName, authToken: authToken, endpoint: endpoint}" />
         </f:then>
         <f:else>
             <p><f:translate key="LLL:EXT:monitoring/Resources/Private/Language/locallang.be.xlf:authorizers.no_authorizers_found" /></p>
