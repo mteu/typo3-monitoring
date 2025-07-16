@@ -22,7 +22,7 @@
 /** @noinspection PhpUndefinedVariableInspection */
 $EM_CONF[$_EXTKEY] = [
     'title' => 'Monitoring',
-    'description' => 'Exposes health status information of selected components in your TYPO3 instance to be integrated in external monitoring',
+    'description' => 'Exposes health state information of selected components in your TYPO3 instance to be integrated in external monitoring',
     'category' => 'be',
     'version' => '0.1.0',
     'state' => 'alpha',

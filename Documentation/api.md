@@ -23,7 +23,7 @@ The monitoring endpoint is configurable through Extension Configuration:
 
 ```
 Default: /monitor/health
-Configuration: monitoring.endpoint
+Configuration: api.endpoint
 ```
 
 Access the endpoint at: `https://yoursite.com/monitor/health`

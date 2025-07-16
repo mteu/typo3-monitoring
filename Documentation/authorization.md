@@ -22,7 +22,7 @@ secret in combination with the TYPO3 encryption key.
 
 1. Set the secret in Extension Configuration:
    ```
-   monitoring.secret = your-secure-secret-key
+   api.secret = your-secure-secret-key
    ```
 
 2. Generate HMAC tokens for your monitoring endpoint.
@@ -45,7 +45,7 @@ for your instance:
 ```php
 $configuredEndpoint = '/monitor/health';
 $additionalSecret = 'your-secret-key';
-$hashService->validateHmac($configuredEndpoint, $additionalSecret)
+$typo3HashService->hmac($configuredEndpoint, $additionalSecret)
 ```
 
 ### Admin User Authorization
@@ -86,7 +86,7 @@ use mteu\Monitoring\Authorization\Authorizer;
 use Psr\Http\Message\ServerRequestInterface;
 use Symfony\Component\DependencyInjection\Attribute\AutoconfigureTag;
 
-#[AutoconfigureTag('monitoring.authorizer')]
+#[AutoconfigureTag(tag: 'monitoring.authorizer')]
 final class CustomAuthorizer implements Authorizer
 {
     public function isAuthorized(ServerRequestInterface $request): bool
@@ -126,7 +126,7 @@ use mteu\Monitoring\Authorization\Authorizer;
 use Psr\Http\Message\ServerRequestInterface;
 use Symfony\Component\DependencyInjection\Attribute\AutoconfigureTag;
 
-#[AutoconfigureTag('monitoring.authorizer')]
+#[AutoconfigureTag(tag: 'monitoring.authorizer')]
 final class IpBasedAuthorizer implements Authorizer
 {
     private const ALLOWED_IPS = [
@@ -206,7 +206,7 @@ use mteu\Monitoring\Authorization\Authorizer;
 use Psr\Http\Message\ServerRequestInterface;
 use Symfony\Component\DependencyInjection\Attribute\AutoconfigureTag;
 
-#[AutoconfigureTag('monitoring.authorizer')]
+#[AutoconfigureTag(tag: 'monitoring.authorizer')]
 final class MultiFactorAuthorizer implements Authorizer
 {
     public function __construct(
@@ -299,7 +299,7 @@ public function isAuthorized(ServerRequestInterface $request): bool
 // Use environment variables for secrets
 public function __construct()
 {
-    $this->secret = $_ENV['MONITORING_SECRET'] ?? '';
+    $this->secret = getenv['MONITORING_SECRET'] ?? '';
 
     if ($this->secret === '')) {
         throw new \RuntimeException('Monitoring secret not configured');

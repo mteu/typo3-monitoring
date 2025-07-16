@@ -116,7 +116,7 @@ HTTP status codes:
 - `403` Unsupported protocol
 - `503` One or more services unhealthy
 
-## 🛠️ Development
+## 🧑‍💻 Development
 
 ### Creating Custom Providers
 
@@ -129,7 +129,7 @@ use mteu\Monitoring\Provider\MonitoringProvider;
 use mteu\Monitoring\Result\MonitoringResult;
 use Symfony\Component\DependencyInjection\Attribute\AutoconfigureTag;
 
-#[AutoconfigureTag('monitoring.provider')]
+#[AutoconfigureTag(tag: 'monitoring.provider')]
 final class MyMonitoringProvider implements MonitoringProvider
 {
     public function getName(): string
@@ -174,7 +174,7 @@ use mteu\Monitoring\Authorization\Authorizer;
 use Psr\Http\Message\ServerRequestInterface;
 use Symfony\Component\DependencyInjection\Attribute\AutoconfigureTag;
 
-#[AutoconfigureTag('monitoring.authorizer')]
+#[AutoconfigureTag(tag: 'monitoring.authorizer')]
 final class MyAuthorizer implements Authorizer
 {
     public function isAuthorized(ServerRequestInterface $request): bool

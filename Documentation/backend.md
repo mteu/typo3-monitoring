@@ -45,12 +45,12 @@ Each provider in the list shows:
 
 The module uses color-coded badges to indicate provider status:
 
-| Badge | Color | Meaning |
-|-------|-------|---------|
-| **Healthy** | Green | Provider is functioning normally |
-| **Unhealthy** | Red | Provider has detected issues |
-| **Inactive** | Gray | Provider is disabled |
-| **Cached** | Blue | Provider results are cached |
+| Badge         | Color | Meaning                          |
+|---------------|-------|----------------------------------|
+| **Healthy**   | Green | Provider is functioning normally |
+| **Unhealthy** | Red   | Provider has detected issues     |
+| **Inactive**  | Gray  | Provider is disabled             |
+| **Cached**    | Blue  | Provider results are cached      |
 
 ### Provider Details
 
@@ -91,11 +91,11 @@ The authorization section displays:
 
 ### Authorization Information
 
-| Field | Description |
-|-------|-------------|
-| **Authorizer Class** | The PHP class name of the authorizer |
-| **Priority** | Numeric priority (higher = evaluated first) |
-| **Status** | Whether the authorizer is active |
+| Field                | Description                                 |
+|----------------------|---------------------------------------------|
+| **Authorizer Class** | The PHP class name of the authorizer        |
+| **Priority**         | Numeric priority (higher = evaluated first) |
+| **Status**           | Whether the authorizer is active            |
 
 ### Authentication Token
 

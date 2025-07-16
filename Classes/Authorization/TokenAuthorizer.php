@@ -23,6 +23,7 @@ declare(strict_types=1);
 
 namespace mteu\Monitoring\Authorization;
 
+use mteu\Monitoring\Configuration\Extension;
 use Psr\Http\Message\ServerRequestInterface;
 use TYPO3\CMS\Core\Configuration\Exception\ExtensionConfigurationExtensionNotConfiguredException;
 use TYPO3\CMS\Core\Configuration\Exception\ExtensionConfigurationPathDoesNotExistException;
@@ -46,11 +47,11 @@ final readonly class TokenAuthorizer implements Authorizer
      * @throws ExtensionConfigurationExtensionNotConfiguredException
      */
     public function __construct(
-        private ExtensionConfiguration $extensionConfiguration,
+        private Extension $extensionConfiguration,
         private HashService $hashService,
     ) {
-        $this->endpoint = $this->getEndpointFromConfiguration();
-        $this->secret = $this->getSecretFromConfiguration();
+        $this->endpoint = $this->extensionConfiguration->getEndpointFromConfiguration();
+        $this->secret = $this->extensionConfiguration->getSecretFromConfiguration();
     }
 
     public function isAuthorized(ServerRequestInterface $request): bool
@@ -70,30 +71,6 @@ final readonly class TokenAuthorizer implements Authorizer
     public static function getPriority(): int
     {
         return 10;
-    }
-
-    /**
-     * @throws ExtensionConfigurationExtensionNotConfiguredException
-     * @throws ExtensionConfigurationPathDoesNotExistException
-     */
-    private function getSecretFromConfiguration(): string
-    {
-        /** @var string $secret */
-        $secret = $this->extensionConfiguration->get('typo3_monitoring', 'monitoring/secret');
-
-        return $secret;
-    }
-
-    /**
-     * @throws ExtensionConfigurationExtensionNotConfiguredException
-     * @throws ExtensionConfigurationPathDoesNotExistException
-     */
-    private function getEndpointFromConfiguration(): string
-    {
-        /** @var string $endpoint */
-        $endpoint = $this->extensionConfiguration->get('typo3_monitoring', 'monitoring/endpoint');
-
-        return $endpoint;
     }
 
     public static function getAuthHeaderName(): string
