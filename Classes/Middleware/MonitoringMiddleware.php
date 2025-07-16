@@ -26,14 +26,15 @@ namespace mteu\Monitoring\Middleware;
 use mteu\Monitoring\Authorization\Authorizer;
 use mteu\Monitoring\Configuration\Extension;
 use mteu\Monitoring\Provider\MonitoringProvider;
+use Psr\Http\Message\ResponseFactoryInterface;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use Psr\Http\Server\MiddlewareInterface;
 use Psr\Http\Server\RequestHandlerInterface;
+use Psr\Log\LoggerInterface;
 use Symfony\Component\DependencyInjection\Attribute\AutowireIterator;
 use TYPO3\CMS\Core\Configuration\Exception\ExtensionConfigurationExtensionNotConfiguredException;
 use TYPO3\CMS\Core\Configuration\Exception\ExtensionConfigurationPathDoesNotExistException;
-use TYPO3\CMS\Core\Http\JsonResponse;
 
 /**
  * MonitoringMiddleware.
@@ -59,6 +60,8 @@ final readonly class MonitoringMiddleware implements MiddlewareInterface
         /** @var iterable<Authorizer> $authorizers */
         #[AutowireIterator(tag: 'monitoring.authorizer', defaultPriorityMethod: 'getPriority')]
         private iterable $authorizers,
+        private ResponseFactoryInterface $responseFactory,
+        private LoggerInterface $logger,
     ) {
         $this->endpoint = $this->extensionConfiguration->getEndpointFromConfiguration();
     }
@@ -74,35 +77,50 @@ final readonly class MonitoringMiddleware implements MiddlewareInterface
         }
 
         if (!$this->isHttps($request)) {
-            return new JsonResponse(
-                [
-                    'code' => 403,
-                    'error' => 'unsupported-protocol',
-                ],
-                403,
-            );
+            try {
+                return $this->jsonResponse(
+                    [
+                        'code' => 403,
+                        'error' => 'unsupported-protocol',
+                    ],
+                    403,
+                );
+            } catch (\JsonException $e) {
+                $this->logger->error($e->getMessage());
+                return $handler->handle($request);
+            }
         }
 
         if (!$this->isAuthorized($request)) {
-            return new JsonResponse(
-                [
-                    'code' => 401,
-                    'error' => 'unauthorized',
-                ],
-                401,
-            );
+            try {
+                return $this->jsonResponse(
+                    [
+                        'code' => 401,
+                        'error' => 'unauthorized',
+                    ],
+                    401,
+                );
+            } catch (\JsonException $e) {
+                $this->logger->error($e->getMessage());
+                return $handler->handle($request);
+            }
         }
 
-        return new JsonResponse(
-            [
-                'isHealthy' => $this->isHealthy(),
-                'services' => array_map(
-                    static fn(bool $serviceStatus): string => $serviceStatus ? 'healthy' : 'unhealthy',
-                    $this->getHealthStatus()
-                ),
-            ],
-            $this->isHealthy() ? 200 : 503,
-        );
+        try {
+            return $this->jsonResponse(
+                [
+                    'isHealthy' => $this->isHealthy(),
+                    'services' => array_map(
+                        static fn(bool $serviceStatus): string => $serviceStatus ? 'healthy' : 'unhealthy',
+                        $this->getHealthStatus()
+                    ),
+                ],
+                $this->isHealthy() ? 200 : 503,
+            );
+        } catch (\JsonException $e) {
+            $this->logger->error($e->getMessage());
+            return $handler->handle($request);
+        }
     }
 
     private function isValid(ServerRequestInterface $request): bool
@@ -149,5 +167,21 @@ final readonly class MonitoringMiddleware implements MiddlewareInterface
     private function isHealthy(): bool
     {
         return !in_array(false, $this->getHealthStatus(), true);
+    }
+
+    /**
+     * @param array{code: int, error: string}|array{isHealthy: bool, services: array<non-empty-string, 'healthy'|'unhealthy'>} $data
+     * @throws \JsonException
+     */
+    private function jsonResponse(array $data, int $statusCode = 200): ResponseInterface
+    {
+        $response = $this->responseFactory
+            ->createResponse()
+            ->withStatus($statusCode)
+            ->withHeader('Content-Type', 'application/json; charset=utf-8');
+
+        $response->getBody()->write(json_encode($data, JSON_THROW_ON_ERROR));
+
+        return $response;
     }
 }
