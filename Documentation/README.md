@@ -1,6 +1,4 @@
-# TYPO3 Monitoring · Documentation
-
-## 📋 Table of Contents
+# 📋 Documentation
 
 1. [Installation](installation.md)
 2. [Configuration](configuration.md)

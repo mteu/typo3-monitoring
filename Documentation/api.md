@@ -19,13 +19,15 @@ Access the endpoint at: `https://yoursite.com/monitor/health`
 
 ### Token Authentication
 
-Include the HMAC token in the request header:
+Include the authentication token in the request header:
 
 ```http
 GET /monitor/health HTTP/1.1
 Host: yoursite.com
-X-TYPO3-MONITORING-AUTH: your-hmac-token
+X-TYPO3-MONITORING-AUTH: your-auth-token
 ```
+> [!TIP]
+> [Learn here](Documentation/authorization.md#token-generation) how the Authentication token is generated.
 
 ### Admin User Authentication
 
@@ -245,42 +247,7 @@ scrape_configs:
       format: ['prometheus']  # If you implement Prometheus format
 ```
 
-## ✨ Best Practices
-
-### Performance
-
-1. **Implement Client-Side Caching**: Cache responses for appropriate intervals
-2. **Use Reasonable Timeouts**: Set appropriate connection and read timeouts
-3. **Implement Retry Logic**: Handle temporary failures gracefully
-4. **Monitor API Performance**: Track response times and error rates
-
-### Security
-
-1. **Use HTTPS Only**: Never make requests over HTTP
-2. **Secure Secret Storage**: Store secrets securely (environment variables,
-   key management)
-3. **Validate SSL Certificates**: Always verify SSL certificates
-4. **Implement Rate Limiting**: Prevent abuse with appropriate rate limits
-
-### Error Handling
-
-1. **Handle All HTTP Status Codes**: Implement appropriate responses for all
-   status codes
-2. **Parse JSON Safely**: Always validate JSON responses
-3. **Log Errors Appropriately**: Log errors without exposing sensitive
-   information
-4. **Implement Circuit Breakers**: Prevent cascading failures
-
-### Monitoring the Monitor
-
-1. **Monitor API Availability**: Ensure the monitoring endpoint itself is
-   monitored
-2. **Track Response Times**: Monitor API response performance
-3. **Alert on Failures**: Set up alerts for monitoring system failures
-4. **Implement Health Checks**: Regular health checks for the monitoring
-   system
-
-## ➡️ Next Steps
+## Next Steps
 
 - [Set up authentication](authorization.md)
 - [Use the backend module](backend.md)

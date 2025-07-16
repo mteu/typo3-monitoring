@@ -11,6 +11,9 @@ proceed.
 The `TokenAuthorizer` implements HMAC-based authentication using a shared
 secret in combination with the TYPO3 encryption key.
 
+**Constants:**
+- `AUTH_HEADER_NAME`: `'X-TYPO3-MONITORING-AUTH'` - The HTTP header name for authentication
+
 #### ⚙️ Configuration
 1. Set the secret in Extension Configuration:
    ```
@@ -80,7 +83,7 @@ final class CustomAuthorizer implements Authorizer
         return $this->checkCustomAuthentication($request);
     }
 
-    public function getPriority(): int
+    public static function getPriority(): int
     {
         return 100; // Higher priority = checked first
     }
@@ -132,7 +135,7 @@ final class IpBasedAuthorizer implements Authorizer
         return false;
     }
 
-    public function getPriority(): int
+    public static function getPriority(): int
     {
         return 200;
     }
@@ -204,7 +207,7 @@ final class MultiFactorAuthorizer implements Authorizer
                $this->tokenAuthorizer->isAuthorized($request);
     }
 
-    public function getPriority(): int
+    public static function getPriority(): int
     {
         return 500;
     }
@@ -217,7 +220,7 @@ authorizer that grants access allows the request to proceed.
 
 ### Default Priorities
 - `AdminUserAuthorizer`: `PHP_INT_MIN` (lowest priority)
-- `TokenAuthorizer`: `0` (default priority)
+- `TokenAuthorizer`: `10` (default priority)
 - Custom authorizers: Define your own priority
 
 ### Priority Guidelines
