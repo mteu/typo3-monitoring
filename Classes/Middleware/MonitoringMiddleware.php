@@ -26,17 +26,15 @@ namespace mteu\Monitoring\Middleware;
 use mteu\Monitoring\Authorization\Authorizer;
 use mteu\Monitoring\Configuration\Extension;
 use mteu\Monitoring\Provider\MonitoringProvider;
+use Psr\Http\Message\ResponseFactoryInterface;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use Psr\Http\Server\MiddlewareInterface;
 use Psr\Http\Server\RequestHandlerInterface;
-use Psr\Log\LoggerAwareInterface;
 use Psr\Log\LoggerInterface;
 use Symfony\Component\DependencyInjection\Attribute\AutowireIterator;
 use TYPO3\CMS\Core\Configuration\Exception\ExtensionConfigurationExtensionNotConfiguredException;
 use TYPO3\CMS\Core\Configuration\Exception\ExtensionConfigurationPathDoesNotExistException;
-use Psr\Http\Message\ResponseFactoryInterface;
-use TYPO3\CMS\Core\Http\StreamFactory;
 
 /**
  * MonitoringMiddleware.
@@ -62,7 +60,6 @@ final readonly class MonitoringMiddleware implements MiddlewareInterface
         /** @var iterable<Authorizer> $authorizers */
         #[AutowireIterator(tag: 'monitoring.authorizer', defaultPriorityMethod: 'getPriority')]
         private iterable $authorizers,
-
         private ResponseFactoryInterface $responseFactory,
         private LoggerInterface $logger,
     ) {
