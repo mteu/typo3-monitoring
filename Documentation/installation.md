@@ -2,7 +2,7 @@
 
 ## Requirements
 
-- **PHP**: 8.4+
+- **PHP**: 8.3+
 - **TYPO3**: 13.4+
 - **HTTPS**: Required for production use
 
