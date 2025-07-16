@@ -48,6 +48,7 @@ final class MonitoringResult extends AbstractMonitoringResult
         );
     }
 
+    #[\Override]
     public function isHealthy(): bool
     {
         return $this->isHealthy;

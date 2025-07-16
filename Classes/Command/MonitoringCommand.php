@@ -70,8 +70,6 @@ final class MonitoringCommand extends Command
 
         $output->writeln('Checking Monitoring status');
         foreach ($activeProvidersResult as $providerClass => $result) {
-            assert($result instanceof Result);
-
             $output->writeln(sprintf(
                 '%s %s%s',
                 $result->isHealthy() ? ' ✅' : '🚨',
@@ -87,7 +85,7 @@ final class MonitoringCommand extends Command
     }
 
     /**
-     * @return array{string: Result}
+     * @return array<class-string<MonitoringProvider>, Result>
      */
     private function getActiveProvidersResult(): array
     {

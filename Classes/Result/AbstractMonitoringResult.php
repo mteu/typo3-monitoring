@@ -48,11 +48,13 @@ abstract class AbstractMonitoringResult implements Result
         return $this->name;
     }
 
+    /** @phpstan-ignore ergebnis.finalInAbstractClass */
     public function isHealthy(): bool
     {
         return $this->isHealthy;
     }
 
+    /** @phpstan-ignore ergebnis.finalInAbstractClass */
     public function getReason(): ?string
     {
         return $this->reason;

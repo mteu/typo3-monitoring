@@ -98,7 +98,6 @@
 			"Composer\\Config::disableProcessTimeout",
 			"rector process"
 		],
-		"sca:migrate:typo3": "fractor process",
 		"sca:php": "phpstan analyse -c phpstan.neon --memory-limit=4G",
 		"test": [
 			"@test:unit",

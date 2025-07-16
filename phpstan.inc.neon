@@ -20,16 +20,22 @@ parameters:
 
 	ignoreErrors:
 		-
+			# review
 			identifier: ternary.shortNotAllowed
 		-
+			# keep ignoring
 			identifier: symplify.requiredInterfaceContractNamespace
 		-
 			identifier: ergebnis.noNamedArgument
 		-
+			# keep ignoring
 			identifier: ergebnis.noConstructorParameterWithDefaultValue
 		-
+			# keep ignoring
 			identifier: ergebnis.noParameterWithNullableTypeDeclaration
 		-
+			# todo
 			identifier: ergebnis.noNullableReturnTypeDeclaration
 		-
+			# keep ignoring
 			identifier: ergebnis.noParameterWithNullDefaultValue
