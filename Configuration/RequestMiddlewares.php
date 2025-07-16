@@ -6,7 +6,7 @@ defined('TYPO3') or die();
 
 return [
     'frontend' => [
-        'mteu/typo3_monitoring' => [
+        'mteu/typo3-monitoring' => [
             'target' => \mteu\Monitoring\Middleware\MonitoringMiddleware::class,
             'before' => [
                 'typo3/cms-frontend/authentication',
