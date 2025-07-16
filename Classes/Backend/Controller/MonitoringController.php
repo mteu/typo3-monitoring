@@ -35,7 +35,10 @@ use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use Symfony\Component\DependencyInjection\Attribute\AutowireIterator;
 use TYPO3\CMS\Backend\Attribute\AsController;
+use TYPO3\CMS\Backend\Routing\Exception\RouteNotFoundException;
+use TYPO3\CMS\Backend\Routing\UriBuilder;
 use TYPO3\CMS\Backend\Template\ModuleTemplateFactory;
+use TYPO3\CMS\Core\Authentication\BackendUserAuthentication;
 use TYPO3\CMS\Core\Configuration\Exception\ExtensionConfigurationExtensionNotConfiguredException;
 use TYPO3\CMS\Core\Configuration\Exception\ExtensionConfigurationPathDoesNotExistException;
 use TYPO3\CMS\Core\Crypto\HashService;
@@ -61,6 +64,8 @@ final class MonitoringController
     use AllowedMethodsTrait;
     use SlugifyCacheKeyTrait;
 
+    private const string LOCALLANG_FILE = 'LLL:EXT:monitoring/Resources/Private/Language/locallang.be.xlf';
+
     /** @var non-empty-string $endpoint */
     private string $endpoint;
 
@@ -84,7 +89,8 @@ final class MonitoringController
         #[AutowireIterator(tag: 'monitoring.authorizer', defaultPriorityMethod: 'getPriority')]
         private readonly iterable $authorizers,
         private readonly MonitoringExecutionHandler $executionHandler,
-        private readonly MonitoringCacheManager $cacheManager
+        private readonly MonitoringCacheManager $cacheManager,
+        private readonly UriBuilder $uriBuilder,
     ) {
         $endpoint = $this->extensionConfiguration->getEndpointFromConfiguration();
 
@@ -93,6 +99,7 @@ final class MonitoringController
         }
 
         $secret = $this->extensionConfiguration->getSecretFromConfiguration();
+
         if ($secret !== '') {
             $this->secret = $secret;
         }
@@ -171,54 +178,54 @@ final class MonitoringController
 
     /**
      * Handle flush cache action with flash messages and redirect
+     * @throws RouteNotFoundException
      */
     private function handleFlushProviderCache(string $providerClass, ServerRequestInterface $request): ResponseInterface
     {
-        $success = $this->cacheManager->flushProviderCache($providerClass);
         $languageService = $this->getLanguageService();
-
         $flashMessageQueue = $this->flashMessageService->getMessageQueueByIdentifier('typo3_monitoring');
 
-        if ($success) {
+        if ($this->cacheManager->flushProviderCache($providerClass)) {
             $message = new FlashMessage(
                 sprintf(
-                    $languageService->sL('LLL:EXT:monitoring/Resources/Private/Language/locallang.be.xlf:provider.cache.flush.success.message'),
-                    $providerClass
+                    $languageService->sL(self::LOCALLANG_FILE . ':provider.cache.flush.success.message'),
+                    $providerClass,
                 ),
-                $languageService->sL('LLL:EXT:monitoring/Resources/Private/Language/locallang.be.xlf:provider.cache.flush.success.title'),
-                ContextualFeedbackSeverity::OK
+                $languageService->sL(self::LOCALLANG_FILE . ':provider.cache.flush.success.title'),
+                ContextualFeedbackSeverity::OK,
             );
         } else {
             $message = new FlashMessage(
                 sprintf(
-                    $languageService->sL('LLL:EXT:monitoring/Resources/Private/Language/locallang.be.xlf:provider.cache.flush.error.message'),
-                    $providerClass
+                    $languageService->sL(self::LOCALLANG_FILE . ':provider.cache.flush.error.message'),
+                    $providerClass,
                 ),
-                $languageService->sL('LLL:EXT:monitoring/Resources/Private/Language/locallang.be.xlf:provider.cache.flush.error.title'),
-                ContextualFeedbackSeverity::ERROR
+                $languageService->sL(self::LOCALLANG_FILE . ':provider.cache.flush.error.title'),
+                ContextualFeedbackSeverity::ERROR,
             );
         }
 
         $flashMessageQueue->addMessage($message);
 
-        // Use the current request URI for redirect - this is the proper way in TYPO3 v13
-        $currentUri = $request->getUri();
-        $redirectUri = $currentUri->withQuery('');
-
-        return new RedirectResponse((string)$redirectUri);
+        /** @phpstan-ignore method.internalClass, new.internalClass */
+        return new RedirectResponse(
+            $this->uriBuilder->buildUriFromRequest($request),
+        );
     }
 
     private function getLanguageService(): LanguageService
     {
-        return $this->languageServiceFactory->createFromUserPreferences($GLOBALS['BE_USER']);
-    }
+        $backendUser = $GLOBALS['BE_USER'] ?? null;
 
-    private function getAuthToken(): ?string
-    {
-        if ($this->endpoint === '' || $this->secret === '') {
-            return null;
+        if ($backendUser instanceof BackendUserAuthentication) {
+            return $this->languageServiceFactory->createFromUserPreferences($backendUser);
         }
 
+        return $this->languageServiceFactory->createFromUserPreferences(null);
+    }
+
+    private function getAuthToken(): string
+    {
         return $this->hashService->hmac($this->endpoint, $this->secret);
     }
 }
