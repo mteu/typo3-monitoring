@@ -39,13 +39,13 @@ use TYPO3\CMS\Core\Cache\Frontend\FrontendInterface;
  * @author Martin Adler <mteu@mailbox.org>
  * @license GPL-2.0-or-later
  */
-final class MonitoringCacheManager
+final readonly class MonitoringCacheManager
 {
     use SlugifyCacheKeyTrait;
     private const string CACHE_IDENTIFIER = 'typo3_monitoring';
 
     public function __construct(
-        private readonly CacheManager $cacheManager,
+        private CacheManager $cacheManager,
     ) {}
 
     /**
