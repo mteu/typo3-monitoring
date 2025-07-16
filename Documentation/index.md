@@ -1,8 +1,4 @@
-# TYPO3 Monitoring Extension Documentation
-
-Welcome to the documentation for the TYPO3 Monitoring Extension
-(`mteu/typo3-monitoring`). This extension provides comprehensive monitoring
-capabilities for TYPO3 instances through a secure HTTP endpoint.
+# TYPO3 Monitoring · Documentation
 
 ## 📋 Table of Contents
 
@@ -17,7 +13,7 @@ capabilities for TYPO3 instances through a secure HTTP endpoint.
 
 ## 🔍 Overview
 
-The TYPO3 Monitoring Extension allows external monitoring systems to check
+`EXT:monitoring` allows external monitoring systems to check
 the health of your TYPO3 instance through a configurable HTTP endpoint. The
 extension follows a provider-based architecture that makes it easy to extend
 with custom monitoring checks.
@@ -27,22 +23,12 @@ with custom monitoring checks.
 - **Provider-based Architecture**: Extensible system with automatic service
   discovery
 - **Multiple Authorization Strategies**: Token-based HMAC and admin user
-  authentication
+  authentication plus open to custom implementations
 - **Secure by Default**: HTTPS-only access with multiple security layers
 - **Caching Support**: Optional caching for expensive monitoring operations
 - **Backend Integration**: TYPO3 backend module for management
 - **CLI Support**: Command-line interface for monitoring checks
-- **JSON API**: RESTful responses with comprehensive status information
-
-### Architecture
-
-The extension consists of several key components:
-
-1. **MonitoringMiddleware**: Handles HTTP requests and coordinates the
-   monitoring process
-2. **Authorization Layer**: Validates requests using configured authorizers
-3. **Provider System**: Executes monitoring checks from registered providers
-4. **Result Processing**: Aggregates results and returns JSON response
+- **JSON API**: RESTful responses with summary status information
 
 ### Core Interfaces
 
@@ -70,8 +56,3 @@ The monitoring endpoint is designed with security in mind:
 - **Rate Limiting**: Can be combined with external rate limiting
 - **No Sensitive Data**: Monitoring responses contain no sensitive information
 - **Configurable Endpoints**: Endpoint paths can be customized
-
-## 🤝 Contributing
-
-Contributions, yes please! See the main README for contribution
-guidelines and development setup instructions.

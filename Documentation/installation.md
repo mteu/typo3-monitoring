@@ -1,7 +1,5 @@
 # Installation Guide
 
-This guide covers the installation and initial setup of the TYPO3 Monitoring
-Extension.
 
 ## 📝 Requirements
 
@@ -98,29 +96,8 @@ Verify the backend module is available:
 2. Navigate to **System → Monitoring**
 3. You should see the monitoring overview page
 
-## 🔧 Troubleshooting
 
-### Common Issues
-
-#### Extension Not Found
-- Ensure the extension is properly installed via Composer
-- Check that the extension is activated in the Extension Manager
-
-#### 404 Error on Endpoint
-- Verify the endpoint path in Extension Configuration
-- Clear all caches after configuration changes
-- Check web server configuration for URL rewriting
-
-#### 403 Forbidden
-- Ensure you're accessing the endpoint via HTTPS
-- Check that authentication is properly configured
-- Verify the secret is set in Extension Configuration
-
-#### Permission Errors
-- Check file permissions on the extension directory
-- Ensure the web server can read the extension files
-
-## 👆 Next Steps
+## ➡️ Next Steps
 
 After successful installation:
 

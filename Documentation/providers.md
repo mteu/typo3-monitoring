@@ -1,9 +1,5 @@
 # Provider Development Guide
 
-This guide covers the creation custom monitoring providers for this extension.
-
-## 🔍 Overview
-
 Providers are the core components that perform actual monitoring checks.
 Once they implement the `MonitoringProvider` interface they are automatically
 discovered through the dependency injection container.
@@ -390,24 +386,6 @@ public function isActive(): bool
 - Monitor the monitoring system itself
 - Implement alerting for critical failures
 
-## 🔧 Troubleshooting
-
-### Common Issues
-
-#### Provider Not Discovered
-- Check the `#[AutoconfigureTag(tag: 'monitoring.provider')]` attribute
-- Verify the class implements `MonitoringProvider`
-- Clear TYPO3 caches
-
-#### Caching Issues
-- Check cache configuration
-- Verify cache key generation
-- Clear monitoring cache
-
-#### Performance Issues
-- Implement caching for expensive operations
-- Use appropriate timeouts
-- Monitor execution time
 
 ### Debug Mode
 
@@ -431,7 +409,7 @@ public function execute(): MonitoringResult
 }
 ```
 
-## 👆 Next Steps
+## ➡️ Next Steps
 
 After creating providers:
 

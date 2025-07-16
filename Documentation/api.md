@@ -1,21 +1,8 @@
 # API Reference
 
-This guide covers the HTTP API of the TYPO3 Monitoring Extension, including
-endpoint specifications, request/response formats, and integration examples.
-
-## 🔍 API Overview
-
 The monitoring extension provides a single HTTP endpoint that returns the
 health status of your TYPO3 instance in JSON format. The endpoint is designed
 to be consumed by external monitoring systems.
-
-### Base Information
-
-- **Protocol**: HTTPS only (enforced)
-- **Method**: GET
-- **Content-Type**: `application/json`
-- **Authentication**: Multiple strategies supported (Token, Admin User)
-- **Rate Limiting**: Can be implemented via external systems
 
 ## ⚙️ Endpoint Configuration
 
@@ -293,31 +280,7 @@ scrape_configs:
 4. **Implement Health Checks**: Regular health checks for the monitoring
    system
 
-## 🔧 Troubleshooting
-
-### Common Issues
-
-#### Connection Refused
-- Check HTTPS configuration
-- Verify endpoint configuration
-- Check firewall settings
-
-#### 🔐 Authentication Failures
-- Verify secret configuration
-- Check token generation logic
-- Ensure proper header format
-
-#### Timeout Issues
-- Increase client timeout settings
-- Check server performance
-- Verify network connectivity
-
-#### Invalid JSON Response
-- Check server error logs
-- Verify endpoint path
-- Ensure proper content-type headers
-
-## 👆 Next Steps
+## ➡️ Next Steps
 
 - [Set up authentication](authorization.md)
 - [Use the backend module](backend.md)

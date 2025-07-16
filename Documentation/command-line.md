@@ -1,10 +1,5 @@
 # CLI Commands Guide
 
-This guide covers the command-line interface for the TYPO3 Monitoring
-Extension, including available commands, options, and usage scenarios.
-
-## 🔍 Overview
-
 The monitoring extension provides CLI commands for:
 - Running monitoring checks from the command line
 - Integration with cron jobs and automated scripts
@@ -576,7 +571,7 @@ TYPO3_CONTEXT=Development ./vendor/bin/typo3 monitoring:run -v
 ./vendor/bin/typo3 configuration:show
 ```
 
-## 👆 Next Steps
+## ➡️ Next Steps
 
 After setting up CLI commands:
 

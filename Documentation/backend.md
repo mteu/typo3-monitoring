@@ -1,11 +1,5 @@
 # Backend Module Guide
 
-This guide covers the TYPO3 backend module for the Monitoring Extension,
-providing administrative interface for managing providers, authorizers, and
-cache.
-
-## 🔍 Overview
-
 The backend module provides a comprehensive interface for administrators to:
 - View all registered monitoring providers
 - Check provider health status
@@ -119,27 +113,6 @@ components):
 - **🚨 Unhealthy**: Component has issues
 - **ℹ️ Info**: Additional information available
 
-## 💻 Using the Backend Module
-
-### Monitoring System Health
-
-1. **Check Overall Status**: View the main dashboard for system overview
-2. **Examine Individual Providers**: Expand provider details for specific
-   information
-3. **Review Sub-Components**: Check sub-results for detailed component status
-
-### Managing Provider Cache
-
-1. **View Cache Status**: Check cache information in provider details
-2. **Flush Specific Cache**: Use the "Flush Cache" link for individual providers
-3. **Monitor Cache Expiration**: Keep track of cache expiration times
-
-### Getting Authentication Information
-
-1. **Copy Auth Token**: Use the displayed token for API requests
-2. **Check Endpoint URL**: Verify the monitoring endpoint configuration
-3. **Review Authorizers**: Understand the authorization priority order
-
 ## ⚙️ Configuration Management
 
 ### Provider Configuration
@@ -164,53 +137,6 @@ Authorization is configured through:
 - **Service Registration**: Authorizer priority and registration
 - **Environment Variables**: Secure secret management
 
-## 🔧 Troubleshooting
-
-### Common Issues
-
-#### No Providers Displayed
-- **Cause**: No providers are registered or all are inactive
-- **Solution**: Check service configuration and provider registration
-
-#### Provider Shows as Unhealthy
-- **Cause**: Provider check is failing
-- **Solution**: Check provider logs and dependencies
-
-#### Cache Issues
-- **Cause**: Cache backend problems or configuration issues
-- **Solution**: Check TYPO3 cache configuration and clear all caches
-
-#### Authorization Problems
-- **Cause**: Missing or incorrect secret configuration
-- **Solution**: Check extension configuration and secret setup
-
-### Debug Information
-
-The backend module provides debugging information:
-- **Provider Class Names**: Full PHP class names for reference
-- **Cache Status**: Current cache state and expiration
-- **Authorization Priority**: Order of authorizer evaluation
-
-## ✨ Best Practices
-
-### Regular Monitoring
-
-1. **Check Provider Status**: Regularly review provider health
-2. **Monitor Cache Performance**: Keep track of cache hit rates
-3. **Review Authorization**: Ensure proper security configuration
-
-### Cache Management
-
-1. **Flush Stale Cache**: Clear cache for failing providers
-2. **Monitor Expiration**: Keep track of cache expiration times
-3. **Optimize Lifetime**: Adjust cache lifetimes for performance
-
-### Security Considerations
-
-1. **Token Security**: Don't expose authentication tokens
-2. **Access Control**: Limit backend access to system maintainers or
-administrators
-3. **Regular Updates**: Keep authentication tokens current
 
 ## 🎨 Customization
 
@@ -228,7 +154,7 @@ Language files can be customized:
 - **Backend Labels**: `Resources/Private/Language/locallang.be.xlf`
 - **Module Labels**: `Resources/Private/Language/locallang.mod.xlf`
 
-## 👆 Next Steps
+## ➡️ Next Steps
 
 After using the backend module:
 

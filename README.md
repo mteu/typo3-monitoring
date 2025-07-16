@@ -9,14 +9,14 @@
 [![Coverage Status](https://coveralls.io/repos/github/mteu/typo3-monitoring/badge.svg?branch=main)](https://coveralls.io/github/mteu/typo3-monitoring?branch=main)
 [![Maintainability](https://api.codeclimate.com/v1/badges/edd606b0c4de053a2762/maintainability)](https://codeclimate.com/github/mteu/typo3-monitoring/maintainability)
 
-<hr />
+<img src="Resources/Public/Icons/Extension.svg" width="64" height="64" alt="Extension Icon">
 
-![](Resources/Public/Icons/Extension.svg)
 # TYPO3 Monitoring
+
 </div>
 
 This packages provides the TYPO3 CMS Extension `EXT:monitoring` which extends the CMS with a monitoring system that
-gives an insight into the health state of custom TYPO3 components through an API endpoint and a CLI command for
+gives an insight into the health state of custom TYPO3 components through an API endpoint and a CLI command, e.g. for
 post-deployment checks.
 
 > [!WARNING]
@@ -25,7 +25,7 @@ post-deployment checks.
 
 ## 🚀 Features
 
-- Highly [extensible monitoring system](Documentation/architecture.md) with automatic service discovery for custom
+- [Extensible monitoring system](Documentation/architecture.md) with automatic service discovery (using DI) for custom
   authorization and monitoring checks.
 - Supports caching for expensive monitoring operations
 - Delivers health reports in three ways:
