@@ -33,7 +33,8 @@ use TYPO3\CMS\Core\Cache\Frontend\FrontendInterface;
  * MonitoringCacheManager.
  *
  * Manages caching for monitoring results with expiration tracking and tag-based invalidation.
- * Provides methods for storing, retrieving, and managing cached monitoring results.
+ * Basically a wrapper around TYPO3\CMS\Core\Cache\CacheManager for storing, retrieving, and managing cached
+ * monitoring results.
  *
  * @author Martin Adler <mteu@mailbox.org>
  * @license GPL-2.0-or-later
@@ -100,12 +101,11 @@ final class MonitoringCacheManager
 
     /**
      * Stores a monitoring result in cache with optional tags and custom lifetime.
+
+     * @param string[] $cacheTags Optional cache tags for invalidation
      *
-     * @param string $cacheKey The cache key to store under
-     * @param Result $result The monitoring result to cache
-     * @param array $cacheTags Optional cache tags for invalidation
-     * @param int $cacheLifeTime Custom cache lifetime in seconds (0 = use default)
-     * @return bool True if successfully cached, false otherwise
+     * @throws \DateInvalidTimeZoneException
+     * @throws \DateMalformedStringException
      */
     public function setCachedResult(
         string $cacheKey,
@@ -148,10 +148,7 @@ final class MonitoringCacheManager
     }
 
     /**
-     * Flush cache entries by tags.
-     *
-     * @param array $tags Array of cache tags to flush
-     * @return bool True if successfully flushed, false otherwise
+     * @param string[] $tags Array of cache tags to flush
      */
     public function flushByTags(array $tags): bool
     {
@@ -166,21 +163,12 @@ final class MonitoringCacheManager
 
     /**
      * Flush cache for a specific provider class.
-     *
-     * @param string $providerClass The provider class name to flush cache for
-     * @return bool True if successfully flushed, false otherwise
      */
     public function flushProviderCache(string $providerClass): bool
     {
         return $this->flushByTags([$this->slugifyString($providerClass)]);
     }
 
-    /**
-     * Flush cache entry by specific cache key.
-     *
-     * @param string $cacheKey The cache key to remove
-     * @return bool True if successfully removed, false otherwise
-     */
     public function flushByCacheKey(string $cacheKey): bool
     {
         try {
@@ -192,11 +180,6 @@ final class MonitoringCacheManager
         }
     }
 
-    /**
-     * Flush all monitoring cache entries.
-     *
-     * @return bool True if successfully flushed, false otherwise
-     */
     public function flushAll(): bool
     {
         try {
@@ -209,19 +192,10 @@ final class MonitoringCacheManager
     }
 
     /**
-     * Gets the cache frontend instance.
-     *
-     * @return FrontendInterface The cache frontend
      * @throws NoSuchCacheException If the cache is not configured
      */
     public function getCache(): FrontendInterface
     {
         return $this->cacheManager->getCache(self::CACHE_IDENTIFIER);
     }
-
-    private function getCacheIdentifier(): string
-    {
-        return self::CACHE_IDENTIFIER;
-    }
-
 }
