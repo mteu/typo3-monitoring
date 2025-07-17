@@ -108,7 +108,7 @@
 			"@test:coverage:unit",
 			"@test:coverage:merge"
 		],
-		"test:coverage:merge": "phpcov merge --html .build/coverage/merged_html  --clover .build/coverage/merged.clover.xml --text php://stdout .build/coverage/ ",
+		"test:coverage:merge": "phpcov merge --html .build/coverage/merged_html  --clover .build/coverage/clover.xml --text php://stdout .build/coverage/ ",
 		"test:coverage:unit": "phpunit -c phpunit.unit.xml",
 		"test:functional": "phpunit -c phpunit.functional.xml",
 		"test:unit": "phpunit -c phpunit.unit.xml",

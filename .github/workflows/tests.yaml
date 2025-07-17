@@ -46,3 +46,72 @@ jobs:
         run: composer test:unit
 
       # todo: add coverage and reporting
+
+  tests-coverage:
+    name: Test coverage
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      # Prepare environment
+      - name: Setup PHP
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: ${{ matrix.php-version }}
+          tools: composer:v2
+          coverage: pcov
+
+      # Install dependencies
+      - name: Install Composer dependencies
+        uses: ramsey/composer-install@v2
+
+      # Run tests
+      - name: Build coverage directory
+        run: mkdir -p .build/coverage
+      - name: Run tests with coverage
+        run: composer test:coverage
+
+      # Upload artifact
+      - name: Fix coverage path
+        working-directory: .build/coverage
+        run: sed -i 's#/home/runner/work/typo3-monitoring/typo3-monitoring#${{ github.workspace }}#g' merged.clover.xml
+      - name: Upload coverage artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: coverage
+          path: .build/coverage/merged.clover.xml
+          retention-days: 7
+
+  report-coverage:
+    name: Report test coverage
+    needs: tests-coverage
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      # Download artifact
+      - name: Download coverage artifact
+        id: download
+        uses: actions/download-artifact@v4
+        with:
+          name: coverage
+
+      # qlty
+      - name: qlty report
+        uses: qltysh/qlty-action/coverage@v1
+        if: env.QLTY_COVERAGE_TOKEN
+        env:
+          QLTY_COVERAGE_TOKEN: ${{ secrets.QLTY_COVERAGE_TOKEN }}
+        with:
+          token: ${{ secrets.QLTY_COVERAGE_TOKEN }}
+          files: ${{ steps.download.outputs.download-path }}/clover.xml
+
+      # Coveralls
+      - name: Coveralls report
+        uses: coverallsapp/github-action@v2
+        with:
+          file: ${{ steps.download.outputs.download-path }}/clover.xml
