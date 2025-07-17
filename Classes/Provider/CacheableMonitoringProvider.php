@@ -28,8 +28,6 @@ namespace mteu\Monitoring\Provider;
  *
  * @author Martin Adler <mteu@mailbox.org>
  * @license GPL-2.0-or-later
- *
- * @codeCoverageIgnore
  */
 interface CacheableMonitoringProvider extends MonitoringProvider
 {
