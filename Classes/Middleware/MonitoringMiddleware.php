@@ -157,7 +157,7 @@ final readonly class MonitoringMiddleware implements MiddlewareInterface
 
         foreach ($this->monitoringProviders as $provider) {
             if ($provider->isActive()) {
-                $status[$provider->getName()] = $provider->isHealthy();
+                $status[$provider->getName()] = $provider->execute()->isHealthy();
             }
         }
 
