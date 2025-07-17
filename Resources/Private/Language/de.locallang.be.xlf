@@ -79,9 +79,13 @@
 				<source>This provider is explicitly disabled at the moment.</source>
 				<target>Dieser Provider ist derzeit deaktiviert.</target>
 			</trans-unit>
-			<trans-unit id="providers.no_providers_found">
+			<trans-unit id="providers.no_providers_found.title">
 				<source>No monitoring providers found.</source>
 				<target>Keine Monitoring-Provider gefunden.</target>
+			</trans-unit>
+			<trans-unit id="providers.no_providers_found.content">
+				<source>Providers must implement %s to become available.</source>
+				<target>Monitoring-Provider müssen %s implementieren, um verfügbar zu werden.</target>
 			</trans-unit>
 			<trans-unit id="authorizers.no_authorizers_found">
 				<source>No monitoring authorizers found.</source>
