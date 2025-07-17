@@ -1,6 +1,7 @@
 # Security Policy
 
-Please follow the guidelines below if you believe you have discovered a vulnerability in this project.
+Please follow the guidelines below if you believe you have discovered a
+vulnerability in this project.
 
 > [!CAUTION]
 > Please do not open GitHub issues for security vulnerabilities!
@@ -15,5 +16,6 @@ Your report should include the following details:
 * A step-by-step explanation of how to exploit the potential vulnerability.
 
 > [!TIP]
-> If you suspect a critical vulnerability you may also reach out to the _TYPO3 Security Team_. Please read
-> [TYPO3's Security Policy](https://github.com/TYPO3/typo3/blob/main/SECURITY.md) for more information.
+> If you suspect a critical vulnerability you may also reach out to the _TYPO3
+> Security Team_. Please read [TYPO3's Security Policy](https://github.com/TYPO3/typo3/blob/main/SECURITY.md)
+> for more information.

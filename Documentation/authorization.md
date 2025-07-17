@@ -12,7 +12,8 @@ The `TokenAuthorizer` implements HMAC-based authentication using a shared
 secret in combination with the TYPO3 encryption key.
 
 **Constants:**
-- `AUTH_HEADER_NAME`: `'X-TYPO3-MONITORING-AUTH'` - The HTTP header name for authentication
+- `AUTH_HEADER_NAME`: `'X-TYPO3-MONITORING-AUTH'` - The HTTP header name for
+authentication
 
 #### ⚙️ Configuration
 1. Set the secret in Extension Configuration:
@@ -269,8 +270,8 @@ public function isAuthorized(ServerRequestInterface $request): bool
 1. **Use HTTPS**: The extension enforces HTTPS for all requests
 2. **Strong Secrets**: Use cryptographically secure random secrets
 3. **Token Rotation**: Regularly rotate authentication tokens
-4. **IP Restrictions**: Combine with IP-based authorization (not yet implemented)
-5. **Audit Logging**: Log all authorization attempts (not yet implemented)
+4. **IP Restrictions**: Combine with IP-based authorization (planned)
+5. **Audit Logging**: Log all authorization attempts (planned)
 
 ### Secret Management
 ```php
