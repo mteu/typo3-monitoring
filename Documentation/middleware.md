@@ -1,12 +1,14 @@
 # Middleware
 
-The `MonitoringMiddleware` handles HTTP requests to the monitoring endpoint and orchestrates the monitoring workflow.
+The `MonitoringMiddleware` handles HTTP requests to the monitoring endpoint and
+orchestrates the monitoring workflow.
 
 ## Request Processing
 
 The middleware processes requests in the following order:
 
-1. **Endpoint Validation** - Checks if the request path matches the configured endpoint
+1. **Endpoint Validation** - Checks if the request path matches the configured
+endpoint
 2. **HTTPS Enforcement** - Ensures the request uses HTTPS protocol
 3. **Authorization** - Validates the request using registered authorizers
 4. **Provider Execution** - Executes active monitoring providers
@@ -59,7 +61,8 @@ private function isHttps(ServerRequestInterface $request): bool
 
 ### Authorization Flow
 
-The middleware evaluates all registered authorizers in priority order. The first authorizer that grants access allows the request to proceed:
+The middleware evaluates all registered authorizers in priority order. The first
+authorizer that grants access allows the request to proceed:
 
 ```php
 private function isAuthorized(ServerRequestInterface $request): bool
@@ -131,15 +134,6 @@ private function getHealthStatus(): array
     "error": "unsupported-protocol"
 }
 ```
-
-## Dependencies
-
-The middleware uses dependency injection to receive:
-
-- **MonitoringProviders** - Auto-wired via `#[AutowireIterator(tag: 'monitoring.provider')]`
-- **Authorizers** - Auto-wired via `#[AutowireIterator(tag: 'monitoring.authorizer')]`
-- **ResponseFactory** - PSR-17 response factory for JSON responses
-- **Logger** - PSR-3 logger for error handling
 
 ## Error Handling
 

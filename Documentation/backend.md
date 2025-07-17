@@ -1,6 +1,7 @@
 # Backend Module
 
-The backend module provides an interface to view and manage monitoring providers.
+The backend module provides an interface to view and manage monitoring
+providers.
 
 ## Access
 
