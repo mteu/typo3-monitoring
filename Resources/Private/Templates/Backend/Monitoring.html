@@ -24,7 +24,10 @@
             <f:render partial="Backend/Provider/List" arguments="{providers: providers, providerInterface: providerInterface}" />
         </f:then>
         <f:else>
-            <p><f:translate key="LLL:EXT:monitoring/Resources/Private/Language/locallang.be.xlf:providers.no_providers_found" /></p>
+            <div class="alert alert-info">
+                <core:icon identifier="actions-info-circle-alt" />
+                <f:translate key="LLL:EXT:monitoring/Resources/Private/Language/locallang.be.xlf:providers.no_providers_found" />
+            </div>
         </f:else>
     </f:if>
 

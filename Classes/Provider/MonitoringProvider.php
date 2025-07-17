@@ -31,8 +31,6 @@ use Symfony\Component\DependencyInjection\Attribute\AutoconfigureTag;
  *
  * @author Martin Adler <mteu@mailbox.org>
  * @license GPL-2.0-or-later
- *
- * @codeCoverageIgnore
  */
 #[AutoconfigureTag(name: 'monitoring.provider')]
 interface MonitoringProvider
@@ -53,12 +51,6 @@ interface MonitoringProvider
      * Allows your provider to implement the MonitoringProvider interface while being ignored for the actual monitoring.
      */
     public function isActive(): bool;
-
-    /**
-     * Overall health of your provider. You may probe subcomponents using the `SubComponentMonitoringProvider`. However,
-     * only this method is taken into consideration when return the overall health of your TYPO3 instance.
-     */
-    public function isHealthy(): bool;
 
     public function execute(): Result;
 }
