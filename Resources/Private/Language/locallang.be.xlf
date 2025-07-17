@@ -60,8 +60,11 @@
 			<trans-unit id="provider.disabled.message">
 				<source>This provider is explicitly disabled at the moment.</source>
 			</trans-unit>
-			<trans-unit id="providers.no_providers_found">
+			<trans-unit id="providers.no_providers_found.title">
 				<source>No monitoring providers found.</source>
+			</trans-unit>
+			<trans-unit id="providers.no_providers_found.content">
+				<source>Providers must implement %s to become available.</source>
 			</trans-unit>
 			<trans-unit id="authorizers.no_authorizers_found">
 				<source>No monitoring authorizers found.</source>
