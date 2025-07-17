@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "0698f18c9b8c0cd988d6ea6aa032a920",
+    "content-hash": "c9b9827d6a2a162ef9c4e65f5a892fc9",
     "packages": [
         {
             "name": "bacon/bacon-qr-code",
@@ -489,76 +489,6 @@
                 }
             ],
             "time": "2024-05-22T20:47:39+00:00"
-        },
-        {
-            "name": "doctrine/instantiator",
-            "version": "2.0.0",
-            "source": {
-                "type": "git",
-                "url": "https://github.com/doctrine/instantiator.git",
-                "reference": "c6222283fa3f4ac679f8b9ced9a4e23f163e80d0"
-            },
-            "dist": {
-                "type": "zip",
-                "url": "https://api.github.com/repos/doctrine/instantiator/zipball/c6222283fa3f4ac679f8b9ced9a4e23f163e80d0",
-                "reference": "c6222283fa3f4ac679f8b9ced9a4e23f163e80d0",
-                "shasum": ""
-            },
-            "require": {
-                "php": "^8.1"
-            },
-            "require-dev": {
-                "doctrine/coding-standard": "^11",
-                "ext-pdo": "*",
-                "ext-phar": "*",
-                "phpbench/phpbench": "^1.2",
-                "phpstan/phpstan": "^1.9.4",
-                "phpstan/phpstan-phpunit": "^1.3",
-                "phpunit/phpunit": "^9.5.27",
-                "vimeo/psalm": "^5.4"
-            },
-            "type": "library",
-            "autoload": {
-                "psr-4": {
-                    "Doctrine\\Instantiator\\": "src/Doctrine/Instantiator/"
-                }
-            },
-            "notification-url": "https://packagist.org/downloads/",
-            "license": [
-                "MIT"
-            ],
-            "authors": [
-                {
-                    "name": "Marco Pivetta",
-                    "email": "ocramius@gmail.com",
-                    "homepage": "https://ocramius.github.io/"
-                }
-            ],
-            "description": "A small, lightweight utility to instantiate objects in PHP without invoking their constructors",
-            "homepage": "https://www.doctrine-project.org/projects/instantiator.html",
-            "keywords": [
-                "constructor",
-                "instantiate"
-            ],
-            "support": {
-                "issues": "https://github.com/doctrine/instantiator/issues",
-                "source": "https://github.com/doctrine/instantiator/tree/2.0.0"
-            },
-            "funding": [
-                {
-                    "url": "https://www.doctrine-project.org/sponsorship.html",
-                    "type": "custom"
-                },
-                {
-                    "url": "https://www.patreon.com/phpdoctrine",
-                    "type": "patreon"
-                },
-                {
-                    "url": "https://tidelift.com/funding/github/packagist/doctrine%2Finstantiator",
-                    "type": "tidelift"
-                }
-            ],
-            "time": "2022-12-30T00:23:10+00:00"
         },
         {
             "name": "doctrine/lexer",
@@ -1268,286 +1198,6 @@
                 "source": "https://github.com/Masterminds/html5-php/tree/2.9.0"
             },
             "time": "2024-03-31T07:05:07+00:00"
-        },
-        {
-            "name": "nikic/php-parser",
-            "version": "v5.5.0",
-            "source": {
-                "type": "git",
-                "url": "https://github.com/nikic/PHP-Parser.git",
-                "reference": "ae59794362fe85e051a58ad36b289443f57be7a9"
-            },
-            "dist": {
-                "type": "zip",
-                "url": "https://api.github.com/repos/nikic/PHP-Parser/zipball/ae59794362fe85e051a58ad36b289443f57be7a9",
-                "reference": "ae59794362fe85e051a58ad36b289443f57be7a9",
-                "shasum": ""
-            },
-            "require": {
-                "ext-ctype": "*",
-                "ext-json": "*",
-                "ext-tokenizer": "*",
-                "php": ">=7.4"
-            },
-            "require-dev": {
-                "ircmaxell/php-yacc": "^0.0.7",
-                "phpunit/phpunit": "^9.0"
-            },
-            "bin": [
-                "bin/php-parse"
-            ],
-            "type": "library",
-            "extra": {
-                "branch-alias": {
-                    "dev-master": "5.0-dev"
-                }
-            },
-            "autoload": {
-                "psr-4": {
-                    "PhpParser\\": "lib/PhpParser"
-                }
-            },
-            "notification-url": "https://packagist.org/downloads/",
-            "license": [
-                "BSD-3-Clause"
-            ],
-            "authors": [
-                {
-                    "name": "Nikita Popov"
-                }
-            ],
-            "description": "A PHP parser written in PHP",
-            "keywords": [
-                "parser",
-                "php"
-            ],
-            "support": {
-                "issues": "https://github.com/nikic/PHP-Parser/issues",
-                "source": "https://github.com/nikic/PHP-Parser/tree/v5.5.0"
-            },
-            "time": "2025-05-31T08:24:38+00:00"
-        },
-        {
-            "name": "phpdocumentor/reflection-common",
-            "version": "2.2.0",
-            "source": {
-                "type": "git",
-                "url": "https://github.com/phpDocumentor/ReflectionCommon.git",
-                "reference": "1d01c49d4ed62f25aa84a747ad35d5a16924662b"
-            },
-            "dist": {
-                "type": "zip",
-                "url": "https://api.github.com/repos/phpDocumentor/ReflectionCommon/zipball/1d01c49d4ed62f25aa84a747ad35d5a16924662b",
-                "reference": "1d01c49d4ed62f25aa84a747ad35d5a16924662b",
-                "shasum": ""
-            },
-            "require": {
-                "php": "^7.2 || ^8.0"
-            },
-            "type": "library",
-            "extra": {
-                "branch-alias": {
-                    "dev-2.x": "2.x-dev"
-                }
-            },
-            "autoload": {
-                "psr-4": {
-                    "phpDocumentor\\Reflection\\": "src/"
-                }
-            },
-            "notification-url": "https://packagist.org/downloads/",
-            "license": [
-                "MIT"
-            ],
-            "authors": [
-                {
-                    "name": "Jaap van Otterdijk",
-                    "email": "opensource@ijaap.nl"
-                }
-            ],
-            "description": "Common reflection classes used by phpdocumentor to reflect the code structure",
-            "homepage": "http://www.phpdoc.org",
-            "keywords": [
-                "FQSEN",
-                "phpDocumentor",
-                "phpdoc",
-                "reflection",
-                "static analysis"
-            ],
-            "support": {
-                "issues": "https://github.com/phpDocumentor/ReflectionCommon/issues",
-                "source": "https://github.com/phpDocumentor/ReflectionCommon/tree/2.x"
-            },
-            "time": "2020-06-27T09:03:43+00:00"
-        },
-        {
-            "name": "phpdocumentor/reflection-docblock",
-            "version": "5.6.2",
-            "source": {
-                "type": "git",
-                "url": "https://github.com/phpDocumentor/ReflectionDocBlock.git",
-                "reference": "92dde6a5919e34835c506ac8c523ef095a95ed62"
-            },
-            "dist": {
-                "type": "zip",
-                "url": "https://api.github.com/repos/phpDocumentor/ReflectionDocBlock/zipball/92dde6a5919e34835c506ac8c523ef095a95ed62",
-                "reference": "92dde6a5919e34835c506ac8c523ef095a95ed62",
-                "shasum": ""
-            },
-            "require": {
-                "doctrine/deprecations": "^1.1",
-                "ext-filter": "*",
-                "php": "^7.4 || ^8.0",
-                "phpdocumentor/reflection-common": "^2.2",
-                "phpdocumentor/type-resolver": "^1.7",
-                "phpstan/phpdoc-parser": "^1.7|^2.0",
-                "webmozart/assert": "^1.9.1"
-            },
-            "require-dev": {
-                "mockery/mockery": "~1.3.5 || ~1.6.0",
-                "phpstan/extension-installer": "^1.1",
-                "phpstan/phpstan": "^1.8",
-                "phpstan/phpstan-mockery": "^1.1",
-                "phpstan/phpstan-webmozart-assert": "^1.2",
-                "phpunit/phpunit": "^9.5",
-                "psalm/phar": "^5.26"
-            },
-            "type": "library",
-            "extra": {
-                "branch-alias": {
-                    "dev-master": "5.x-dev"
-                }
-            },
-            "autoload": {
-                "psr-4": {
-                    "phpDocumentor\\Reflection\\": "src"
-                }
-            },
-            "notification-url": "https://packagist.org/downloads/",
-            "license": [
-                "MIT"
-            ],
-            "authors": [
-                {
-                    "name": "Mike van Riel",
-                    "email": "me@mikevanriel.com"
-                },
-                {
-                    "name": "Jaap van Otterdijk",
-                    "email": "opensource@ijaap.nl"
-                }
-            ],
-            "description": "With this component, a library can provide support for annotations via DocBlocks or otherwise retrieve information that is embedded in a DocBlock.",
-            "support": {
-                "issues": "https://github.com/phpDocumentor/ReflectionDocBlock/issues",
-                "source": "https://github.com/phpDocumentor/ReflectionDocBlock/tree/5.6.2"
-            },
-            "time": "2025-04-13T19:20:35+00:00"
-        },
-        {
-            "name": "phpdocumentor/type-resolver",
-            "version": "1.10.0",
-            "source": {
-                "type": "git",
-                "url": "https://github.com/phpDocumentor/TypeResolver.git",
-                "reference": "679e3ce485b99e84c775d28e2e96fade9a7fb50a"
-            },
-            "dist": {
-                "type": "zip",
-                "url": "https://api.github.com/repos/phpDocumentor/TypeResolver/zipball/679e3ce485b99e84c775d28e2e96fade9a7fb50a",
-                "reference": "679e3ce485b99e84c775d28e2e96fade9a7fb50a",
-                "shasum": ""
-            },
-            "require": {
-                "doctrine/deprecations": "^1.0",
-                "php": "^7.3 || ^8.0",
-                "phpdocumentor/reflection-common": "^2.0",
-                "phpstan/phpdoc-parser": "^1.18|^2.0"
-            },
-            "require-dev": {
-                "ext-tokenizer": "*",
-                "phpbench/phpbench": "^1.2",
-                "phpstan/extension-installer": "^1.1",
-                "phpstan/phpstan": "^1.8",
-                "phpstan/phpstan-phpunit": "^1.1",
-                "phpunit/phpunit": "^9.5",
-                "rector/rector": "^0.13.9",
-                "vimeo/psalm": "^4.25"
-            },
-            "type": "library",
-            "extra": {
-                "branch-alias": {
-                    "dev-1.x": "1.x-dev"
-                }
-            },
-            "autoload": {
-                "psr-4": {
-                    "phpDocumentor\\Reflection\\": "src"
-                }
-            },
-            "notification-url": "https://packagist.org/downloads/",
-            "license": [
-                "MIT"
-            ],
-            "authors": [
-                {
-                    "name": "Mike van Riel",
-                    "email": "me@mikevanriel.com"
-                }
-            ],
-            "description": "A PSR-5 based resolver of Class names, Types and Structural Element Names",
-            "support": {
-                "issues": "https://github.com/phpDocumentor/TypeResolver/issues",
-                "source": "https://github.com/phpDocumentor/TypeResolver/tree/1.10.0"
-            },
-            "time": "2024-11-09T15:12:26+00:00"
-        },
-        {
-            "name": "phpstan/phpdoc-parser",
-            "version": "1.33.0",
-            "source": {
-                "type": "git",
-                "url": "https://github.com/phpstan/phpdoc-parser.git",
-                "reference": "82a311fd3690fb2bf7b64d5c98f912b3dd746140"
-            },
-            "dist": {
-                "type": "zip",
-                "url": "https://api.github.com/repos/phpstan/phpdoc-parser/zipball/82a311fd3690fb2bf7b64d5c98f912b3dd746140",
-                "reference": "82a311fd3690fb2bf7b64d5c98f912b3dd746140",
-                "shasum": ""
-            },
-            "require": {
-                "php": "^7.2 || ^8.0"
-            },
-            "require-dev": {
-                "doctrine/annotations": "^2.0",
-                "nikic/php-parser": "^4.15",
-                "php-parallel-lint/php-parallel-lint": "^1.2",
-                "phpstan/extension-installer": "^1.0",
-                "phpstan/phpstan": "^1.5",
-                "phpstan/phpstan-phpunit": "^1.1",
-                "phpstan/phpstan-strict-rules": "^1.0",
-                "phpunit/phpunit": "^9.5",
-                "symfony/process": "^5.2"
-            },
-            "type": "library",
-            "autoload": {
-                "psr-4": {
-                    "PHPStan\\PhpDocParser\\": [
-                        "src/"
-                    ]
-                }
-            },
-            "notification-url": "https://packagist.org/downloads/",
-            "license": [
-                "MIT"
-            ],
-            "description": "PHPDoc parser with support for nullable, intersection and generic types",
-            "support": {
-                "issues": "https://github.com/phpstan/phpdoc-parser/issues",
-                "source": "https://github.com/phpstan/phpdoc-parser/tree/1.33.0"
-            },
-            "time": "2024-10-13T11:25:22+00:00"
         },
         {
             "name": "psr/cache",
@@ -4120,168 +3770,6 @@
             "time": "2025-04-17T09:11:12+00:00"
         },
         {
-            "name": "symfony/property-access",
-            "version": "v7.3.1",
-            "source": {
-                "type": "git",
-                "url": "https://github.com/symfony/property-access.git",
-                "reference": "518d15c8cca726ebe665dcd7154074584cf862e8"
-            },
-            "dist": {
-                "type": "zip",
-                "url": "https://api.github.com/repos/symfony/property-access/zipball/518d15c8cca726ebe665dcd7154074584cf862e8",
-                "reference": "518d15c8cca726ebe665dcd7154074584cf862e8",
-                "shasum": ""
-            },
-            "require": {
-                "php": ">=8.2",
-                "symfony/property-info": "^6.4|^7.0"
-            },
-            "require-dev": {
-                "symfony/cache": "^6.4|^7.0"
-            },
-            "type": "library",
-            "autoload": {
-                "psr-4": {
-                    "Symfony\\Component\\PropertyAccess\\": ""
-                },
-                "exclude-from-classmap": [
-                    "/Tests/"
-                ]
-            },
-            "notification-url": "https://packagist.org/downloads/",
-            "license": [
-                "MIT"
-            ],
-            "authors": [
-                {
-                    "name": "Fabien Potencier",
-                    "email": "fabien@symfony.com"
-                },
-                {
-                    "name": "Symfony Community",
-                    "homepage": "https://symfony.com/contributors"
-                }
-            ],
-            "description": "Provides functions to read and write from/to an object or array using a simple string notation",
-            "homepage": "https://symfony.com",
-            "keywords": [
-                "access",
-                "array",
-                "extraction",
-                "index",
-                "injection",
-                "object",
-                "property",
-                "property-path",
-                "reflection"
-            ],
-            "support": {
-                "source": "https://github.com/symfony/property-access/tree/v7.3.1"
-            },
-            "funding": [
-                {
-                    "url": "https://symfony.com/sponsor",
-                    "type": "custom"
-                },
-                {
-                    "url": "https://github.com/fabpot",
-                    "type": "github"
-                },
-                {
-                    "url": "https://tidelift.com/funding/github/packagist/symfony/symfony",
-                    "type": "tidelift"
-                }
-            ],
-            "time": "2025-06-24T04:04:43+00:00"
-        },
-        {
-            "name": "symfony/property-info",
-            "version": "v7.3.1",
-            "source": {
-                "type": "git",
-                "url": "https://github.com/symfony/property-info.git",
-                "reference": "90586acbf2a6dd13bee4f09f09111c8bd4773970"
-            },
-            "dist": {
-                "type": "zip",
-                "url": "https://api.github.com/repos/symfony/property-info/zipball/90586acbf2a6dd13bee4f09f09111c8bd4773970",
-                "reference": "90586acbf2a6dd13bee4f09f09111c8bd4773970",
-                "shasum": ""
-            },
-            "require": {
-                "php": ">=8.2",
-                "symfony/deprecation-contracts": "^2.5|^3",
-                "symfony/string": "^6.4|^7.0",
-                "symfony/type-info": "~7.2.8|^7.3.1"
-            },
-            "conflict": {
-                "phpdocumentor/reflection-docblock": "<5.2",
-                "phpdocumentor/type-resolver": "<1.5.1",
-                "symfony/cache": "<6.4",
-                "symfony/dependency-injection": "<6.4",
-                "symfony/serializer": "<6.4"
-            },
-            "require-dev": {
-                "phpdocumentor/reflection-docblock": "^5.2",
-                "phpstan/phpdoc-parser": "^1.0|^2.0",
-                "symfony/cache": "^6.4|^7.0",
-                "symfony/dependency-injection": "^6.4|^7.0",
-                "symfony/serializer": "^6.4|^7.0"
-            },
-            "type": "library",
-            "autoload": {
-                "psr-4": {
-                    "Symfony\\Component\\PropertyInfo\\": ""
-                },
-                "exclude-from-classmap": [
-                    "/Tests/"
-                ]
-            },
-            "notification-url": "https://packagist.org/downloads/",
-            "license": [
-                "MIT"
-            ],
-            "authors": [
-                {
-                    "name": "Kévin Dunglas",
-                    "email": "dunglas@gmail.com"
-                },
-                {
-                    "name": "Symfony Community",
-                    "homepage": "https://symfony.com/contributors"
-                }
-            ],
-            "description": "Extracts information about PHP class' properties using metadata of popular sources",
-            "homepage": "https://symfony.com",
-            "keywords": [
-                "doctrine",
-                "phpdoc",
-                "property",
-                "symfony",
-                "type",
-                "validator"
-            ],
-            "support": {
-                "source": "https://github.com/symfony/property-info/tree/v7.3.1"
-            },
-            "funding": [
-                {
-                    "url": "https://symfony.com/sponsor",
-                    "type": "custom"
-                },
-                {
-                    "url": "https://github.com/fabpot",
-                    "type": "github"
-                },
-                {
-                    "url": "https://tidelift.com/funding/github/packagist/symfony/symfony",
-                    "type": "tidelift"
-                }
-            ],
-            "time": "2025-06-27T19:55:54+00:00"
-        },
-        {
             "name": "symfony/rate-limiter",
             "version": "v7.3.0",
             "source": {
@@ -4601,85 +4089,6 @@
                 }
             ],
             "time": "2025-04-20T20:19:01+00:00"
-        },
-        {
-            "name": "symfony/type-info",
-            "version": "v7.3.1",
-            "source": {
-                "type": "git",
-                "url": "https://github.com/symfony/type-info.git",
-                "reference": "5fa6e25e4195e73ce9e457b521ac5e61ec271150"
-            },
-            "dist": {
-                "type": "zip",
-                "url": "https://api.github.com/repos/symfony/type-info/zipball/5fa6e25e4195e73ce9e457b521ac5e61ec271150",
-                "reference": "5fa6e25e4195e73ce9e457b521ac5e61ec271150",
-                "shasum": ""
-            },
-            "require": {
-                "php": ">=8.2",
-                "psr/container": "^1.1|^2.0",
-                "symfony/deprecation-contracts": "^2.5|^3"
-            },
-            "conflict": {
-                "phpstan/phpdoc-parser": "<1.30"
-            },
-            "require-dev": {
-                "phpstan/phpdoc-parser": "^1.30|^2.0"
-            },
-            "type": "library",
-            "autoload": {
-                "psr-4": {
-                    "Symfony\\Component\\TypeInfo\\": ""
-                },
-                "exclude-from-classmap": [
-                    "/Tests/"
-                ]
-            },
-            "notification-url": "https://packagist.org/downloads/",
-            "license": [
-                "MIT"
-            ],
-            "authors": [
-                {
-                    "name": "Mathias Arlaud",
-                    "email": "mathias.arlaud@gmail.com"
-                },
-                {
-                    "name": "Baptiste LEDUC",
-                    "email": "baptiste.leduc@gmail.com"
-                },
-                {
-                    "name": "Symfony Community",
-                    "homepage": "https://symfony.com/contributors"
-                }
-            ],
-            "description": "Extracts PHP types information.",
-            "homepage": "https://symfony.com",
-            "keywords": [
-                "PHPStan",
-                "phpdoc",
-                "symfony",
-                "type"
-            ],
-            "support": {
-                "source": "https://github.com/symfony/type-info/tree/v7.3.1"
-            },
-            "funding": [
-                {
-                    "url": "https://symfony.com/sponsor",
-                    "type": "custom"
-                },
-                {
-                    "url": "https://github.com/fabpot",
-                    "type": "github"
-                },
-                {
-                    "url": "https://tidelift.com/funding/github/packagist/symfony/symfony",
-                    "type": "tidelift"
-                }
-            ],
-            "time": "2025-06-27T19:55:54+00:00"
         },
         {
             "name": "symfony/uid",
@@ -5302,208 +4711,6 @@
             "time": "2025-07-08T09:23:09+00:00"
         },
         {
-            "name": "typo3/cms-extbase",
-            "version": "v13.4.15",
-            "source": {
-                "type": "git",
-                "url": "https://github.com/TYPO3-CMS/extbase.git",
-                "reference": "212fcb0dd6f23bdb41de38ec6e932c905a4a8e5e"
-            },
-            "dist": {
-                "type": "zip",
-                "url": "https://api.github.com/repos/TYPO3-CMS/extbase/zipball/212fcb0dd6f23bdb41de38ec6e932c905a4a8e5e",
-                "reference": "212fcb0dd6f23bdb41de38ec6e932c905a4a8e5e",
-                "shasum": ""
-            },
-            "require": {
-                "doctrine/instantiator": "^1.5 || ^2.0",
-                "phpdocumentor/reflection-docblock": "^5.4.1",
-                "phpdocumentor/type-resolver": "^1.8.2",
-                "symfony/dependency-injection": "^7.2",
-                "symfony/property-access": "^7.2",
-                "symfony/property-info": "^7.2",
-                "typo3/cms-core": "13.4.15"
-            },
-            "conflict": {
-                "typo3/cms": "*"
-            },
-            "suggest": {
-                "typo3/cms-scheduler": "Additional scheduler tasks"
-            },
-            "type": "typo3-cms-framework",
-            "extra": {
-                "typo3/cms": {
-                    "Package": {
-                        "protected": true,
-                        "serviceProvider": "TYPO3\\CMS\\Extbase\\ServiceProvider",
-                        "partOfFactoryDefault": true,
-                        "partOfMinimalUsableSystem": true
-                    },
-                    "extension-key": "extbase"
-                },
-                "branch-alias": {
-                    "dev-main": "13.4.x-dev"
-                }
-            },
-            "autoload": {
-                "psr-4": {
-                    "TYPO3\\CMS\\Extbase\\": "Classes/"
-                }
-            },
-            "notification-url": "https://packagist.org/downloads/",
-            "license": [
-                "GPL-2.0-or-later"
-            ],
-            "authors": [
-                {
-                    "name": "TYPO3 Core Team",
-                    "email": "typo3cms@typo3.org",
-                    "role": "Developer"
-                }
-            ],
-            "description": "TYPO3 CMS Extbase - Extension framework to create TYPO3 frontend plugins and TYPO3 backend modules.",
-            "homepage": "https://typo3.org",
-            "support": {
-                "chat": "https://typo3.org/help",
-                "docs": "https://docs.typo3.org",
-                "issues": "https://forge.typo3.org",
-                "source": "https://github.com/typo3/typo3"
-            },
-            "time": "2025-07-08T09:23:09+00:00"
-        },
-        {
-            "name": "typo3/cms-fluid",
-            "version": "v13.4.15",
-            "source": {
-                "type": "git",
-                "url": "https://github.com/TYPO3-CMS/fluid.git",
-                "reference": "181b1cf10570402c51e675b49124ade8af95d66e"
-            },
-            "dist": {
-                "type": "zip",
-                "url": "https://api.github.com/repos/TYPO3-CMS/fluid/zipball/181b1cf10570402c51e675b49124ade8af95d66e",
-                "reference": "181b1cf10570402c51e675b49124ade8af95d66e",
-                "shasum": ""
-            },
-            "require": {
-                "symfony/dependency-injection": "^7.2",
-                "typo3/cms-core": "13.4.15",
-                "typo3/cms-extbase": "13.4.15",
-                "typo3fluid/fluid": "^4.3.0"
-            },
-            "conflict": {
-                "typo3/cms": "*"
-            },
-            "type": "typo3-cms-framework",
-            "extra": {
-                "typo3/cms": {
-                    "Package": {
-                        "protected": true,
-                        "serviceProvider": "TYPO3\\CMS\\Fluid\\ServiceProvider",
-                        "partOfFactoryDefault": true,
-                        "partOfMinimalUsableSystem": true
-                    },
-                    "extension-key": "fluid"
-                },
-                "branch-alias": {
-                    "dev-main": "13.4.x-dev"
-                }
-            },
-            "autoload": {
-                "psr-4": {
-                    "TYPO3\\CMS\\Fluid\\": "Classes/"
-                }
-            },
-            "notification-url": "https://packagist.org/downloads/",
-            "license": [
-                "GPL-2.0-or-later"
-            ],
-            "authors": [
-                {
-                    "name": "TYPO3 Core Team",
-                    "email": "typo3cms@typo3.org",
-                    "role": "Developer"
-                }
-            ],
-            "description": "TYPO3 CMS Fluid Integration - Integration of the Fluid templating engine into TYPO3.",
-            "homepage": "https://typo3.org",
-            "support": {
-                "chat": "https://typo3.org/help",
-                "docs": "https://docs.typo3.org/other/typo3/view-helper-reference/main/en-us/",
-                "issues": "https://forge.typo3.org",
-                "source": "https://github.com/typo3/typo3"
-            },
-            "time": "2025-07-08T09:23:09+00:00"
-        },
-        {
-            "name": "typo3/cms-install",
-            "version": "v13.4.15",
-            "source": {
-                "type": "git",
-                "url": "https://github.com/TYPO3-CMS/install.git",
-                "reference": "f13fc1232a6810ebc4b8270589b557ad0927847b"
-            },
-            "dist": {
-                "type": "zip",
-                "url": "https://api.github.com/repos/TYPO3-CMS/install/zipball/f13fc1232a6810ebc4b8270589b557ad0927847b",
-                "reference": "f13fc1232a6810ebc4b8270589b557ad0927847b",
-                "shasum": ""
-            },
-            "require": {
-                "doctrine/dbal": "4.2.*",
-                "guzzlehttp/promises": "^2.0.3",
-                "nikic/php-parser": "^5.4.0",
-                "symfony/finder": "^7.2",
-                "symfony/http-foundation": "^7.2",
-                "typo3/cms-core": "13.4.15",
-                "typo3/cms-extbase": "13.4.15",
-                "typo3/cms-fluid": "13.4.15"
-            },
-            "conflict": {
-                "typo3/cms": "*"
-            },
-            "type": "typo3-cms-framework",
-            "extra": {
-                "typo3/cms": {
-                    "Package": {
-                        "protected": true,
-                        "serviceProvider": "TYPO3\\CMS\\Install\\ServiceProvider",
-                        "partOfFactoryDefault": true,
-                        "partOfMinimalUsableSystem": true
-                    },
-                    "extension-key": "install"
-                },
-                "branch-alias": {
-                    "dev-main": "13.4.x-dev"
-                }
-            },
-            "autoload": {
-                "psr-4": {
-                    "TYPO3\\CMS\\Install\\": "Classes/"
-                }
-            },
-            "notification-url": "https://packagist.org/downloads/",
-            "license": [
-                "GPL-2.0-or-later"
-            ],
-            "authors": [
-                {
-                    "name": "TYPO3 Core Team",
-                    "email": "typo3cms@typo3.org",
-                    "role": "Developer"
-                }
-            ],
-            "description": "TYPO3 CMS Install Tool - The Install Tool is used for installation, upgrade, system administration and setup tasks.",
-            "homepage": "https://typo3.org",
-            "support": {
-                "chat": "https://typo3.org/help",
-                "docs": "https://docs.typo3.org",
-                "issues": "https://forge.typo3.org",
-                "source": "https://github.com/typo3/typo3"
-            },
-            "time": "2025-07-08T09:23:09+00:00"
-        },
-        {
             "name": "typo3/html-sanitizer",
             "version": "v2.2.0",
             "source": {
@@ -5612,490 +4819,9 @@
                 "source": "https://github.com/TYPO3/Fluid"
             },
             "time": "2025-06-24T12:53:54+00:00"
-        },
-        {
-            "name": "webmozart/assert",
-            "version": "1.11.0",
-            "source": {
-                "type": "git",
-                "url": "https://github.com/webmozarts/assert.git",
-                "reference": "11cb2199493b2f8a3b53e7f19068fc6aac760991"
-            },
-            "dist": {
-                "type": "zip",
-                "url": "https://api.github.com/repos/webmozarts/assert/zipball/11cb2199493b2f8a3b53e7f19068fc6aac760991",
-                "reference": "11cb2199493b2f8a3b53e7f19068fc6aac760991",
-                "shasum": ""
-            },
-            "require": {
-                "ext-ctype": "*",
-                "php": "^7.2 || ^8.0"
-            },
-            "conflict": {
-                "phpstan/phpstan": "<0.12.20",
-                "vimeo/psalm": "<4.6.1 || 4.6.2"
-            },
-            "require-dev": {
-                "phpunit/phpunit": "^8.5.13"
-            },
-            "type": "library",
-            "extra": {
-                "branch-alias": {
-                    "dev-master": "1.10-dev"
-                }
-            },
-            "autoload": {
-                "psr-4": {
-                    "Webmozart\\Assert\\": "src/"
-                }
-            },
-            "notification-url": "https://packagist.org/downloads/",
-            "license": [
-                "MIT"
-            ],
-            "authors": [
-                {
-                    "name": "Bernhard Schussek",
-                    "email": "bschussek@gmail.com"
-                }
-            ],
-            "description": "Assertions to validate method input/output with nice error messages.",
-            "keywords": [
-                "assert",
-                "check",
-                "validate"
-            ],
-            "support": {
-                "issues": "https://github.com/webmozarts/assert/issues",
-                "source": "https://github.com/webmozarts/assert/tree/1.11.0"
-            },
-            "time": "2022-06-03T18:03:27+00:00"
         }
     ],
     "packages-dev": [
-        {
-            "name": "a9f/fractor",
-            "version": "v0.5.2",
-            "source": {
-                "type": "git",
-                "url": "https://github.com/andreaswolf/fractor-fractor.git",
-                "reference": "7276b5c9bbcf2824a1ef0f27fe47fb1912011257"
-            },
-            "dist": {
-                "type": "zip",
-                "url": "https://api.github.com/repos/andreaswolf/fractor-fractor/zipball/7276b5c9bbcf2824a1ef0f27fe47fb1912011257",
-                "reference": "7276b5c9bbcf2824a1ef0f27fe47fb1912011257",
-                "shasum": ""
-            },
-            "require": {
-                "league/flysystem": "^2.0 || ^3.0",
-                "league/flysystem-memory": "^2.0 || ^3.0",
-                "nette/utils": "^4.0",
-                "ondram/ci-detector": "^4.2",
-                "php": "^8.2",
-                "sebastian/diff": "^4.0 || ^5.0 || ^6.0",
-                "symfony/config": "^5.4 || ^6.4 || ^7.0",
-                "symfony/console": "^5.4 || ^6.4 || ^7.0",
-                "symfony/dependency-injection": "^6.4 || ^7.0",
-                "symfony/filesystem": "^5.4 || ^6.4 || ^7.0",
-                "symfony/finder": "^5.4 || ^6.4 || ^7.0",
-                "symplify/rule-doc-generator-contracts": "^11.2",
-                "webmozart/assert": "^1.11"
-            },
-            "bin": [
-                "bin/fractor"
-            ],
-            "type": "library",
-            "extra": {
-                "branch-alias": {
-                    "dev-main": "0.5-dev"
-                }
-            },
-            "autoload": {
-                "psr-4": {
-                    "a9f\\Fractor\\": "src/"
-                }
-            },
-            "notification-url": "https://packagist.org/downloads/",
-            "license": [
-                "MIT"
-            ],
-            "authors": [
-                {
-                    "name": "Andreas Wolf",
-                    "email": "dev@a-w.io",
-                    "role": "Lead Developer"
-                }
-            ],
-            "description": "File Read-Analyse-Change Tool",
-            "support": {
-                "issues": "https://github.com/andreaswolf/fractor-fractor/issues",
-                "source": "https://github.com/andreaswolf/fractor-fractor/tree/v0.5.2"
-            },
-            "time": "2025-07-08T20:45:55+00:00"
-        },
-        {
-            "name": "a9f/fractor-extension-installer",
-            "version": "v0.5.2",
-            "source": {
-                "type": "git",
-                "url": "https://github.com/andreaswolf/fractor-extension-installer.git",
-                "reference": "ecb39a33705ec94acd5170ed2633c9598279b54c"
-            },
-            "dist": {
-                "type": "zip",
-                "url": "https://api.github.com/repos/andreaswolf/fractor-extension-installer/zipball/ecb39a33705ec94acd5170ed2633c9598279b54c",
-                "reference": "ecb39a33705ec94acd5170ed2633c9598279b54c",
-                "shasum": ""
-            },
-            "require": {
-                "composer-plugin-api": "^2.0",
-                "php": "^8.2"
-            },
-            "require-dev": {
-                "composer/composer": "^2.7"
-            },
-            "type": "composer-plugin",
-            "extra": {
-                "class": "a9f\\FractorExtensionInstaller\\InstallerPlugin",
-                "branch-alias": {
-                    "dev-main": "0.5-dev"
-                }
-            },
-            "autoload": {
-                "psr-4": {
-                    "a9f\\FractorExtensionInstaller\\": "src/",
-                    "a9f\\FractorExtensionInstaller\\Generated\\": "generated/"
-                }
-            },
-            "notification-url": "https://packagist.org/downloads/",
-            "license": [
-                "MIT"
-            ],
-            "authors": [
-                {
-                    "name": "Andreas Wolf",
-                    "email": "dev@a-w.io",
-                    "role": "Lead Developer"
-                }
-            ],
-            "description": "Installer for Fractor extensions.",
-            "support": {
-                "source": "https://github.com/andreaswolf/fractor-extension-installer/tree/v0.5.2"
-            },
-            "time": "2025-04-30T21:48:47+00:00"
-        },
-        {
-            "name": "a9f/fractor-fluid",
-            "version": "v0.5.2",
-            "source": {
-                "type": "git",
-                "url": "https://github.com/andreaswolf/fractor-fluid.git",
-                "reference": "e330bf2bfcd6a487414208c4267c08a970c6b8d4"
-            },
-            "dist": {
-                "type": "zip",
-                "url": "https://api.github.com/repos/andreaswolf/fractor-fluid/zipball/e330bf2bfcd6a487414208c4267c08a970c6b8d4",
-                "reference": "e330bf2bfcd6a487414208c4267c08a970c6b8d4",
-                "shasum": ""
-            },
-            "require": {
-                "a9f/fractor": "^0.5.2",
-                "a9f/fractor-extension-installer": "^0.5.2",
-                "nette/utils": "^4.0",
-                "php": "^8.2",
-                "symplify/rule-doc-generator-contracts": "^11.2",
-                "webmozart/assert": "^1.11"
-            },
-            "type": "fractor-extension",
-            "extra": {
-                "branch-alias": {
-                    "dev-main": "0.5-dev"
-                }
-            },
-            "autoload": {
-                "psr-4": {
-                    "a9f\\FractorFluid\\": "src/"
-                }
-            },
-            "notification-url": "https://packagist.org/downloads/",
-            "license": [
-                "MIT"
-            ],
-            "authors": [
-                {
-                    "name": "Andreas Wolf",
-                    "email": "dev@a-w.io",
-                    "role": "Lead Developer"
-                }
-            ],
-            "description": "Fluid extension for the File Read-Analyse-Change Tool. Allows modifying Fluid files",
-            "support": {
-                "issues": "https://github.com/andreaswolf/fractor-fluid/issues",
-                "source": "https://github.com/andreaswolf/fractor-fluid/tree/v0.5.2"
-            },
-            "time": "2025-07-08T20:45:55+00:00"
-        },
-        {
-            "name": "a9f/fractor-htaccess",
-            "version": "v0.5.2",
-            "source": {
-                "type": "git",
-                "url": "https://github.com/andreaswolf/fractor-htaccess.git",
-                "reference": "aed9720f28473453d6368976bc6c863df8d2b4f9"
-            },
-            "dist": {
-                "type": "zip",
-                "url": "https://api.github.com/repos/andreaswolf/fractor-htaccess/zipball/aed9720f28473453d6368976bc6c863df8d2b4f9",
-                "reference": "aed9720f28473453d6368976bc6c863df8d2b4f9",
-                "shasum": ""
-            },
-            "require": {
-                "a9f/fractor": "^0.5.2",
-                "a9f/fractor-extension-installer": "^0.5.2",
-                "nette/utils": "^4.0",
-                "php": "^8.2",
-                "symplify/rule-doc-generator-contracts": "^11.2",
-                "tivie/htaccess-parser": "^0.3.0",
-                "webmozart/assert": "^1.11"
-            },
-            "type": "fractor-extension",
-            "extra": {
-                "branch-alias": {
-                    "dev-main": "0.5-dev"
-                }
-            },
-            "autoload": {
-                "psr-4": {
-                    "a9f\\FractorHtaccess\\": "src/"
-                }
-            },
-            "notification-url": "https://packagist.org/downloads/",
-            "license": [
-                "MIT"
-            ],
-            "authors": [
-                {
-                    "name": "Simon Schaufelberger",
-                    "email": "simonschaufi@gmail.com",
-                    "role": "Lead Developer"
-                }
-            ],
-            "description": "htaccess extension for the File Read-Analyse-Change Tool. Allows modifying htaccess files",
-            "support": {
-                "source": "https://github.com/andreaswolf/fractor-htaccess/tree/v0.5.2"
-            },
-            "time": "2025-07-08T20:45:55+00:00"
-        },
-        {
-            "name": "a9f/fractor-typoscript",
-            "version": "v0.5.2",
-            "source": {
-                "type": "git",
-                "url": "https://github.com/andreaswolf/fractor-typoscript.git",
-                "reference": "84dee44bf7a0b7de742ac2baecc0e3f0e68e4af2"
-            },
-            "dist": {
-                "type": "zip",
-                "url": "https://api.github.com/repos/andreaswolf/fractor-typoscript/zipball/84dee44bf7a0b7de742ac2baecc0e3f0e68e4af2",
-                "reference": "84dee44bf7a0b7de742ac2baecc0e3f0e68e4af2",
-                "shasum": ""
-            },
-            "require": {
-                "a9f/fractor": "^0.5.2",
-                "a9f/fractor-extension-installer": "^0.5.2",
-                "helmich/typo3-typoscript-parser": "^2.7.0",
-                "php": "^8.2",
-                "symplify/rule-doc-generator-contracts": "^11.2",
-                "webmozart/assert": "^1.11"
-            },
-            "type": "fractor-extension",
-            "extra": {
-                "branch-alias": {
-                    "dev-main": "0.5-dev"
-                }
-            },
-            "autoload": {
-                "psr-4": {
-                    "a9f\\FractorTypoScript\\": "src/"
-                }
-            },
-            "notification-url": "https://packagist.org/downloads/",
-            "license": [
-                "MIT"
-            ],
-            "authors": [
-                {
-                    "name": "Andreas Wolf",
-                    "email": "dev@a-w.io",
-                    "role": "Lead Developer"
-                }
-            ],
-            "description": "TypoScript extension for the File Read-Analyse-Change Tool. Allows modifying TYPO3 TypoScript configuration files",
-            "support": {
-                "source": "https://github.com/andreaswolf/fractor-typoscript/tree/v0.5.2"
-            },
-            "time": "2025-07-08T20:45:55+00:00"
-        },
-        {
-            "name": "a9f/fractor-xml",
-            "version": "v0.5.2",
-            "source": {
-                "type": "git",
-                "url": "https://github.com/andreaswolf/fractor-xml.git",
-                "reference": "cd8327e04958e2cf25239bcdc072bafe77f84e8e"
-            },
-            "dist": {
-                "type": "zip",
-                "url": "https://api.github.com/repos/andreaswolf/fractor-xml/zipball/cd8327e04958e2cf25239bcdc072bafe77f84e8e",
-                "reference": "cd8327e04958e2cf25239bcdc072bafe77f84e8e",
-                "shasum": ""
-            },
-            "require": {
-                "a9f/fractor": "^0.5.2",
-                "a9f/fractor-extension-installer": "^0.5.2",
-                "ext-dom": "*",
-                "ext-xml": "*",
-                "php": "^8.2",
-                "simonschaufi/pretty-xml": "^3.0.0",
-                "symplify/rule-doc-generator-contracts": "^11.2",
-                "webmozart/assert": "^1.11"
-            },
-            "type": "fractor-extension",
-            "extra": {
-                "branch-alias": {
-                    "dev-main": "0.5-dev"
-                }
-            },
-            "autoload": {
-                "psr-4": {
-                    "a9f\\FractorXml\\": "src/"
-                }
-            },
-            "notification-url": "https://packagist.org/downloads/",
-            "license": [
-                "MIT"
-            ],
-            "authors": [
-                {
-                    "name": "Andreas Wolf",
-                    "email": "dev@a-w.io",
-                    "role": "Lead Developer"
-                }
-            ],
-            "description": "XML extension for the File Read-Analyse-Change Tool. Allows modifying XML files",
-            "support": {
-                "source": "https://github.com/andreaswolf/fractor-xml/tree/v0.5.2"
-            },
-            "time": "2025-07-08T20:45:55+00:00"
-        },
-        {
-            "name": "a9f/fractor-yaml",
-            "version": "v0.5.2",
-            "source": {
-                "type": "git",
-                "url": "https://github.com/andreaswolf/fractor-yaml.git",
-                "reference": "f35e4e352887b7b3911beedb2ccde9899000305f"
-            },
-            "dist": {
-                "type": "zip",
-                "url": "https://api.github.com/repos/andreaswolf/fractor-yaml/zipball/f35e4e352887b7b3911beedb2ccde9899000305f",
-                "reference": "f35e4e352887b7b3911beedb2ccde9899000305f",
-                "shasum": ""
-            },
-            "require": {
-                "a9f/fractor": "^0.5.2",
-                "a9f/fractor-extension-installer": "^0.5.2",
-                "php": "^8.2",
-                "symfony/yaml": "^5.4 || ^6.4 || ^7.0",
-                "symplify/rule-doc-generator-contracts": "^11.2",
-                "webmozart/assert": "^1.11"
-            },
-            "type": "fractor-extension",
-            "extra": {
-                "branch-alias": {
-                    "dev-main": "0.5-dev"
-                }
-            },
-            "autoload": {
-                "psr-4": {
-                    "a9f\\FractorYaml\\": "src/"
-                }
-            },
-            "notification-url": "https://packagist.org/downloads/",
-            "license": [
-                "MIT"
-            ],
-            "authors": [
-                {
-                    "name": "Andreas Wolf",
-                    "email": "dev@a-w.io",
-                    "role": "Lead Developer"
-                }
-            ],
-            "description": "YAML extension for the File Read-Analyse-Change Tool. Allows modifying YAML files",
-            "support": {
-                "source": "https://github.com/andreaswolf/fractor-yaml/tree/v0.5.2"
-            },
-            "time": "2025-07-08T20:45:55+00:00"
-        },
-        {
-            "name": "a9f/typo3-fractor",
-            "version": "v0.5.2",
-            "source": {
-                "type": "git",
-                "url": "https://github.com/andreaswolf/fractor-typo3-fractor.git",
-                "reference": "0b76a466df9bf12810b4bdbf0985a878d02c5cde"
-            },
-            "dist": {
-                "type": "zip",
-                "url": "https://api.github.com/repos/andreaswolf/fractor-typo3-fractor/zipball/0b76a466df9bf12810b4bdbf0985a878d02c5cde",
-                "reference": "0b76a466df9bf12810b4bdbf0985a878d02c5cde",
-                "shasum": ""
-            },
-            "require": {
-                "a9f/fractor": "^0.5.2",
-                "a9f/fractor-extension-installer": "^0.5.2",
-                "a9f/fractor-fluid": "^0.5.2",
-                "a9f/fractor-htaccess": "^0.5.2",
-                "a9f/fractor-typoscript": "^0.5.2",
-                "a9f/fractor-xml": "^0.5.2",
-                "a9f/fractor-yaml": "^0.5.2",
-                "ext-dom": "*",
-                "php": "^8.2",
-                "symplify/rule-doc-generator-contracts": "^11.2"
-            },
-            "type": "fractor-extension",
-            "extra": {
-                "branch-alias": {
-                    "dev-main": "0.5-dev"
-                }
-            },
-            "autoload": {
-                "psr-4": {
-                    "a9f\\Typo3Fractor\\": [
-                        "src/",
-                        "rules/"
-                    ]
-                }
-            },
-            "notification-url": "https://packagist.org/downloads/",
-            "license": [
-                "MIT"
-            ],
-            "authors": [
-                {
-                    "name": "Andreas Wolf",
-                    "email": "dev@a-w.io",
-                    "role": "Lead Developer"
-                }
-            ],
-            "description": "TYPO3 extension for the File Read-Analyse-Change Tool. Allows modifying XML files",
-            "support": {
-                "source": "https://github.com/andreaswolf/fractor-typo3-fractor/tree/v0.5.2"
-            },
-            "time": "2025-07-08T20:45:55+00:00"
-        },
         {
             "name": "armin/editorconfig-cli",
             "version": "2.1.1",
@@ -6713,6 +5439,76 @@
                 }
             ],
             "time": "2024-11-26T16:23:11+00:00"
+        },
+        {
+            "name": "doctrine/instantiator",
+            "version": "2.0.0",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/doctrine/instantiator.git",
+                "reference": "c6222283fa3f4ac679f8b9ced9a4e23f163e80d0"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/doctrine/instantiator/zipball/c6222283fa3f4ac679f8b9ced9a4e23f163e80d0",
+                "reference": "c6222283fa3f4ac679f8b9ced9a4e23f163e80d0",
+                "shasum": ""
+            },
+            "require": {
+                "php": "^8.1"
+            },
+            "require-dev": {
+                "doctrine/coding-standard": "^11",
+                "ext-pdo": "*",
+                "ext-phar": "*",
+                "phpbench/phpbench": "^1.2",
+                "phpstan/phpstan": "^1.9.4",
+                "phpstan/phpstan-phpunit": "^1.3",
+                "phpunit/phpunit": "^9.5.27",
+                "vimeo/psalm": "^5.4"
+            },
+            "type": "library",
+            "autoload": {
+                "psr-4": {
+                    "Doctrine\\Instantiator\\": "src/Doctrine/Instantiator/"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Marco Pivetta",
+                    "email": "ocramius@gmail.com",
+                    "homepage": "https://ocramius.github.io/"
+                }
+            ],
+            "description": "A small, lightweight utility to instantiate objects in PHP without invoking their constructors",
+            "homepage": "https://www.doctrine-project.org/projects/instantiator.html",
+            "keywords": [
+                "constructor",
+                "instantiate"
+            ],
+            "support": {
+                "issues": "https://github.com/doctrine/instantiator/issues",
+                "source": "https://github.com/doctrine/instantiator/tree/2.0.0"
+            },
+            "funding": [
+                {
+                    "url": "https://www.doctrine-project.org/sponsorship.html",
+                    "type": "custom"
+                },
+                {
+                    "url": "https://www.patreon.com/phpdoctrine",
+                    "type": "patreon"
+                },
+                {
+                    "url": "https://tidelift.com/funding/github/packagist/doctrine%2Finstantiator",
+                    "type": "tidelift"
+                }
+            ],
+            "time": "2022-12-30T00:23:10+00:00"
         },
         {
             "name": "eliashaeussler/version-bumper",
@@ -8339,82 +7135,62 @@
             "time": "2025-06-03T04:55:08+00:00"
         },
         {
-            "name": "ondram/ci-detector",
-            "version": "4.2.0",
+            "name": "nikic/php-parser",
+            "version": "v5.5.0",
             "source": {
                 "type": "git",
-                "url": "https://github.com/OndraM/ci-detector.git",
-                "reference": "8b0223b5ed235fd377c75fdd1bfcad05c0f168b8"
+                "url": "https://github.com/nikic/PHP-Parser.git",
+                "reference": "ae59794362fe85e051a58ad36b289443f57be7a9"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/OndraM/ci-detector/zipball/8b0223b5ed235fd377c75fdd1bfcad05c0f168b8",
-                "reference": "8b0223b5ed235fd377c75fdd1bfcad05c0f168b8",
+                "url": "https://api.github.com/repos/nikic/PHP-Parser/zipball/ae59794362fe85e051a58ad36b289443f57be7a9",
+                "reference": "ae59794362fe85e051a58ad36b289443f57be7a9",
                 "shasum": ""
             },
             "require": {
-                "php": "^7.4 || ^8.0"
+                "ext-ctype": "*",
+                "ext-json": "*",
+                "ext-tokenizer": "*",
+                "php": ">=7.4"
             },
             "require-dev": {
-                "ergebnis/composer-normalize": "^2.13.2",
-                "lmc/coding-standard": "^3.0.0",
-                "php-parallel-lint/php-parallel-lint": "^1.2",
-                "phpstan/extension-installer": "^1.1.0",
-                "phpstan/phpstan": "^1.2.0",
-                "phpstan/phpstan-phpunit": "^1.0.0",
-                "phpunit/phpunit": "^9.6.13"
+                "ircmaxell/php-yacc": "^0.0.7",
+                "phpunit/phpunit": "^9.0"
             },
+            "bin": [
+                "bin/php-parse"
+            ],
             "type": "library",
+            "extra": {
+                "branch-alias": {
+                    "dev-master": "5.0-dev"
+                }
+            },
             "autoload": {
                 "psr-4": {
-                    "OndraM\\CiDetector\\": "src/"
+                    "PhpParser\\": "lib/PhpParser"
                 }
             },
             "notification-url": "https://packagist.org/downloads/",
             "license": [
-                "MIT"
+                "BSD-3-Clause"
             ],
             "authors": [
                 {
-                    "name": "Ondřej Machulda",
-                    "email": "ondrej.machulda@gmail.com"
+                    "name": "Nikita Popov"
                 }
             ],
-            "description": "Detect continuous integration environment and provide unified access to properties of current build",
+            "description": "A PHP parser written in PHP",
             "keywords": [
-                "CircleCI",
-                "Codeship",
-                "Wercker",
-                "adapter",
-                "appveyor",
-                "aws",
-                "aws codebuild",
-                "azure",
-                "azure devops",
-                "azure pipelines",
-                "bamboo",
-                "bitbucket",
-                "buddy",
-                "ci-info",
-                "codebuild",
-                "continuous integration",
-                "continuousphp",
-                "devops",
-                "drone",
-                "github",
-                "gitlab",
-                "interface",
-                "jenkins",
-                "pipelines",
-                "sourcehut",
-                "teamcity",
-                "travis"
+                "parser",
+                "php"
             ],
             "support": {
-                "issues": "https://github.com/OndraM/ci-detector/issues",
-                "source": "https://github.com/OndraM/ci-detector/tree/4.2.0"
+                "issues": "https://github.com/nikic/PHP-Parser/issues",
+                "source": "https://github.com/nikic/PHP-Parser/tree/v5.5.0"
             },
-            "time": "2024-03-12T13:22:30+00:00"
+            "time": "2025-05-31T08:24:38+00:00"
         },
         {
             "name": "phar-io/manifest",
@@ -8533,6 +7309,181 @@
                 "source": "https://github.com/phar-io/version/tree/3.2.1"
             },
             "time": "2022-02-21T01:04:05+00:00"
+        },
+        {
+            "name": "phpdocumentor/reflection-common",
+            "version": "2.2.0",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/phpDocumentor/ReflectionCommon.git",
+                "reference": "1d01c49d4ed62f25aa84a747ad35d5a16924662b"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/phpDocumentor/ReflectionCommon/zipball/1d01c49d4ed62f25aa84a747ad35d5a16924662b",
+                "reference": "1d01c49d4ed62f25aa84a747ad35d5a16924662b",
+                "shasum": ""
+            },
+            "require": {
+                "php": "^7.2 || ^8.0"
+            },
+            "type": "library",
+            "extra": {
+                "branch-alias": {
+                    "dev-2.x": "2.x-dev"
+                }
+            },
+            "autoload": {
+                "psr-4": {
+                    "phpDocumentor\\Reflection\\": "src/"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Jaap van Otterdijk",
+                    "email": "opensource@ijaap.nl"
+                }
+            ],
+            "description": "Common reflection classes used by phpdocumentor to reflect the code structure",
+            "homepage": "http://www.phpdoc.org",
+            "keywords": [
+                "FQSEN",
+                "phpDocumentor",
+                "phpdoc",
+                "reflection",
+                "static analysis"
+            ],
+            "support": {
+                "issues": "https://github.com/phpDocumentor/ReflectionCommon/issues",
+                "source": "https://github.com/phpDocumentor/ReflectionCommon/tree/2.x"
+            },
+            "time": "2020-06-27T09:03:43+00:00"
+        },
+        {
+            "name": "phpdocumentor/reflection-docblock",
+            "version": "5.6.2",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/phpDocumentor/ReflectionDocBlock.git",
+                "reference": "92dde6a5919e34835c506ac8c523ef095a95ed62"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/phpDocumentor/ReflectionDocBlock/zipball/92dde6a5919e34835c506ac8c523ef095a95ed62",
+                "reference": "92dde6a5919e34835c506ac8c523ef095a95ed62",
+                "shasum": ""
+            },
+            "require": {
+                "doctrine/deprecations": "^1.1",
+                "ext-filter": "*",
+                "php": "^7.4 || ^8.0",
+                "phpdocumentor/reflection-common": "^2.2",
+                "phpdocumentor/type-resolver": "^1.7",
+                "phpstan/phpdoc-parser": "^1.7|^2.0",
+                "webmozart/assert": "^1.9.1"
+            },
+            "require-dev": {
+                "mockery/mockery": "~1.3.5 || ~1.6.0",
+                "phpstan/extension-installer": "^1.1",
+                "phpstan/phpstan": "^1.8",
+                "phpstan/phpstan-mockery": "^1.1",
+                "phpstan/phpstan-webmozart-assert": "^1.2",
+                "phpunit/phpunit": "^9.5",
+                "psalm/phar": "^5.26"
+            },
+            "type": "library",
+            "extra": {
+                "branch-alias": {
+                    "dev-master": "5.x-dev"
+                }
+            },
+            "autoload": {
+                "psr-4": {
+                    "phpDocumentor\\Reflection\\": "src"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Mike van Riel",
+                    "email": "me@mikevanriel.com"
+                },
+                {
+                    "name": "Jaap van Otterdijk",
+                    "email": "opensource@ijaap.nl"
+                }
+            ],
+            "description": "With this component, a library can provide support for annotations via DocBlocks or otherwise retrieve information that is embedded in a DocBlock.",
+            "support": {
+                "issues": "https://github.com/phpDocumentor/ReflectionDocBlock/issues",
+                "source": "https://github.com/phpDocumentor/ReflectionDocBlock/tree/5.6.2"
+            },
+            "time": "2025-04-13T19:20:35+00:00"
+        },
+        {
+            "name": "phpdocumentor/type-resolver",
+            "version": "1.10.0",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/phpDocumentor/TypeResolver.git",
+                "reference": "679e3ce485b99e84c775d28e2e96fade9a7fb50a"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/phpDocumentor/TypeResolver/zipball/679e3ce485b99e84c775d28e2e96fade9a7fb50a",
+                "reference": "679e3ce485b99e84c775d28e2e96fade9a7fb50a",
+                "shasum": ""
+            },
+            "require": {
+                "doctrine/deprecations": "^1.0",
+                "php": "^7.3 || ^8.0",
+                "phpdocumentor/reflection-common": "^2.0",
+                "phpstan/phpdoc-parser": "^1.18|^2.0"
+            },
+            "require-dev": {
+                "ext-tokenizer": "*",
+                "phpbench/phpbench": "^1.2",
+                "phpstan/extension-installer": "^1.1",
+                "phpstan/phpstan": "^1.8",
+                "phpstan/phpstan-phpunit": "^1.1",
+                "phpunit/phpunit": "^9.5",
+                "rector/rector": "^0.13.9",
+                "vimeo/psalm": "^4.25"
+            },
+            "type": "library",
+            "extra": {
+                "branch-alias": {
+                    "dev-1.x": "1.x-dev"
+                }
+            },
+            "autoload": {
+                "psr-4": {
+                    "phpDocumentor\\Reflection\\": "src"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Mike van Riel",
+                    "email": "me@mikevanriel.com"
+                }
+            ],
+            "description": "A PSR-5 based resolver of Class names, Types and Structural Element Names",
+            "support": {
+                "issues": "https://github.com/phpDocumentor/TypeResolver/issues",
+                "source": "https://github.com/phpDocumentor/TypeResolver/tree/1.10.0"
+            },
+            "time": "2024-11-09T15:12:26+00:00"
         },
         {
             "name": "phpoption/phpoption",
@@ -8658,17 +7609,64 @@
             "time": "2024-09-04T20:21:43+00:00"
         },
         {
-            "name": "phpstan/phpstan",
-            "version": "2.1.17",
+            "name": "phpstan/phpdoc-parser",
+            "version": "1.33.0",
             "source": {
                 "type": "git",
-                "url": "https://github.com/phpstan/phpstan.git",
-                "reference": "89b5ef665716fa2a52ecd2633f21007a6a349053"
+                "url": "https://github.com/phpstan/phpdoc-parser.git",
+                "reference": "82a311fd3690fb2bf7b64d5c98f912b3dd746140"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/phpstan/phpstan/zipball/89b5ef665716fa2a52ecd2633f21007a6a349053",
-                "reference": "89b5ef665716fa2a52ecd2633f21007a6a349053",
+                "url": "https://api.github.com/repos/phpstan/phpdoc-parser/zipball/82a311fd3690fb2bf7b64d5c98f912b3dd746140",
+                "reference": "82a311fd3690fb2bf7b64d5c98f912b3dd746140",
+                "shasum": ""
+            },
+            "require": {
+                "php": "^7.2 || ^8.0"
+            },
+            "require-dev": {
+                "doctrine/annotations": "^2.0",
+                "nikic/php-parser": "^4.15",
+                "php-parallel-lint/php-parallel-lint": "^1.2",
+                "phpstan/extension-installer": "^1.0",
+                "phpstan/phpstan": "^1.5",
+                "phpstan/phpstan-phpunit": "^1.1",
+                "phpstan/phpstan-strict-rules": "^1.0",
+                "phpunit/phpunit": "^9.5",
+                "symfony/process": "^5.2"
+            },
+            "type": "library",
+            "autoload": {
+                "psr-4": {
+                    "PHPStan\\PhpDocParser\\": [
+                        "src/"
+                    ]
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "description": "PHPDoc parser with support for nullable, intersection and generic types",
+            "support": {
+                "issues": "https://github.com/phpstan/phpdoc-parser/issues",
+                "source": "https://github.com/phpstan/phpdoc-parser/tree/1.33.0"
+            },
+            "time": "2024-10-13T11:25:22+00:00"
+        },
+        {
+            "name": "phpstan/phpstan",
+            "version": "2.1.18",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/phpstan/phpstan.git",
+                "reference": "ee1f390b7a70cdf74a2b737e554f68afea885db7"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/phpstan/phpstan/zipball/ee1f390b7a70cdf74a2b737e554f68afea885db7",
+                "reference": "ee1f390b7a70cdf74a2b737e554f68afea885db7",
                 "shasum": ""
             },
             "require": {
@@ -8713,7 +7711,7 @@
                     "type": "github"
                 }
             ],
-            "time": "2025-05-21T20:55:28+00:00"
+            "time": "2025-07-17T17:22:31+00:00"
         },
         {
             "name": "phpstan/phpstan-deprecation-rules",
@@ -9844,21 +8842,21 @@
         },
         {
             "name": "rector/rector",
-            "version": "2.1.1",
+            "version": "2.1.2",
             "source": {
                 "type": "git",
                 "url": "https://github.com/rectorphp/rector.git",
-                "reference": "d0917c069bb0d9bb06ed111cf052510f609015a4"
+                "reference": "40a71441dd73fa150a66102f5ca1364c44fc8fff"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/rectorphp/rector/zipball/d0917c069bb0d9bb06ed111cf052510f609015a4",
-                "reference": "d0917c069bb0d9bb06ed111cf052510f609015a4",
+                "url": "https://api.github.com/repos/rectorphp/rector/zipball/40a71441dd73fa150a66102f5ca1364c44fc8fff",
+                "reference": "40a71441dd73fa150a66102f5ca1364c44fc8fff",
                 "shasum": ""
             },
             "require": {
                 "php": "^7.4|^8.0",
-                "phpstan/phpstan": "^2.1.17"
+                "phpstan/phpstan": "^2.1.18"
             },
             "conflict": {
                 "rector/rector-doctrine": "*",
@@ -9892,7 +8890,7 @@
             ],
             "support": {
                 "issues": "https://github.com/rectorphp/rector/issues",
-                "source": "https://github.com/rectorphp/rector/tree/2.1.1"
+                "source": "https://github.com/rectorphp/rector/tree/2.1.2"
             },
             "funding": [
                 {
@@ -9900,7 +8898,7 @@
                     "type": "github"
                 }
             ],
-            "time": "2025-07-10T11:31:31+00:00"
+            "time": "2025-07-17T19:30:06+00:00"
         },
         {
             "name": "roave/security-advisories",
@@ -9908,12 +8906,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/Roave/SecurityAdvisories.git",
-                "reference": "d9e8845908f658ef04aebe52283cfc63b192d421"
+                "reference": "5e472fed1bcf8d3a967247576053a20ef3cfefc0"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/Roave/SecurityAdvisories/zipball/d9e8845908f658ef04aebe52283cfc63b192d421",
-                "reference": "d9e8845908f658ef04aebe52283cfc63b192d421",
+                "url": "https://api.github.com/repos/Roave/SecurityAdvisories/zipball/5e472fed1bcf8d3a967247576053a20ef3cfefc0",
+                "reference": "5e472fed1bcf8d3a967247576053a20ef3cfefc0",
                 "shasum": ""
             },
             "conflict": {
@@ -10313,7 +9311,7 @@
                 "lightsaml/lightsaml": "<1.3.5",
                 "limesurvey/limesurvey": "<6.5.12",
                 "livehelperchat/livehelperchat": "<=3.91",
-                "livewire/livewire": "<2.12.7|>=3.0.0.0-beta1,<3.5.2",
+                "livewire/livewire": "<2.12.7|>=3.0.0.0-beta1,<3.6.4",
                 "livewire/volt": "<1.7",
                 "lms/routes": "<2.1.1",
                 "localizationteam/l10nmgr": "<7.4|>=8,<8.7|>=9,<9.2",
@@ -10857,7 +9855,7 @@
                     "type": "tidelift"
                 }
             ],
-            "time": "2025-07-14T22:05:34+00:00"
+            "time": "2025-07-17T21:05:33+00:00"
         },
         {
             "name": "saschaegerer/phpstan-typo3",
@@ -11992,66 +10990,6 @@
             "time": "2025-07-17T11:41:10+00:00"
         },
         {
-            "name": "simonschaufi/pretty-xml",
-            "version": "3.0.0",
-            "source": {
-                "type": "git",
-                "url": "https://github.com/simonschaufi/pretty-xml.git",
-                "reference": "2af716465f67cac264785cf1ca1484ce054c0f23"
-            },
-            "dist": {
-                "type": "zip",
-                "url": "https://api.github.com/repos/simonschaufi/pretty-xml/zipball/2af716465f67cac264785cf1ca1484ce054c0f23",
-                "reference": "2af716465f67cac264785cf1ca1484ce054c0f23",
-                "shasum": ""
-            },
-            "require": {
-                "php": "^7.4 || ^8.0",
-                "symfony/polyfill-php80": "^1.31"
-            },
-            "require-dev": {
-                "ergebnis/composer-normalize": "^2.47",
-                "phpunit/phpunit": "^10.5"
-            },
-            "type": "library",
-            "autoload": {
-                "psr-4": {
-                    "PrettyXml\\": "src"
-                }
-            },
-            "notification-url": "https://packagist.org/downloads/",
-            "license": [
-                "MIT"
-            ],
-            "authors": [
-                {
-                    "name": "Shane Auckland",
-                    "email": "shane.auckland@gmail.com",
-                    "homepage": "https://shaneauckland.co.uk"
-                }
-            ],
-            "description": "Library for pretty-printing XML",
-            "keywords": [
-                "pretty",
-                "xml"
-            ],
-            "support": {
-                "issues": "https://github.com/simonschaufi/pretty-xml/issues",
-                "source": "https://github.com/simonschaufi/pretty-xml/tree/3.0.0"
-            },
-            "funding": [
-                {
-                    "url": "https://www.paypal.me/simonschaufi/10",
-                    "type": "custom"
-                },
-                {
-                    "url": "https://github.com/simonschaufi",
-                    "type": "github"
-                }
-            ],
-            "time": "2025-05-02T09:09:58+00:00"
-        },
-        {
             "name": "spaze/phpstan-disallowed-calls",
             "version": "v4.6.0",
             "source": {
@@ -12749,6 +11687,168 @@
             "time": "2024-09-09T11:45:10+00:00"
         },
         {
+            "name": "symfony/property-access",
+            "version": "v7.3.1",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/symfony/property-access.git",
+                "reference": "518d15c8cca726ebe665dcd7154074584cf862e8"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/symfony/property-access/zipball/518d15c8cca726ebe665dcd7154074584cf862e8",
+                "reference": "518d15c8cca726ebe665dcd7154074584cf862e8",
+                "shasum": ""
+            },
+            "require": {
+                "php": ">=8.2",
+                "symfony/property-info": "^6.4|^7.0"
+            },
+            "require-dev": {
+                "symfony/cache": "^6.4|^7.0"
+            },
+            "type": "library",
+            "autoload": {
+                "psr-4": {
+                    "Symfony\\Component\\PropertyAccess\\": ""
+                },
+                "exclude-from-classmap": [
+                    "/Tests/"
+                ]
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Fabien Potencier",
+                    "email": "fabien@symfony.com"
+                },
+                {
+                    "name": "Symfony Community",
+                    "homepage": "https://symfony.com/contributors"
+                }
+            ],
+            "description": "Provides functions to read and write from/to an object or array using a simple string notation",
+            "homepage": "https://symfony.com",
+            "keywords": [
+                "access",
+                "array",
+                "extraction",
+                "index",
+                "injection",
+                "object",
+                "property",
+                "property-path",
+                "reflection"
+            ],
+            "support": {
+                "source": "https://github.com/symfony/property-access/tree/v7.3.1"
+            },
+            "funding": [
+                {
+                    "url": "https://symfony.com/sponsor",
+                    "type": "custom"
+                },
+                {
+                    "url": "https://github.com/fabpot",
+                    "type": "github"
+                },
+                {
+                    "url": "https://tidelift.com/funding/github/packagist/symfony/symfony",
+                    "type": "tidelift"
+                }
+            ],
+            "time": "2025-06-24T04:04:43+00:00"
+        },
+        {
+            "name": "symfony/property-info",
+            "version": "v7.3.1",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/symfony/property-info.git",
+                "reference": "90586acbf2a6dd13bee4f09f09111c8bd4773970"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/symfony/property-info/zipball/90586acbf2a6dd13bee4f09f09111c8bd4773970",
+                "reference": "90586acbf2a6dd13bee4f09f09111c8bd4773970",
+                "shasum": ""
+            },
+            "require": {
+                "php": ">=8.2",
+                "symfony/deprecation-contracts": "^2.5|^3",
+                "symfony/string": "^6.4|^7.0",
+                "symfony/type-info": "~7.2.8|^7.3.1"
+            },
+            "conflict": {
+                "phpdocumentor/reflection-docblock": "<5.2",
+                "phpdocumentor/type-resolver": "<1.5.1",
+                "symfony/cache": "<6.4",
+                "symfony/dependency-injection": "<6.4",
+                "symfony/serializer": "<6.4"
+            },
+            "require-dev": {
+                "phpdocumentor/reflection-docblock": "^5.2",
+                "phpstan/phpdoc-parser": "^1.0|^2.0",
+                "symfony/cache": "^6.4|^7.0",
+                "symfony/dependency-injection": "^6.4|^7.0",
+                "symfony/serializer": "^6.4|^7.0"
+            },
+            "type": "library",
+            "autoload": {
+                "psr-4": {
+                    "Symfony\\Component\\PropertyInfo\\": ""
+                },
+                "exclude-from-classmap": [
+                    "/Tests/"
+                ]
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Kévin Dunglas",
+                    "email": "dunglas@gmail.com"
+                },
+                {
+                    "name": "Symfony Community",
+                    "homepage": "https://symfony.com/contributors"
+                }
+            ],
+            "description": "Extracts information about PHP class' properties using metadata of popular sources",
+            "homepage": "https://symfony.com",
+            "keywords": [
+                "doctrine",
+                "phpdoc",
+                "property",
+                "symfony",
+                "type",
+                "validator"
+            ],
+            "support": {
+                "source": "https://github.com/symfony/property-info/tree/v7.3.1"
+            },
+            "funding": [
+                {
+                    "url": "https://symfony.com/sponsor",
+                    "type": "custom"
+                },
+                {
+                    "url": "https://github.com/fabpot",
+                    "type": "github"
+                },
+                {
+                    "url": "https://tidelift.com/funding/github/packagist/symfony/symfony",
+                    "type": "tidelift"
+                }
+            ],
+            "time": "2025-06-27T19:55:54+00:00"
+        },
+        {
             "name": "symfony/stopwatch",
             "version": "v7.3.0",
             "source": {
@@ -12811,17 +11911,96 @@
             "time": "2025-02-24T10:49:57+00:00"
         },
         {
-            "name": "symplify/phpstan-rules",
-            "version": "14.6.9",
+            "name": "symfony/type-info",
+            "version": "v7.3.1",
             "source": {
                 "type": "git",
-                "url": "https://github.com/symplify/phpstan-rules.git",
-                "reference": "0d3f5b5f9f6c20df5405fcbc123313c932d2562c"
+                "url": "https://github.com/symfony/type-info.git",
+                "reference": "5fa6e25e4195e73ce9e457b521ac5e61ec271150"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/symplify/phpstan-rules/zipball/0d3f5b5f9f6c20df5405fcbc123313c932d2562c",
-                "reference": "0d3f5b5f9f6c20df5405fcbc123313c932d2562c",
+                "url": "https://api.github.com/repos/symfony/type-info/zipball/5fa6e25e4195e73ce9e457b521ac5e61ec271150",
+                "reference": "5fa6e25e4195e73ce9e457b521ac5e61ec271150",
+                "shasum": ""
+            },
+            "require": {
+                "php": ">=8.2",
+                "psr/container": "^1.1|^2.0",
+                "symfony/deprecation-contracts": "^2.5|^3"
+            },
+            "conflict": {
+                "phpstan/phpdoc-parser": "<1.30"
+            },
+            "require-dev": {
+                "phpstan/phpdoc-parser": "^1.30|^2.0"
+            },
+            "type": "library",
+            "autoload": {
+                "psr-4": {
+                    "Symfony\\Component\\TypeInfo\\": ""
+                },
+                "exclude-from-classmap": [
+                    "/Tests/"
+                ]
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Mathias Arlaud",
+                    "email": "mathias.arlaud@gmail.com"
+                },
+                {
+                    "name": "Baptiste LEDUC",
+                    "email": "baptiste.leduc@gmail.com"
+                },
+                {
+                    "name": "Symfony Community",
+                    "homepage": "https://symfony.com/contributors"
+                }
+            ],
+            "description": "Extracts PHP types information.",
+            "homepage": "https://symfony.com",
+            "keywords": [
+                "PHPStan",
+                "phpdoc",
+                "symfony",
+                "type"
+            ],
+            "support": {
+                "source": "https://github.com/symfony/type-info/tree/v7.3.1"
+            },
+            "funding": [
+                {
+                    "url": "https://symfony.com/sponsor",
+                    "type": "custom"
+                },
+                {
+                    "url": "https://github.com/fabpot",
+                    "type": "github"
+                },
+                {
+                    "url": "https://tidelift.com/funding/github/packagist/symfony/symfony",
+                    "type": "tidelift"
+                }
+            ],
+            "time": "2025-06-27T19:55:54+00:00"
+        },
+        {
+            "name": "symplify/phpstan-rules",
+            "version": "14.6.11",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/symplify/phpstan-rules.git",
+                "reference": "afe3b8a5b4662d703035fc3689d27180a1d4cb8e"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/symplify/phpstan-rules/zipball/afe3b8a5b4662d703035fc3689d27180a1d4cb8e",
+                "reference": "afe3b8a5b4662d703035fc3689d27180a1d4cb8e",
                 "shasum": ""
             },
             "require": {
@@ -12853,7 +12032,7 @@
             "description": "Set of Symplify rules for PHPStan",
             "support": {
                 "issues": "https://github.com/symplify/phpstan-rules/issues",
-                "source": "https://github.com/symplify/phpstan-rules/tree/14.6.9"
+                "source": "https://github.com/symplify/phpstan-rules/tree/14.6.11"
             },
             "funding": [
                 {
@@ -12865,66 +12044,7 @@
                     "type": "github"
                 }
             ],
-            "time": "2025-04-28T13:48:58+00:00"
-        },
-        {
-            "name": "symplify/rule-doc-generator-contracts",
-            "version": "11.2.0",
-            "source": {
-                "type": "git",
-                "url": "https://github.com/symplify/rule-doc-generator-contracts.git",
-                "reference": "479cfcfd46047f80624aba931d9789e50475b5c6"
-            },
-            "dist": {
-                "type": "zip",
-                "url": "https://api.github.com/repos/symplify/rule-doc-generator-contracts/zipball/479cfcfd46047f80624aba931d9789e50475b5c6",
-                "reference": "479cfcfd46047f80624aba931d9789e50475b5c6",
-                "shasum": ""
-            },
-            "require": {
-                "php": ">=8.1"
-            },
-            "require-dev": {
-                "php-parallel-lint/php-parallel-lint": "^1.3",
-                "phpstan/extension-installer": "^1.2",
-                "rector/rector": "^0.15.10",
-                "symplify/easy-ci": "^11.1",
-                "symplify/easy-coding-standard": "^11.1",
-                "symplify/easy-testing": "^11.1",
-                "symplify/phpstan-extensions": "^11.1",
-                "symplify/phpstan-rules": "11.2.3.72",
-                "tomasvotruba/unused-public": "^0.0.34"
-            },
-            "type": "library",
-            "extra": {
-                "branch-alias": {
-                    "dev-main": "11.2-dev"
-                }
-            },
-            "autoload": {
-                "psr-4": {
-                    "Symplify\\RuleDocGenerator\\": "src"
-                }
-            },
-            "notification-url": "https://packagist.org/downloads/",
-            "license": [
-                "MIT"
-            ],
-            "description": "Contracts for production code of RuleDocGenerator",
-            "support": {
-                "source": "https://github.com/symplify/rule-doc-generator-contracts/tree/11.2.0"
-            },
-            "funding": [
-                {
-                    "url": "https://www.paypal.me/rectorphp",
-                    "type": "custom"
-                },
-                {
-                    "url": "https://github.com/tomasvotruba",
-                    "type": "github"
-                }
-            ],
-            "time": "2024-03-18T22:02:54+00:00"
+            "time": "2025-07-17T19:33:44+00:00"
         },
         {
             "name": "theseer/tokenizer",
@@ -12977,52 +12097,138 @@
             "time": "2024-03-03T12:36:25+00:00"
         },
         {
-            "name": "tivie/htaccess-parser",
-            "version": "0.3.0",
+            "name": "typo3/cms-extbase",
+            "version": "v13.4.15",
             "source": {
                 "type": "git",
-                "url": "https://github.com/tivie/php-htaccess-parser.git",
-                "reference": "14e14d066533c340851172ba1019ff52890b30b3"
+                "url": "https://github.com/TYPO3-CMS/extbase.git",
+                "reference": "212fcb0dd6f23bdb41de38ec6e932c905a4a8e5e"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/tivie/php-htaccess-parser/zipball/14e14d066533c340851172ba1019ff52890b30b3",
-                "reference": "14e14d066533c340851172ba1019ff52890b30b3",
+                "url": "https://api.github.com/repos/TYPO3-CMS/extbase/zipball/212fcb0dd6f23bdb41de38ec6e932c905a4a8e5e",
+                "reference": "212fcb0dd6f23bdb41de38ec6e932c905a4a8e5e",
                 "shasum": ""
             },
             "require": {
-                "php": ">=8.0.0"
+                "doctrine/instantiator": "^1.5 || ^2.0",
+                "phpdocumentor/reflection-docblock": "^5.4.1",
+                "phpdocumentor/type-resolver": "^1.8.2",
+                "symfony/dependency-injection": "^7.2",
+                "symfony/property-access": "^7.2",
+                "symfony/property-info": "^7.2",
+                "typo3/cms-core": "13.4.15"
             },
-            "require-dev": {
-                "phpunit/phpunit": "^11.0.6"
+            "conflict": {
+                "typo3/cms": "*"
             },
-            "type": "library",
+            "suggest": {
+                "typo3/cms-scheduler": "Additional scheduler tasks"
+            },
+            "type": "typo3-cms-framework",
+            "extra": {
+                "typo3/cms": {
+                    "Package": {
+                        "protected": true,
+                        "serviceProvider": "TYPO3\\CMS\\Extbase\\ServiceProvider",
+                        "partOfFactoryDefault": true,
+                        "partOfMinimalUsableSystem": true
+                    },
+                    "extension-key": "extbase"
+                },
+                "branch-alias": {
+                    "dev-main": "13.4.x-dev"
+                }
+            },
             "autoload": {
                 "psr-4": {
-                    "Tivie\\HtaccessParser\\": "src/"
+                    "TYPO3\\CMS\\Extbase\\": "Classes/"
                 }
             },
             "notification-url": "https://packagist.org/downloads/",
             "license": [
-                "Apache-2.0"
+                "GPL-2.0-or-later"
             ],
             "authors": [
                 {
-                    "name": "Estevão Soares dos Santos",
-                    "email": "estevao@soares-dos-santos.com"
+                    "name": "TYPO3 Core Team",
+                    "email": "typo3cms@typo3.org",
+                    "role": "Developer"
                 }
             ],
-            "description": "A .htaccess parser and validator implemented in PHP",
-            "homepage": "https://github.com/tivie/php-htaccess-parser",
-            "keywords": [
-                ".htaccess",
-                "htaccess"
-            ],
+            "description": "TYPO3 CMS Extbase - Extension framework to create TYPO3 frontend plugins and TYPO3 backend modules.",
+            "homepage": "https://typo3.org",
             "support": {
-                "issues": "https://github.com/tivie/php-htaccess-parser/issues",
-                "source": "https://github.com/tivie/php-htaccess-parser/tree/0.3.0"
+                "chat": "https://typo3.org/help",
+                "docs": "https://docs.typo3.org",
+                "issues": "https://forge.typo3.org",
+                "source": "https://github.com/typo3/typo3"
             },
-            "time": "2024-03-17T05:33:05+00:00"
+            "time": "2025-07-08T09:23:09+00:00"
+        },
+        {
+            "name": "typo3/cms-fluid",
+            "version": "v13.4.15",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/TYPO3-CMS/fluid.git",
+                "reference": "181b1cf10570402c51e675b49124ade8af95d66e"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/TYPO3-CMS/fluid/zipball/181b1cf10570402c51e675b49124ade8af95d66e",
+                "reference": "181b1cf10570402c51e675b49124ade8af95d66e",
+                "shasum": ""
+            },
+            "require": {
+                "symfony/dependency-injection": "^7.2",
+                "typo3/cms-core": "13.4.15",
+                "typo3/cms-extbase": "13.4.15",
+                "typo3fluid/fluid": "^4.3.0"
+            },
+            "conflict": {
+                "typo3/cms": "*"
+            },
+            "type": "typo3-cms-framework",
+            "extra": {
+                "typo3/cms": {
+                    "Package": {
+                        "protected": true,
+                        "serviceProvider": "TYPO3\\CMS\\Fluid\\ServiceProvider",
+                        "partOfFactoryDefault": true,
+                        "partOfMinimalUsableSystem": true
+                    },
+                    "extension-key": "fluid"
+                },
+                "branch-alias": {
+                    "dev-main": "13.4.x-dev"
+                }
+            },
+            "autoload": {
+                "psr-4": {
+                    "TYPO3\\CMS\\Fluid\\": "Classes/"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "GPL-2.0-or-later"
+            ],
+            "authors": [
+                {
+                    "name": "TYPO3 Core Team",
+                    "email": "typo3cms@typo3.org",
+                    "role": "Developer"
+                }
+            ],
+            "description": "TYPO3 CMS Fluid Integration - Integration of the Fluid templating engine into TYPO3.",
+            "homepage": "https://typo3.org",
+            "support": {
+                "chat": "https://typo3.org/help",
+                "docs": "https://docs.typo3.org/other/typo3/view-helper-reference/main/en-us/",
+                "issues": "https://forge.typo3.org",
+                "source": "https://github.com/typo3/typo3"
+            },
+            "time": "2025-07-08T09:23:09+00:00"
         },
         {
             "name": "typo3/cms-frontend",
@@ -13308,6 +12514,64 @@
                 "source": "https://github.com/TYPO3/testing-framework/tree/9.2.0"
             },
             "time": "2025-04-10T11:43:00+00:00"
+        },
+        {
+            "name": "webmozart/assert",
+            "version": "1.11.0",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/webmozarts/assert.git",
+                "reference": "11cb2199493b2f8a3b53e7f19068fc6aac760991"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/webmozarts/assert/zipball/11cb2199493b2f8a3b53e7f19068fc6aac760991",
+                "reference": "11cb2199493b2f8a3b53e7f19068fc6aac760991",
+                "shasum": ""
+            },
+            "require": {
+                "ext-ctype": "*",
+                "php": "^7.2 || ^8.0"
+            },
+            "conflict": {
+                "phpstan/phpstan": "<0.12.20",
+                "vimeo/psalm": "<4.6.1 || 4.6.2"
+            },
+            "require-dev": {
+                "phpunit/phpunit": "^8.5.13"
+            },
+            "type": "library",
+            "extra": {
+                "branch-alias": {
+                    "dev-master": "1.10-dev"
+                }
+            },
+            "autoload": {
+                "psr-4": {
+                    "Webmozart\\Assert\\": "src/"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Bernhard Schussek",
+                    "email": "bschussek@gmail.com"
+                }
+            ],
+            "description": "Assertions to validate method input/output with nice error messages.",
+            "keywords": [
+                "assert",
+                "check",
+                "validate"
+            ],
+            "support": {
+                "issues": "https://github.com/webmozarts/assert/issues",
+                "source": "https://github.com/webmozarts/assert/tree/1.11.0"
+            },
+            "time": "2022-06-03T18:03:27+00:00"
         }
     ],
     "aliases": [],
@@ -13318,8 +12582,7 @@
     "prefer-stable": false,
     "prefer-lowest": false,
     "platform": {
-        "php": "~8.3.0 || ~8.4.0",
-        "ext-intl": "*"
+        "php": "~8.3.0 || ~8.4.0"
     },
     "platform-dev": {},
     "plugin-api-version": "2.6.0"
