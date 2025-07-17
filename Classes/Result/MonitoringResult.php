@@ -50,7 +50,17 @@ final class MonitoringResult implements Result
 
     public function isHealthy(): bool
     {
-        return $this->isHealthy;
+        if (!$this->isHealthy || !$this->hasSubResults()) {
+            return $this->isHealthy;
+        }
+
+        foreach ($this->subResults as $subResult) {
+            if (!$subResult->isHealthy()) {
+                return false;
+            }
+        }
+
+        return true;
     }
 
     public function setHealthy(bool $isHealthy): Result
