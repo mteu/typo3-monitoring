@@ -26,39 +26,123 @@ namespace mteu\Monitoring\Result;
 /**
  * MonitoringResult.
  *
+ * Opinionated implementation of mteu\Monitoring\Result
+ *
  * @author Martin Adler <mteu@mailbox.org>
  * @license GPL-2.0-or-later
  */
-final class MonitoringResult extends AbstractMonitoringResult
+final class MonitoringResult implements Result
 {
     /**
      * @param list<Result> $subResults
      */
     public function __construct(
         private readonly string $name,
-        private bool $isHealthy = false,
-        private readonly ?string $reason = null,
-        private readonly array $subResults = [],
-    ) {
-        parent::__construct(
-            name: $this->name,
-            isHealthy: $this->isHealthy(),
-            reason: $this->reason,
-            subResults: $this->subResults,
-        );
+        private bool $isHealthy,
+        private ?string $reason = null,
+        private array $subResults = [],
+    ) {}
+
+    public function getName(): string
+    {
+        return $this->name;
     }
 
-    #[\Override]
     public function isHealthy(): bool
     {
         return $this->isHealthy;
     }
 
-    public function setHealthy(bool $isHealthy): self
+    public function setHealthy(bool $isHealthy): Result
     {
         $this->isHealthy = $isHealthy;
 
         return $this;
     }
 
+    public function getReason(): ?string
+    {
+        return $this->reason;
+    }
+
+    public function setReason(string $reason): Result
+    {
+        $this->reason = $reason;
+
+        return $this;
+    }
+
+    public function hasSubResults(): bool
+    {
+        return count($this->subResults) > 0;
+    }
+
+    /**
+     * @return list<Result>
+     */
+    public function getSubResults(): array
+    {
+        return $this->subResults;
+    }
+
+    public function addSubResult(Result $result): Result
+    {
+        $this->subResults[] = $result;
+
+        return $result;
+    }
+
+    /**
+     * Magic getter for Fluid templates to access private properties as way dirty workaround to Fluid's inability to
+     * invoke the `isHealthy()` method instead of directly accessing the property with the exact same name.
+     */
+    public function __get(string $property): mixed
+    {
+        return match ($property) {
+            'name' => $this->name,
+            'isHealthy' => $this->isHealthy,
+            'description' => $this->reason,
+            default => throw new \InvalidArgumentException(
+                sprintf('Property "%s" does not exist on %s', $property, self::class)
+            ),
+        };
+    }
+
+    /**
+     * @return array{
+     *     name: string,
+     *     isHealthy: bool,
+     *     description: string|null,
+     *     subResults?: array<int, array{name: string, isHealthy: bool, description: string|null}>
+     * }
+     */
+    public function toArray(): array
+    {
+        $array = [
+            'name' => $this->name,
+            'isHealthy' => $this->isHealthy,
+            'description' => $this->reason,
+        ];
+
+        if ($this->subResults !== []) {
+            $array['subResults'] = array_map(
+                static fn(Result $subResult): array => $subResult->toArray(),
+                $this->subResults
+            );
+        }
+
+        return $array;
+    }
+
+    /**
+     * @return array{
+     *     name: string,
+     *     isHealthy: bool,
+     *     description: string|null,
+     *     subResults?: array<int, array{name: string, isHealthy: bool, description: string|null}>}
+     */
+    public function jsonSerialize(): array
+    {
+        return $this->toArray();
+    }
 }
