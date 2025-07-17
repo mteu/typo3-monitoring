@@ -7,7 +7,7 @@
 				<source>TYPO3 Monitoring</source>
 			</trans-unit>
 			<trans-unit id="module.description">
-				<source>This API seeks to give an insight into the health status of various components within and around this TYPO3 instance.</source>
+				<source>This extension seeks to give an insight into the health state of various components in this TYPO3 instance.</source>
 			</trans-unit>
 			<trans-unit id="providers.title">
 				<source>Available Providers</source>
@@ -28,7 +28,7 @@
 				<source>Monitoring requests will be authorized following this Authorizer order:</source>
 			</trans-unit>
 			<trans-unit id="settings.api.secret.missing">
-				<source>Please set an API secret in your extensions settings.</source>
+				<source>Please set an API secret in the Extension settings.</source>
 			</trans-unit>
 			<trans-unit id="auth.token.button">
 				<source>Show Authorization Token</source>
