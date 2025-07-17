@@ -25,8 +25,22 @@
         </f:then>
         <f:else>
             <div class="alert alert-info">
-                <core:icon identifier="actions-info-circle-alt" />
-                <f:translate key="LLL:EXT:monitoring/Resources/Private/Language/locallang.be.xlf:providers.no_providers_found" />
+                <div class="alert-inner">
+                    <div class="alert-icon">
+                        <span class="icon-emphasized">
+                            <core:icon identifier="actions-info" />
+                        </span>
+                    </div>
+                    <div class="alert-content">
+                        <div class="alert-title">
+                            <f:translate key="LLL:EXT:monitoring/Resources/Private/Language/locallang.be.xlf:providers.no_providers_found.title" />
+                        </div>
+                        <p class="alert-message">
+                            <f:translate key="LLL:EXT:monitoring/Resources/Private/Language/locallang.be.xlf:providers.no_providers_found.content"
+                                         arguments="{0: providerInterface}" />
+                        </p>
+                    </div>
+                </div>
             </div>
         </f:else>
     </f:if>
