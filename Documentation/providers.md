@@ -39,11 +39,6 @@ final class MyServiceProvider implements MonitoringProvider
         return true;
     }
 
-    public function isHealthy(): bool
-    {
-        return $this->execute()->isHealthy();
-    }
-
     public function execute(): Result
     {
         try {
@@ -115,11 +110,6 @@ final class ExpensiveServiceProvider implements CacheableMonitoringProvider
     public function isActive(): bool
     {
         return true;
-    }
-
-    public function isHealthy(): bool
-    {
-        return $this->execute()->isHealthy();
     }
 
     public function execute(): Result
@@ -194,11 +184,6 @@ final class DatabaseConnectionProvider implements MonitoringProvider
         return true;
     }
 
-    public function isHealthy(): bool
-    {
-        return $this->execute()->isHealthy();
-    }
-
     public function execute(): Result
     {
         try {
@@ -253,11 +238,6 @@ final class MultiComponentProvider implements MonitoringProvider
     public function isActive(): bool
     {
         return true;
-    }
-
-    public function isHealthy(): bool
-    {
-        return $this->execute()->isHealthy();
     }
 
     public function execute(): Result
