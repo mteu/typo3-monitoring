@@ -9,7 +9,9 @@
 
 # TYPO3 Monitoring
 
-[![TYPO3](https://img.shields.io/badge/TYPO3-13.4+-orange.svg)](https://typo3.org)
+![TYPO3 versions](https://typo3-badges.dev/badge/monitoring/typo3/shields.svg)
+![Latest version](https://typo3-badges.dev/badge/monitoring/version/shields.svg)
+![Stability](https://typo3-badges.dev/badge/monitoring/stability/shields.svg)
 [![PHP Version Require](https://poser.pugx.org/mteu/typo3-monitoring/require/php)](https://packagist.org/packages/mteu/typo3-monitoring)
 
 </div>
