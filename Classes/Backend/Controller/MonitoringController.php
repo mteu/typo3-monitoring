@@ -69,8 +69,10 @@ final class MonitoringController
     /** @var non-empty-string $endpoint */
     private string $endpoint;
 
-    /** @var non-empty-string $secret */
+    /** @var string $secret */
     private string $secret;
+
+    private const string FLASHMESSAGE_QUEUE_IDENTIFIER = 'monitoring';
 
     /**
      * @throws ExtensionConfigurationPathDoesNotExistException
@@ -98,11 +100,7 @@ final class MonitoringController
             $this->endpoint = $endpoint;
         }
 
-        $secret = $this->extensionConfiguration->getSecretFromConfiguration();
-
-        if ($secret !== '') {
-            $this->secret = $secret;
-        }
+        $this->secret = $this->extensionConfiguration->getSecretFromConfiguration();
     }
 
     /**
@@ -129,13 +127,25 @@ final class MonitoringController
         $templateVariables = [
             'providers' => [],
             'providerInterface' => MonitoringProvider::class,
-            // This extension assumes the TokenAuthorizer to be used.
-            // @todo: Make optional in later iteration
-            'authHeaderName' => TokenAuthorizer::getAuthHeaderName(),
-            'authToken' => $this->getAuthToken(),
             'endpoint' => $params->getRequestHost() . $this->endpoint,
-            'flashMessageQueueIdentifier' => 'typo3_monitoring',
+            'flashMessageQueueIdentifier' => self::FLASHMESSAGE_QUEUE_IDENTIFIER,
         ];
+
+        if ($this->secret === '') {
+            $message = new FlashMessage(
+                $this->getLanguageService()->sL(self::LOCALLANG_FILE . ':settings.api.secret.missing'),
+                $this->getLanguageService()->sL(self::LOCALLANG_FILE . ':general.warning'),
+                ContextualFeedbackSeverity::WARNING,
+                true
+            );
+
+            $messageQueue = $this->flashMessageService->getMessageQueueByIdentifier(self::FLASHMESSAGE_QUEUE_IDENTIFIER);
+            $messageQueue->addMessage($message);
+
+        } else {
+            $templateVariables['authHeaderName'] = TokenAuthorizer::getAuthHeaderName();
+            $templateVariables['authToken'] = $this->hashService->hmac($this->endpoint, $this->secret);
+        }
 
         foreach ($this->authorizers as $authorizer) {
             $templateVariables['authorizers'][$authorizer::class] = $authorizer::getPriority();
@@ -222,10 +232,5 @@ final class MonitoringController
         }
 
         return $this->languageServiceFactory->createFromUserPreferences(null);
-    }
-
-    private function getAuthToken(): string
-    {
-        return $this->hashService->hmac($this->endpoint, $this->secret);
     }
 }
