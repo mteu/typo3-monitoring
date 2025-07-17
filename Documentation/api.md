@@ -27,7 +27,8 @@ Host: yoursite.com
 X-TYPO3-MONITORING-AUTH: your-auth-token
 ```
 > [!TIP]
-> [Learn here](Documentation/authorization.md#token-generation) how the Authentication token is generated.
+> [Learn here](Documentation/authorization.md#token-generation) how the
+> Authentication token is generated.
 
 ### Admin User Authentication
 

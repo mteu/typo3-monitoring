@@ -37,10 +37,14 @@ depending on how the check was initiated:
 
 ## Component Summary
 
-- [`MonitoringMiddleware`](middleware.md) handling HTTP requests and orchestrates the entire monitoring workflow.
-- [`Authorization Layer`](authorization.md) applying configured authorizers to validate and secure access.
-- [`Provider System`](providers.md) executing custom or built-in monitoring logic through discoverable providers.
-- Result Handling aggregating provider outputs and formats the response accordingly.
+- [`MonitoringMiddleware`](middleware.md) handling HTTP requests and orchestrates the
+entire monitoring workflow.
+- [`Authorization Layer`](authorization.md) applying configured authorizers to validate and
+secure access.
+- [`Provider System`](providers.md) executing custom or built-in monitoring logic through
+discoverable providers.
+- Result Handling aggregating provider outputs and formats the response
+accordingly.
 
 ```
       ┌────────────────────────────────────────────────────────────┐

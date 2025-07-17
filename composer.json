@@ -35,6 +35,7 @@
 		"shipmonk/composer-dependency-analyser": "*",
 		"ssch/typo3-rector": "^3.6",
 		"typo3/coding-standards": "^0.8.0",
+		"typo3/tailor": "^1.7",
 		"typo3/testing-framework": "^9.0"
 	},
 	"autoload": {
@@ -86,7 +87,7 @@
 		"lint:editorconfig": "ec",
 		"lint:php": "php-cs-fixer fix --config php-cs-fixer.php",
 		"lint:typoscript": "typoscript-lint -c typoscript-lint.yml",
-		"lint:yaml": "yaml-lint --format=github --exclude='.build' *.yaml *.yml",
+		"lint:yaml": "find . -path './.build' -prune -o \\( -name '*.yaml' -o -name '*.yml' \\) -type f -print | xargs yaml-lint --format=github",
 		"sbom:generate": "@composer CycloneDX:make-sbom --spec-version=1.6 --output-format=JSON --output-file=.sbom/cdx.json",
 		"sca": [
 			"@sca:php",

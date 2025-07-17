@@ -20,7 +20,8 @@ return [
 
 ### Options
 
-- **`api.endpoint`**: URL path for monitoring endpoint (default: `/monitor/health`)
+- **`api.endpoint`**: URL path for monitoring endpoint
+(default: `/monitor/health`)
 - **`api.secret`**: Secret key for HMAC authentication
 
 ## Provider Configuration
@@ -46,21 +47,4 @@ public static function getPriority(): int
 {
     return 1000; // Higher = checked first
 }
-```
-
-## Cache Configuration
-
-Configure cache backend for provider caching:
-
-```php
-# config/system/additional.php or ext_localconf.php
-$GLOBALS['TYPO3_CONF_VARS']['SYS']['caching']['cacheConfigurations']['monitoring'] = [
-    'frontend' => \TYPO3\CMS\Core\Cache\Frontend\VariableFrontend::class,
-    'backend' => \TYPO3\CMS\Core\Cache\Backend\RedisBackend::class,
-    'options' => [
-        'hostname' => 'localhost',
-        'port' => 6379,
-        'database' => 2,
-    ],
-];
 ```

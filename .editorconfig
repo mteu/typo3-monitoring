@@ -23,6 +23,10 @@ indent_size = 2
 [*.{yaml,yml}]
 indent_size = 2
 
+# Exclude README.md b/c of the badges
+[{README.md,SECURITY.md,architecture.md}]
+max_line_length = 200
+
 # NEON-Files
 [*.neon]
 indent_size = 2
