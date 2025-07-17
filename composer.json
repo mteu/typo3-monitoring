@@ -3,7 +3,6 @@
 	"description": "Exposes health status information of selected components in your TYPO3 instance to be integrated in external monitoring",
 	"license": "GPL-2.0-or-later",
 	"type": "typo3-cms-extension",
-	"version": "0.1.0",
 	"authors": [
 		{
 			"name": "Martin Adler",
