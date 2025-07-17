@@ -3,9 +3,6 @@
 	<file source-language="en" target-language="de" datatype="plaintext" original="EXT:monitoring/Resources/Private/Language/locallang.xlf">
 		<header/>
 		<body>
-			<trans-unit id="general.warning">
-				<source>Achtung</source>
-			</trans-unit>
 			<trans-unit id="module.title">
 				<source>TYPO3 Monitoring</source>
 				<target>TYPO3 Monitoring</target>
@@ -39,8 +36,8 @@
 				<target>Monitoringrequests werden in folgender Reihenfolge der Authorizer autorisiert:</target>
 			</trans-unit>
 			<trans-unit id="settings.api.secret.missing">
-				<source>Please set an API secret in your the EXT:monitoring settings!</source>
-				<target>Bitte ein Secret in den EXT_monitoring Settings hinterlegen!</target>
+				<source>Please set an API secret in your extensions settings.</source>
+				<target>Bitte ein Monitoring-Secret in den Extension-Settings hinterlegen</target>
 			</trans-unit>
 			<trans-unit id="auth.token.button">
 				<source>Show Authorization Token</source>
