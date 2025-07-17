@@ -35,6 +35,10 @@
 				<source>Monitoring requests will be authorized following this Authorizer order:</source>
 				<target>Monitoringrequests werden in folgender Reihenfolge der Authorizer autorisiert:</target>
 			</trans-unit>
+			<trans-unit id="settings.api.secret.missing">
+				<source>Please set an API secret in your extensions settings.</source>
+				<target>Bitte ein Monitoring-Secret in den Extension-Settings hinterlegen</target>
+			</trans-unit>
 			<trans-unit id="auth.token.button">
 				<source>Show Authorization Token</source>
 				<target>Autorisierungstoken anzeigen</target>
