@@ -69,8 +69,10 @@ final class MonitoringController
     /** @var non-empty-string $endpoint */
     private string $endpoint;
 
-    /** @var non-empty-string $secret */
+    /** @var string $secret */
     private string $secret;
+
+    private const string FLASHMESSAGE_QUEUE_IDENTIFIER = 'ext_monitoring_message_queue';
 
     /**
      * @throws ExtensionConfigurationPathDoesNotExistException
@@ -98,11 +100,7 @@ final class MonitoringController
             $this->endpoint = $endpoint;
         }
 
-        $secret = $this->extensionConfiguration->getSecretFromConfiguration();
-
-        if ($secret !== '') {
-            $this->secret = $secret;
-        }
+        $this->secret = $this->extensionConfiguration->getSecretFromConfiguration();
     }
 
     /**
@@ -122,6 +120,7 @@ final class MonitoringController
         }
 
         $template = $this->moduleTemplateFactory->create($request);
+        $messageQueue = $this->flashMessageService->getMessageQueueByIdentifier(self::FLASHMESSAGE_QUEUE_IDENTIFIER);
 
         /** @var NormalizedParams $params */
         $params = $request->getAttribute('normalizedParams');
@@ -129,13 +128,22 @@ final class MonitoringController
         $templateVariables = [
             'providers' => [],
             'providerInterface' => MonitoringProvider::class,
-            // This extension assumes the TokenAuthorizer to be used.
-            // @todo: Make optional in later iteration
-            'authHeaderName' => TokenAuthorizer::getAuthHeaderName(),
-            'authToken' => $this->getAuthToken(),
             'endpoint' => $params->getRequestHost() . $this->endpoint,
-            'flashMessageQueueIdentifier' => 'typo3_monitoring',
+            'monitoringMessageQueueIdentifier' => self::FLASHMESSAGE_QUEUE_IDENTIFIER,
         ];
+
+        if ($this->secret === '') {
+            $messageQueue->addMessage(
+                new FlashMessage(
+                    message: $this->getLanguageService()->sL(self::LOCALLANG_FILE . ':settings.api.secret.missing'),
+                    severity: ContextualFeedbackSeverity::WARNING,
+                    storeInSession: true,
+                )
+            );
+        } else {
+            $templateVariables['authHeaderName'] = TokenAuthorizer::getAuthHeaderName();
+            $templateVariables['authToken'] = $this->hashService->hmac($this->endpoint, $this->secret);
+        }
 
         foreach ($this->authorizers as $authorizer) {
             $templateVariables['authorizers'][$authorizer::class] = $authorizer::getPriority();
@@ -184,7 +192,7 @@ final class MonitoringController
     private function handleFlushProviderCache(string $providerClass, ServerRequestInterface $request): ResponseInterface
     {
         $languageService = $this->getLanguageService();
-        $flashMessageQueue = $this->flashMessageService->getMessageQueueByIdentifier('typo3_monitoring');
+        $messageQueue = $this->flashMessageService->getMessageQueueByIdentifier(self::FLASHMESSAGE_QUEUE_IDENTIFIER);
 
         if ($this->cacheManager->flushProviderCache($providerClass)) {
             $message = new FlashMessage(
@@ -206,7 +214,7 @@ final class MonitoringController
             );
         }
 
-        $flashMessageQueue->addMessage($message);
+        $messageQueue->addMessage($message);
 
         /** @phpstan-ignore method.internalClass, new.internalClass */
         return new RedirectResponse(
@@ -223,10 +231,5 @@ final class MonitoringController
         }
 
         return $this->languageServiceFactory->createFromUserPreferences(null);
-    }
-
-    private function getAuthToken(): string
-    {
-        return $this->hashService->hmac($this->endpoint, $this->secret);
     }
 }
