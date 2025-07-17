@@ -86,7 +86,7 @@ private function getHealthStatus(): array
     $status = [];
     foreach ($this->monitoringProviders as $provider) {
         if ($provider->isActive()) {
-            $status[$provider->getName()] = $provider->isHealthy();
+            $status[$provider->getName()] = $provider->execute()->isHealthy();
         }
     }
     return $status;
