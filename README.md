@@ -148,11 +148,6 @@ final class MyMonitoringProvider implements MonitoringProvider
         return true;
     }
 
-    public function isHealthy(): bool
-    {
-        return $this->execute()->isHealthy();
-    }
-
     public function execute(): MonitoringResult
     {
         // Your monitoring logic here
