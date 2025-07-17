@@ -1,6 +1,6 @@
 repository:
   name: 'typo3-monitoring'
-  description: '🚀 Extension for TYPO3 CMS that exposes health status information of selected components in your TYPO3 instance to be integrated in external monitoring.'
+  description: 'Extension for TYPO3 CMS that exposes health status information of selected components in your TYPO3 instance to be integrated in external monitoring.'
   homepage: 'https://github.com/mteu/typo3-monitoring'
   topics: 'typo3,extension,cache-warmup,warming,cache,xml-sitemap'
   private: false

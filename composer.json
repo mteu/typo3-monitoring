@@ -35,6 +35,7 @@
 		"shipmonk/composer-dependency-analyser": "*",
 		"ssch/typo3-rector": "^3.6",
 		"typo3/coding-standards": "^0.8.0",
+		"typo3/tailor": "^1.7",
 		"typo3/testing-framework": "^9.0"
 	},
 	"autoload": {
