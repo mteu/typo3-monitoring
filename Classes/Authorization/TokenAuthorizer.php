@@ -23,10 +23,10 @@ declare(strict_types=1);
 
 namespace mteu\Monitoring\Authorization;
 
-use mteu\Monitoring\Configuration\Extension;
+use mteu\Monitoring\Configuration\MonitoringConfiguration;
+use mteu\Monitoring\Configuration\MonitoringConfigurationFactory;
 use Psr\Http\Message\ServerRequestInterface;
-use TYPO3\CMS\Core\Configuration\Exception\ExtensionConfigurationExtensionNotConfiguredException;
-use TYPO3\CMS\Core\Configuration\Exception\ExtensionConfigurationPathDoesNotExistException;
+use TYPO3\CMS\Core\Configuration\ExtensionConfiguration;
 use TYPO3\CMS\Core\Crypto\HashService;
 
 /**
@@ -35,45 +35,43 @@ use TYPO3\CMS\Core\Crypto\HashService;
  * @author Martin Adler <mteu@mailbox.org>
  * @license GPL-2.0-or-later
  */
-final readonly class TokenAuthorizer implements Authorizer
+final class TokenAuthorizer implements Authorizer
 {
-    public const string AUTH_HEADER_NAME = 'X-TYPO3-MONITORING-AUTH';
-    private string $endpoint;
-    private string $secret;
-
-    /**
-     * @throws ExtensionConfigurationPathDoesNotExistException
-     * @throws ExtensionConfigurationExtensionNotConfiguredException
-     */
     public function __construct(
-        private Extension $extensionConfiguration,
-        private HashService $hashService,
+        private readonly HashService $hashService,
+        private readonly MonitoringConfigurationFactory $monitoringConfigurationFactory,
+        private MonitoringConfiguration $monitoringConfiguration,
     ) {
-        $this->endpoint = $this->extensionConfiguration->getEndpointFromConfiguration();
-        $this->secret = $this->extensionConfiguration->getSecretFromConfiguration();
+        $this->monitoringConfiguration = $this->monitoringConfigurationFactory->create();
+    }
+
+    public function isActive(): bool
+    {
+        return $this->monitoringConfiguration->tokenAuthorizerEnabled;
     }
 
     public function isAuthorized(ServerRequestInterface $request): bool
     {
-        $authToken = $request->getHeaderLine(self::AUTH_HEADER_NAME);
+        $authToken = $request->getHeaderLine($this->monitoringConfiguration->tokenAuthorizerAuthHeaderName);
 
         if ($authToken === '') {
             return false;
         }
 
-        // safely assert that the secret is not empty after being evaluated in the process() method
-        assert($this->secret !== '');
+        if ($this->monitoringConfiguration->tokenAuthorizerSecret === '') {
+            return false;
+        }
 
-        return $this->hashService->validateHmac($this->endpoint, $this->secret, $authToken);
+        return $this->hashService->validateHmac(
+            $this->monitoringConfiguration->endpoint,
+            $this->monitoringConfiguration->tokenAuthorizerSecret,
+            $authToken,
+        );
     }
 
     public static function getPriority(): int
     {
-        return 10;
-    }
-
-    public static function getAuthHeaderName(): string
-    {
-        return self::AUTH_HEADER_NAME;
+        return (new MonitoringConfigurationFactory(new ExtensionConfiguration()))
+            ->create()->adminUserAuthorizerPriority;
     }
 }

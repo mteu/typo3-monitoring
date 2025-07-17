@@ -92,8 +92,7 @@
 			"@sca:migrate"
 		],
 		"sca:migrate": [
-			"@sca:migrate:php",
-			"@sca:migrate:typo3"
+			"@sca:migrate:php"
 		],
 		"sca:migrate:php": [
 			"Composer\\Config::disableProcessTimeout",

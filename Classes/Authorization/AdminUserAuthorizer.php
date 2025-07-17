@@ -23,7 +23,10 @@ declare(strict_types=1);
 
 namespace mteu\Monitoring\Authorization;
 
+use mteu\Monitoring\Configuration\MonitoringConfiguration;
+use mteu\Monitoring\Configuration\MonitoringConfigurationFactory;
 use Psr\Http\Message\ServerRequestInterface;
+use TYPO3\CMS\Core\Configuration\ExtensionConfiguration;
 use TYPO3\CMS\Core\Context\Context;
 use TYPO3\CMS\Core\Context\Exception\AspectNotFoundException;
 
@@ -33,9 +36,20 @@ use TYPO3\CMS\Core\Context\Exception\AspectNotFoundException;
  * @author Martin Adler <mteu@mailbox.org>
  * @license GPL-2.0-or-later
  */
-final readonly class AdminUserAuthorizer implements Authorizer
+final class AdminUserAuthorizer implements Authorizer
 {
-    public function __construct(private Context $context) {}
+    public function __construct(
+        private readonly Context $context,
+        private readonly MonitoringConfigurationFactory $configurationFactory,
+        private MonitoringConfiguration $monitoringConfiguration,
+    ) {
+        $this->monitoringConfiguration = $this->configurationFactory->create();
+    }
+
+    public function isActive(): bool
+    {
+        return $this->monitoringConfiguration->adminUserAuthorizerEnabled;
+    }
 
     /**
      * @throws AspectNotFoundException
@@ -50,6 +64,7 @@ final readonly class AdminUserAuthorizer implements Authorizer
 
     public static function getPriority(): int
     {
-        return PHP_INT_MIN;
+        return (new MonitoringConfigurationFactory(new ExtensionConfiguration()))
+            ->create()->adminUserAuthorizerPriority;
     }
 }

@@ -24,7 +24,8 @@ declare(strict_types=1);
 namespace mteu\Monitoring\Middleware;
 
 use mteu\Monitoring\Authorization\Authorizer;
-use mteu\Monitoring\Configuration\Extension;
+use mteu\Monitoring\Configuration\MonitoringConfiguration;
+use mteu\Monitoring\Configuration\MonitoringConfigurationFactory;
 use mteu\Monitoring\Provider\MonitoringProvider;
 use Psr\Http\Message\ResponseFactoryInterface;
 use Psr\Http\Message\ResponseInterface;
@@ -33,8 +34,6 @@ use Psr\Http\Server\MiddlewareInterface;
 use Psr\Http\Server\RequestHandlerInterface;
 use Psr\Log\LoggerInterface;
 use Symfony\Component\DependencyInjection\Attribute\AutowireIterator;
-use TYPO3\CMS\Core\Configuration\Exception\ExtensionConfigurationExtensionNotConfiguredException;
-use TYPO3\CMS\Core\Configuration\Exception\ExtensionConfigurationPathDoesNotExistException;
 
 /**
  * MonitoringMiddleware.
@@ -44,15 +43,9 @@ use TYPO3\CMS\Core\Configuration\Exception\ExtensionConfigurationPathDoesNotExis
  */
 final readonly class MonitoringMiddleware implements MiddlewareInterface
 {
-    private string $endpoint;
+    private MonitoringConfiguration $configuration;
 
-    /**
-     * @throws ExtensionConfigurationPathDoesNotExistException
-     * @throws ExtensionConfigurationExtensionNotConfiguredException
-     */
     public function __construct(
-        private Extension $extensionConfiguration,
-
         /** @var iterable<MonitoringProvider> $monitoringProviders */
         #[AutowireIterator(tag: 'monitoring.provider')]
         private iterable $monitoringProviders,
@@ -60,15 +53,16 @@ final readonly class MonitoringMiddleware implements MiddlewareInterface
         /** @var iterable<Authorizer> $authorizers */
         #[AutowireIterator(tag: 'monitoring.authorizer', defaultPriorityMethod: 'getPriority')]
         private iterable $authorizers,
+        private MonitoringConfigurationFactory $monitoringConfigurationFactory,
         private ResponseFactoryInterface $responseFactory,
         private LoggerInterface $logger,
     ) {
-        $this->endpoint = $this->extensionConfiguration->getEndpointFromConfiguration();
+        $this->configuration = $this->monitoringConfigurationFactory->create();
     }
 
     public function process(ServerRequestInterface $request, RequestHandlerInterface $handler): ResponseInterface
     {
-        if ($this->endpoint === '') {
+        if ($this->configuration->endpoint === '') {
             return $handler->handle($request);
         }
 
@@ -125,7 +119,7 @@ final readonly class MonitoringMiddleware implements MiddlewareInterface
 
     private function isValid(ServerRequestInterface $request): bool
     {
-        return rtrim($request->getUri()->getPath(), '/') === $this->endpoint;
+        return rtrim($request->getUri()->getPath(), '/') === $this->configuration->endpoint;
     }
 
     private function isHttps(ServerRequestInterface $request): bool
