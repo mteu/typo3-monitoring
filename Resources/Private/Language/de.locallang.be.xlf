@@ -8,8 +8,8 @@
 				<target>TYPO3 Monitoring</target>
 			</trans-unit>
 			<trans-unit id="module.description">
-				<source>This API seeks to give an insight into the health status of various components within and around this TYPO3 instance.</source>
-				<target>Diese API bietet einen Einblick in den Gesundheitsstatus verschiedener Komponenten innerhalb und um diese TYPO3-Instanz.</target>
+				<source>This extension seeks to give an insight into the health state of various components in this TYPO3 instance.</source>
+				<target>Diese Extension bietet einen Einblick in den Gesundheitsstatus verschiedener Komponenten innerhalb dieser TYPO3-Instanz.</target>
 			</trans-unit>
 			<trans-unit id="providers.title">
 				<source>Available Providers</source>
@@ -33,7 +33,7 @@
 			</trans-unit>
 			<trans-unit id="authorizers.description">
 				<source>Monitoring requests will be authorized following this Authorizer order:</source>
-				<target>Monitoringrequests werden in folgender Reihenfolge der Authorizer autorisiert:</target>
+				<target>Monitoring-Requests werden in folgender Reihenfolge der Authorizer autorisiert:</target>
 			</trans-unit>
 			<trans-unit id="settings.api.secret.missing">
 				<source>Please set an API secret in your extensions settings.</source>
@@ -65,7 +65,7 @@
 			</trans-unit>
 			<trans-unit id="provider.cache.lifetime">
 				<source>The monitoring result is cached with an active cache lifetime of %s minutes.</source>
-				<target>Das Überwachungsergebnis ist mit einer aktiven Cache-Laufzeit von %s Minuten gecacht.</target>
+				<target>Das Monitoringergebnis ist mit einer Cache-Lebenszeit von %s Minuten gecacht.</target>
 			</trans-unit>
 			<trans-unit id="provider.cache.expires_at">
 				<source>Expires at %s</source>
@@ -77,7 +77,7 @@
 			</trans-unit>
 			<trans-unit id="provider.disabled.message">
 				<source>This provider is explicitly disabled at the moment.</source>
-				<target>Dieser Provider ist derzeit explizit deaktiviert.</target>
+				<target>Dieser Provider ist derzeit deaktiviert.</target>
 			</trans-unit>
 			<trans-unit id="providers.no_providers_found">
 				<source>No monitoring providers found.</source>
