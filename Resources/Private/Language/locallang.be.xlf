@@ -3,6 +3,9 @@
 	<file source-language="en" datatype="plaintext" original="EXT:monitoring/Resources/Private/Language/locallang.be.xlf">
 		<header/>
 		<body>
+			<trans-unit id="general.warning">
+				<source>Warning</source>
+			</trans-unit>
 			<trans-unit id="module.title">
 				<source>TYPO3 Monitoring</source>
 			</trans-unit>
@@ -26,6 +29,9 @@
 			</trans-unit>
 			<trans-unit id="authorizers.description">
 				<source>Monitoring requests will be authorized following this Authorizer order:</source>
+			</trans-unit>
+			<trans-unit id="settings.api.secret.missing">
+				<source>Please set an API secret in your the EXT:monitoring settings!</source>
 			</trans-unit>
 			<trans-unit id="auth.token.button">
 				<source>Show Authorization Token</source>
