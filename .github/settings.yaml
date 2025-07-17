@@ -60,6 +60,10 @@ labels:
     color: '#c0e596'
     description: 'Code base is being maintained'
 
+  - name: 'ci'
+    color: '#c0e596'
+    description: 'GitHub workflows maintained'
+
   - name: 'question'
     color: '#d876e3'
     description: 'Further information is requested'
