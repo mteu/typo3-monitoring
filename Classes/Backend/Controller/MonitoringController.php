@@ -24,9 +24,9 @@ declare(strict_types=1);
 namespace mteu\Monitoring\Backend\Controller;
 
 use mteu\Monitoring\Authorization\Authorizer;
-use mteu\Monitoring\Authorization\TokenAuthorizer;
 use mteu\Monitoring\Cache\MonitoringCacheManager;
-use mteu\Monitoring\Configuration\Extension;
+use mteu\Monitoring\Configuration\MonitoringConfiguration;
+use mteu\Monitoring\Configuration\MonitoringConfigurationFactory;
 use mteu\Monitoring\Handler\MonitoringExecutionHandler;
 use mteu\Monitoring\Provider\CacheableMonitoringProvider;
 use mteu\Monitoring\Provider\MonitoringProvider;
@@ -40,7 +40,6 @@ use TYPO3\CMS\Backend\Routing\UriBuilder;
 use TYPO3\CMS\Backend\Template\ModuleTemplateFactory;
 use TYPO3\CMS\Core\Authentication\BackendUserAuthentication;
 use TYPO3\CMS\Core\Configuration\Exception\ExtensionConfigurationExtensionNotConfiguredException;
-use TYPO3\CMS\Core\Configuration\Exception\ExtensionConfigurationPathDoesNotExistException;
 use TYPO3\CMS\Core\Crypto\HashService;
 use TYPO3\CMS\Core\Http\AllowedMethodsTrait;
 use TYPO3\CMS\Core\Http\Error\MethodNotAllowedException;
@@ -65,42 +64,30 @@ final class MonitoringController
     use SlugifyCacheKeyTrait;
 
     private const string LOCALLANG_FILE = 'LLL:EXT:monitoring/Resources/Private/Language/locallang.be.xlf';
-
-    /** @var non-empty-string $endpoint */
-    private string $endpoint;
-
-    /** @var string $secret */
-    private string $secret;
-
     private const string FLASHMESSAGE_QUEUE_IDENTIFIER = 'ext_monitoring_message_queue';
 
     /**
-     * @throws ExtensionConfigurationPathDoesNotExistException
      * @throws ExtensionConfigurationExtensionNotConfiguredException
      */
     public function __construct(
-        private readonly ModuleTemplateFactory $moduleTemplateFactory,
-        private readonly HashService $hashService,
-        private readonly Extension $extensionConfiguration,
-        private readonly FlashMessageService $flashMessageService,
-        private readonly LanguageServiceFactory $languageServiceFactory,
         /** @var MonitoringProvider[] $monitoringProviders */
         #[AutowireIterator(tag: 'monitoring.provider')]
         private readonly iterable $monitoringProviders,
+
         /** @var Authorizer[] $authorizers */
         #[AutowireIterator(tag: 'monitoring.authorizer', defaultPriorityMethod: 'getPriority')]
         private readonly iterable $authorizers,
+        private readonly ModuleTemplateFactory $moduleTemplateFactory,
+        private readonly HashService $hashService,
+        private readonly FlashMessageService $flashMessageService,
+        private readonly LanguageServiceFactory $languageServiceFactory,
         private readonly MonitoringExecutionHandler $executionHandler,
         private readonly MonitoringCacheManager $cacheManager,
+        private readonly MonitoringConfigurationFactory $monitoringConfigurationFactory,
+        private MonitoringConfiguration $monitoringConfiguration,
         private readonly UriBuilder $uriBuilder,
     ) {
-        $endpoint = $this->extensionConfiguration->getEndpointFromConfiguration();
-
-        if ($endpoint !== '') {
-            $this->endpoint = $endpoint;
-        }
-
-        $this->secret = $this->extensionConfiguration->getSecretFromConfiguration();
+        $this->monitoringConfiguration = $this->monitoringConfigurationFactory->create();
     }
 
     /**
@@ -128,24 +115,31 @@ final class MonitoringController
         $templateVariables = [
             'providers' => [],
             'providerInterface' => MonitoringProvider::class,
-            'endpoint' => $params->getRequestHost() . $this->endpoint,
+            'endpoint' => $params->getRequestHost() . $this->monitoringConfiguration->endpoint,
             'monitoringMessageQueueIdentifier' => self::FLASHMESSAGE_QUEUE_IDENTIFIER,
         ];
 
-        if ($this->secret === '') {
-            $messageQueue->addMessage(
-                new FlashMessage(
-                    message: $this->getLanguageService()->sL(self::LOCALLANG_FILE . ':settings.api.secret.missing'),
-                    severity: ContextualFeedbackSeverity::WARNING,
-                    storeInSession: true,
-                )
-            );
-        } else {
-            $templateVariables['authHeaderName'] = TokenAuthorizer::getAuthHeaderName();
-            $templateVariables['authToken'] = $this->hashService->hmac($this->endpoint, $this->secret);
+        if ($this->monitoringConfiguration->tokenAuthorizerEnabled) {
+
+            if ($this->monitoringConfiguration->tokenAuthorizerSecret === '') {
+                $messageQueue->addMessage(
+                    new FlashMessage(
+                        message: $this->getLanguageService()->sL(self::LOCALLANG_FILE . ':settings.api.secret.missing'),
+                        severity: ContextualFeedbackSeverity::WARNING,
+                        storeInSession: true,
+                    )
+                );
+            } else {
+                $templateVariables['authHeaderName'] = $this->monitoringConfiguration->tokenAuthorizerAuthHeaderName;
+                $templateVariables['authToken'] = $this->hashService->hmac(
+                    $this->monitoringConfiguration->endpoint,
+                    $this->monitoringConfiguration->tokenAuthorizerSecret,
+                );
+            }
         }
 
         foreach ($this->authorizers as $authorizer) {
+
             $templateVariables['authorizers'][$authorizer::class] = $authorizer::getPriority();
         }
 

@@ -33,10 +33,10 @@ return static function (RectorConfig $rectorConfig): void {
         __DIR__ . '/Tests',
     ]);
 
-    $rectorConfig->phpVersion(PhpVersion::PHP_84);
+    $rectorConfig->phpVersion(PhpVersion::PHP_83);
 
     $rectorConfig->sets([
-        LevelSetList::UP_TO_PHP_84,
+        LevelSetList::UP_TO_PHP_83,
         Typo3LevelSetList::UP_TO_TYPO3_13,
     ]);
 };
