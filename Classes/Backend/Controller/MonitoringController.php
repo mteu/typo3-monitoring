@@ -152,19 +152,20 @@ final class MonitoringController
         }
 
         foreach ($this->monitoringProviders as $monitoringProvider) {
+
+            $result = $this->executionHandler->executeProvider($monitoringProvider);
+
             $templateVariables['providers'][$monitoringProvider::class] = [
                 'name' => $monitoringProvider->getName(),
                 'isCached' => $monitoringProvider instanceof CacheableMonitoringProvider,
                 'isActive' => $monitoringProvider->isActive(),
-                'isHealthy' => $monitoringProvider->isHealthy(),
+                'isHealthy' => $result->isHealthy(),
                 'description' => $monitoringProvider->getDescription(),
             ];
 
             if ($monitoringProvider instanceof CacheableMonitoringProvider) {
                 $templateVariables['providers'][$monitoringProvider::class]['cacheLifetime'] = $monitoringProvider->getCacheLifetime();
             }
-
-            $result = $this->executionHandler->executeProvider($monitoringProvider);
 
             if ($result->hasSubResults()) {
                 $templateVariables['providers'][$monitoringProvider::class]['subResults'] = $result->getSubResults();
