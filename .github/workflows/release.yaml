@@ -38,8 +38,8 @@ jobs:
 
       - name: Create artefact
         run: |
-          php ~/.build/vendor/bin/tailor set-version "${{ github.ref_name }}"
-          php ~/.build/vendor/bin/tailor create-artefact "${{ github.ref_name }}"
+          php ~/.composer/vendor/bin/tailor set-version "${{ github.ref_name }}"
+          php ~/.composer/vendor/bin/tailor create-artefact "${{ github.ref_name }}"
 
       - name: Upload extension artefact
         uses: actions/upload-artifact@v4
@@ -71,7 +71,7 @@ jobs:
         with:
           generate_release_notes: true
           files: ${{ steps.download.outputs.download-path }}/${{ env.EXTENSION_ARTEFACT }}
-  
+
   # Publish to TER
   ter-publish:
     name: Publish on TER
@@ -102,7 +102,7 @@ jobs:
       # Release
       - name: Publish to TER
         run: |
-          php ~/.build/vendor/bin/tailor ter:publish \
+          php ~/.composer/vendor/bin/tailor ter:publish \
             --comment "${{ steps.get-comment.outputs.comment }}" \
             --artefact "${{ steps.download.outputs.download-path }}/${{ env.EXTENSION_ARTEFACT }}" \
             "${{ github.ref_name }}"
