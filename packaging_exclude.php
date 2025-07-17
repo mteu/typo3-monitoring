@@ -18,7 +18,7 @@ return [
         'CODEOWNERS',
         'composer.lock',
         'CONTRIBUTING.md',
-         # 'crowdin.yaml',
+        // 'crowdin.yaml',
         'editorconfig',
         'gitattributes',
         'gitignore',
