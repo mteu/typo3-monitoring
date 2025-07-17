@@ -28,6 +28,7 @@
 		"mteu/zealous-stan": "^0.6.3",
 		"phpstan/extension-installer": "*",
 		"phpstan/phpstan": "^2.1",
+		"phpunit/phpcov": "^10.0",
 		"phpunit/phpunit": "^11.5",
 		"roave/security-advisories": "dev-latest",
 		"saschaegerer/phpstan-typo3": "^2.1",
@@ -108,9 +109,9 @@
 			"@test:coverage:unit",
 			"@test:coverage:merge"
 		],
-		"test:coverage:merge": "phpcov merge --html .build/coverage/merged_html  --clover .build/coverage/clover.xml --text php://stdout .build/coverage/ ",
+		"test:coverage:merge": "phpcov merge --html .build/coverage/merged_html  --clover .build/coverage/clover.xml --text php://stdout .build/coverage/php ",
 		"test:coverage:unit": "phpunit -c phpunit.unit.xml",
-		"test:functional": "phpunit -c phpunit.functional.xml",
+		"test:functional": "phpunit -c phpunit.functional.xml ",
 		"test:unit": "phpunit -c phpunit.unit.xml",
 		"validate-dependencies": "composer-dependency-analyser"
 	}

@@ -76,12 +76,12 @@ jobs:
       # Upload artifact
       - name: Fix coverage path
         working-directory: .build/coverage
-        run: sed -i 's#/home/runner/work/typo3-monitoring/typo3-monitoring#${{ github.workspace }}#g' merged.clover.xml
+        run: sed -i 's#/home/runner/work/typo3-monitoring/typo3-monitoring#${{ github.workspace }}#g' clover.xml
       - name: Upload coverage artifact
         uses: actions/upload-artifact@v4
         with:
           name: coverage
-          path: .build/coverage/merged.clover.xml
+          path: .build/coverage/clover.xml
           retention-days: 7
 
   report-coverage:
