@@ -64,7 +64,6 @@ final readonly class MonitoringController
 
     private const string LOCALLANG_FILE = 'LLL:EXT:monitoring/Resources/Private/Language/locallang.be.xlf';
     private const string FLASHMESSAGE_QUEUE_IDENTIFIER = 'ext_monitoring_message_queue';
-
     private MonitoringConfiguration $monitoringConfiguration;
 
     public function __construct(
@@ -116,9 +115,9 @@ final readonly class MonitoringController
             'monitoringMessageQueueIdentifier' => self::FLASHMESSAGE_QUEUE_IDENTIFIER,
         ];
 
-        if ($this->monitoringConfiguration->tokenAuthorizerEnabled) {
+        if ($this->monitoringConfiguration->tokenAuthorizerConfiguration->isEnabled()) {
 
-            if ($this->monitoringConfiguration->tokenAuthorizerSecret === '') {
+            if ($this->monitoringConfiguration->tokenAuthorizerConfiguration->secret === '') {
                 $messageQueue->addMessage(
                     new FlashMessage(
                         message: $this->getLanguageService()->sL(self::LOCALLANG_FILE . ':settings.api.secret.missing'),
@@ -127,10 +126,10 @@ final readonly class MonitoringController
                     )
                 );
             } else {
-                $templateVariables['authHeaderName'] = $this->monitoringConfiguration->tokenAuthorizerAuthHeaderName;
+                $templateVariables['authHeaderName'] = $this->monitoringConfiguration->tokenAuthorizerConfiguration->authHeaderName;
                 $templateVariables['authToken'] = $this->hashService->hmac(
                     $this->monitoringConfiguration->endpoint,
-                    $this->monitoringConfiguration->tokenAuthorizerSecret,
+                    $this->monitoringConfiguration->tokenAuthorizerConfiguration->secret,
                 );
             }
         }

@@ -109,8 +109,8 @@
 		],
 		"test:coverage:merge": "phpcov merge --html .build/coverage/merged_html  --clover .build/coverage/clover.xml --text php://stdout .build/coverage/php ",
 		"test:coverage:unit": "phpunit -c phpunit.unit.xml",
-		"test:functional": "phpunit -c phpunit.functional.xml ",
-		"test:unit": "phpunit -c phpunit.unit.xml",
+		"test:functional": "phpunit -c phpunit.functional.xml --no-coverage",
+		"test:unit": "phpunit -c phpunit.unit.xml --no-coverage",
 		"validate-dependencies": "composer-dependency-analyser"
 	}
 }

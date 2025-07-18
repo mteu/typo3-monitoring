@@ -23,6 +23,7 @@ declare(strict_types=1);
 
 namespace mteu\Monitoring\Authorization;
 
+use mteu\Monitoring\Configuration\Authorizer\TokenAuthorizerConfiguration;
 use mteu\Monitoring\Configuration\MonitoringConfiguration;
 use mteu\Monitoring\Configuration\MonitoringConfigurationFactory;
 use Psr\Http\Message\ServerRequestInterface;
@@ -37,35 +38,37 @@ use TYPO3\CMS\Core\Crypto\HashService;
  */
 final readonly class TokenAuthorizer implements Authorizer
 {
-    private MonitoringConfiguration $monitoringConfiguration;
+    private MonitoringConfiguration $configuration;
+    private TokenAuthorizerConfiguration $tokenAuthorizerConfiguration;
 
     public function __construct(
         private HashService $hashService,
         private MonitoringConfigurationFactory $monitoringConfigurationFactory,
     ) {
-        $this->monitoringConfiguration = $this->monitoringConfigurationFactory->create();
+        $this->configuration = $this->monitoringConfigurationFactory->create();
+        $this->tokenAuthorizerConfiguration = $this->configuration->tokenAuthorizerConfiguration;
     }
 
     public function isActive(): bool
     {
-        return $this->monitoringConfiguration->tokenAuthorizerEnabled;
+        return $this->tokenAuthorizerConfiguration->isEnabled();
     }
 
     public function isAuthorized(ServerRequestInterface $request): bool
     {
-        $authToken = $request->getHeaderLine($this->monitoringConfiguration->tokenAuthorizerAuthHeaderName);
+        $authToken = $request->getHeaderLine($this->tokenAuthorizerConfiguration->authHeaderName);
 
         if ($authToken === '') {
             return false;
         }
 
-        if ($this->monitoringConfiguration->tokenAuthorizerSecret === '') {
+        if ($this->tokenAuthorizerConfiguration->secret === '') {
             return false;
         }
 
         return $this->hashService->validateHmac(
-            $this->monitoringConfiguration->endpoint,
-            $this->monitoringConfiguration->tokenAuthorizerSecret,
+            $this->configuration->endpoint,
+            $this->tokenAuthorizerConfiguration->secret,
             $authToken,
         );
     }
@@ -73,6 +76,6 @@ final readonly class TokenAuthorizer implements Authorizer
     public static function getPriority(): int
     {
         return (new MonitoringConfigurationFactory(new ExtensionConfiguration()))
-            ->create()->adminUserAuthorizerPriority;
+            ->create()->adminUserAuthorizerConfiguration->getPriority();
     }
 }
