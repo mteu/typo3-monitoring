@@ -35,6 +35,7 @@ use Symfony\Component\DependencyInjection\Attribute\AutoconfigureTag;
 #[AutoconfigureTag(name: 'monitoring.authorizer')]
 interface Authorizer
 {
+    public function isActive(): bool;
     public function isAuthorized(ServerRequestInterface $request): bool;
 
     /**

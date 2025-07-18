@@ -47,6 +47,11 @@ final readonly class AdminUserAuthorizer implements Authorizer
         $this->adminUserConfiguration = $this->configurationFactory->create()->adminUserAuthorizerConfiguration;
     }
 
+    public function isActive(): bool
+    {
+        return $this->adminUserConfiguration->isEnabled();
+    }
+
     /**
      * @throws AspectNotFoundException
      */
