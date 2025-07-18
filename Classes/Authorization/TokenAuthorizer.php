@@ -49,11 +49,6 @@ final readonly class TokenAuthorizer implements Authorizer
         $this->tokenAuthorizerConfiguration = $this->configuration->tokenAuthorizerConfiguration;
     }
 
-    public function isActive(): bool
-    {
-        return $this->tokenAuthorizerConfiguration->isEnabled();
-    }
-
     public function isAuthorized(ServerRequestInterface $request): bool
     {
         $authToken = $request->getHeaderLine($this->tokenAuthorizerConfiguration->authHeaderName);
