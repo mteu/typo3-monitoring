@@ -23,7 +23,7 @@
 		"mteu/zealous-stan": "^0.6.3",
 		"phpstan/extension-installer": "*",
 		"phpstan/phpstan": "^2.1",
-		"phpunit/phpcov": "^10.0",
+		"phpunit/phpcov": "^11.0",
 		"phpunit/phpunit": "^11.5",
 		"roave/security-advisories": "dev-latest",
 		"saschaegerer/phpstan-typo3": "^2.1",
