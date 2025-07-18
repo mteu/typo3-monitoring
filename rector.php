@@ -3,7 +3,7 @@
 declare(strict_types=1);
 
 /*
- * This file is part of the TYPO3 CMS extension "mteu/typo3-stream-writer".
+ * This file is part of the TYPO3 CMS extension "monitoring".
  *
  * Copyright (C) 2024 Martin Adler <mteu@mailbox.org>
  *
