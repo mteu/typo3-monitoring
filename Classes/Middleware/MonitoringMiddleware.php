@@ -43,7 +43,7 @@ use Symfony\Component\DependencyInjection\Attribute\AutowireIterator;
  */
 final readonly class MonitoringMiddleware implements MiddlewareInterface
 {
-    private MonitoringConfiguration $configuration;
+    private MonitoringConfiguration $monitoringConfiguration;
 
     public function __construct(
         /** @var iterable<MonitoringProvider> $monitoringProviders */
@@ -57,12 +57,12 @@ final readonly class MonitoringMiddleware implements MiddlewareInterface
         private ResponseFactoryInterface $responseFactory,
         private LoggerInterface $logger,
     ) {
-        $this->configuration = $this->monitoringConfigurationFactory->create();
+        $this->monitoringConfiguration = $this->monitoringConfigurationFactory->create();
     }
 
     public function process(ServerRequestInterface $request, RequestHandlerInterface $handler): ResponseInterface
     {
-        if ($this->configuration->endpoint === '') {
+        if ($this->monitoringConfiguration->endpoint === '') {
             return $handler->handle($request);
         }
 
@@ -119,7 +119,7 @@ final readonly class MonitoringMiddleware implements MiddlewareInterface
 
     private function isValid(ServerRequestInterface $request): bool
     {
-        return rtrim($request->getUri()->getPath(), '/') === $this->configuration->endpoint;
+        return rtrim($request->getUri()->getPath(), '/') === $this->monitoringConfiguration->endpoint;
     }
 
     private function isHttps(ServerRequestInterface $request): bool
