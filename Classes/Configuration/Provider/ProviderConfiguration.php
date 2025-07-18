@@ -1,5 +1,4 @@
 <?php
-
 declare(strict_types=1);
 
 /*
@@ -21,16 +20,15 @@ declare(strict_types=1);
  * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
-namespace mteu\Monitoring\Configuration\Authorizer;
+namespace mteu\Monitoring\Configuration\Provider;
 
 /**
- * AuthorizerConfiguration.
+ * ProviderConfiguration.
  *
  * @author Martin Adler <mteu@mailbox.org>
  * @license GPL-2.0-or-later
  */
-interface AuthorizerConfiguration
+interface ProviderConfiguration
 {
-    public function isEnabled(): bool;
-    public function getPriority(): int;
+    public function enabled(): bool;
 }
