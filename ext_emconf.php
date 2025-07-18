@@ -1,7 +1,7 @@
 <?php
 
 /*
- * This file is part of the TYPO3 CMS extension "mteu/typo3-monitoring".
+ * This file is part of the TYPO3 CMS extension "monitoring".
  *
  * Copyright (C) 2025 Martin Adler <mteu@mailbox.org>
  *
