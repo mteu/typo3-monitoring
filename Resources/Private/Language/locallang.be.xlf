@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <xliff version="1.2" xmlns="urn:oasis:names:tc:xliff:document:1.2">
-	<file source-language="en" datatype="plaintext" original="EXT:monitoring/Resources/Private/Language/locallang.be.xlf">
+	<file source-language="en" datatype="plaintext" original="EXT:monitoring/Resources/Pvate/Language/locallang.be.xlf">
 		<header/>
 		<body>
 			<trans-unit id="module.title">
@@ -28,7 +28,10 @@
 				<source>Monitoring requests will be authorized following this Authorizer order:</source>
 			</trans-unit>
 			<trans-unit id="settings.api.secret.missing">
-				<source>Please set an API secret in the Extension settings.</source>
+				<source>Please set a secret in the Extension settings to make the Token based authorization available.</source>
+			</trans-unit>
+			<trans-unit id="authorizers.priority">
+				<source>Priority:</source>
 			</trans-unit>
 			<trans-unit id="auth.token.button">
 				<source>Show Authorization Token</source>
@@ -47,6 +50,9 @@
 			</trans-unit>
 			<trans-unit id="status.inactive">
 				<source>inactive</source>
+			</trans-unit>
+			<trans-unit id="status.active">
+				<source>active</source>
 			</trans-unit>
 			<trans-unit id="provider.cache.lifetime">
 				<source>The monitoring result is cached with an active cache lifetime of %s minutes.</source>
@@ -68,6 +74,9 @@
 			</trans-unit>
 			<trans-unit id="authorizers.no_authorizers_found">
 				<source>No monitoring authorizers found.</source>
+			</trans-unit>
+			<trans-unit id="authorizers.no_authorizers_found.content">
+				<source>Authorizers must either be enabled in the extension configuration or implement %s to become available.</source>
 			</trans-unit>
 			<trans-unit id="detail.header.component">
 				<source>Component</source>

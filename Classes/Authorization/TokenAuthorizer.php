@@ -49,6 +49,13 @@ final readonly class TokenAuthorizer implements Authorizer
         $this->tokenAuthorizerConfiguration = $this->configuration->tokenAuthorizerConfiguration;
     }
 
+    public function isActive(): bool
+    {
+        return
+            $this->tokenAuthorizerConfiguration->isEnabled() &&
+            $this->tokenAuthorizerConfiguration->secret !== '';
+    }
+
     public function isAuthorized(ServerRequestInterface $request): bool
     {
         $authToken = $request->getHeaderLine($this->tokenAuthorizerConfiguration->authHeaderName);
@@ -71,6 +78,6 @@ final readonly class TokenAuthorizer implements Authorizer
     public static function getPriority(): int
     {
         return (new MonitoringConfigurationFactory(new ExtensionConfiguration()))
-            ->create()->adminUserAuthorizerConfiguration->getPriority();
+            ->create()->tokenAuthorizerConfiguration->getPriority();
     }
 }
