@@ -8,6 +8,7 @@ use mteu\Monitoring as Src;
 use mteu\Monitoring\Configuration\MonitoringConfigurationFactory;
 use PHPUnit\Framework;
 use PHPUnit\Framework\Attributes\Test;
+use PHPUnit\Framework\MockObject\MockObject;
 use TYPO3\CMS\Core\Configuration\ExtensionConfiguration;
 
 /**
@@ -21,7 +22,7 @@ use TYPO3\CMS\Core\Configuration\ExtensionConfiguration;
 final class MonitoringConfigurationTest extends Framework\TestCase
 {
     private MonitoringConfigurationFactory $subject;
-    private ExtensionConfiguration $extensionConfiguration;
+    private ExtensionConfiguration&MockObject $extensionConfiguration;
 
     protected function setUp(): void
     {
@@ -31,7 +32,7 @@ final class MonitoringConfigurationTest extends Framework\TestCase
 
     /**
      * @param array<string, mixed> $config
-     * @param array<string, mixed> $expected
+     * @param array{endpoint: string, tokenAuthorizer: array{enabled: bool, secret: string, authHeaderName: string, priority: int}, adminUserAuthorizer: array{enabled: bool, priority: int}} $expected
      */
     #[Test]
     #[Framework\Attributes\DataProvider('provideExtensionConfiguration')]
