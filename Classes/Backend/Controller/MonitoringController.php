@@ -39,7 +39,6 @@ use TYPO3\CMS\Backend\Routing\Exception\RouteNotFoundException;
 use TYPO3\CMS\Backend\Routing\UriBuilder;
 use TYPO3\CMS\Backend\Template\ModuleTemplateFactory;
 use TYPO3\CMS\Core\Authentication\BackendUserAuthentication;
-use TYPO3\CMS\Core\Configuration\Exception\ExtensionConfigurationExtensionNotConfiguredException;
 use TYPO3\CMS\Core\Crypto\HashService;
 use TYPO3\CMS\Core\Http\AllowedMethodsTrait;
 use TYPO3\CMS\Core\Http\Error\MethodNotAllowedException;
@@ -58,7 +57,7 @@ use TYPO3\CMS\Core\Type\ContextualFeedbackSeverity;
  * @license GPL-2.0-or-later
  */
 #[AsController]
-final class MonitoringController
+final readonly class MonitoringController
 {
     use AllowedMethodsTrait;
     use SlugifyCacheKeyTrait;
@@ -66,26 +65,24 @@ final class MonitoringController
     private const string LOCALLANG_FILE = 'LLL:EXT:monitoring/Resources/Private/Language/locallang.be.xlf';
     private const string FLASHMESSAGE_QUEUE_IDENTIFIER = 'ext_monitoring_message_queue';
 
-    /**
-     * @throws ExtensionConfigurationExtensionNotConfiguredException
-     */
+    private MonitoringConfiguration $monitoringConfiguration;
+
     public function __construct(
         /** @var MonitoringProvider[] $monitoringProviders */
         #[AutowireIterator(tag: 'monitoring.provider')]
-        private readonly iterable $monitoringProviders,
+        private iterable $monitoringProviders,
 
         /** @var Authorizer[] $authorizers */
         #[AutowireIterator(tag: 'monitoring.authorizer', defaultPriorityMethod: 'getPriority')]
-        private readonly iterable $authorizers,
-        private readonly ModuleTemplateFactory $moduleTemplateFactory,
-        private readonly HashService $hashService,
-        private readonly FlashMessageService $flashMessageService,
-        private readonly LanguageServiceFactory $languageServiceFactory,
-        private readonly MonitoringExecutionHandler $executionHandler,
-        private readonly MonitoringCacheManager $cacheManager,
-        private readonly MonitoringConfigurationFactory $monitoringConfigurationFactory,
-        private MonitoringConfiguration $monitoringConfiguration,
-        private readonly UriBuilder $uriBuilder,
+        private iterable $authorizers,
+        private ModuleTemplateFactory $moduleTemplateFactory,
+        private HashService $hashService,
+        private FlashMessageService $flashMessageService,
+        private LanguageServiceFactory $languageServiceFactory,
+        private MonitoringExecutionHandler $executionHandler,
+        private MonitoringCacheManager $cacheManager,
+        private MonitoringConfigurationFactory $monitoringConfigurationFactory,
+        private UriBuilder $uriBuilder,
     ) {
         $this->monitoringConfiguration = $this->monitoringConfigurationFactory->create();
     }

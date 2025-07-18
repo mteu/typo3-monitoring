@@ -35,12 +35,13 @@ use TYPO3\CMS\Core\Crypto\HashService;
  * @author Martin Adler <mteu@mailbox.org>
  * @license GPL-2.0-or-later
  */
-final class TokenAuthorizer implements Authorizer
+final readonly class TokenAuthorizer implements Authorizer
 {
+    private MonitoringConfiguration $monitoringConfiguration;
+
     public function __construct(
-        private readonly HashService $hashService,
-        private readonly MonitoringConfigurationFactory $monitoringConfigurationFactory,
-        private MonitoringConfiguration $monitoringConfiguration,
+        private HashService $hashService,
+        private MonitoringConfigurationFactory $monitoringConfigurationFactory,
     ) {
         $this->monitoringConfiguration = $this->monitoringConfigurationFactory->create();
     }

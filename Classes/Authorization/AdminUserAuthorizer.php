@@ -36,12 +36,13 @@ use TYPO3\CMS\Core\Context\Exception\AspectNotFoundException;
  * @author Martin Adler <mteu@mailbox.org>
  * @license GPL-2.0-or-later
  */
-final class AdminUserAuthorizer implements Authorizer
+final readonly class AdminUserAuthorizer implements Authorizer
 {
+    private MonitoringConfiguration $monitoringConfiguration;
+
     public function __construct(
-        private readonly Context $context,
-        private readonly MonitoringConfigurationFactory $configurationFactory,
-        private MonitoringConfiguration $monitoringConfiguration,
+        private Context $context,
+        private MonitoringConfigurationFactory $configurationFactory,
     ) {
         $this->monitoringConfiguration = $this->configurationFactory->create();
     }
