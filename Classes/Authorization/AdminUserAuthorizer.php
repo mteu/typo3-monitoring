@@ -38,9 +38,19 @@ use TYPO3\CMS\Core\Context\Exception\AspectNotFoundException;
  */
 final readonly class AdminUserAuthorizer implements Authorizer
 {
+    private AdminUserAuthorizerConfiguration $adminUserConfiguration;
+
     public function __construct(
         private Context $context,
-    ) {}
+        private MonitoringConfigurationFactory $configurationFactory,
+    ) {
+        $this->adminUserConfiguration = $this->configurationFactory->create()->adminUserAuthorizerConfiguration;
+    }
+
+    public function isActive(): bool
+    {
+        return $this->adminUserConfiguration->isEnabled();
+    }
 
     /**
      * @throws AspectNotFoundException
