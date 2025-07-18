@@ -1,0 +1,50 @@
+<html
+    data-namespace-typo3-fluid="true"
+    xmlns:core="http://typo3.org/ns/TYPO3/CMS/Core/ViewHelpers"
+    xmlns:f="http://typo3.org/ns/TYPO3/CMS/Fluid/ViewHelpers"
+    xmlns:monitoring="http://typo3.org/ns/mteu/Monitoring/ViewHelper/Backend"
+
+>
+
+<f:layout name="Module" />
+
+<tr>
+    <td>{className -> monitoring:className()}</td>
+    <td>
+        <f:translate key="LLL:EXT:monitoring/Resources/Private/Language/locallang.be.xlf:authorizers.priority" /> {authorizer.priority}
+    </td>
+    <td>
+        <f:if condition="{className -> monitoring:className()} == 'TokenAuthorizer'">
+            <f:if condition="{authorizer.enabled}">
+                <f:if condition="{authorizer.authToken}">
+                    <f:else>
+                        <core:icon identifier="overlay-warning" size="small" />
+                        <f:translate key="LLL:EXT:monitoring/Resources/Private/Language/locallang.be.xlf:settings.api.secret.missing" />
+                    </f:else>
+                </f:if>
+            </f:if>
+        </f:if>
+    </td>
+    <td class="col-control">
+        <div class="btn-group" role="group">
+            <f:if condition="{className -> monitoring:className()} == 'TokenAuthorizer'">
+                <f:if condition="{authorizer.authToken} && {endpoint} && {authorizer.authHeaderName} && {authorizer.isActive}">
+                    <button type="button" class="btn btn-default t3js-modal-trigger" data-title="{f:translate(key: 'LLL:EXT:monitoring/Resources/Private/Language/locallang.be.xlf:auth.token.modal.title')}" data-content="curl -s -H '{authorizer.authHeaderName}: {authorizer.authToken}' {endpoint} | jq '.'"><f:translate key="LLL:EXT:monitoring/Resources/Private/Language/locallang.be.xlf:auth.token.button" /></button>
+                </f:if>
+            </f:if>
+            <span class="btn {f:if(condition: authorizer.isActive, then: 'btn-success', else: 'btn-danger')}">
+                <f:if condition="{authorizer.isActive}">
+                    <f:then><f:translate key="LLL:EXT:monitoring/Resources/Private/Language/locallang.be.xlf:status.active" /></f:then>
+                    <f:else><f:translate key="LLL:EXT:monitoring/Resources/Private/Language/locallang.be.xlf:status.inactive" /></f:else>
+                </f:if>
+            </span>
+        </div>
+    </td>
+</tr>
+
+
+
+
+
+
+</html>

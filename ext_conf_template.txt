@@ -1,4 +1,27 @@
-# cat=api//10; type=string; label=Route
-api.endpoint=/monitor/health
-# cat=api//20; type=string; label=Secret
-api.secret=
+api {
+    # cat=api/endpoint; type=string; label=Endpoint Route
+    endpoint=/monitor/health
+}
+
+authorizer {
+    mteu\Monitoring\Authorization\TokenAuthorizer {
+        # cat=TokenAuthorizer/Enabled//10; type=boolean; label=Enable TokenAuthorizer: Enables the access to health status via Token in the Request Header
+        enabled=1
+        # cat=TokenAuthorizer/Secret//20; type=string; label=Secret:Additional secret used for AuthToken generation
+        secret=
+        # cat=TokenAuthorizer/Authorization Header//30; type=string; label=Secret:Additional secret used for AuthToken generation
+        authHeaderName=X-TYPO3-MONITORING-AUTH
+        # cat=TokenAuthorizer/Priority//40; type=string; label=Priority:Set the priority of this Authorizer. Higher value will be tried first.
+        priority=10
+    }
+    mteu\Monitoring\Authorization\AdminUserAuthorizer {
+        # cat=AdminUserAuthorizer/Enabled; type=boolean; label=Enable AdminUserAuthorizer:Enable access to health status endpoint for logged in backend admins
+        enabled=1
+        # cat=AdminUserAuthorizer/Priority; type=integer; label=Priority:Set the priority of this Authorizer. Higher value will be tried first.
+        priority=-10
+    }
+}
+
+provider {
+    # ..
+}
