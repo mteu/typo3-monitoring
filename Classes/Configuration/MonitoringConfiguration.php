@@ -4,6 +4,9 @@ declare(strict_types=1);
 
 namespace mteu\Monitoring\Configuration;
 
+use mteu\Monitoring\Configuration\Authorizer\AdminUserAuthorizerConfiguration;
+use mteu\Monitoring\Configuration\Authorizer\TokenAuthorizerConfiguration;
+
 /**
  * MonitoringConfiguration DTO.
  *
@@ -14,11 +17,7 @@ final readonly class MonitoringConfiguration
 {
     public function __construct(
         public string $endpoint,
-        public bool $tokenAuthorizerEnabled,
-        public string $tokenAuthorizerSecret,
-        public string $tokenAuthorizerAuthHeaderName,
-        public int $tokenAuthorizerPriority,
-        public bool $adminUserAuthorizerEnabled,
-        public int $adminUserAuthorizerPriority
+        public TokenAuthorizerConfiguration $tokenAuthorizerConfiguration,
+        public AdminUserAuthorizerConfiguration $adminUserAuthorizerConfiguration,
     ) {}
 }
