@@ -51,7 +51,7 @@ composer require mteu/typo3-monitoring
    - Go to **Admin Tools → Settings → Extension Configuration**
    - Select `monitoring`
    - Set the monitoring endpoint path (default: `/monitor/health`)
-   - Configure a secret for HMAC authentication
+   - Configure authorizer settings for token-based and admin user authentication
 
 2. Or better yet configure the settings programmatically:
     ```php
@@ -65,7 +65,18 @@ composer require mteu/typo3-monitoring
             'monitoring' => [
                 'api' => [
                     'endpoint' => '/monitor/health',
-                    'secret' => 'foobarsecret',
+                ],
+                'authorizer' => [
+                    'mteu\Monitoring\Authorization\TokenAuthorizer' => [
+                        'enabled' => true,
+                        'secret' => 'your-secure-secret',
+                        'authHeaderName' => 'X-TYPO3-MONITORING-AUTH',
+                        'priority' => 10,
+                    ],
+                    'mteu\Monitoring\Authorization\AdminUserAuthorizer' => [
+                        'enabled' => true,
+                        'priority' => -10,
+                    ],
                 ],
             ],
         ],
@@ -86,11 +97,19 @@ This extension ships two authentication methods natively:
 Access the endpoint while logged in as a TYPO3 backend administrator.
 
 #### Token-based Authentication
-Add the `X-TYPO3-MONITORING-AUTH` header with an HMAC signature:
+Add the configured auth header (default: `X-TYPO3-MONITORING-AUTH`) with an HMAC signature:
 
 ```bash
 curl -s -H "X-TYPO3-MONITORING-AUTH: <auth-token>" \
      https://<your-site>/monitor/health | jq '.'
+```
+
+**Token Generation:**
+The HMAC token is generated using TYPO3's HashService with the endpoint path and your configured secret:
+
+```php
+$hashService = \TYPO3\CMS\Core\Utility\GeneralUtility::makeInstance(\TYPO3\CMS\Core\Crypto\HashService::class);
+$token = $hashService->hmac('/monitor/health', 'your-secure-secret');
 ```
 
 ## 📝 Response Format
