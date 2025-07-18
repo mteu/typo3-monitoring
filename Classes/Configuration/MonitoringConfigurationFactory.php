@@ -87,6 +87,12 @@ final readonly class MonitoringConfigurationFactory
         if ($value === null) {
             return '';
         }
-        return (string)$value;
+        if (is_string($value)) {
+            return $value;
+        }
+        if (is_scalar($value)) {
+            return (string)$value;
+        }
+        return '';
     }
 }
