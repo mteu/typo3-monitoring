@@ -16,18 +16,44 @@ secret in combination with the TYPO3 encryption key.
 authentication
 
 #### ⚙️ Configuration
-1. Set the secret in Extension Configuration:
-   ```
-   api.secret = your-secure-secret-key
+1. Configure in Extension Configuration or programmatically:
+   ```php
+   # config/system/settings.php
+   'EXTENSIONS' => [
+       'monitoring' => [
+           'authorizer' => [
+               'mteu\Monitoring\Authorization\TokenAuthorizer' => [
+                   'enabled' => true,
+                   'secret' => 'your-secure-secret-key',
+                   'authHeaderName' => 'X-TYPO3-MONITORING-AUTH',
+                   'priority' => 10,
+               ],
+           ],
+       ],
+   ];
    ```
 
 2. Generate HMAC tokens for your monitoring endpoint.
 
 #### Usage
-Include the HMAC token in the `X-TYPO3-MONITORING-AUTH` header:
+Include the HMAC token in the configured auth header (default: `X-TYPO3-MONITORING-AUTH`):
 
 ```bash
 curl -H "X-TYPO3-MONITORING-AUTH: your-hmac-token" \
+     https://yoursite.com/monitor/health
+```
+
+**Custom Header Name:**
+You can configure a custom header name:
+
+```php
+'authHeaderName' => 'X-Custom-Auth-Header',
+```
+
+Then use it in your requests:
+
+```bash
+curl -H "X-Custom-Auth-Header: your-hmac-token" \
      https://yoursite.com/monitor/health
 ```
 
@@ -37,18 +63,50 @@ the endpoint path and the configured secret on top of the TYPO3 encryption key
 for your instance:
 
 ```php
+$hashService = \TYPO3\CMS\Core\Utility\GeneralUtility::makeInstance(
+    \TYPO3\CMS\Core\Crypto\HashService::class
+);
 $configuredEndpoint = '/monitor/health';
 $additionalSecret = 'your-secret-key';
-$typo3HashService->hmac($configuredEndpoint, $additionalSecret)
+$token = $hashService->hmac($configuredEndpoint, $additionalSecret);
+```
+
+**Configuration Access:**
+The token authorizer reads its configuration from the new configuration structure:
+
+```php
+// Access configuration
+$config = $monitoringConfiguration->tokenAuthorizerConfiguration;
+$secret = $config->secret;
+$headerName = $config->authHeaderName;
+$isEnabled = $config->isEnabled();
+$priority = $config->getPriority();
 ```
 
 ### Admin User Authorization
-The `AdminUserAuthorizer` allows access for logged-in TYPO3 backend user.
+The `AdminUserAuthorizer` allows access for logged-in TYPO3 backend users.
 
 #### ⚙️ Configuration
-No configuration required. The authorizer automatically checks if:
+Configure to enable/disable and set priority:
+
+```php
+# config/system/settings.php
+'EXTENSIONS' => [
+    'monitoring' => [
+        'authorizer' => [
+            'mteu\Monitoring\Authorization\AdminUserAuthorizer' => [
+                'enabled' => true,
+                'priority' => -10,
+            ],
+        ],
+    ],
+];
+```
+
+The authorizer automatically checks if:
 - User is logged in to the TYPO3 backend
 - User has administrator privileges
+- The authorizer is enabled in configuration
 
 #### Usage
 1. Log in to the TYPO3 backend as an administrator
@@ -56,8 +114,15 @@ No configuration required. The authorizer automatically checks if:
 3. No additional headers or authentication required
 
 #### Priority
-The `AdminUserAuthorizer` has the lowest priority (`PHP_INT_MIN`) and serves
-as a fallback for development and testing.
+The `AdminUserAuthorizer` has a default priority of `-10` and serves
+as a fallback for development and testing. You can configure a custom priority:
+
+```php
+'mteu\Monitoring\Authorization\AdminUserAuthorizer' => [
+    'enabled' => true,
+    'priority' => 100, // Higher priority than default
+],
+```
 
 ## 🔨 Custom Authorizers
 
@@ -220,9 +285,31 @@ Authorizers are evaluated in priority order (highest to lowest). The first
 authorizer that grants access allows the request to proceed.
 
 ### Default Priorities
-- `AdminUserAuthorizer`: `PHP_INT_MIN` (lowest priority)
+- `AdminUserAuthorizer`: `-10` (lower priority, fallback)
 - `TokenAuthorizer`: `10` (default priority)
 - Custom authorizers: Define your own priority
+
+### Configuration-Based Priorities
+Priorities can be configured per authorizer:
+
+```php
+'EXTENSIONS' => [
+    'monitoring' => [
+        'authorizer' => [
+            'mteu\Monitoring\Authorization\TokenAuthorizer' => [
+                'enabled' => true,
+                'priority' => 100, // High priority
+                'secret' => 'token-secret',
+                'authHeaderName' => 'X-TYPO3-MONITORING-AUTH',
+            ],
+            'mteu\Monitoring\Authorization\AdminUserAuthorizer' => [
+                'enabled' => true,
+                'priority' => 50, // Medium priority
+            ],
+        ],
+    ],
+];
+```
 
 ### Priority Guidelines
 - **High Priority (500+)**: Strict security requirements

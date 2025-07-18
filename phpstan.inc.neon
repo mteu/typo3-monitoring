@@ -4,6 +4,7 @@ parameters:
 		-	Configuration
 		- Tests
 	level: max
+	treatPhpDocTypesAsCertain: false
 
 #	docblock:
 #		copyrightIdentifier: 'Copyright (C) 2025'

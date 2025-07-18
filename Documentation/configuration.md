@@ -11,18 +11,39 @@ return [
         'monitoring' => [
             'api' => [
                 'endpoint' => '/monitor/health',
-                'secret' => 'your-secure-secret',
+            ],
+            'authorizer' => [
+                'mteu\Monitoring\Authorization\TokenAuthorizer' => [
+                    'enabled' => true,
+                    'secret' => 'your-secure-secret',
+                    'authHeaderName' => 'X-TYPO3-MONITORING-AUTH',
+                    'priority' => 10,
+                ],
+                'mteu\Monitoring\Authorization\AdminUserAuthorizer' => [
+                    'enabled' => true,
+                    'priority' => -10,
+                ],
             ],
         ],
     ],
 ];
 ```
 
-### Options
+### API Configuration
 
-- **`api.endpoint`**: URL path for monitoring endpoint
-(default: `/monitor/health`)
-- **`api.secret`**: Secret key for HMAC authentication
+- **`api.endpoint`**: URL path for monitoring endpoint (default: `/monitor/health`)
+
+### Authorizer Configuration
+
+#### Token Authorizer
+- **`enabled`**: Enable/disable token-based authentication (default: `false`)
+- **`secret`**: Secret key for HMAC authentication (default: `''`)
+- **`authHeaderName`**: HTTP header name for auth token (default: `''`)
+- **`priority`**: Authorization priority, higher = checked first (default: `10`)
+
+#### Admin User Authorizer
+- **`enabled`**: Enable/disable admin user authentication (default: `false`)
+- **`priority`**: Authorization priority, higher = checked first (default: `-10`)
 
 ## Provider Configuration
 
@@ -41,10 +62,61 @@ services:
 
 Multiple authorizers are supported, evaluated by priority (highest first).
 
-Set custom priority:
+### Built-in Authorizers
+
+#### Token Authorizer
+Provides HMAC-based authentication using a shared secret:
+
 ```php
-public static function getPriority(): int
+'mteu\Monitoring\Authorization\TokenAuthorizer' => [
+    'enabled' => true,
+    'secret' => 'your-secure-secret',
+    'authHeaderName' => 'X-TYPO3-MONITORING-AUTH',
+    'priority' => 10,
+],
+```
+
+#### Admin User Authorizer
+Allows access for logged-in TYPO3 backend administrators:
+
+```php
+'mteu\Monitoring\Authorization\AdminUserAuthorizer' => [
+    'enabled' => true,
+    'priority' => -10,
+],
+```
+
+### Custom Authorizers
+
+For custom authorizers, implement the `Authorizer` interface and set priority:
+
+```php
+public function getPriority(): int
 {
     return 1000; // Higher = checked first
 }
+```
+
+### Configuration Structure
+
+The configuration uses a nested structure with type-safe defaults:
+
+```php
+// Configuration factory creates strongly-typed objects
+$config = $factory->create();
+
+// Access endpoint
+$endpoint = $config->endpoint;
+
+// Access token authorizer settings
+$tokenConfig = $config->tokenAuthorizerConfiguration;
+$isEnabled = $tokenConfig->isEnabled();
+$secret = $tokenConfig->secret;
+$headerName = $tokenConfig->authHeaderName;
+$priority = $tokenConfig->getPriority();
+
+// Access admin user authorizer settings
+$adminConfig = $config->adminUserAuthorizerConfiguration;
+$isEnabled = $adminConfig->isEnabled();
+$priority = $adminConfig->getPriority();
 ```

@@ -36,5 +36,9 @@ use Symfony\Component\DependencyInjection\Attribute\AutoconfigureTag;
 interface Authorizer
 {
     public function isAuthorized(ServerRequestInterface $request): bool;
+
+    /**
+     * Static ::getPriority() used in the DI autowiring for sorting.
+     */
     public static function getPriority(): int;
 }
