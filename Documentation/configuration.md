@@ -31,7 +31,8 @@ return [
 
 ### API Configuration
 
-- **`api.endpoint`**: URL path for monitoring endpoint (default: `/monitor/health`)
+- **`api.endpoint`**: URL path for monitoring endpoint
+- (default: `/monitor/health`)
 
 ### Authorizer Configuration
 
@@ -39,11 +40,13 @@ return [
 - **`enabled`**: Enable/disable token-based authentication (default: `false`)
 - **`secret`**: Secret key for HMAC authentication (default: `''`)
 - **`authHeaderName`**: HTTP header name for auth token (default: `''`)
-- **`priority`**: Authorization priority, higher = checked first (default: `10`)
+- **`priority`**: Authorization priority, higher = checked first
+(default: `10`)
 
 #### Admin User Authorizer
 - **`enabled`**: Enable/disable admin user authentication (default: `false`)
-- **`priority`**: Authorization priority, higher = checked first (default: `-10`)
+- **`priority`**: Authorization priority, higher = checked first
+- (default: `-10`)
 
 ## Provider Configuration
 

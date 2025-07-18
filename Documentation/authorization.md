@@ -36,7 +36,8 @@ authentication
 2. Generate HMAC tokens for your monitoring endpoint.
 
 #### Usage
-Include the HMAC token in the configured auth header (default: `X-TYPO3-MONITORING-AUTH`):
+Include the HMAC token in the configured auth header
+(default: `X-TYPO3-MONITORING-AUTH`):
 
 ```bash
 curl -H "X-TYPO3-MONITORING-AUTH: your-hmac-token" \
@@ -72,7 +73,8 @@ $token = $hashService->hmac($configuredEndpoint, $additionalSecret);
 ```
 
 **Configuration Access:**
-The token authorizer reads its configuration from the new configuration structure:
+The token authorizer reads its configuration from the new configuration
+structure:
 
 ```php
 // Access configuration
