@@ -12,7 +12,7 @@
     <table class="table table-striped">
         <tbody>
             <f:for each="{authorizers}" as="authorizer" key="class" iteration="iterator">
-                <f:render partial="Backend/Authorizer/Item" arguments="{authorizer: authorizer, className: class}" />
+                <f:render partial="Backend/Authorizer/Item" arguments="{authorizer: authorizer, className: class, endpoint: endpoint}" />
             </f:for>
         </tbody>
     </table>
