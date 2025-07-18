@@ -47,7 +47,7 @@
 
     <f:if condition="{authorizers}">
         <f:then>
-            <f:render partial="Backend/Authorizer/List" arguments="{authorizers: authorizers}" />
+            <f:render partial="Backend/Authorizer/List" arguments="{authorizers: authorizers, endpoint: endpoint}" />
         </f:then>
         <f:else>
             <div class="alert alert-info">
