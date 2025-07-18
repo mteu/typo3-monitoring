@@ -9,7 +9,7 @@ authorizer {
         enabled=1
         # cat=TokenAuthorizer/Secret//20; type=string; label=Secret:Additional secret used for AuthToken generation
         secret=
-        # cat=TokenAuthorizer/Secret//30; type=string; label=Secret:Additional secret used for AuthToken generation
+        # cat=TokenAuthorizer/Authorization Header//30; type=string; label=Secret:Additional secret used for AuthToken generation
         authHeaderName=X-TYPO3-MONITORING-AUTH
         # cat=TokenAuthorizer/Priority//40; type=string; label=Priority:Set the priority of this Authorizer. Higher value will be tried first.
         priority=10
@@ -23,5 +23,5 @@ authorizer {
 }
 
 provider {
-
+    # ..
 }
