@@ -26,7 +26,8 @@ namespace mteu\Monitoring\Backend\Controller;
 use mteu\Monitoring\Authorization\Authorizer;
 use mteu\Monitoring\Authorization\TokenAuthorizer;
 use mteu\Monitoring\Cache\MonitoringCacheManager;
-use mteu\Monitoring\Configuration\Extension;
+use mteu\Monitoring\Configuration\MonitoringConfiguration;
+use mteu\Monitoring\Configuration\MonitoringConfigurationFactory;
 use mteu\Monitoring\Handler\MonitoringExecutionHandler;
 use mteu\Monitoring\Provider\CacheableMonitoringProvider;
 use mteu\Monitoring\Provider\MonitoringProvider;
@@ -39,8 +40,6 @@ use TYPO3\CMS\Backend\Routing\Exception\RouteNotFoundException;
 use TYPO3\CMS\Backend\Routing\UriBuilder;
 use TYPO3\CMS\Backend\Template\ModuleTemplateFactory;
 use TYPO3\CMS\Core\Authentication\BackendUserAuthentication;
-use TYPO3\CMS\Core\Configuration\Exception\ExtensionConfigurationExtensionNotConfiguredException;
-use TYPO3\CMS\Core\Configuration\Exception\ExtensionConfigurationPathDoesNotExistException;
 use TYPO3\CMS\Core\Crypto\HashService;
 use TYPO3\CMS\Core\Http\AllowedMethodsTrait;
 use TYPO3\CMS\Core\Http\Error\MethodNotAllowedException;
@@ -59,48 +58,33 @@ use TYPO3\CMS\Core\Type\ContextualFeedbackSeverity;
  * @license GPL-2.0-or-later
  */
 #[AsController]
-final class MonitoringController
+final readonly class MonitoringController
 {
     use AllowedMethodsTrait;
     use SlugifyCacheKeyTrait;
 
     private const string LOCALLANG_FILE = 'LLL:EXT:monitoring/Resources/Private/Language/locallang.be.xlf';
-
-    /** @var non-empty-string $endpoint */
-    private string $endpoint;
-
-    /** @var string $secret */
-    private string $secret;
-
     private const string FLASHMESSAGE_QUEUE_IDENTIFIER = 'ext_monitoring_message_queue';
+    private MonitoringConfiguration $monitoringConfiguration;
 
-    /**
-     * @throws ExtensionConfigurationPathDoesNotExistException
-     * @throws ExtensionConfigurationExtensionNotConfiguredException
-     */
     public function __construct(
-        private readonly ModuleTemplateFactory $moduleTemplateFactory,
-        private readonly HashService $hashService,
-        private readonly Extension $extensionConfiguration,
-        private readonly FlashMessageService $flashMessageService,
-        private readonly LanguageServiceFactory $languageServiceFactory,
         /** @var MonitoringProvider[] $monitoringProviders */
         #[AutowireIterator(tag: 'monitoring.provider')]
-        private readonly iterable $monitoringProviders,
+        private iterable $monitoringProviders,
+
         /** @var Authorizer[] $authorizers */
         #[AutowireIterator(tag: 'monitoring.authorizer', defaultPriorityMethod: 'getPriority')]
-        private readonly iterable $authorizers,
-        private readonly MonitoringExecutionHandler $executionHandler,
-        private readonly MonitoringCacheManager $cacheManager,
-        private readonly UriBuilder $uriBuilder,
+        private iterable $authorizers,
+        private ModuleTemplateFactory $moduleTemplateFactory,
+        private HashService $hashService,
+        private FlashMessageService $flashMessageService,
+        private LanguageServiceFactory $languageServiceFactory,
+        private MonitoringExecutionHandler $executionHandler,
+        private MonitoringCacheManager $cacheManager,
+        private MonitoringConfigurationFactory $monitoringConfigurationFactory,
+        private UriBuilder $uriBuilder,
     ) {
-        $endpoint = $this->extensionConfiguration->getEndpointFromConfiguration();
-
-        if ($endpoint !== '') {
-            $this->endpoint = $endpoint;
-        }
-
-        $this->secret = $this->extensionConfiguration->getSecretFromConfiguration();
+        $this->monitoringConfiguration = $this->monitoringConfigurationFactory->create();
     }
 
     /**
@@ -112,6 +96,7 @@ final class MonitoringController
 
         // Handle flush action if present
         $action = $request->getQueryParams()['action'] ?? '';
+
         /** @var string $providerClass */
         $providerClass = $request->getQueryParams()['providerClass'] ?? '';
 
@@ -120,69 +105,83 @@ final class MonitoringController
         }
 
         $template = $this->moduleTemplateFactory->create($request);
-        $messageQueue = $this->flashMessageService->getMessageQueueByIdentifier(self::FLASHMESSAGE_QUEUE_IDENTIFIER);
 
         /** @var NormalizedParams $params */
         $params = $request->getAttribute('normalizedParams');
 
         $templateVariables = [
-            'providers' => [],
+            'authorizers' => $this->buildAuthorizerTemplateVariables(),
+            'authorizerInterface' => Authorizer::class,
+            'endpoint' => $params->getRequestHost() . $this->monitoringConfiguration->endpoint,
+            'providers' => $this->buildProviderTemplateVariables(),
             'providerInterface' => MonitoringProvider::class,
-            'endpoint' => $params->getRequestHost() . $this->endpoint,
             'monitoringMessageQueueIdentifier' => self::FLASHMESSAGE_QUEUE_IDENTIFIER,
         ];
-
-        if ($this->secret === '') {
-            $messageQueue->addMessage(
-                new FlashMessage(
-                    message: $this->getLanguageService()->sL(self::LOCALLANG_FILE . ':settings.api.secret.missing'),
-                    severity: ContextualFeedbackSeverity::WARNING,
-                    storeInSession: true,
-                )
-            );
-        } else {
-            $templateVariables['authHeaderName'] = TokenAuthorizer::getAuthHeaderName();
-            $templateVariables['authToken'] = $this->hashService->hmac($this->endpoint, $this->secret);
-        }
-
-        foreach ($this->authorizers as $authorizer) {
-            $templateVariables['authorizers'][$authorizer::class] = $authorizer::getPriority();
-        }
-
-        foreach ($this->monitoringProviders as $monitoringProvider) {
-
-            $result = $this->executionHandler->executeProvider($monitoringProvider);
-
-            $templateVariables['providers'][$monitoringProvider::class] = [
-                'name' => $monitoringProvider->getName(),
-                'isCached' => $monitoringProvider instanceof CacheableMonitoringProvider,
-                'isActive' => $monitoringProvider->isActive(),
-                'isHealthy' => $result->isHealthy(),
-                'description' => $monitoringProvider->getDescription(),
-            ];
-
-            if ($monitoringProvider instanceof CacheableMonitoringProvider) {
-                $templateVariables['providers'][$monitoringProvider::class]['cacheLifetime'] = $monitoringProvider->getCacheLifetime();
-            }
-
-            if ($result->hasSubResults()) {
-                $templateVariables['providers'][$monitoringProvider::class]['subResults'] = $result->getSubResults();
-            }
-
-            // Check for cache expiration time
-            if ($monitoringProvider instanceof CacheableMonitoringProvider) {
-                $cacheKey = $monitoringProvider->getCacheKey();
-                $expirationTime = $this->cacheManager->getCacheExpirationTime($this->slugifyString($cacheKey));
-
-                if ($expirationTime !== null) {
-                    $templateVariables['providers'][$monitoringProvider::class]['cacheExpiresAt'] = $expirationTime;
-                }
-            }
-        }
 
         return $template
             ->assignMultiple($templateVariables)
             ->renderResponse('Backend/Monitoring');
+    }
+
+    /**
+     * Process authorizers and build template variables
+     *
+     * @return array<class-string, array{
+     *     isActive: bool,
+     *     priority: int,
+     *     authHeaderName?: string,
+     *     authToken?: string
+     * }>
+     */
+    private function buildAuthorizerTemplateVariables(): array
+    {
+        $templateVariables = $this->collectAuthorizerStatuses();
+
+        $tokenConfig = $this->monitoringConfiguration->tokenAuthorizerConfiguration;
+
+        if (!$tokenConfig->isEnabled()) {
+            return $templateVariables;
+        }
+
+        $templateVariables[TokenAuthorizer::class]['authHeaderName'] = $tokenConfig->authHeaderName;
+
+        $secret = $tokenConfig->secret;
+
+        if ($secret === '') {
+            return $templateVariables;
+        }
+
+        $templateVariables[TokenAuthorizer::class]['authToken'] = $this->generateAuthToken($tokenConfig->secret);
+
+        return $templateVariables;
+    }
+
+    /**
+     * @return array<class-string, array{isActive: bool, priority: int}>
+     */
+    private function collectAuthorizerStatuses(): array
+    {
+        $statuses = [];
+
+        foreach ($this->authorizers as $authorizer) {
+            $statuses[$authorizer::class] = [
+                'isActive' => $authorizer->isActive(),
+                'priority' => $authorizer::getPriority(),
+            ];
+        }
+
+        return $statuses;
+    }
+
+    private function generateAuthToken(string $secret): string
+    {
+        if ($secret === '') {
+            return '';
+        }
+        return $this->hashService->hmac(
+            $this->monitoringConfiguration->endpoint,
+            $secret
+        );
     }
 
     /**
@@ -231,5 +230,57 @@ final class MonitoringController
         }
 
         return $this->languageServiceFactory->createFromUserPreferences(null);
+    }
+
+    /**
+     * Build template variables for all monitoring providers
+     *
+     * @return array<class-string<\mteu\Monitoring\Provider\MonitoringProvider>, array{
+     *     name: string,
+     *     isCached: bool,
+     *     isActive: bool,
+     *     isHealthy: bool,
+     *     description: string,
+     *     cacheLifetime?: int,
+     *     subResults?: array<\mteu\Monitoring\Result\Result>,
+     *     cacheExpiresAt?: \DateTimeImmutable
+     * }>
+     */
+    private function buildProviderTemplateVariables(): array
+    {
+        $providerTemplateVariables = [];
+
+        foreach ($this->monitoringProviders as $monitoringProvider) {
+
+            $result = $this->executionHandler->executeProvider($monitoringProvider);
+
+            $providerTemplateVariables[$monitoringProvider::class] = [
+                'name' => $monitoringProvider->getName(),
+                'isCached' => $monitoringProvider instanceof CacheableMonitoringProvider,
+                'isActive' => $monitoringProvider->isActive(),
+                'isHealthy' => $result->isHealthy(),
+                'description' => $monitoringProvider->getDescription(),
+            ];
+
+            if ($monitoringProvider instanceof CacheableMonitoringProvider) {
+                $providerTemplateVariables[$monitoringProvider::class]['cacheLifetime'] = $monitoringProvider->getCacheLifetime();
+            }
+
+            if ($result->hasSubResults()) {
+                $providerTemplateVariables[$monitoringProvider::class]['subResults'] = $result->getSubResults();
+            }
+
+            // Check for cache expiration time
+            if ($monitoringProvider instanceof CacheableMonitoringProvider) {
+                $cacheKey = $monitoringProvider->getCacheKey();
+                $expirationTime = $this->cacheManager->getCacheExpirationTime($this->slugifyString($cacheKey));
+
+                if ($expirationTime !== null) {
+                    $providerTemplateVariables[$monitoringProvider::class]['cacheExpiresAt'] = $expirationTime;
+                }
+            }
+        }
+
+        return $providerTemplateVariables;
     }
 }

@@ -36,8 +36,12 @@
 				<target>Monitoring-Requests werden in folgender Reihenfolge der Authorizer autorisiert:</target>
 			</trans-unit>
 			<trans-unit id="settings.api.secret.missing">
-				<source>Please set an API secret in your extensions settings.</source>
-				<target>Bitte ein Monitoring-Secret in den Extension-Settings hinterlegen</target>
+				<source>Please set a secret in the Extension settings to make the Token based authorization available.</source>
+				<target>Bitte ein Monitoring-Secret in den Extension-Settings hinterlegen, um eine Autorisierung mittels Token zu ermöglichen.</target>
+			</trans-unit>
+			<trans-unit id="authorizers.priority">
+				<source>Priority: </source>
+				<target>Priorität: </target>
 			</trans-unit>
 			<trans-unit id="auth.token.button">
 				<source>Show Authorization Token</source>
@@ -62,6 +66,10 @@
 			<trans-unit id="status.inactive">
 				<source>inactive</source>
 				<target>inaktiv</target>
+			</trans-unit>
+			<trans-unit id="status.active">
+				<source>active</source>
+				<target>aktiviert</target>
 			</trans-unit>
 			<trans-unit id="provider.cache.lifetime">
 				<source>The monitoring result is cached with an active cache lifetime of %s minutes.</source>
@@ -90,6 +98,10 @@
 			<trans-unit id="authorizers.no_authorizers_found">
 				<source>No monitoring authorizers found.</source>
 				<target>Keine Monitoring-Autorisatoren gefunden.</target>
+			</trans-unit>
+			<trans-unit id="authorizers.no_authorizers_found.content">
+				<source>Authorizers must either be enabled in the extension configuration or implement %s to become available.</source>
+				<target>Autorisatoren müssen entweder über die Extension Settings aktiviert werden oder %s implementieren, um verfügbar zu werden.<target/>
 			</trans-unit>
 			<trans-unit id="detail.header.component">
 				<source>Component</source>
