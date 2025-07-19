@@ -14,7 +14,6 @@ parameters:
 		noExtends:
 			classesAllowedToBeExtended:
 				- Exception
-				- mteu\Monitoring\Result\AbstractMonitoringResult
 				- Symfony\Component\Console\Command\Command
 				- TYPO3Fluid\Fluid\Core\ViewHelper\AbstractViewHelper
 				- TYPO3\TestingFramework\Core\Unit\UnitTestCase
@@ -27,6 +26,7 @@ parameters:
 			# keep ignoring
 			identifier: symplify.requiredInterfaceContractNamespace
 		-
+			# keep ignoring
 			identifier: ergebnis.noNamedArgument
 		-
 			# keep ignoring
@@ -35,7 +35,7 @@ parameters:
 			# keep ignoring
 			identifier: ergebnis.noParameterWithNullableTypeDeclaration
 		-
-			# todo
+			# review
 			identifier: ergebnis.noNullableReturnTypeDeclaration
 		-
 			# keep ignoring

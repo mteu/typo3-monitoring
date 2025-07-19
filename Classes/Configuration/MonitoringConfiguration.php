@@ -25,6 +25,8 @@ namespace mteu\Monitoring\Configuration;
 
 use mteu\Monitoring\Configuration\Authorizer\AdminUserAuthorizerConfiguration;
 use mteu\Monitoring\Configuration\Authorizer\TokenAuthorizerConfiguration;
+use mteu\TypedExtConf\Attribute\ExtConfValue;
+use mteu\TypedExtConf\Attribute\ExtensionConfig;
 
 /**
  * MonitoringConfiguration DTO.
@@ -32,9 +34,11 @@ use mteu\Monitoring\Configuration\Authorizer\TokenAuthorizerConfiguration;
  * @author Martin Adler <mteu@mailbox.org>
  * @license GPL-2.0-or-later
  */
+#[ExtensionConfig(extensionKey: 'monitoring')]
 final readonly class MonitoringConfiguration
 {
     public function __construct(
+        #[ExtConfValue(path: 'api.endpoint', default: '')]
         public string $endpoint,
         public TokenAuthorizerConfiguration $tokenAuthorizerConfiguration,
         public AdminUserAuthorizerConfiguration $adminUserAuthorizerConfiguration,

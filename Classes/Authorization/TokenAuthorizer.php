@@ -26,6 +26,7 @@ namespace mteu\Monitoring\Authorization;
 use mteu\Monitoring\Configuration\Authorizer\TokenAuthorizerConfiguration;
 use mteu\Monitoring\Configuration\MonitoringConfiguration;
 use mteu\Monitoring\Configuration\MonitoringConfigurationFactory;
+use mteu\TypedExtConf\Mapper\ExtensionConfigurationMapper;
 use Psr\Http\Message\ServerRequestInterface;
 use TYPO3\CMS\Core\Configuration\ExtensionConfiguration;
 use TYPO3\CMS\Core\Crypto\HashService;
@@ -77,7 +78,7 @@ final readonly class TokenAuthorizer implements Authorizer
 
     public static function getPriority(): int
     {
-        return (new MonitoringConfigurationFactory(new ExtensionConfiguration()))
-            ->create()->tokenAuthorizerConfiguration->getPriority();
+        $configService = new ExtensionConfigurationMapper(new ExtensionConfiguration());
+        return $configService->map(MonitoringConfiguration::class)->tokenAuthorizerConfiguration->getPriority();
     }
 }

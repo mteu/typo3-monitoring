@@ -23,6 +23,8 @@ declare(strict_types=1);
 
 namespace mteu\Monitoring\Configuration\Authorizer;
 
+use mteu\TypedExtConf\Attribute\ExtConfValue;
+
 /**
  * AdminUserConfiguration.
  *
@@ -32,8 +34,10 @@ namespace mteu\Monitoring\Configuration\Authorizer;
 final readonly class AdminUserAuthorizerConfiguration implements AuthorizerConfiguration
 {
     public function __construct(
-        private bool $enabled = false,
-        private int $priority = -10,
+        #[ExtConfValue(path: 'authorizer.mteu\\Monitoring\\Authorization\\AdminUserAuthorizer.enabled', default: false)]
+        public bool $enabled = false,
+        #[ExtConfValue(path: 'authorizer.mteu\\Monitoring\\Authorization\\AdminUserAuthorizer.priority', default: -10)]
+        public int $priority = -10,
     ) {}
 
     public function isEnabled(): bool

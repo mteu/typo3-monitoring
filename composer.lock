@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "c9b9827d6a2a162ef9c4e65f5a892fc9",
+    "content-hash": "86961fc7fed503cf14b5d8d833c3db83",
     "packages": [
         {
             "name": "bacon/bacon-qr-code",
@@ -118,6 +118,83 @@
                 "source": "https://github.com/ChristianRiesen/base32/tree/1.6.0"
             },
             "time": "2021-02-26T10:19:33+00:00"
+        },
+        {
+            "name": "cuyz/valinor",
+            "version": "2.0.0",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/CuyZ/Valinor.git",
+                "reference": "914a8cbe64c71f9f0a9728df75e7d92a2988fb40"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/CuyZ/Valinor/zipball/914a8cbe64c71f9f0a9728df75e7d92a2988fb40",
+                "reference": "914a8cbe64c71f9f0a9728df75e7d92a2988fb40",
+                "shasum": ""
+            },
+            "require": {
+                "composer-runtime-api": "^2.0",
+                "php": "~8.1.0 || ~8.2.0 || ~8.3.0 || ~8.4.0"
+            },
+            "conflict": {
+                "phpstan/phpstan": "<1.0 || >= 3.0",
+                "vimeo/psalm": "<5.0 || >=7.0"
+            },
+            "require-dev": {
+                "friendsofphp/php-cs-fixer": "^3.4",
+                "infection/infection": "^0.29",
+                "marcocesarato/php-conventional-changelog": "^1.12",
+                "mikey179/vfsstream": "^1.6.10",
+                "phpbench/phpbench": "^1.3",
+                "phpstan/phpstan": "^2.0",
+                "phpstan/phpstan-phpunit": "^2.0",
+                "phpstan/phpstan-strict-rules": "^2.0",
+                "phpunit/phpunit": "^10.5",
+                "rector/rector": "^2.0",
+                "vimeo/psalm": "^6.0"
+            },
+            "type": "library",
+            "autoload": {
+                "psr-4": {
+                    "CuyZ\\Valinor\\": "src"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Romain Canon",
+                    "email": "romain.hydrocanon@gmail.com",
+                    "homepage": "https://github.com/romm"
+                }
+            ],
+            "description": "Library that helps to map any input into a strongly-typed value object structure.",
+            "homepage": "https://github.com/CuyZ/Valinor",
+            "keywords": [
+                "array",
+                "conversion",
+                "hydrator",
+                "json",
+                "mapper",
+                "mapping",
+                "object",
+                "tree",
+                "yaml"
+            ],
+            "support": {
+                "issues": "https://github.com/CuyZ/Valinor/issues",
+                "source": "https://github.com/CuyZ/Valinor/tree/2.0.0"
+            },
+            "funding": [
+                {
+                    "url": "https://github.com/romm",
+                    "type": "github"
+                }
+            ],
+            "time": "2025-06-27T06:38:26+00:00"
         },
         {
             "name": "dasprid/enum",
@@ -1198,6 +1275,125 @@
                 "source": "https://github.com/Masterminds/html5-php/tree/2.9.0"
             },
             "time": "2024-03-31T07:05:07+00:00"
+        },
+        {
+            "name": "mteu/typo3-typed-extconf",
+            "version": "dev-main",
+            "dist": {
+                "type": "path",
+                "url": "../typo3-typed-extconf",
+                "reference": "f44cfe33f29428ed0b96411402b7bb6ce492eedf"
+            },
+            "require": {
+                "cuyz/valinor": "^2.0",
+                "php": "~8.3.0 || ~8.4.0",
+                "typo3/cms-core": "~13.4.12"
+            },
+            "require-dev": {
+                "armin/editorconfig-cli": "^2.0",
+                "eliashaeussler/version-bumper": "^3.0",
+                "ergebnis/composer-normalize": "^2.28",
+                "mteu/zealous-stan": "^0.6.3",
+                "phpstan/extension-installer": "*",
+                "phpstan/phpstan": "^2.1",
+                "phpunit/phpcov": "^11.0.0",
+                "phpunit/phpunit": "^12.1",
+                "roave/security-advisories": "dev-latest",
+                "saschaegerer/phpstan-typo3": "^2.1",
+                "shipmonk/composer-dependency-analyser": "*",
+                "ssch/typo3-rector": "^3.6",
+                "typo3/coding-standards": "^0.8.0",
+                "typo3/testing-framework": "^9.2.0"
+            },
+            "type": "typo3-cms-extension",
+            "extra": {
+                "typo3/cms": {
+                    "extension-key": "typed_extconf",
+                    "web-dir": ".build/web"
+                }
+            },
+            "autoload": {
+                "psr-4": {
+                    "mteu\\TypedExtConf\\": "Classes/"
+                }
+            },
+            "autoload-dev": {
+                "psr-4": {
+                    "mteu\\TypedExtConf\\Tests\\": "Tests/"
+                }
+            },
+            "scripts": {
+                "fix": [
+                    "@fix:composer",
+                    "@fix:editorconfig",
+                    "@fix:php"
+                ],
+                "fix:composer": [
+                    "@composer normalize"
+                ],
+                "fix:editorconfig": [
+                    "ec --fix"
+                ],
+                "fix:php": [
+                    "php-cs-fixer fix --config php-cs-fixer.php"
+                ],
+                "lint": [
+                    "@lint:composer",
+                    "@lint:editorconfig",
+                    "@lint:php"
+                ],
+                "lint:composer": [
+                    "@composer normalize --dry-run"
+                ],
+                "lint:editorconfig": [
+                    "ec"
+                ],
+                "lint:php": [
+                    "php-cs-fixer fix --config php-cs-fixer.php"
+                ],
+                "sca": [
+                    "@sca:php",
+                    "@sca:migrate"
+                ],
+                "sca:migrate": [
+                    "@sca:migrate:php"
+                ],
+                "sca:migrate:php": [
+                    "Composer\\Config::disableProcessTimeout",
+                    "rector process"
+                ],
+                "sca:php": [
+                    "phpstan analyse -c phpstan.neon --memory-limit=4G"
+                ],
+                "test": [
+                    "@test:unit"
+                ],
+                "test:coverage": [
+                    "@test:coverage:unit"
+                ],
+                "test:coverage:unit": [
+                    "phpunit -c phpunit.unit.xml"
+                ],
+                "test:unit": [
+                    "phpunit -c phpunit.unit.xml --no-coverage"
+                ],
+                "validate-dependencies": [
+                    "composer-dependency-analyser"
+                ]
+            },
+            "license": [
+                "GPL-2.0-or-later"
+            ],
+            "authors": [
+                {
+                    "name": "Martin Adler",
+                    "email": "mteu@mailbox.org"
+                }
+            ],
+            "description": "Provides type-safe extension configuration management for TYPO3, ensuring proper types instead of string-only values from backend configuration",
+            "transport-options": {
+                "relative": true
+            }
         },
         {
             "name": "psr/cache",
@@ -5299,83 +5495,6 @@
                 }
             ],
             "time": "2024-05-06T16:37:16+00:00"
-        },
-        {
-            "name": "cuyz/valinor",
-            "version": "2.0.0",
-            "source": {
-                "type": "git",
-                "url": "https://github.com/CuyZ/Valinor.git",
-                "reference": "914a8cbe64c71f9f0a9728df75e7d92a2988fb40"
-            },
-            "dist": {
-                "type": "zip",
-                "url": "https://api.github.com/repos/CuyZ/Valinor/zipball/914a8cbe64c71f9f0a9728df75e7d92a2988fb40",
-                "reference": "914a8cbe64c71f9f0a9728df75e7d92a2988fb40",
-                "shasum": ""
-            },
-            "require": {
-                "composer-runtime-api": "^2.0",
-                "php": "~8.1.0 || ~8.2.0 || ~8.3.0 || ~8.4.0"
-            },
-            "conflict": {
-                "phpstan/phpstan": "<1.0 || >= 3.0",
-                "vimeo/psalm": "<5.0 || >=7.0"
-            },
-            "require-dev": {
-                "friendsofphp/php-cs-fixer": "^3.4",
-                "infection/infection": "^0.29",
-                "marcocesarato/php-conventional-changelog": "^1.12",
-                "mikey179/vfsstream": "^1.6.10",
-                "phpbench/phpbench": "^1.3",
-                "phpstan/phpstan": "^2.0",
-                "phpstan/phpstan-phpunit": "^2.0",
-                "phpstan/phpstan-strict-rules": "^2.0",
-                "phpunit/phpunit": "^10.5",
-                "rector/rector": "^2.0",
-                "vimeo/psalm": "^6.0"
-            },
-            "type": "library",
-            "autoload": {
-                "psr-4": {
-                    "CuyZ\\Valinor\\": "src"
-                }
-            },
-            "notification-url": "https://packagist.org/downloads/",
-            "license": [
-                "MIT"
-            ],
-            "authors": [
-                {
-                    "name": "Romain Canon",
-                    "email": "romain.hydrocanon@gmail.com",
-                    "homepage": "https://github.com/romm"
-                }
-            ],
-            "description": "Library that helps to map any input into a strongly-typed value object structure.",
-            "homepage": "https://github.com/CuyZ/Valinor",
-            "keywords": [
-                "array",
-                "conversion",
-                "hydrator",
-                "json",
-                "mapper",
-                "mapping",
-                "object",
-                "tree",
-                "yaml"
-            ],
-            "support": {
-                "issues": "https://github.com/CuyZ/Valinor/issues",
-                "source": "https://github.com/CuyZ/Valinor/tree/2.0.0"
-            },
-            "funding": [
-                {
-                    "url": "https://github.com/romm",
-                    "type": "github"
-                }
-            ],
-            "time": "2025-06-27T06:38:26+00:00"
         },
         {
             "name": "cypresslab/gitelephant",
@@ -11284,253 +11403,6 @@
             "time": "2024-10-20T05:08:20+00:00"
         },
         {
-            "name": "symfony/dotenv",
-            "version": "v7.3.0",
-            "source": {
-                "type": "git",
-                "url": "https://github.com/symfony/dotenv.git",
-                "reference": "28347a897771d0c28e99b75166dd2689099f3045"
-            },
-            "dist": {
-                "type": "zip",
-                "url": "https://api.github.com/repos/symfony/dotenv/zipball/28347a897771d0c28e99b75166dd2689099f3045",
-                "reference": "28347a897771d0c28e99b75166dd2689099f3045",
-                "shasum": ""
-            },
-            "require": {
-                "php": ">=8.2"
-            },
-            "conflict": {
-                "symfony/console": "<6.4",
-                "symfony/process": "<6.4"
-            },
-            "require-dev": {
-                "symfony/console": "^6.4|^7.0",
-                "symfony/process": "^6.4|^7.0"
-            },
-            "type": "library",
-            "autoload": {
-                "psr-4": {
-                    "Symfony\\Component\\Dotenv\\": ""
-                },
-                "exclude-from-classmap": [
-                    "/Tests/"
-                ]
-            },
-            "notification-url": "https://packagist.org/downloads/",
-            "license": [
-                "MIT"
-            ],
-            "authors": [
-                {
-                    "name": "Fabien Potencier",
-                    "email": "fabien@symfony.com"
-                },
-                {
-                    "name": "Symfony Community",
-                    "homepage": "https://symfony.com/contributors"
-                }
-            ],
-            "description": "Registers environment variables from a .env file",
-            "homepage": "https://symfony.com",
-            "keywords": [
-                "dotenv",
-                "env",
-                "environment"
-            ],
-            "support": {
-                "source": "https://github.com/symfony/dotenv/tree/v7.3.0"
-            },
-            "funding": [
-                {
-                    "url": "https://symfony.com/sponsor",
-                    "type": "custom"
-                },
-                {
-                    "url": "https://github.com/fabpot",
-                    "type": "github"
-                },
-                {
-                    "url": "https://tidelift.com/funding/github/packagist/symfony/symfony",
-                    "type": "tidelift"
-                }
-            ],
-            "time": "2024-11-27T11:18:42+00:00"
-        },
-        {
-            "name": "symfony/http-client",
-            "version": "v7.3.1",
-            "source": {
-                "type": "git",
-                "url": "https://github.com/symfony/http-client.git",
-                "reference": "4403d87a2c16f33345dca93407a8714ee8c05a64"
-            },
-            "dist": {
-                "type": "zip",
-                "url": "https://api.github.com/repos/symfony/http-client/zipball/4403d87a2c16f33345dca93407a8714ee8c05a64",
-                "reference": "4403d87a2c16f33345dca93407a8714ee8c05a64",
-                "shasum": ""
-            },
-            "require": {
-                "php": ">=8.2",
-                "psr/log": "^1|^2|^3",
-                "symfony/deprecation-contracts": "^2.5|^3",
-                "symfony/http-client-contracts": "~3.4.4|^3.5.2",
-                "symfony/service-contracts": "^2.5|^3"
-            },
-            "conflict": {
-                "amphp/amp": "<2.5",
-                "amphp/socket": "<1.1",
-                "php-http/discovery": "<1.15",
-                "symfony/http-foundation": "<6.4"
-            },
-            "provide": {
-                "php-http/async-client-implementation": "*",
-                "php-http/client-implementation": "*",
-                "psr/http-client-implementation": "1.0",
-                "symfony/http-client-implementation": "3.0"
-            },
-            "require-dev": {
-                "amphp/http-client": "^4.2.1|^5.0",
-                "amphp/http-tunnel": "^1.0|^2.0",
-                "guzzlehttp/promises": "^1.4|^2.0",
-                "nyholm/psr7": "^1.0",
-                "php-http/httplug": "^1.0|^2.0",
-                "psr/http-client": "^1.0",
-                "symfony/amphp-http-client-meta": "^1.0|^2.0",
-                "symfony/dependency-injection": "^6.4|^7.0",
-                "symfony/http-kernel": "^6.4|^7.0",
-                "symfony/messenger": "^6.4|^7.0",
-                "symfony/process": "^6.4|^7.0",
-                "symfony/rate-limiter": "^6.4|^7.0",
-                "symfony/stopwatch": "^6.4|^7.0"
-            },
-            "type": "library",
-            "autoload": {
-                "psr-4": {
-                    "Symfony\\Component\\HttpClient\\": ""
-                },
-                "exclude-from-classmap": [
-                    "/Tests/"
-                ]
-            },
-            "notification-url": "https://packagist.org/downloads/",
-            "license": [
-                "MIT"
-            ],
-            "authors": [
-                {
-                    "name": "Nicolas Grekas",
-                    "email": "p@tchwork.com"
-                },
-                {
-                    "name": "Symfony Community",
-                    "homepage": "https://symfony.com/contributors"
-                }
-            ],
-            "description": "Provides powerful methods to fetch HTTP resources synchronously or asynchronously",
-            "homepage": "https://symfony.com",
-            "keywords": [
-                "http"
-            ],
-            "support": {
-                "source": "https://github.com/symfony/http-client/tree/v7.3.1"
-            },
-            "funding": [
-                {
-                    "url": "https://symfony.com/sponsor",
-                    "type": "custom"
-                },
-                {
-                    "url": "https://github.com/fabpot",
-                    "type": "github"
-                },
-                {
-                    "url": "https://tidelift.com/funding/github/packagist/symfony/symfony",
-                    "type": "tidelift"
-                }
-            ],
-            "time": "2025-06-28T07:58:39+00:00"
-        },
-        {
-            "name": "symfony/http-client-contracts",
-            "version": "v3.6.0",
-            "source": {
-                "type": "git",
-                "url": "https://github.com/symfony/http-client-contracts.git",
-                "reference": "75d7043853a42837e68111812f4d964b01e5101c"
-            },
-            "dist": {
-                "type": "zip",
-                "url": "https://api.github.com/repos/symfony/http-client-contracts/zipball/75d7043853a42837e68111812f4d964b01e5101c",
-                "reference": "75d7043853a42837e68111812f4d964b01e5101c",
-                "shasum": ""
-            },
-            "require": {
-                "php": ">=8.1"
-            },
-            "type": "library",
-            "extra": {
-                "thanks": {
-                    "url": "https://github.com/symfony/contracts",
-                    "name": "symfony/contracts"
-                },
-                "branch-alias": {
-                    "dev-main": "3.6-dev"
-                }
-            },
-            "autoload": {
-                "psr-4": {
-                    "Symfony\\Contracts\\HttpClient\\": ""
-                },
-                "exclude-from-classmap": [
-                    "/Test/"
-                ]
-            },
-            "notification-url": "https://packagist.org/downloads/",
-            "license": [
-                "MIT"
-            ],
-            "authors": [
-                {
-                    "name": "Nicolas Grekas",
-                    "email": "p@tchwork.com"
-                },
-                {
-                    "name": "Symfony Community",
-                    "homepage": "https://symfony.com/contributors"
-                }
-            ],
-            "description": "Generic abstractions related to HTTP clients",
-            "homepage": "https://symfony.com",
-            "keywords": [
-                "abstractions",
-                "contracts",
-                "decoupling",
-                "interfaces",
-                "interoperability",
-                "standards"
-            ],
-            "support": {
-                "source": "https://github.com/symfony/http-client-contracts/tree/v3.6.0"
-            },
-            "funding": [
-                {
-                    "url": "https://symfony.com/sponsor",
-                    "type": "custom"
-                },
-                {
-                    "url": "https://github.com/fabpot",
-                    "type": "github"
-                },
-                {
-                    "url": "https://tidelift.com/funding/github/packagist/symfony/symfony",
-                    "type": "tidelift"
-                }
-            ],
-            "time": "2025-04-29T11:18:49+00:00"
-        },
-        {
             "name": "symfony/polyfill-php80",
             "version": "v1.32.0",
             "source": {
@@ -12384,65 +12256,6 @@
             "time": "2024-06-03T14:17:54+00:00"
         },
         {
-            "name": "typo3/tailor",
-            "version": "1.7.0",
-            "source": {
-                "type": "git",
-                "url": "https://github.com/TYPO3/tailor.git",
-                "reference": "3777380ef7ea9362699bcbab2f3702c4a5c9c822"
-            },
-            "dist": {
-                "type": "zip",
-                "url": "https://api.github.com/repos/TYPO3/tailor/zipball/3777380ef7ea9362699bcbab2f3702c4a5c9c822",
-                "reference": "3777380ef7ea9362699bcbab2f3702c4a5c9c822",
-                "shasum": ""
-            },
-            "require": {
-                "ext-json": "*",
-                "ext-zip": "*",
-                "php": "^7.2 || ^8.0",
-                "symfony/console": "^5.4 || ^6.4 || ^7.0",
-                "symfony/dotenv": "^5.4 || ^6.4 || ^7.0",
-                "symfony/http-client": "^5.4 || ^6.4 || ^7.0",
-                "symfony/mime": "^5.4 || ^6.4 || ^7.0"
-            },
-            "require-dev": {
-                "phpunit/phpunit": "^8.5.36 || ^9.6.16",
-                "typo3/coding-standards": "^0.6.1 || dev-main"
-            },
-            "bin": [
-                "bin/tailor"
-            ],
-            "type": "library",
-            "autoload": {
-                "psr-4": {
-                    "TYPO3\\Tailor\\": "src/"
-                }
-            },
-            "notification-url": "https://packagist.org/downloads/",
-            "license": [
-                "MIT"
-            ],
-            "authors": [
-                {
-                    "name": "Benni Mack",
-                    "email": "benni@typo3.org",
-                    "role": "Maintainer"
-                },
-                {
-                    "name": "Oliver Bartsch",
-                    "email": "bo@cedev.de",
-                    "role": "Maintainer"
-                }
-            ],
-            "description": "A CLI tool to make TYPO3 extension handling easier",
-            "support": {
-                "issues": "https://github.com/TYPO3/tailor/issues",
-                "source": "https://github.com/TYPO3/tailor/tree/1.7.0"
-            },
-            "time": "2025-04-02T14:26:43+00:00"
-        },
-        {
             "name": "typo3/testing-framework",
             "version": "9.2.0",
             "source": {
@@ -12577,6 +12390,7 @@
     "aliases": [],
     "minimum-stability": "stable",
     "stability-flags": {
+        "mteu/typo3-typed-extconf": 20,
         "roave/security-advisories": 20
     },
     "prefer-stable": false,

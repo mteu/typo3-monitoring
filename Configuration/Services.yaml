@@ -6,3 +6,8 @@ services:
 
   mteu\Monitoring\:
     resource: '../Classes/*'
+
+  # Import typed-extconf services
+  mteu\TypedExtConf\Mapper\ConfigurationMapper:
+    class: mteu\TypedExtConf\Mapper\ExtensionConfigurationMapper
+    public: true

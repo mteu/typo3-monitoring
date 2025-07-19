@@ -24,7 +24,9 @@ declare(strict_types=1);
 namespace mteu\Monitoring\Authorization;
 
 use mteu\Monitoring\Configuration\Authorizer\AdminUserAuthorizerConfiguration;
+use mteu\Monitoring\Configuration\MonitoringConfiguration;
 use mteu\Monitoring\Configuration\MonitoringConfigurationFactory;
+use mteu\TypedExtConf\Mapper\ExtensionConfigurationMapper;
 use Psr\Http\Message\ServerRequestInterface;
 use TYPO3\CMS\Core\Configuration\ExtensionConfiguration;
 use TYPO3\CMS\Core\Context\Context;
@@ -65,7 +67,7 @@ final readonly class AdminUserAuthorizer implements Authorizer
 
     public static function getPriority(): int
     {
-        return (new MonitoringConfigurationFactory(new ExtensionConfiguration()))
-            ->create()->adminUserAuthorizerConfiguration->getPriority();
+        $configService = new ExtensionConfigurationMapper(new ExtensionConfiguration());
+        return $configService->map(MonitoringConfiguration::class)->adminUserAuthorizerConfiguration->getPriority();
     }
 }
