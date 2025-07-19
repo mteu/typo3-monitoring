@@ -13,7 +13,7 @@ use PHPUnit\Framework;
  * @author Martin Adler <mteu@mailbox.org>
  * @license GPL-2.0-or-later
  */
-#[Framework\Attributes\CoversClass(\mteu\Monitoring\Trait\SlugifyCacheKeyTrait::class)]
+#[Framework\Attributes\CoversTrait(\mteu\Monitoring\Trait\SlugifyCacheKeyTrait::class)]
 final class SlugifyCacheKeyTraitTest extends Framework\TestCase
 {
     private SlugifyCacheKeyTraitStub $subject;
