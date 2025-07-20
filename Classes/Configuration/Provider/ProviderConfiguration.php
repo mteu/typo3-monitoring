@@ -1,4 +1,5 @@
 <?php
+
 declare(strict_types=1);
 
 /*
@@ -30,5 +31,5 @@ namespace mteu\Monitoring\Configuration\Provider;
  */
 interface ProviderConfiguration
 {
-    public function enabled(): bool;
+    public function isEnabled(): bool;
 }

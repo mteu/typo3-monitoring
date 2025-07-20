@@ -27,6 +27,7 @@ use mteu\Monitoring\Authorization\Authorizer;
 use mteu\Monitoring\Configuration\MonitoringConfiguration;
 use mteu\Monitoring\Configuration\MonitoringConfigurationFactory;
 use mteu\Monitoring\Provider\MonitoringProvider;
+use mteu\Monitoring\Provider\SelfCareProvider;
 use Psr\Http\Message\ResponseFactoryInterface;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
@@ -151,6 +152,11 @@ final readonly class MonitoringMiddleware implements MiddlewareInterface
 
         foreach ($this->monitoringProviders as $provider) {
             if ($provider->isActive()) {
+
+                if ($provider instanceof SelfCareProvider) {
+                    continue;
+                }
+
                 $status[$provider->getName()] = $provider->execute()->isHealthy();
             }
         }

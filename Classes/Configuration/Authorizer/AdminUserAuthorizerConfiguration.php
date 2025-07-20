@@ -32,13 +32,13 @@ namespace mteu\Monitoring\Configuration\Authorizer;
 final readonly class AdminUserAuthorizerConfiguration implements AuthorizerConfiguration
 {
     public function __construct(
-        private bool $enabled = false,
+        private bool $isEnabled = false,
         private int $priority = -10,
     ) {}
 
     public function isEnabled(): bool
     {
-        return $this->enabled;
+        return $this->isEnabled;
     }
 
     public function getPriority(): int
