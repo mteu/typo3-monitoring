@@ -135,6 +135,27 @@ private function getHealthStatus(): array
 }
 ```
 
+## Provider Execution
+
+The middleware executes all active providers and collects their health status. Special handling is applied to certain providers:
+
+### SelfCareProvider Handling
+
+The built-in `SelfCareProvider` is completely excluded from middleware execution for logical and performance reasons:
+
+- **Redundancy**: If the middleware can respond, the monitoring system is already working
+- **Performance**: Avoids unnecessary HTTP requests to itself during monitoring requests
+- **Logic**: The middleware's successful response IS the self-check
+
+```php
+// SelfCareProvider is completely skipped in middleware execution
+if ($provider instanceof SelfCareProvider) {
+    continue; // Skip execution entirely
+}
+```
+
+The SelfCareProvider is only useful when called externally (CLI commands, external monitoring tools) to verify the monitoring endpoint accessibility from outside the application.
+
 ## Error Handling
 
 The middleware handles errors gracefully:
@@ -142,3 +163,4 @@ The middleware handles errors gracefully:
 - JSON encoding errors are logged and fall back to the next middleware
 - Invalid configurations result in passing requests to the next middleware
 - Authorization failures return structured error responses
+- Provider exceptions are caught and reported as unhealthy status

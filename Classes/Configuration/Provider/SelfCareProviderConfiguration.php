@@ -21,30 +21,20 @@ declare(strict_types=1);
  * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
-namespace mteu\Monitoring\Configuration\Authorizer;
+namespace mteu\Monitoring\Configuration\Provider;
 
 /**
- * TokenAuthorizerConfiguration.
+ * SelfCareProviderConfiguration.
  *
  * @author Martin Adler <mteu@mailbox.org>
  * @license GPL-2.0-or-later
  */
-final readonly class TokenAuthorizerConfiguration implements AuthorizerConfiguration
+final readonly class SelfCareProviderConfiguration implements ProviderConfiguration
 {
-    public function __construct(
-        private bool $isEnabled = false,
-        private int $priority = 10,
-        public string $secret = '',
-        public string $authHeaderName = '',
-    ) {}
+    public function __construct(private bool $isEnabled = false) {}
 
     public function isEnabled(): bool
     {
         return $this->isEnabled;
-    }
-
-    public function getPriority(): int
-    {
-        return $this->priority;
     }
 }

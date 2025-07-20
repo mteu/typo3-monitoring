@@ -28,7 +28,14 @@ return [
         'monitoring' => [
             'api' => [
                 'endpoint' => '/monitor/health',
-                'secret' => 'your-secure-secret',
+            ],
+            'authorizer' => [
+                'mteu\Monitoring\Authorization\TokenAuthorizer' => [
+                    'enabled' => true,
+                    'secret' => 'your-secure-secret',
+                    'authHeaderName' => 'X-TYPO3-MONITORING-AUTH',
+                    'priority' => 10,
+                ],
             ],
         ],
     ],

@@ -52,6 +52,8 @@ logged in to the TYPO3 backend.
 }
 ```
 
+**Note**: The built-in `SelfCareProvider` is never included in the `services` object when accessed via HTTP. The middleware skips it entirely since a successful HTTP response already proves the monitoring system is working.
+
 ### Unhealthy Response
 
 **Status Code**: `503 Service Unavailable`
