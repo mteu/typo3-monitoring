@@ -154,8 +154,6 @@ if ($provider instanceof SelfCareProvider) {
 }
 ```
 
-The SelfCareProvider is only useful when called externally (CLI commands, external monitoring tools) to verify the monitoring endpoint accessibility from outside the application.
-
 ## Error Handling
 
 The middleware handles errors gracefully:
