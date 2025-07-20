@@ -25,6 +25,7 @@ namespace mteu\Monitoring\Configuration;
 
 use mteu\Monitoring\Configuration\Authorizer\AdminUserAuthorizerConfiguration;
 use mteu\Monitoring\Configuration\Authorizer\TokenAuthorizerConfiguration;
+use mteu\Monitoring\Configuration\Provider\SelfCareProviderConfiguration;
 
 /**
  * MonitoringConfiguration DTO.
@@ -38,5 +39,6 @@ final readonly class MonitoringConfiguration
         public string $endpoint,
         public TokenAuthorizerConfiguration $tokenAuthorizerConfiguration,
         public AdminUserAuthorizerConfiguration $adminUserAuthorizerConfiguration,
+        public SelfCareProviderConfiguration $selfCareProviderConfiguration,
     ) {}
 }

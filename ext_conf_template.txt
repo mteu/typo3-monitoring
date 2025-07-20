@@ -23,5 +23,8 @@ authorizer {
 }
 
 provider {
-    # ..
+    mteu\Monitoring\Provider\SelfCareProvider {
+        # cat=SelfCareProvider/Enabled; type=boolean; label=Enable SelfCareProvider:Enables monitoring of the monitoring middleware itself by making self-requests
+        enabled=1
+    }
 }

@@ -24,8 +24,8 @@ indent_size = 2
 indent_size = 2
 
 # Exclude README.md b/c of the badges
-[{README.md,SECURITY.md,architecture.md}]
-max_line_length = 200
+[{*.md}]
+max_line_length = 255
 
 # NEON-Files
 [*.neon]

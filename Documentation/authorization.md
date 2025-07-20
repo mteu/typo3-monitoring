@@ -64,12 +64,19 @@ the endpoint path and the configured secret on top of the TYPO3 encryption key
 for your instance:
 
 ```php
-$hashService = \TYPO3\CMS\Core\Utility\GeneralUtility::makeInstance(
-    \TYPO3\CMS\Core\Crypto\HashService::class
-);
-$configuredEndpoint = '/monitor/health';
-$additionalSecret = 'your-secret-key';
-$token = $hashService->hmac($configuredEndpoint, $additionalSecret);
+// Using dependency injection (recommended)
+public function __construct(
+    private readonly HashService $hashService,
+    private readonly MonitoringConfigurationFactory $configurationFactory,
+) {}
+
+public function generateToken(): string {
+    $config = $this->configurationFactory->create();
+    return $this->hashService->hmac(
+        $config->endpoint,
+        $config->tokenAuthorizerConfiguration->secret
+    );
+}
 ```
 
 **Configuration Access:**
@@ -367,7 +374,7 @@ public function isAuthorized(ServerRequestInterface $request): bool
 // Use environment variables for secrets
 public function __construct()
 {
-    $this->secret = getenv['MONITORING_SECRET'] ?? '';
+    $this->secret = getenv('MONITORING_SECRET') ?? '';
 
     if ($this->secret === '')) {
         throw new \RuntimeException('Monitoring secret not configured');

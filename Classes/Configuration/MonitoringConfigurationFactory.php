@@ -25,6 +25,7 @@ namespace mteu\Monitoring\Configuration;
 
 use mteu\Monitoring\Configuration\Authorizer\AdminUserAuthorizerConfiguration;
 use mteu\Monitoring\Configuration\Authorizer\TokenAuthorizerConfiguration;
+use mteu\Monitoring\Configuration\Provider\SelfCareProviderConfiguration;
 use TYPO3\CMS\Core\Configuration\ExtensionConfiguration;
 
 /**
@@ -61,30 +62,39 @@ final readonly class MonitoringConfigurationFactory
          *           enabled?: string|bool|int,
          *           priority?: string|bool|int|float,
          *         }
-         *      }
+         *      },
+         *     provider?: array{
+         *      enabled?: string|bool|int,
+         *      },
          *   } $config
          */
         $config = $this->extensionConfiguration->get('monitoring') ?? [];
 
         $adminUserConfig = $config['authorizer']['mteu\Monitoring\Authorization\AdminUserAuthorizer'] ?? [];
         $tokenAuthorizerConfig = $config['authorizer']['mteu\Monitoring\Authorization\TokenAuthorizer'] ?? [];
+        $selfCareProviderConfig = $config['provider']['mteu\Monitoring\Provider\SelfCareProvider'] ?? [];
 
         $adminUserConfiguration = new AdminUserAuthorizerConfiguration(
-            enabled: $this->boolean($adminUserConfig['enabled'] ?? false),
+            isEnabled: $this->boolean($adminUserConfig['enabled'] ?? false),
             priority: $this->integer($adminUserConfig['priority'] ?? -10),
         );
 
         $tokenAuthorizerConfiguration = new TokenAuthorizerConfiguration(
-            enabled: $this->boolean($tokenAuthorizerConfig['enabled'] ?? false),
+            isEnabled: $this->boolean($tokenAuthorizerConfig['enabled'] ?? false),
             priority: $this->integer($tokenAuthorizerConfig['priority'] ?? 10),
             secret: $this->string($tokenAuthorizerConfig['secret'] ?? ''),
             authHeaderName: $this->string($tokenAuthorizerConfig['authHeaderName'] ?? ''),
+        );
+
+        $selfCareProviderConfiguration = new SelfCareProviderConfiguration(
+            isEnabled: $selfCareProviderConfig['enabled'] ?? false,
         );
 
         return new MonitoringConfiguration(
             endpoint: $this->string($config['api']['endpoint'] ?? ''),
             tokenAuthorizerConfiguration: $tokenAuthorizerConfiguration,
             adminUserAuthorizerConfiguration: $adminUserConfiguration,
+            selfCareProviderConfiguration: $selfCareProviderConfiguration,
         );
     }
 

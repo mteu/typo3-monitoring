@@ -31,7 +31,7 @@ Each provider displays:
 For cacheable providers:
 - View cache lifetime and expiration
 - Flush provider cache via "Flush Cache" link
-- Flash messages use queue identifier: `'typo3_monitoring'`
+- Flash messages use queue identifier: `'ext_monitoring_message_queue'`
 
 ### Authorization Information
 

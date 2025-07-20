@@ -24,6 +24,11 @@ return [
                     'priority' => -10,
                 ],
             ],
+            'provider' => [
+                'mteu\Monitoring\Provider\SelfCareProvider' => [
+                    'enabled' => true,
+                ],
+            ],
         ],
     ],
 ];
@@ -50,7 +55,24 @@ return [
 
 ## Provider Configuration
 
-Providers are auto-discovered via dependency injection. To disable a provider:
+Providers are auto-discovered via dependency injection and can be configured via extension configuration.
+
+### Built-in Provider Configuration
+
+#### SelfCareProvider
+- **`enabled`**: Enable/disable the SelfCareProvider (default: `true`)
+
+```php
+'provider' => [
+    'mteu\Monitoring\Provider\SelfCareProvider' => [
+        'enabled' => true,
+    ],
+],
+```
+
+### Custom Provider Configuration
+
+To disable a custom provider via service configuration:
 
 ```yaml
 # Configuration/Services.yaml

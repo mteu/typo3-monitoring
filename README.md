@@ -28,6 +28,7 @@ post-deployment checks.
 
 - [Extensible monitoring system](Documentation/architecture.md) with automatic service discovery (using DI) for custom
   authorization and monitoring checks.
+- Built-in **SelfCareProvider** for meta-level monitoring of the monitoring system itself
 - Supports caching for expensive monitoring operations
 - Delivers health reports in three ways:
   - **JSON response**: Returns structured responses for the overall health status

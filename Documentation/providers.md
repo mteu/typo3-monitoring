@@ -279,37 +279,24 @@ final class MultiComponentProvider implements MonitoringProvider
 }
 ```
 
-## 📝 Provider Patterns
-Here's quick glance at what custom providers might be able to achieve.
+## 📦 Built-in Providers
 
-### Health Check Patterns
+The monitoring extension includes several built-in providers:
 
-@todo
+### SelfCareProvider
 
-### Error Handling
+The `SelfCareProvider` monitors the health of the monitoring middleware itself by making HTTP requests to its own health endpoint. This provides meta-level monitoring to ensure the monitoring system is accessible and responding correctly.
 
-Always implement proper error handling:
-
-```php
-public function execute(): Result
-{
-    try {
-        $isHealthy = $this->performCheck();
-
-        return new MonitoringResult(
-            name: $this->getName(),
-            isHealthy: $isHealthy,
-            reason: $isHealthy ? null : 'Service check failed'
-        );
-    } catch (\Exception $e) {
-        return new MonitoringResult(
-            name: $this->getName(),
-            isHealthy: false,
-            reason: 'Exception: ' . $e->getMessage()
-        );
+**Configuration:**
+```yaml
+# ext_conf_template.txt
+provider {
+    mteu\Monitoring\Provider\SelfCareProvider {
+        enabled=1
     }
 }
 ```
+**Note**: The SelfCareProvider is automatically excluded from HTTP middleware execution to avoid redundancy and unnecessary performance overhead. A successful HTTP response from the monitoring endpoint already proves the system is working.
 
 ## ⚙️ Configuration
 
