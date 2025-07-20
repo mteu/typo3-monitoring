@@ -21,27 +21,27 @@ declare(strict_types=1);
  * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
-namespace mteu\Monitoring\Configuration;
+namespace mteu\Monitoring\Configuration\Provider;
 
-use mteu\TypedExtConf\Mapper\ConfigurationMapper;
+use mteu\TypedExtConf\Attribute\ExtConfProperty;
+use mteu\TypedExtConf\Attribute\ExtensionConfig;
 
 /**
- * MonitoringConfigurationFactory.
- *
- * Uses the typed configuration service to provide type-safe configuration.
+ * SelfCareProviderConfiguration.
  *
  * @author Martin Adler <mteu@mailbox.org>
  * @license GPL-2.0-or-later
  */
-final readonly class MonitoringConfigurationFactory
+#[ExtensionConfig(extensionKey: 'monitoring')]
+final readonly class SelfCareProviderConfiguration implements ProviderConfiguration
 {
     public function __construct(
-        private ConfigurationMapper $configurationService,
+        #[ExtConfProperty(path: 'provider.mteu\\Monitoring\\Provider\\SelfCareProvider.enabled', default: true)]
+        private bool $enabled = true,
     ) {}
 
-    public function create(): MonitoringConfiguration
+    public function isEnabled(): bool
     {
-        return $this->configurationService->map(MonitoringConfiguration::class);
+        return $this->enabled;
     }
-
 }

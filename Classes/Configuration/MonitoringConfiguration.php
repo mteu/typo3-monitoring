@@ -25,7 +25,8 @@ namespace mteu\Monitoring\Configuration;
 
 use mteu\Monitoring\Configuration\Authorizer\AdminUserAuthorizerConfiguration;
 use mteu\Monitoring\Configuration\Authorizer\TokenAuthorizerConfiguration;
-use mteu\TypedExtConf\Attribute\ExtConfValue;
+use mteu\Monitoring\Configuration\Provider\SelfCareProviderConfiguration;
+use mteu\TypedExtConf\Attribute\ExtConfProperty;
 use mteu\TypedExtConf\Attribute\ExtensionConfig;
 
 /**
@@ -38,9 +39,10 @@ use mteu\TypedExtConf\Attribute\ExtensionConfig;
 final readonly class MonitoringConfiguration
 {
     public function __construct(
-        #[ExtConfValue(path: 'api.endpoint', default: '')]
+        #[ExtConfProperty(path: 'api.endpoint', default: '')]
         public string $endpoint,
         public TokenAuthorizerConfiguration $tokenAuthorizerConfiguration,
         public AdminUserAuthorizerConfiguration $adminUserAuthorizerConfiguration,
+        public SelfCareProviderConfiguration $selfCareProviderConfiguration,
     ) {}
 }

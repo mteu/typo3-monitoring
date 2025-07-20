@@ -5,11 +5,11 @@ declare(strict_types=1);
 namespace mteu\Monitoring\Tests\Unit\Middleware;
 
 use mteu\Monitoring\Authorization\Authorizer;
-use mteu\Monitoring\Configuration\MonitoringConfigurationFactory;
+use mteu\Monitoring\Configuration\MonitoringConfiguration;
 use mteu\Monitoring\Middleware\MonitoringMiddleware;
 use mteu\Monitoring\Provider\MonitoringProvider;
 use mteu\Monitoring\Result\MonitoringResult;
-use mteu\TypedExtConf\Mapper\ExtensionConfigurationMapper;
+use mteu\TypedExtConf\Provider\TypedExtensionConfigurationProvider;
 use PHPUnit\Framework;
 use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\MockObject\MockObject;
@@ -71,8 +71,8 @@ final class MonitoringMiddlewareTest extends Framework\TestCase
             ->willReturn($configurationData);
 
         // Create real configuration mapper (not mocked)
-        $configurationMapper = new ExtensionConfigurationMapper($this->extensionConfiguration);
-        $configurationFactory = new MonitoringConfigurationFactory($configurationMapper);
+        $configurationMapper = new TypedExtensionConfigurationProvider($this->extensionConfiguration);
+        $configuration = $configurationMapper->get(MonitoringConfiguration::class);
 
         // Create mock provider and authorizer
         $provider = $this->createMock(MonitoringProvider::class);
@@ -89,13 +89,13 @@ final class MonitoringMiddlewareTest extends Framework\TestCase
             $middleware = new MonitoringMiddleware(
                 [$provider],
                 [$authorizer],
-                $configurationFactory,
+                $configuration,
                 $this->responseFactory,
                 $this->logger
             );
 
             // Now let's inspect what configuration was actually loaded
-            $config = $configurationFactory->create();
+            $config = $configuration;
 
             // Debug: Let's see what the endpoint value actually is
             self::assertSame('/monitor/health', $config->endpoint, 'Endpoint should be correctly mapped from api.endpoint');
@@ -141,8 +141,8 @@ final class MonitoringMiddlewareTest extends Framework\TestCase
             ->with('monitoring')
             ->willReturn($configurationData);
 
-        $configurationMapper = new ExtensionConfigurationMapper($this->extensionConfiguration);
-        $configurationFactory = new MonitoringConfigurationFactory($configurationMapper);
+        $configurationMapper = new TypedExtensionConfigurationProvider($this->extensionConfiguration);
+        $configuration = $configurationMapper->get(MonitoringConfiguration::class);
 
         // Create mock provider that reports healthy
         $provider = $this->createMock(MonitoringProvider::class);
@@ -158,7 +158,7 @@ final class MonitoringMiddlewareTest extends Framework\TestCase
         $middleware = new MonitoringMiddleware(
             [$provider],
             [$authorizer],
-            $configurationFactory,
+            $configuration,
             $this->responseFactory,
             $this->logger
         );
@@ -211,13 +211,13 @@ final class MonitoringMiddlewareTest extends Framework\TestCase
             ->with('monitoring')
             ->willReturn($configurationData);
 
-        $configurationMapper = new ExtensionConfigurationMapper($this->extensionConfiguration);
-        $configurationFactory = new MonitoringConfigurationFactory($configurationMapper);
+        $configurationMapper = new TypedExtensionConfigurationProvider($this->extensionConfiguration);
+        $configuration = $configurationMapper->get(MonitoringConfiguration::class);
 
         $middleware = new MonitoringMiddleware(
             [],
             [],
-            $configurationFactory,
+            $configuration,
             $this->responseFactory,
             $this->logger
         );

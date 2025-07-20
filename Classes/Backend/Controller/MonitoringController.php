@@ -27,7 +27,6 @@ use mteu\Monitoring\Authorization\Authorizer;
 use mteu\Monitoring\Authorization\TokenAuthorizer;
 use mteu\Monitoring\Cache\MonitoringCacheManager;
 use mteu\Monitoring\Configuration\MonitoringConfiguration;
-use mteu\Monitoring\Configuration\MonitoringConfigurationFactory;
 use mteu\Monitoring\Handler\MonitoringExecutionHandler;
 use mteu\Monitoring\Provider\CacheableMonitoringProvider;
 use mteu\Monitoring\Provider\MonitoringProvider;
@@ -65,7 +64,6 @@ final readonly class MonitoringController
 
     private const string LOCALLANG_FILE = 'LLL:EXT:monitoring/Resources/Private/Language/locallang.be.xlf';
     private const string FLASHMESSAGE_QUEUE_IDENTIFIER = 'ext_monitoring_message_queue';
-    private MonitoringConfiguration $monitoringConfiguration;
 
     public function __construct(
         /** @var MonitoringProvider[] $monitoringProviders */
@@ -81,11 +79,9 @@ final readonly class MonitoringController
         private LanguageServiceFactory $languageServiceFactory,
         private MonitoringExecutionHandler $executionHandler,
         private MonitoringCacheManager $cacheManager,
-        private MonitoringConfigurationFactory $monitoringConfigurationFactory,
+        private MonitoringConfiguration $monitoringConfiguration,
         private UriBuilder $uriBuilder,
-    ) {
-        $this->monitoringConfiguration = $this->monitoringConfigurationFactory->create();
-    }
+    ) {}
 
     /**
      * @throws MethodNotAllowedException

@@ -23,7 +23,8 @@ declare(strict_types=1);
 
 namespace mteu\Monitoring\Configuration\Authorizer;
 
-use mteu\TypedExtConf\Attribute\ExtConfValue;
+use mteu\TypedExtConf\Attribute\ExtConfProperty;
+use mteu\TypedExtConf\Attribute\ExtensionConfig;
 
 /**
  * AdminUserConfiguration.
@@ -31,12 +32,13 @@ use mteu\TypedExtConf\Attribute\ExtConfValue;
  * @author Martin Adler <mteu@mailbox.org>
  * @license GPL-2.0-or-later
  */
+#[ExtensionConfig(extensionKey: 'monitoring')]
 final readonly class AdminUserAuthorizerConfiguration implements AuthorizerConfiguration
 {
     public function __construct(
-        #[ExtConfValue(path: 'authorizer.mteu\\Monitoring\\Authorization\\AdminUserAuthorizer.enabled', default: false)]
+        #[ExtConfProperty(path: 'authorizer.mteu\\Monitoring\\Authorization\\AdminUserAuthorizer.enabled', default: false)]
         public bool $enabled = false,
-        #[ExtConfValue(path: 'authorizer.mteu\\Monitoring\\Authorization\\AdminUserAuthorizer.priority', default: -10)]
+        #[ExtConfProperty(path: 'authorizer.mteu\\Monitoring\\Authorization\\AdminUserAuthorizer.priority', default: -10)]
         public int $priority = -10,
     ) {}
 

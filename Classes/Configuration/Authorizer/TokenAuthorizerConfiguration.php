@@ -23,7 +23,7 @@ declare(strict_types=1);
 
 namespace mteu\Monitoring\Configuration\Authorizer;
 
-use mteu\TypedExtConf\Attribute\ExtConfValue;
+use mteu\TypedExtConf\Attribute\ExtConfProperty;
 
 /**
  * TokenAuthorizerConfiguration.
@@ -34,13 +34,13 @@ use mteu\TypedExtConf\Attribute\ExtConfValue;
 final readonly class TokenAuthorizerConfiguration implements AuthorizerConfiguration
 {
     public function __construct(
-        #[ExtConfValue(path: 'authorizer.mteu\\Monitoring\\Authorization\\TokenAuthorizer.enabled', default: false)]
+        #[ExtConfProperty(path: 'authorizer.mteu\\Monitoring\\Authorization\\TokenAuthorizer.enabled', default: false)]
         public bool $enabled = false,
-        #[ExtConfValue(path: 'authorizer.mteu\\Monitoring\\Authorization\\TokenAuthorizer.priority', default: 10)]
+        #[ExtConfProperty(path: 'authorizer.mteu\\Monitoring\\Authorization\\TokenAuthorizer.priority', default: 10)]
         public int $priority = 10,
-        #[ExtConfValue(path: 'authorizer.mteu\\Monitoring\\Authorization\\TokenAuthorizer.secret', default: '')]
+        #[ExtConfProperty(path: 'authorizer.mteu\\Monitoring\\Authorization\\TokenAuthorizer.secret', default: '')]
         public string $secret = '',
-        #[ExtConfValue(path: 'authorizer.mteu\\Monitoring\\Authorization\\TokenAuthorizer.authHeaderName', default: '')]
+        #[ExtConfProperty(path: 'authorizer.mteu\\Monitoring\\Authorization\\TokenAuthorizer.authHeaderName', default: '')]
         public string $authHeaderName = '',
     ) {}
 

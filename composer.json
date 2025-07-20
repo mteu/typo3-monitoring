@@ -24,14 +24,14 @@
 		"mteu/zealous-stan": "^0.6.3",
 		"phpstan/extension-installer": "*",
 		"phpstan/phpstan": "^2.1",
-		"phpunit/phpcov": "^10.0",
-		"phpunit/phpunit": "^11.5",
+		"phpunit/phpcov": "^11.0.0",
+		"phpunit/phpunit": "^12.1",
 		"roave/security-advisories": "dev-latest",
 		"saschaegerer/phpstan-typo3": "^2.1",
 		"shipmonk/composer-dependency-analyser": "*",
 		"ssch/typo3-rector": "^3.6",
 		"typo3/coding-standards": "^0.8.0",
-		"typo3/testing-framework": "^9.0"
+		"typo3/testing-framework": "^9.2.0"
 	},
 	"repositories": [
 		{

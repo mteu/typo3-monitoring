@@ -25,8 +25,8 @@ namespace mteu\Monitoring\Middleware;
 
 use mteu\Monitoring\Authorization\Authorizer;
 use mteu\Monitoring\Configuration\MonitoringConfiguration;
-use mteu\Monitoring\Configuration\MonitoringConfigurationFactory;
 use mteu\Monitoring\Provider\MonitoringProvider;
+use mteu\Monitoring\Provider\SelfCareProvider;
 use Psr\Http\Message\ResponseFactoryInterface;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
@@ -43,8 +43,6 @@ use Symfony\Component\DependencyInjection\Attribute\AutowireIterator;
  */
 final readonly class MonitoringMiddleware implements MiddlewareInterface
 {
-    private MonitoringConfiguration $monitoringConfiguration;
-
     public function __construct(
         /** @var iterable<MonitoringProvider> $monitoringProviders */
         #[AutowireIterator(tag: 'monitoring.provider')]
@@ -53,12 +51,10 @@ final readonly class MonitoringMiddleware implements MiddlewareInterface
         /** @var iterable<Authorizer> $authorizers */
         #[AutowireIterator(tag: 'monitoring.authorizer', defaultPriorityMethod: 'getPriority')]
         private iterable $authorizers,
-        private MonitoringConfigurationFactory $monitoringConfigurationFactory,
+        private MonitoringConfiguration $monitoringConfiguration,
         private ResponseFactoryInterface $responseFactory,
         private LoggerInterface $logger,
-    ) {
-        $this->monitoringConfiguration = $this->monitoringConfigurationFactory->create();
-    }
+    ) {}
 
     public function process(ServerRequestInterface $request, RequestHandlerInterface $handler): ResponseInterface
     {
@@ -151,6 +147,11 @@ final readonly class MonitoringMiddleware implements MiddlewareInterface
 
         foreach ($this->monitoringProviders as $provider) {
             if ($provider->isActive()) {
+
+                if ($provider instanceof SelfCareProvider) {
+                    continue;
+                }
+
                 $status[$provider->getName()] = $provider->execute()->isHealthy();
             }
         }

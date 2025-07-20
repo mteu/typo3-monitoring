@@ -8,6 +8,12 @@ services:
     resource: '../Classes/*'
 
   # Import typed-extconf services
-  mteu\TypedExtConf\Mapper\ConfigurationMapper:
-    class: mteu\TypedExtConf\Mapper\ExtensionConfigurationMapper
+  mteu\TypedExtConf\Provider\ExtensionConfigurationProvider:
+    alias: mteu\TypedExtConf\Provider\TypedExtensionConfigurationProvider
     public: true
+
+  # Configure MonitoringConfiguration as a service
+  mteu\Monitoring\Configuration\MonitoringConfiguration:
+    factory: ['@mteu\TypedExtConf\Provider\ExtensionConfigurationProvider', 'get']
+    arguments:
+      $configClass: 'mteu\Monitoring\Configuration\MonitoringConfiguration'
