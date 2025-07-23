@@ -6,14 +6,3 @@ services:
 
   mteu\Monitoring\:
     resource: '../Classes/*'
-
-  # Import typed-extconf services
-  mteu\TypedExtConf\Provider\ExtensionConfigurationProvider:
-    alias: mteu\TypedExtConf\Provider\TypedExtensionConfigurationProvider
-    public: true
-
-  # Configure MonitoringConfiguration as a service
-  mteu\Monitoring\Configuration\MonitoringConfiguration:
-    factory: ['@mteu\TypedExtConf\Provider\ExtensionConfigurationProvider', 'get']
-    arguments:
-      $configClass: 'mteu\Monitoring\Configuration\MonitoringConfiguration'
