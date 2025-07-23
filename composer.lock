@@ -121,16 +121,16 @@
         },
         {
             "name": "cuyz/valinor",
-            "version": "2.1.0",
+            "version": "2.1.1",
             "source": {
                 "type": "git",
                 "url": "https://github.com/CuyZ/Valinor.git",
-                "reference": "1d294c57161704c513193fff6049e927fd62d2b0"
+                "reference": "f51e9beebdefc968cbfcd4a2c561b40575288610"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/CuyZ/Valinor/zipball/1d294c57161704c513193fff6049e927fd62d2b0",
-                "reference": "1d294c57161704c513193fff6049e927fd62d2b0",
+                "url": "https://api.github.com/repos/CuyZ/Valinor/zipball/f51e9beebdefc968cbfcd4a2c561b40575288610",
+                "reference": "f51e9beebdefc968cbfcd4a2c561b40575288610",
                 "shasum": ""
             },
             "require": {
@@ -186,7 +186,7 @@
             ],
             "support": {
                 "issues": "https://github.com/CuyZ/Valinor/issues",
-                "source": "https://github.com/CuyZ/Valinor/tree/2.1.0"
+                "source": "https://github.com/CuyZ/Valinor/tree/2.1.1"
             },
             "funding": [
                 {
@@ -194,7 +194,7 @@
                     "type": "github"
                 }
             ],
-            "time": "2025-07-23T11:48:10+00:00"
+            "time": "2025-07-23T20:32:01+00:00"
         },
         {
             "name": "dasprid/enum",
@@ -1278,16 +1278,16 @@
         },
         {
             "name": "mteu/typo3-typed-extconf",
-            "version": "0.1.0",
+            "version": "0.1.1",
             "source": {
                 "type": "git",
                 "url": "https://github.com/mteu/typo3-typed-extconf.git",
-                "reference": "915fc3ef3ae9e9b8ef328a45c07f4a54f3612ee9"
+                "reference": "4d092380d2f619d7a423197c5152dff9d5aa950f"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/mteu/typo3-typed-extconf/zipball/915fc3ef3ae9e9b8ef328a45c07f4a54f3612ee9",
-                "reference": "915fc3ef3ae9e9b8ef328a45c07f4a54f3612ee9",
+                "url": "https://api.github.com/repos/mteu/typo3-typed-extconf/zipball/4d092380d2f619d7a423197c5152dff9d5aa950f",
+                "reference": "4d092380d2f619d7a423197c5152dff9d5aa950f",
                 "shasum": ""
             },
             "require": {
@@ -1340,9 +1340,9 @@
             "description": "Aims to provide a type-safe extension configuration management for TYPO3, ensuring proper types instead of string-only values from backend configuration or mixed types from config/system/settings.php",
             "support": {
                 "issues": "https://github.com/mteu/typo3-typed-extconf/issues",
-                "source": "https://github.com/mteu/typo3-typed-extconf/tree/0.1.0"
+                "source": "https://github.com/mteu/typo3-typed-extconf/tree/0.1.1"
             },
-            "time": "2025-07-23T10:39:46+00:00"
+            "time": "2025-07-23T20:07:23+00:00"
         },
         {
             "name": "psr/cache",
