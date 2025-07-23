@@ -23,18 +23,25 @@ declare(strict_types=1);
 
 namespace mteu\Monitoring\Configuration\Provider;
 
+use mteu\TypedExtConf\Attribute\ExtConfProperty;
+use mteu\TypedExtConf\Attribute\ExtensionConfig;
+
 /**
  * SelfCareProviderConfiguration.
  *
  * @author Martin Adler <mteu@mailbox.org>
  * @license GPL-2.0-or-later
  */
+#[ExtensionConfig(extensionKey: 'monitoring')]
 final readonly class SelfCareProviderConfiguration implements ProviderConfiguration
 {
-    public function __construct(private bool $isEnabled = false) {}
+    public function __construct(
+        #[ExtConfProperty(path: 'provider.mteu\\Monitoring\\Provider\\SelfCareProvider.enabled')]
+        private bool $enabled = true,
+    ) {}
 
     public function isEnabled(): bool
     {
-        return $this->isEnabled;
+        return $this->enabled;
     }
 }

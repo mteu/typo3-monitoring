@@ -26,6 +26,8 @@ namespace mteu\Monitoring\Configuration;
 use mteu\Monitoring\Configuration\Authorizer\AdminUserAuthorizerConfiguration;
 use mteu\Monitoring\Configuration\Authorizer\TokenAuthorizerConfiguration;
 use mteu\Monitoring\Configuration\Provider\SelfCareProviderConfiguration;
+use mteu\TypedExtConf\Attribute\ExtConfProperty;
+use mteu\TypedExtConf\Attribute\ExtensionConfig;
 
 /**
  * MonitoringConfiguration DTO.
@@ -33,12 +35,14 @@ use mteu\Monitoring\Configuration\Provider\SelfCareProviderConfiguration;
  * @author Martin Adler <mteu@mailbox.org>
  * @license GPL-2.0-or-later
  */
+#[ExtensionConfig(extensionKey: 'monitoring')]
 final readonly class MonitoringConfiguration
 {
     public function __construct(
-        public string $endpoint,
         public TokenAuthorizerConfiguration $tokenAuthorizerConfiguration,
         public AdminUserAuthorizerConfiguration $adminUserAuthorizerConfiguration,
         public SelfCareProviderConfiguration $selfCareProviderConfiguration,
+        #[ExtConfProperty(path: 'api.endpoint')]
+        public string $endpoint = 'monitor/health',
     ) {}
 }
