@@ -60,7 +60,6 @@ final class ClassNameViewHelper extends AbstractViewHelper
         );
     }
 
-    #[\Override]
     public function render(): string
     {
         $fqcn = $this->arguments['fqcn'] ?? $this->renderChildren();
