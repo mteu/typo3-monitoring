@@ -24,15 +24,12 @@ declare(strict_types=1);
 namespace mteu\Monitoring\Provider;
 
 use mteu\Monitoring\Configuration\MonitoringConfiguration;
-use mteu\Monitoring\Configuration\MonitoringConfigurationFactory;
 use mteu\Monitoring\Result\MonitoringResult;
 use mteu\Monitoring\Result\Result;
 use Psr\Http\Client\ClientExceptionInterface;
 use Psr\Http\Client\ClientInterface;
 use Psr\Http\Message\RequestFactoryInterface;
 use Psr\Log\LoggerInterface;
-use Symfony\Component\DependencyInjection\Attribute\AutoconfigureTag;
-use TYPO3\CMS\Core\Configuration\ExtensionConfiguration;
 use TYPO3\CMS\Core\Crypto\HashService;
 use TYPO3\CMS\Core\Site\SiteFinder;
 
@@ -46,22 +43,16 @@ use TYPO3\CMS\Core\Site\SiteFinder;
  * @author Martin Adler <mteu@mailbox.org>
  * @license GPL-2.0-or-later
  */
-#[AutoconfigureTag(name: 'monitoring.provider')]
 final readonly class SelfCareProvider implements MonitoringProvider
 {
-    private MonitoringConfiguration $monitoringConfiguration;
-
     public function __construct(
-        private MonitoringConfigurationFactory $monitoringConfigurationFactory,
+        private MonitoringConfiguration $monitoringConfiguration,
         private ClientInterface $httpClient,
         private RequestFactoryInterface $requestFactory,
         private SiteFinder $siteFinder,
         private LoggerInterface $logger,
-        private ExtensionConfiguration $extensionConfiguration,
         private HashService $hashService,
-    ) {
-        $this->monitoringConfiguration = $this->monitoringConfigurationFactory->create();
-    }
+    ) {}
 
     public function getName(): string
     {
@@ -70,9 +61,7 @@ final readonly class SelfCareProvider implements MonitoringProvider
 
     public function getDescription(): string
     {
-        return 'The self-care provider monitors the monitoring middleware itself by making HTTP requests to its own
-            health endpoint, providing meta-level health checking to ensure the monitoring system is accessible and
-            responding correctly.';
+        return 'The self-care provider monitors the monitoring middleware itself by making HTTP requests to its own health endpoint, providing meta-level health checking to ensure the monitoring system is accessible and responding correctly.';
     }
 
     public function isActive(): bool
@@ -87,24 +76,7 @@ final readonly class SelfCareProvider implements MonitoringProvider
             return false;
         }
 
-        $config = $this->extensionConfiguration->get('monitoring') ?? [];
-        if (!is_array($config)) {
-            return true;
-        }
-
-        $providerSection = $config['provider'] ?? [];
-        if (!is_array($providerSection)) {
-            return true;
-        }
-
-        $providerConfig = $providerSection['mteu\\Monitoring\\Provider\\SelfCareProvider'] ?? [];
-        if (!is_array($providerConfig)) {
-            return true;
-        }
-
-        $enabled = $providerConfig['enabled'] ?? true;
-
-        return filter_var($enabled, FILTER_VALIDATE_BOOLEAN, FILTER_NULL_ON_FAILURE) ?? true;
+        return $this->monitoringConfiguration->selfCareProviderConfiguration->isEnabled();
     }
 
     public function execute(): Result

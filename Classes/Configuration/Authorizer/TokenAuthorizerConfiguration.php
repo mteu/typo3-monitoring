@@ -23,6 +23,8 @@ declare(strict_types=1);
 
 namespace mteu\Monitoring\Configuration\Authorizer;
 
+use mteu\TypedExtConf\Attribute\ExtConfProperty;
+
 /**
  * TokenAuthorizerConfiguration.
  *
@@ -32,15 +34,19 @@ namespace mteu\Monitoring\Configuration\Authorizer;
 final readonly class TokenAuthorizerConfiguration implements AuthorizerConfiguration
 {
     public function __construct(
-        private bool $isEnabled = false,
-        private int $priority = 10,
+        #[ExtConfProperty(path: 'authorizer.mteu\\Monitoring\\Authorization\\TokenAuthorizer.enabled', required: true)]
+        public bool $enabled = false,
+        #[ExtConfProperty(path: 'authorizer.mteu\\Monitoring\\Authorization\\TokenAuthorizer.priority')]
+        public int $priority = 10,
+        #[ExtConfProperty(path: 'authorizer.mteu\\Monitoring\\Authorization\\TokenAuthorizer.secret', required: true)]
         public string $secret = '',
+        #[ExtConfProperty(path: 'authorizer.mteu\\Monitoring\\Authorization\\TokenAuthorizer.authHeaderName')]
         public string $authHeaderName = '',
     ) {}
 
     public function isEnabled(): bool
     {
-        return $this->isEnabled;
+        return $this->enabled;
     }
 
     public function getPriority(): int
