@@ -36,9 +36,9 @@ use mteu\TypedExtConf\Attribute\ExtensionConfig;
 final readonly class AdminUserAuthorizerConfiguration implements AuthorizerConfiguration
 {
     public function __construct(
-        #[ExtConfProperty(path: 'authorizer.mteu\\Monitoring\\Authorization\\AdminUserAuthorizer.enabled', default: false)]
+        #[ExtConfProperty(path: 'authorizer.mteu\\Monitoring\\Authorization\\AdminUserAuthorizer.enabled')]
         public bool $enabled = false,
-        #[ExtConfProperty(path: 'authorizer.mteu\\Monitoring\\Authorization\\AdminUserAuthorizer.priority', default: -10)]
+        #[ExtConfProperty(path: 'authorizer.mteu\\Monitoring\\Authorization\\AdminUserAuthorizer.priority')]
         public int $priority = -10,
     ) {}
 

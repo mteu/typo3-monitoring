@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace mteu\Monitoring\Tests\Unit\Middleware;
 
+use CuyZ\Valinor\MapperBuilder;
 use mteu\Monitoring\Authorization\Authorizer;
 use mteu\Monitoring\Configuration\MonitoringConfiguration;
 use mteu\Monitoring\Middleware\MonitoringMiddleware;
@@ -35,12 +36,32 @@ final class MonitoringMiddlewareTest extends Framework\TestCase
     private LoggerInterface&MockObject $logger;
     private RequestHandlerInterface&MockObject $handler;
 
+    private MonitoringConfiguration $configuration;
+
     protected function setUp(): void
     {
         $this->extensionConfiguration = $this->createMock(ExtensionConfiguration::class);
         $this->responseFactory = $this->createMock(ResponseFactoryInterface::class);
         $this->logger = $this->createMock(LoggerInterface::class);
         $this->handler = $this->createMock(RequestHandlerInterface::class);
+    }
+
+    /**
+     * @param mixed[] $configurationData
+     */
+    private function createConfigurationFromData(array $configurationData): MonitoringConfiguration
+    {
+        $this->extensionConfiguration->expects(self::atLeastOnce())
+            ->method('get')
+            ->with('monitoring')
+            ->willReturn($configurationData);
+
+        $mapper = (new MapperBuilder())
+            ->allowSuperfluousKeys()
+            ->mapper();
+
+        $provider = new TypedExtensionConfigurationProvider($this->extensionConfiguration, $mapper);
+        return $provider->get(MonitoringConfiguration::class);
     }
 
     #[Test]
@@ -60,21 +81,13 @@ final class MonitoringMiddlewareTest extends Framework\TestCase
                     'authHeaderName' => 'X-TYPO3-MONITORING-AUTH',
                     'enabled' => '1',
                     'priority' => '10',
-                    'secret' => 'wefwef',
+                    'secret' => 'superSecretSalt',
                 ],
             ],
         ];
 
-        $this->extensionConfiguration->expects(self::atLeastOnce())
-            ->method('get')
-            ->with('monitoring')
-            ->willReturn($configurationData);
+        $this->configuration = $this->createConfigurationFromData($configurationData);
 
-        // Create real configuration mapper (not mocked)
-        $configurationMapper = new TypedExtensionConfigurationProvider($this->extensionConfiguration);
-        $configuration = $configurationMapper->get(MonitoringConfiguration::class);
-
-        // Create mock provider and authorizer
         $provider = $this->createMock(MonitoringProvider::class);
         $provider->method('isActive')->willReturn(true);
         $provider->method('getName')->willReturn('test_provider');
@@ -82,27 +95,22 @@ final class MonitoringMiddlewareTest extends Framework\TestCase
 
         $authorizer = $this->createMock(Authorizer::class);
         $authorizer->method('isAuthorized')->willReturn(true);
-        $authorizer->method('getPriority')->willReturn(10);
 
         // Test middleware creation and configuration loading
         try {
             $middleware = new MonitoringMiddleware(
                 [$provider],
                 [$authorizer],
-                $configuration,
+                $this->configuration,
                 $this->responseFactory,
                 $this->logger
             );
 
-            // Now let's inspect what configuration was actually loaded
-            $config = $configuration;
-
-            // Debug: Let's see what the endpoint value actually is
-            self::assertSame('/monitor/health', $config->endpoint, 'Endpoint should be correctly mapped from api.endpoint');
-            self::assertTrue($config->tokenAuthorizerConfiguration->isEnabled(), 'Token authorizer should be enabled');
-            self::assertSame('wefwef', $config->tokenAuthorizerConfiguration->secret, 'Secret should be correctly mapped');
-            self::assertSame('X-TYPO3-MONITORING-AUTH', $config->tokenAuthorizerConfiguration->authHeaderName, 'Auth header should be correctly mapped');
-            self::assertTrue($config->adminUserAuthorizerConfiguration->isEnabled(), 'Admin user authorizer should be enabled');
+            self::assertSame('/monitor/health', $this->configuration->endpoint, 'Endpoint should be correctly mapped from api.endpoint');
+            self::assertTrue($this->configuration->tokenAuthorizerConfiguration->isEnabled(), 'Token authorizer should be enabled');
+            self::assertSame('superSecretSalt', $this->configuration->tokenAuthorizerConfiguration->secret, 'Secret should be correctly mapped');
+            self::assertSame('X-TYPO3-MONITORING-AUTH', $this->configuration->tokenAuthorizerConfiguration->authHeaderName, 'Auth header should be correctly mapped');
+            self::assertTrue($this->configuration->adminUserAuthorizerConfiguration->isEnabled(), 'Admin user authorizer should be enabled');
 
         } catch (\Throwable $e) {
             self::fail(
@@ -136,13 +144,7 @@ final class MonitoringMiddlewareTest extends Framework\TestCase
             ],
         ];
 
-        $this->extensionConfiguration->expects(self::atLeastOnce())
-            ->method('get')
-            ->with('monitoring')
-            ->willReturn($configurationData);
-
-        $configurationMapper = new TypedExtensionConfigurationProvider($this->extensionConfiguration);
-        $configuration = $configurationMapper->get(MonitoringConfiguration::class);
+        $this->configuration = $this->createConfigurationFromData($configurationData);
 
         // Create mock provider that reports healthy
         $provider = $this->createMock(MonitoringProvider::class);
@@ -150,15 +152,13 @@ final class MonitoringMiddlewareTest extends Framework\TestCase
         $provider->method('getName')->willReturn('database');
         $provider->method('execute')->willReturn(new MonitoringResult('database', true));
 
-        // Create mock authorizer that authorizes the request
         $authorizer = $this->createMock(Authorizer::class);
         $authorizer->method('isAuthorized')->willReturn(true);
-        $authorizer->method('getPriority')->willReturn(10);
 
         $middleware = new MonitoringMiddleware(
             [$provider],
             [$authorizer],
-            $configuration,
+            $this->configuration,
             $this->responseFactory,
             $this->logger
         );
@@ -171,7 +171,6 @@ final class MonitoringMiddlewareTest extends Framework\TestCase
         $request = $this->createMock(ServerRequestInterface::class);
         $request->method('getUri')->willReturn($uri);
 
-        // Create mock response
         $responseBody = $this->createMock(StreamInterface::class);
         $response = $this->createMock(ResponseInterface::class);
         $response->method('withStatus')->willReturnSelf();
@@ -182,7 +181,6 @@ final class MonitoringMiddlewareTest extends Framework\TestCase
             ->method('createResponse')
             ->willReturn($response);
 
-        // Process the request
         $result = $middleware->process($request, $this->handler);
 
         self::assertSame($response, $result);
@@ -194,7 +192,7 @@ final class MonitoringMiddlewareTest extends Framework\TestCase
         // Configuration with empty endpoint should pass through to next handler
         $configurationData = [
             'api' => [
-                'endpoint' => '',  // Empty endpoint
+                'endpoint' => '',
             ],
             'authorizer' => [
                 'mteu\Monitoring\Authorization\TokenAuthorizer' => [
@@ -206,18 +204,12 @@ final class MonitoringMiddlewareTest extends Framework\TestCase
             ],
         ];
 
-        $this->extensionConfiguration->expects(self::atLeastOnce())
-            ->method('get')
-            ->with('monitoring')
-            ->willReturn($configurationData);
-
-        $configurationMapper = new TypedExtensionConfigurationProvider($this->extensionConfiguration);
-        $configuration = $configurationMapper->get(MonitoringConfiguration::class);
+        $this->configuration = $this->createConfigurationFromData($configurationData);
 
         $middleware = new MonitoringMiddleware(
             [],
             [],
-            $configuration,
+            $this->configuration,
             $this->responseFactory,
             $this->logger
         );

@@ -39,10 +39,10 @@ use mteu\TypedExtConf\Attribute\ExtensionConfig;
 final readonly class MonitoringConfiguration
 {
     public function __construct(
-        #[ExtConfProperty(path: 'api.endpoint', default: '')]
-        public string $endpoint,
         public TokenAuthorizerConfiguration $tokenAuthorizerConfiguration,
         public AdminUserAuthorizerConfiguration $adminUserAuthorizerConfiguration,
         public SelfCareProviderConfiguration $selfCareProviderConfiguration,
+        #[ExtConfProperty(path: 'api.endpoint')]
+        public string $endpoint = 'monitor/health',
     ) {}
 }

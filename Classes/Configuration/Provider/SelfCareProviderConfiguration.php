@@ -36,7 +36,7 @@ use mteu\TypedExtConf\Attribute\ExtensionConfig;
 final readonly class SelfCareProviderConfiguration implements ProviderConfiguration
 {
     public function __construct(
-        #[ExtConfProperty(path: 'provider.mteu\\Monitoring\\Provider\\SelfCareProvider.enabled', default: true)]
+        #[ExtConfProperty(path: 'provider.mteu\\Monitoring\\Provider\\SelfCareProvider.enabled')]
         private bool $enabled = true,
     ) {}
 

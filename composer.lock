@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "a157cc5db27838a704ce5e8317a7289d",
+    "content-hash": "8e6342a5de89586897c40fd8be0b0daa",
     "packages": [
         {
             "name": "bacon/bacon-qr-code",
@@ -121,16 +121,16 @@
         },
         {
             "name": "cuyz/valinor",
-            "version": "2.0.0",
+            "version": "2.1.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/CuyZ/Valinor.git",
-                "reference": "914a8cbe64c71f9f0a9728df75e7d92a2988fb40"
+                "reference": "1d294c57161704c513193fff6049e927fd62d2b0"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/CuyZ/Valinor/zipball/914a8cbe64c71f9f0a9728df75e7d92a2988fb40",
-                "reference": "914a8cbe64c71f9f0a9728df75e7d92a2988fb40",
+                "url": "https://api.github.com/repos/CuyZ/Valinor/zipball/1d294c57161704c513193fff6049e927fd62d2b0",
+                "reference": "1d294c57161704c513193fff6049e927fd62d2b0",
                 "shasum": ""
             },
             "require": {
@@ -186,7 +186,7 @@
             ],
             "support": {
                 "issues": "https://github.com/CuyZ/Valinor/issues",
-                "source": "https://github.com/CuyZ/Valinor/tree/2.0.0"
+                "source": "https://github.com/CuyZ/Valinor/tree/2.1.0"
             },
             "funding": [
                 {
@@ -194,7 +194,7 @@
                     "type": "github"
                 }
             ],
-            "time": "2025-06-27T06:38:26+00:00"
+            "time": "2025-07-23T11:48:10+00:00"
         },
         {
             "name": "dasprid/enum",
@@ -1278,38 +1278,48 @@
         },
         {
             "name": "mteu/typo3-typed-extconf",
-            "version": "dev-main",
+            "version": "0.1.0",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/mteu/typo3-typed-extconf.git",
+                "reference": "915fc3ef3ae9e9b8ef328a45c07f4a54f3612ee9"
+            },
             "dist": {
-                "type": "path",
-                "url": "../typo3-typed-extconf",
-                "reference": "e207748b81a3b98b346c193dc5fa0fda76cb2e4a"
+                "type": "zip",
+                "url": "https://api.github.com/repos/mteu/typo3-typed-extconf/zipball/915fc3ef3ae9e9b8ef328a45c07f4a54f3612ee9",
+                "reference": "915fc3ef3ae9e9b8ef328a45c07f4a54f3612ee9",
+                "shasum": ""
             },
             "require": {
                 "cuyz/valinor": "^2.0",
-                "php": "~8.3.0 || ~8.4.0",
-                "typo3/cms-core": "~13.4.12"
+                "php": "~8.2.0 || ~8.3.0 || ~8.4.0",
+                "typo3/cms-core": "~12.4.31 || ~13.4.12"
             },
             "require-dev": {
-                "armin/editorconfig-cli": "^2.0",
+                "armin/editorconfig-cli": "^2.1",
+                "eliashaeussler/phpunit-attributes": "^1.7",
                 "eliashaeussler/version-bumper": "^3.0",
                 "ergebnis/composer-normalize": "^2.28",
+                "friendsofphp/php-cs-fixer": "^3.8",
                 "mteu/zealous-stan": "^0.6.3",
                 "phpstan/extension-installer": "*",
                 "phpstan/phpstan": "^2.1",
-                "phpunit/phpcov": "^11.0.0",
-                "phpunit/phpunit": "^12.1",
+                "phpstan/phpstan-phpunit": "^2.0",
+                "phpunit/phpcov": "^10.0 || ^11.0.0",
+                "phpunit/phpunit": "^11.5 || ^12.1",
                 "roave/security-advisories": "dev-latest",
                 "saschaegerer/phpstan-typo3": "^2.1",
                 "shipmonk/composer-dependency-analyser": "*",
                 "ssch/typo3-rector": "^3.6",
                 "typo3/coding-standards": "^0.8.0",
-                "typo3/testing-framework": "^9.2.0"
+                "typo3/testing-framework": "^8.2 || ^9.2"
             },
             "type": "typo3-cms-extension",
             "extra": {
                 "typo3/cms": {
+                    "web-dir": ".build/web",
                     "extension-key": "typed_extconf",
-                    "web-dir": ".build/web"
+                    "skip-ter-packagist-import": true
                 }
             },
             "autoload": {
@@ -1317,73 +1327,7 @@
                     "mteu\\TypedExtConf\\": "Classes/"
                 }
             },
-            "autoload-dev": {
-                "psr-4": {
-                    "mteu\\TypedExtConf\\Tests\\": "Tests/"
-                }
-            },
-            "scripts": {
-                "fix": [
-                    "@fix:composer",
-                    "@fix:editorconfig",
-                    "@fix:php"
-                ],
-                "fix:composer": [
-                    "@composer normalize"
-                ],
-                "fix:editorconfig": [
-                    "ec --fix"
-                ],
-                "fix:php": [
-                    "php-cs-fixer fix --config php-cs-fixer.php"
-                ],
-                "lint": [
-                    "@lint:composer",
-                    "@lint:editorconfig",
-                    "@lint:php"
-                ],
-                "lint:composer": [
-                    "@composer normalize --dry-run"
-                ],
-                "lint:editorconfig": [
-                    "ec"
-                ],
-                "lint:php": [
-                    "php-cs-fixer fix --config php-cs-fixer.php"
-                ],
-                "lint:yaml": [
-                    "find . -path './.build' -prune -o \\( -name '*.yaml' -o -name '*.yml' \\) -type f -print | xargs yaml-lint --format=github"
-                ],
-                "sca": [
-                    "@sca:php",
-                    "@sca:migrate"
-                ],
-                "sca:migrate": [
-                    "@sca:migrate:php"
-                ],
-                "sca:migrate:php": [
-                    "Composer\\Config::disableProcessTimeout",
-                    "rector process"
-                ],
-                "sca:php": [
-                    "phpstan analyse -c phpstan.neon --memory-limit=4G"
-                ],
-                "test": [
-                    "@test:unit"
-                ],
-                "test:coverage": [
-                    "@test:coverage:unit"
-                ],
-                "test:coverage:unit": [
-                    "phpunit -c phpunit.unit.xml"
-                ],
-                "test:unit": [
-                    "phpunit -c phpunit.unit.xml --no-coverage"
-                ],
-                "validate-dependencies": [
-                    "composer-dependency-analyser"
-                ]
-            },
+            "notification-url": "https://packagist.org/downloads/",
             "license": [
                 "GPL-2.0-or-later"
             ],
@@ -1393,10 +1337,12 @@
                     "email": "mteu@mailbox.org"
                 }
             ],
-            "description": "Provides type-safe extension configuration management for TYPO3, ensuring proper types instead of string-only values from backend configuration",
-            "transport-options": {
-                "relative": true
-            }
+            "description": "Aims to provide a type-safe extension configuration management for TYPO3, ensuring proper types instead of string-only values from backend configuration or mixed types from config/system/settings.php",
+            "support": {
+                "issues": "https://github.com/mteu/typo3-typed-extconf/issues",
+                "source": "https://github.com/mteu/typo3-typed-extconf/tree/0.1.0"
+            },
+            "time": "2025-07-23T10:39:46+00:00"
         },
         {
             "name": "psr/cache",
@@ -7779,16 +7725,16 @@
         },
         {
             "name": "phpstan/phpstan",
-            "version": "2.1.18",
+            "version": "2.1.19",
             "source": {
                 "type": "git",
                 "url": "https://github.com/phpstan/phpstan.git",
-                "reference": "ee1f390b7a70cdf74a2b737e554f68afea885db7"
+                "reference": "473a8c30e450d87099f76313edcbb90852f9afdf"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/phpstan/phpstan/zipball/ee1f390b7a70cdf74a2b737e554f68afea885db7",
-                "reference": "ee1f390b7a70cdf74a2b737e554f68afea885db7",
+                "url": "https://api.github.com/repos/phpstan/phpstan/zipball/473a8c30e450d87099f76313edcbb90852f9afdf",
+                "reference": "473a8c30e450d87099f76313edcbb90852f9afdf",
                 "shasum": ""
             },
             "require": {
@@ -7833,7 +7779,7 @@
                     "type": "github"
                 }
             ],
-            "time": "2025-07-17T17:22:31+00:00"
+            "time": "2025-07-21T19:58:24+00:00"
         },
         {
             "name": "phpstan/phpstan-deprecation-rules",
@@ -7884,16 +7830,16 @@
         },
         {
             "name": "phpstan/phpstan-strict-rules",
-            "version": "2.0.4",
+            "version": "2.0.6",
             "source": {
                 "type": "git",
                 "url": "https://github.com/phpstan/phpstan-strict-rules.git",
-                "reference": "3e139cbe67fafa3588e1dbe27ca50f31fdb6236a"
+                "reference": "f9f77efa9de31992a832ff77ea52eb42d675b094"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/phpstan/phpstan-strict-rules/zipball/3e139cbe67fafa3588e1dbe27ca50f31fdb6236a",
-                "reference": "3e139cbe67fafa3588e1dbe27ca50f31fdb6236a",
+                "url": "https://api.github.com/repos/phpstan/phpstan-strict-rules/zipball/f9f77efa9de31992a832ff77ea52eb42d675b094",
+                "reference": "f9f77efa9de31992a832ff77ea52eb42d675b094",
                 "shasum": ""
             },
             "require": {
@@ -7926,9 +7872,9 @@
             "description": "Extra strict and opinionated rules for PHPStan",
             "support": {
                 "issues": "https://github.com/phpstan/phpstan-strict-rules/issues",
-                "source": "https://github.com/phpstan/phpstan-strict-rules/tree/2.0.4"
+                "source": "https://github.com/phpstan/phpstan-strict-rules/tree/2.0.6"
             },
-            "time": "2025-03-18T11:42:40+00:00"
+            "time": "2025-07-21T12:19:29+00:00"
         },
         {
             "name": "phpunit/php-code-coverage",
@@ -9023,12 +8969,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/Roave/SecurityAdvisories.git",
-                "reference": "2976f12cdae3501980aabb46810cf807f7fdec44"
+                "reference": "0b1f127d644a2ff8af1c8bd2955dbe3c11812017"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/Roave/SecurityAdvisories/zipball/2976f12cdae3501980aabb46810cf807f7fdec44",
-                "reference": "2976f12cdae3501980aabb46810cf807f7fdec44",
+                "url": "https://api.github.com/repos/Roave/SecurityAdvisories/zipball/0b1f127d644a2ff8af1c8bd2955dbe3c11812017",
+                "reference": "0b1f127d644a2ff8af1c8bd2955dbe3c11812017",
                 "shasum": ""
             },
             "conflict": {
@@ -9189,7 +9135,7 @@
                 "doctrine/mongodb-odm": "<1.0.2",
                 "doctrine/mongodb-odm-bundle": "<3.0.1",
                 "doctrine/orm": ">=1,<1.2.4|>=2,<2.4.8|>=2.5,<2.5.1|>=2.8.3,<2.8.4",
-                "dolibarr/dolibarr": "<19.0.2|==21.0.0.0-beta",
+                "dolibarr/dolibarr": "<=21.0.2",
                 "dompdf/dompdf": "<2.0.4",
                 "doublethreedigital/guest-entries": "<3.1.2",
                 "drupal/admin_audit_trail": "<1.0.5",
@@ -9225,7 +9171,7 @@
                 "elefant/cms": "<2.0.7",
                 "elgg/elgg": "<3.3.24|>=4,<4.0.5",
                 "elijaa/phpmemcacheadmin": "<=1.3",
-                "elmsln/haxcms": "<11",
+                "elmsln/haxcms": "<11.0.8",
                 "encore/laravel-admin": "<=1.8.19",
                 "endroid/qr-code-bundle": "<3.4.2",
                 "enhavo/enhavo-app": "<=0.13.1",
@@ -9353,10 +9299,10 @@
                 "imdbphp/imdbphp": "<=5.1.1",
                 "impresscms/impresscms": "<=1.4.5",
                 "impresspages/impresspages": "<1.0.13",
-                "in2code/femanager": "<5.5.5|>=6,<6.4.1|>=7,<7.4.2|>=8,<8.2.2",
+                "in2code/femanager": "<6.4.2|>=7,<7.5.3|>=8,<8.3.1",
                 "in2code/ipandlanguageredirect": "<5.1.2",
                 "in2code/lux": "<17.6.1|>=18,<24.0.2",
-                "in2code/powermail": "<7.5.1|>=8,<8.5.1|>=9,<10.9.1|>=11,<12.4.1",
+                "in2code/powermail": "<7.5.1|>=8,<8.5.1|>=9,<10.9.1|>=11,<12.5.3|==13",
                 "innologi/typo3-appointments": "<2.0.6",
                 "intelliants/subrion": "<4.2.2",
                 "inter-mediator/inter-mediator": "==5.5",
@@ -9446,8 +9392,10 @@
                 "magneto/core": "<1.9.4.4-dev",
                 "maikuolan/phpmussel": ">=1,<1.6",
                 "mainwp/mainwp": "<=4.4.3.3",
+                "manogi/nova-tiptap": "<=3.2.6",
                 "mantisbt/mantisbt": "<=2.26.3",
                 "marcwillmann/turn": "<0.3.3",
+                "marshmallow/nova-tiptap": "<5.7",
                 "matomo/matomo": "<1.11",
                 "matyhtf/framework": "<3.0.6",
                 "mautic/core": "<5.2.6|>=6.0.0.0-alpha,<6.0.2",
@@ -9973,7 +9921,7 @@
                     "type": "tidelift"
                 }
             ],
-            "time": "2025-07-20T17:05:09+00:00"
+            "time": "2025-07-22T16:07:09+00:00"
         },
         {
             "name": "saschaegerer/phpstan-typo3",
@@ -12288,7 +12236,6 @@
     "aliases": [],
     "minimum-stability": "stable",
     "stability-flags": {
-        "mteu/typo3-typed-extconf": 20,
         "roave/security-advisories": 20
     },
     "prefer-stable": false,

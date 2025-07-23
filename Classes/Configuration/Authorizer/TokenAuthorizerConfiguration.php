@@ -34,13 +34,13 @@ use mteu\TypedExtConf\Attribute\ExtConfProperty;
 final readonly class TokenAuthorizerConfiguration implements AuthorizerConfiguration
 {
     public function __construct(
-        #[ExtConfProperty(path: 'authorizer.mteu\\Monitoring\\Authorization\\TokenAuthorizer.enabled', default: false)]
+        #[ExtConfProperty(path: 'authorizer.mteu\\Monitoring\\Authorization\\TokenAuthorizer.enabled', required: true)]
         public bool $enabled = false,
-        #[ExtConfProperty(path: 'authorizer.mteu\\Monitoring\\Authorization\\TokenAuthorizer.priority', default: 10)]
+        #[ExtConfProperty(path: 'authorizer.mteu\\Monitoring\\Authorization\\TokenAuthorizer.priority')]
         public int $priority = 10,
-        #[ExtConfProperty(path: 'authorizer.mteu\\Monitoring\\Authorization\\TokenAuthorizer.secret', default: '')]
+        #[ExtConfProperty(path: 'authorizer.mteu\\Monitoring\\Authorization\\TokenAuthorizer.secret', required: true)]
         public string $secret = '',
-        #[ExtConfProperty(path: 'authorizer.mteu\\Monitoring\\Authorization\\TokenAuthorizer.authHeaderName', default: '')]
+        #[ExtConfProperty(path: 'authorizer.mteu\\Monitoring\\Authorization\\TokenAuthorizer.authHeaderName')]
         public string $authHeaderName = '',
     ) {}
 
