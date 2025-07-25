@@ -11,27 +11,24 @@
 	],
 	"require": {
 		"php": "~8.3.0 || ~8.4.0",
-		"mteu/typo3-typed-extconf": "^0.1.0",
+		"mteu/typo3-typed-extconf": "^0.2.0",
+		"psr/http-client": "^1.0",
+		"psr/http-factory": "^1.1",
 		"psr/http-message": "^2.0",
+		"psr/http-server-handler": "^1.0",
+		"psr/http-server-middleware": "^1.0",
+		"psr/log": "^3.0",
+		"symfony/console": "^7.3",
+		"symfony/dependency-injection": "^7.3",
 		"typo3/cms-backend": "~12.4.31 || ~13.4.12",
-		"typo3/cms-core": "~12.4.31 || ~13.4.12"
+		"typo3/cms-core": "~12.4.31 || ~13.4.12",
+		"typo3fluid/fluid": "^2.15.0 || ^4.3"
 	},
 	"require-dev": {
-		"armin/editorconfig-cli": "^2.0",
 		"eliashaeussler/version-bumper": "^3.0",
-		"ergebnis/composer-normalize": "^2.28",
-		"friendsofphp/php-cs-fixer": "^3.8",
-		"helmich/typo3-typoscript-lint": "^3.0",
-		"mteu/zealous-stan": "^0.6.3",
-		"phpstan/extension-installer": "*",
-		"phpstan/phpstan": "^2.1",
 		"phpunit/phpcov": "^10.0 || ^11.0.0",
 		"phpunit/phpunit": "^11.5 || ^12.1",
 		"roave/security-advisories": "dev-latest",
-		"saschaegerer/phpstan-typo3": "^2.1",
-		"shipmonk/composer-dependency-analyser": "*",
-		"ssch/typo3-rector": "^3.6",
-		"typo3/coding-standards": "^0.8.0",
 		"typo3/testing-framework": "^8.2 || ^9.2"
 	},
 	"autoload": {
@@ -48,7 +45,6 @@
 		"allow-plugins": {
 			"eliashaeussler/version-bumper": true,
 			"ergebnis/composer-normalize": true,
-			"phpstan/extension-installer": true,
 			"typo3/class-alias-loader": true,
 			"typo3/cms-composer-installers": true
 		},
@@ -63,50 +59,26 @@
 		}
 	},
 	"scripts": {
-		"fix": [
-			"@fix:composer",
-			"@fix:editorconfig",
-			"@fix:php"
+		"post-install-cmd": [
+			"@cgl install"
 		],
-		"fix:composer": "@composer normalize",
-		"fix:editorconfig": "ec --fix",
-		"fix:php": "php-cs-fixer fix --config php-cs-fixer.php",
-		"lint": [
-			"@lint:composer",
-			"@lint:editorconfig",
-			"@lint:php",
-			"@lint:typoscript",
-			"@lint:yaml"
-		],
-		"lint:composer": "@composer normalize --dry-run",
-		"lint:editorconfig": "ec",
-		"lint:php": "php-cs-fixer fix --config php-cs-fixer.php",
-		"lint:typoscript": "typoscript-lint -c typoscript-lint.yml",
-		"lint:yaml": "find . -path './.build' -prune -o \\( -name '*.yaml' -o -name '*.yml' \\) -type f -print | xargs yaml-lint --format=github",
-		"sca": [
-			"@sca:php",
-			"@sca:migrate"
-		],
-		"sca:migrate": [
-			"@sca:migrate:php"
-		],
-		"sca:migrate:php": [
-			"Composer\\Config::disableProcessTimeout",
-			"rector process"
-		],
-		"sca:php": "phpstan analyse -c phpstan.neon --memory-limit=4G",
+		"cgl": "@composer -d Tests/CGL --",
+		"fix": "@cgl fix",
+		"lint": "@cgl lint",
+		"sca": "@cgl sca",
 		"test": [
-			"@test:unit",
-			"@test:functional"
+			"@test:functional",
+			"@test:unit"
 		],
 		"test:coverage": [
+			"@test:coverage:functional",
 			"@test:coverage:unit",
 			"@test:coverage:merge"
 		],
-		"test:coverage:merge": "phpcov merge --html .build/coverage/merged_html  --clover .build/coverage/clover.xml --text php://stdout .build/coverage/php ",
+		"test:coverage:functional": "phpunit -c phpunit.functional.xml",
+		"test:coverage:merge": "phpcov merge --html .build/coverage/merged_html --clover .build/coverage/clover.xml --text php://stdout .build/coverage/php ",
 		"test:coverage:unit": "phpunit -c phpunit.unit.xml",
-		"test:functional": "phpunit -c phpunit.functional.xml --no-coverage",
-		"test:unit": "phpunit -c phpunit.unit.xml --no-coverage",
-		"validate-dependencies": "composer-dependency-analyser"
+		"test:functional": "@test:coverage:functional --no-coverage",
+		"test:unit": "@test:coverage:unit --no-coverage"
 	}
 }
