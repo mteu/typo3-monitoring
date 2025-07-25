@@ -1,0 +1,29 @@
+parameters:
+	scanDirectories:
+		- ../../.build/vendor/phpunit/phpunit/src
+		- ../../.build/vendor/typo3/cms-backend/Classes
+		- ../../.build/vendor/typo3/testing-framework/Classes
+		- ../../.build/vendor/mteu/typo3-typed-extconf/Classes
+	paths:
+		- ../../Classes
+		- ../../Configuration
+		- ../../Tests/Functional
+		- ../../Tests/Unit
+	level: max
+	treatPhpDocTypesAsCertain: false
+
+	ergebnis:
+		noExtends:
+			classesAllowedToBeExtended:
+				- Exception
+				- TYPO3\TestingFramework\Core\Unit\UnitTestCase
+				- TYPO3Fluid\Fluid\Core\ViewHelper\AbstractViewHelper
+				- Symfony\Component\Console\Command\Command
+
+	ignoreErrors:
+		- identifier: ergebnis.noConstructorParameterWithDefaultValue
+		- identifier: ergebnis.noNullableReturnTypeDeclaration
+		- identifier: ergebnis.noParameterWithNullDefaultValue
+		- identifier: ergebnis.noParameterWithNullableTypeDeclaration
+		- identifier: ergebnis.noNamedArgument
+		- message: '#Interface must be located in "Contract" or "Contracts" namespace#'
