@@ -28,7 +28,7 @@ use TYPO3\CMS\Core\Crypto\HashService;
 use TYPO3\CMS\Core\Site\SiteFinder;
 
 /**
- * SelfCareProvider.
+ * MiddlewareStatusProvider.
  *
  * Monitors the health of the monitoring middleware itself by making an HTTP request
  * to its own health endpoint. This provides a meta-level health check to ensure
@@ -36,8 +36,10 @@ use TYPO3\CMS\Core\Site\SiteFinder;
  *
  * @author Martin Adler <mteu@mailbox.org>
  * @license GPL-2.0-or-later
+ *
+ * @internal
  */
-final readonly class SelfCareProvider implements MonitoringProvider
+final readonly class MiddlewareStatusProvider implements MonitoringProvider
 {
     public function __construct(
         private MonitoringConfiguration $monitoringConfiguration,
@@ -50,12 +52,12 @@ final readonly class SelfCareProvider implements MonitoringProvider
 
     public function getName(): string
     {
-        return 'Endpoint Self Check';
+        return 'MiddlewareStatus';
     }
 
     public function getDescription(): string
     {
-        return 'The self-care provider monitors the monitoring middleware itself by making HTTP requests to its own health endpoint, providing meta-level health checking to ensure the monitoring system is accessible and responding correctly.';
+        return 'This meta-provider monitors the monitoring middleware itself by making HTTP requests to its own health endpoint, providing meta-level health checking to ensure the monitoring system is accessible and responding correctly.';
     }
 
     public function isActive(): bool

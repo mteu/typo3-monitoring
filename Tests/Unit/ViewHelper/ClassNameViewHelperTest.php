@@ -33,7 +33,6 @@ final class ClassNameViewHelperTest extends UnitTestCase
 {
     private ClassNameViewHelper $subject;
 
-    #[\Override]
     protected function setUp(): void
     {
         parent::setUp();
