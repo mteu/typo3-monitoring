@@ -10,6 +10,8 @@ use mteu\Monitoring\Configuration\MonitoringConfiguration;
 use mteu\Monitoring\Middleware\MonitoringMiddleware;
 use mteu\Monitoring\Provider\MonitoringProvider;
 use mteu\Monitoring\Result\MonitoringResult;
+use mteu\TypedExtConf\Mapper\MapperFactory;
+use mteu\TypedExtConf\Mapper\TreeMapperFactory;
 use mteu\TypedExtConf\Provider\TypedExtensionConfigurationProvider;
 use PHPUnit\Framework;
 use PHPUnit\Framework\Attributes\Test;
@@ -22,6 +24,7 @@ use Psr\Http\Message\UriInterface;
 use Psr\Http\Server\RequestHandlerInterface;
 use Psr\Log\LoggerInterface;
 use TYPO3\CMS\Core\Configuration\ExtensionConfiguration;
+use TYPO3\CMS\Core\Utility\GeneralUtility;
 
 /**
  * MonitoringMiddlewareTest.
@@ -56,11 +59,10 @@ final class MonitoringMiddlewareTest extends Framework\TestCase
             ->with('monitoring')
             ->willReturn($configurationData);
 
-        $mapper = (new MapperBuilder())
-            ->allowSuperfluousKeys()
-            ->mapper();
-
-        $provider = new TypedExtensionConfigurationProvider($this->extensionConfiguration, $mapper);
+        $provider = new TypedExtensionConfigurationProvider(
+            $this->extensionConfiguration,
+            GeneralUtility::makeInstance(TreeMapperFactory::class),
+        );
         return $provider->get(MonitoringConfiguration::class);
     }
 
