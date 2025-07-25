@@ -25,7 +25,7 @@ return [
                 ],
             ],
             'provider' => [
-                'mteu\Monitoring\Provider\SelfCareProvider' => [
+                'mteu\Monitoring\Provider\MiddlewareStatusProvider' => [
                     'enabled' => true,
                 ],
             ],
@@ -64,7 +64,7 @@ Providers are auto-discovered via dependency injection and can be configured via
 
 ```php
 'provider' => [
-    'mteu\Monitoring\Provider\SelfCareProvider' => [
+    'mteu\Monitoring\Provider\MiddlewareStatusProvider' => [
         'enabled' => true,
     ],
 ],
