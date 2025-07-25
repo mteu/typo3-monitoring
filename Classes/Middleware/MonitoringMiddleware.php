@@ -19,8 +19,8 @@ namespace mteu\Monitoring\Middleware;
 
 use mteu\Monitoring\Authorization\Authorizer;
 use mteu\Monitoring\Configuration\MonitoringConfiguration;
-use mteu\Monitoring\Provider\MonitoringProvider;
 use mteu\Monitoring\Provider\MiddlewareStatusProvider;
+use mteu\Monitoring\Provider\MonitoringProvider;
 use Psr\Http\Message\ResponseFactoryInterface;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
