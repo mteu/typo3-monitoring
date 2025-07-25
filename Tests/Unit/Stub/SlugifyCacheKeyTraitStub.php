@@ -15,8 +15,16 @@ declare(strict_types=1);
  * The TYPO3 project - inspiring people to share!
  */
 
-$config = \TYPO3\CodingStandards\CsFixerConfig::create();
-$config->setParallelConfig(\PhpCsFixer\Runner\Parallel\ParallelConfigFactory::detect());
-$config->getFinder()->in(__DIR__);
+namespace mteu\Monitoring\Tests\Unit\Stub;
 
-return $config;
+use mteu\Monitoring\Trait\SlugifyCacheKeyTrait;
+
+final readonly class SlugifyCacheKeyTraitStub
+{
+    use SlugifyCacheKeyTrait;
+
+    public function stubSlugifyString(string $value): string
+    {
+        return $this->slugifyString($value);
+    }
+}
