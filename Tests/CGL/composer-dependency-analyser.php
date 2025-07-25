@@ -15,8 +15,20 @@ declare(strict_types=1);
  * The TYPO3 project - inspiring people to share!
  */
 
-$config = \TYPO3\CodingStandards\CsFixerConfig::create();
-$config->setParallelConfig(\PhpCsFixer\Runner\Parallel\ParallelConfigFactory::detect());
-$config->getFinder()->in(__DIR__);
+use Composer\Autoload;
+use ShipMonk\ComposerDependencyAnalyser;
 
-return $config;
+$rootPath = dirname(__DIR__, 2);
+
+/** @var Autoload\ClassLoader $loader */
+$loader = require $rootPath . '/.build/vendor/autoload.php';
+$loader->register();
+
+$configuration = new ComposerDependencyAnalyser\Config\Configuration();
+$configuration
+    ->addPathsToExclude([
+        $rootPath . '/Tests/CGL',
+    ])
+;
+
+return $configuration;

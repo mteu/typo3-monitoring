@@ -2,15 +2,26 @@
 
 declare(strict_types=1);
 
+/*
+ * This file is part of the TYPO3 CMS extension "monitoring".
+ *
+ * It is free software; you can redistribute it and/or modify it under
+ * the terms of the GNU General Public License, either version 2
+ * of the License, or any later version.
+ *
+ * For the full copyright and license information, please read the
+ * LICENSE.txt file that was distributed with this source code.
+ *
+ * The TYPO3 project - inspiring people to share!
+ */
+
 namespace mteu\Monitoring\Tests\Unit\Middleware;
 
-use CuyZ\Valinor\MapperBuilder;
 use mteu\Monitoring\Authorization\Authorizer;
 use mteu\Monitoring\Configuration\MonitoringConfiguration;
 use mteu\Monitoring\Middleware\MonitoringMiddleware;
 use mteu\Monitoring\Provider\MonitoringProvider;
 use mteu\Monitoring\Result\MonitoringResult;
-use mteu\TypedExtConf\Mapper\MapperFactory;
 use mteu\TypedExtConf\Mapper\TreeMapperFactory;
 use mteu\TypedExtConf\Provider\TypedExtensionConfigurationProvider;
 use PHPUnit\Framework;
@@ -24,7 +35,6 @@ use Psr\Http\Message\UriInterface;
 use Psr\Http\Server\RequestHandlerInterface;
 use Psr\Log\LoggerInterface;
 use TYPO3\CMS\Core\Configuration\ExtensionConfiguration;
-use TYPO3\CMS\Core\Utility\GeneralUtility;
 
 /**
  * MonitoringMiddlewareTest.
@@ -59,10 +69,8 @@ final class MonitoringMiddlewareTest extends Framework\TestCase
             ->with('monitoring')
             ->willReturn($configurationData);
 
-        $provider = new TypedExtensionConfigurationProvider(
-            $this->extensionConfiguration,
-            GeneralUtility::makeInstance(TreeMapperFactory::class),
-        );
+        $mapperFactory = new TreeMapperFactory();
+        $provider = new TypedExtensionConfigurationProvider($this->extensionConfiguration, $mapperFactory);
         return $provider->get(MonitoringConfiguration::class);
     }
 
