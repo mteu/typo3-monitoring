@@ -41,8 +41,8 @@ final class ClassNameViewHelperTest extends UnitTestCase
     }
 
     #[Test]
-    #[DataProvider('provideFullyQualifiedClassNames')]
-    public function viewHelperSuccessfullyConvertsFcqnToClassName(string $input, string $expectedClassName): void
+    #[DataProvider('fullyQualifiedClassNameProvider')]
+    public function fullyQualifiedClassNameIsConvertedToClassName(string $input, string $expectedClassName): void
     {
         $this->subject->setArguments(['fqcn' => $input]);
 
@@ -55,7 +55,7 @@ final class ClassNameViewHelperTest extends UnitTestCase
     /**
      * @return \Generator<string[]>
      */
-    public static function provideFullyQualifiedClassNames(): \Generator
+    public static function fullyQualifiedClassNameProvider(): \Generator
     {
         yield ['mteu\Monitoring\Authorization\AdminUserAuthorizer', 'AdminUserAuthorizer'];
         yield ['\Generator', 'Generator'];
