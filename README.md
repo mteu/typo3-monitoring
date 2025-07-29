@@ -26,9 +26,9 @@ post-deployment checks.
 
 ## 🚀 Features
 
-- [Extensible monitoring system](Documentation/architecture.md) with automatic service discovery (using DI) for custom
+- [Extensible monitoring system](Documentation/Architecture.md) with automatic service discovery (using DI) for custom
   authorization and monitoring checks.
-- Built-in **SelfCareProvider** for meta-level monitoring of the monitoring system itself
+- Built-in **MiddlewareStatusProvider** for meta-level monitoring of the monitoring system itself
 - Supports caching for expensive monitoring operations
 - Delivers health reports in three ways:
   - **JSON response**: Returns structured responses for the overall health status
@@ -165,6 +165,7 @@ final class MyMonitoringProvider implements MonitoringProvider
 
     public function isActive(): bool
     {
+        // conditional logic or just true
         return true;
     }
 
@@ -199,7 +200,7 @@ final class MyAuthorizer implements Authorizer
         return true;
     }
 
-    public function getPriority(): int
+    public static function getPriority(): int
     {
         return 100; // Higher priority = checked first
     }
@@ -211,7 +212,7 @@ Contributions are very welcome! Please have a look at the [Contribution Guide](C
 workflow of submitting new features or bugfixes.
 
 ## 📙 Documentation
-Please have a look at the official extension [documentation](Documentation/README.md). It provides a detailed look into
+Please have a look at the extension [documentation](Documentation/README.md). It provides a detailed look into
 the possibilities you have in extending and customizing this extension for your specific TYPO3 components.
 
 ## 🔒 Security
