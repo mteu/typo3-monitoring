@@ -135,6 +135,14 @@
 				<source>Failed to flush cache for provider "%s".</source>
 				<target>Fehler beim Leeren des Caches für Provider "%s".</target>
 			</trans-unit>
+			<trans-unit id="api.error.title">
+				<source>API Error</source>
+				<target>API-Fehler</target>
+			</trans-unit>
+			<trans-unit id="api.error.message">
+				<source>Check the endpoint at:</source>
+				<target>Überprüfe den Endpunkt unter:</target>
+			</trans-unit>
 		</body>
 	</file>
 </xliff>

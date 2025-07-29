@@ -102,6 +102,12 @@
 			<trans-unit id="provider.cache.flush.error.message">
 				<source>Failed to flush cache for provider "%s".</source>
 			</trans-unit>
+			<trans-unit id="api.error.title">
+				<source>API Error</source>
+			</trans-unit>
+			<trans-unit id="api.error.message">
+				<source>Check the endpoint at:</source>
+			</trans-unit>
 		</body>
 	</file>
 </xliff>

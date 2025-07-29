@@ -104,9 +104,9 @@ final readonly class MonitoringController
             'authorizers' => $this->buildAuthorizerTemplateVariables(),
             'authorizerInterface' => Authorizer::class,
             'endpoint' => $params->getRequestHost() . $this->monitoringConfiguration->endpoint,
-            'isMiddlewareHealthy' => $this->executionHandler->executeProvider(
+            'middlewareStatusResult' => $this->executionHandler->executeProvider(
                 $this->getMiddlewareStatusProvider(),
-            )->isHealthy(),
+            ),
             'providers' => $this->buildProviderTemplateVariables(),
             'providerInterface' => MonitoringProvider::class,
             'monitoringMessageQueueIdentifier' => self::FLASHMESSAGE_QUEUE_IDENTIFIER,
@@ -125,7 +125,7 @@ final readonly class MonitoringController
             }
         }
 
-        throw new \LogicException('SelfCareProvider not found among tagged services.');
+        throw new \LogicException('MiddlewareStatusProvider not found among tagged services.');
     }
     /**
      * Process authorizers and build template variables
