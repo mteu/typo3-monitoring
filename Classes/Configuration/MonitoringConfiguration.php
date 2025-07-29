@@ -19,7 +19,7 @@ namespace mteu\Monitoring\Configuration;
 
 use mteu\Monitoring\Configuration\Authorizer\AdminUserAuthorizerConfiguration;
 use mteu\Monitoring\Configuration\Authorizer\TokenAuthorizerConfiguration;
-use mteu\Monitoring\Configuration\Provider\SelfCareProviderConfiguration;
+use mteu\Monitoring\Configuration\Provider\MiddlewareStatusProviderConfiguration;
 use mteu\TypedExtConf\Attribute\ExtConfProperty;
 use mteu\TypedExtConf\Attribute\ExtensionConfig;
 
@@ -35,7 +35,7 @@ final readonly class MonitoringConfiguration
     public function __construct(
         public TokenAuthorizerConfiguration $tokenAuthorizerConfiguration,
         public AdminUserAuthorizerConfiguration $adminUserAuthorizerConfiguration,
-        public SelfCareProviderConfiguration $selfCareProviderConfiguration,
+        public MiddlewareStatusProviderConfiguration $providerConfiguration,
         #[ExtConfProperty(path: 'api.endpoint')]
         public string $endpoint = 'monitor/health',
     ) {}
