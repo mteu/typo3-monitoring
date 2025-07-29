@@ -76,13 +76,138 @@ final class ExpensiveProvider implements CacheableMonitoringProvider
 }
 ```
 
-### Dependencies
-Inject TYPO3 services via constructor:
+### Provider with Dependencies
+
+Inject TYPO3 services into your provider:
 
 ```php
-public function __construct(
-    private readonly ConnectionPool $connectionPool
-) {}
+<?php
+declare(strict_types=1);
+
+namespace My\Extension\Provider;
+
+use mteu\Monitoring\Provider\MonitoringProvider;
+use mteu\Monitoring\Result\MonitoringResult;
+use mteu\Monitoring\Result\Result;
+use Symfony\Component\DependencyInjection\Attribute\AutoconfigureTag;
+use TYPO3\CMS\Core\Database\ConnectionPool;
+use TYPO3\CMS\Core\Configuration\ExtensionConfiguration;
+
+#[AutoconfigureTag('monitoring.provider')]
+final class DatabaseConnectionProvider implements MonitoringProvider
+{
+    public function __construct(
+        private readonly ConnectionPool $connectionPool,
+        private readonly ExtensionConfiguration $extensionConfiguration
+    ) {}
+
+    public function getName(): string
+    {
+        return 'DatabaseConnection';
+    }
+
+    public function getDescription(): string
+    {
+        return 'Monitors database connectivity';
+    }
+
+    public function isActive(): bool
+    {
+        return true;
+    }
+
+    public function execute(): Result
+    {
+        try {
+            $connection = $this->connectionPool->getConnectionForTable('pages');
+            $result = $connection->executeQuery('SELECT 1');
+            $result->fetchOne();
+
+            return new MonitoringResult(
+                name: $this->getName(),
+                isHealthy: true,
+            );
+        } catch (\Exception $e) {
+            return new MonitoringResult(
+                name: $this->getName(),
+                isHealthy: false,
+                reason: 'Database connection failed: ' . $e->getMessage()
+            );
+        }
+    }
+}
+```
+
+### Sub-Component Monitoring
+
+Monitor multiple sub-components within a single provider:
+
+```php
+<?php
+declare(strict_types=1);
+
+namespace My\Extension\Provider;
+
+use mteu\Monitoring\Provider\MonitoringProvider;
+use mteu\Monitoring\Result\MonitoringResult;
+use mteu\Monitoring\Result\Result;
+use Symfony\Component\DependencyInjection\Attribute\AutoconfigureTag;
+
+#[AutoconfigureTag('monitoring.provider')]
+final class MultiComponentProvider implements MonitoringProvider
+{
+    public function getName(): string
+    {
+        return 'MultiComponent';
+    }
+
+    public function getDescription(): string
+    {
+        return 'Monitors multiple sub-components';
+    }
+
+    public function isActive(): bool
+    {
+        return true;
+    }
+
+    public function execute(): Result
+    {
+        $subResults = [];
+
+        // Check component A
+        $subResults[] = $this->checkComponentA();
+
+        // Check component B
+        $subResults[] = $this->checkComponentB();
+
+        // Overall health is true if all sub-components are healthy
+        $isHealthy = array_reduce(
+            $subResults,
+            fn(bool $carry, Result $result): bool => $carry &&
+                $result->isHealthy(),
+            true
+        );
+
+        return new MonitoringResult(
+            name: $this->getName(),
+            isHealthy: $isHealthy,
+            subResults: $subResults
+        );
+    }
+
+    private function checkComponentA(): MonitoringResult
+    {
+        // Check component A logic
+        return new MonitoringResult('ComponentA', true);
+    }
+
+    private function checkComponentB(): MonitoringResult
+    {
+        // Check component B logic
+        return new MonitoringResult('ComponentB', true);
+    }
+}
 ```
 
 ### Conditional Activation
@@ -92,6 +217,9 @@ public function isActive(): bool
 {
     // Only active if extension loaded
     return ExtensionManagementUtility::isLoaded('my_extension');
+    
+    // Or environment-specific
+    return GeneralUtility::getApplicationContext()->isProduction();
 }
 ```
 
