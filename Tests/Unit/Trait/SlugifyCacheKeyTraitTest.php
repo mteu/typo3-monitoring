@@ -37,8 +37,8 @@ final class SlugifyCacheKeyTraitTest extends Framework\TestCase
     }
 
     #[Framework\Attributes\Test]
-    #[Framework\Attributes\DataProvider('providerSlugifyData')]
-    public function testSlugifyString(string $input, string $expectedPattern): void
+    #[Framework\Attributes\DataProvider('slugifyDataProvider')]
+    public function stringIsCorrectlySlugified(string $input, string $expectedPattern): void
     {
         $result = $this->subject->stubSlugifyString($input);
 
@@ -53,7 +53,7 @@ final class SlugifyCacheKeyTraitTest extends Framework\TestCase
     /**
      * @return \Generator<string[]>
      */
-    public static function providerSlugifyData(): \Generator
+    public static function slugifyDataProvider(): \Generator
     {
         yield 'basic slug' => ['Foo Bar', 'foo-bar'];
         yield 'trimming and spaces' => ['   Hello     World   ', 'hello-world'];
