@@ -22,6 +22,7 @@ use mteu\Monitoring\Configuration\MonitoringConfiguration;
 use Psr\Http\Message\ServerRequestInterface;
 use TYPO3\CMS\Core\Context\Context;
 use TYPO3\CMS\Core\Context\Exception\AspectNotFoundException;
+use TYPO3\CMS\Core\Utility\GeneralUtility;
 
 /**
  * AdminUserAuthorizer.
@@ -58,6 +59,8 @@ final readonly class AdminUserAuthorizer implements Authorizer
 
     public static function getPriority(): int
     {
-        return -10;
+        $extConf = GeneralUtility::makeInstance(AdminUserAuthorizerConfiguration::class);
+
+        return $extConf->getPriority();
     }
 }
