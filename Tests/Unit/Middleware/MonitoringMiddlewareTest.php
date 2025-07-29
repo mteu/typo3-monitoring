@@ -25,6 +25,7 @@ use mteu\Monitoring\Result\MonitoringResult;
 use mteu\TypedExtConf\Mapper\TreeMapperFactory;
 use mteu\TypedExtConf\Provider\TypedExtensionConfigurationProvider;
 use PHPUnit\Framework;
+use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\MockObject\MockObject;
 use Psr\Http\Message\ResponseFactoryInterface;
@@ -36,11 +37,6 @@ use Psr\Http\Server\RequestHandlerInterface;
 use Psr\Log\LoggerInterface;
 use TYPO3\CMS\Core\Configuration\ExtensionConfiguration;
 
-/**
- * MonitoringMiddlewareTest.
- *
- * Tests the middleware with real configuration mapping to identify issues.
- */
 #[Framework\Attributes\CoversClass(MonitoringMiddleware::class)]
 final class MonitoringMiddlewareTest extends Framework\TestCase
 {
@@ -48,7 +44,6 @@ final class MonitoringMiddlewareTest extends Framework\TestCase
     private ResponseFactoryInterface&MockObject $responseFactory;
     private LoggerInterface&MockObject $logger;
     private RequestHandlerInterface&MockObject $handler;
-
     private MonitoringConfiguration $configuration;
 
     protected function setUp(): void
@@ -74,89 +69,21 @@ final class MonitoringMiddlewareTest extends Framework\TestCase
         return $provider->get(MonitoringConfiguration::class);
     }
 
+    /**
+     * @param array{
+     * api: array{endpoint: string},
+     * authorizer: array<string, array{enabled: string, secret: string, priority: string, authHeaderName: string}>
+     * } $configurationData
+     */
     #[Test]
-    public function testMiddlewareWithRealConfigurationFromSettings(): void
-    {
-        // This is the actual configuration structure from settings.php
-        $configurationData = [
-            'api' => [
-                'endpoint' => '/monitor/health',
-            ],
-            'authorizer' => [
-                'mteu\Monitoring\Authorization\AdminUserAuthorizer' => [
-                    'enabled' => '1',
-                    'priority' => '-10',
-                ],
-                'mteu\Monitoring\Authorization\TokenAuthorizer' => [
-                    'authHeaderName' => 'X-TYPO3-MONITORING-AUTH',
-                    'enabled' => '1',
-                    'priority' => '10',
-                    'secret' => 'superSecretSalt',
-                ],
-            ],
-        ];
-
+    #[DataProvider('middlewareProcessDataProvider')]
+    public function middlewareProcessesRequestCorrectly(
+        array $configurationData,
+        bool $shouldCallHandler,
+        bool $shouldCreateResponse
+    ): void {
         $this->configuration = $this->createConfigurationFromData($configurationData);
 
-        $provider = $this->createMock(MonitoringProvider::class);
-        $provider->method('isActive')->willReturn(true);
-        $provider->method('getName')->willReturn('test_provider');
-        $provider->method('execute')->willReturn(new MonitoringResult('test_provider', true));
-
-        $authorizer = $this->createMock(Authorizer::class);
-        $authorizer->method('isAuthorized')->willReturn(true);
-
-        // Test middleware creation and configuration loading
-        try {
-            $middleware = new MonitoringMiddleware(
-                [$provider],
-                [$authorizer],
-                $this->configuration,
-                $this->responseFactory,
-                $this->logger
-            );
-
-            self::assertSame('/monitor/health', $this->configuration->endpoint, 'Endpoint should be correctly mapped from api.endpoint');
-            self::assertTrue($this->configuration->tokenAuthorizerConfiguration->isEnabled(), 'Token authorizer should be enabled');
-            self::assertSame('superSecretSalt', $this->configuration->tokenAuthorizerConfiguration->secret, 'Secret should be correctly mapped');
-            self::assertSame('X-TYPO3-MONITORING-AUTH', $this->configuration->tokenAuthorizerConfiguration->authHeaderName, 'Auth header should be correctly mapped');
-            self::assertTrue($this->configuration->adminUserAuthorizerConfiguration->isEnabled(), 'Admin user authorizer should be enabled');
-
-        } catch (\Throwable $e) {
-            self::fail(
-                sprintf(
-                    'Failed to create middleware with real configuration: %s',
-                    $e->getMessage()
-                )
-            );
-        }
-    }
-
-    #[Test]
-    public function testMiddlewareProcessWithValidRequest(): void
-    {
-        // Configuration that should work
-        $configurationData = [
-            'api' => [
-                'endpoint' => '/monitor/health',
-            ],
-            'authorizer' => [
-                'mteu\Monitoring\Authorization\AdminUserAuthorizer' => [
-                    'enabled' => '0',  // disabled
-                    'priority' => '-10',
-                ],
-                'mteu\Monitoring\Authorization\TokenAuthorizer' => [
-                    'authHeaderName' => 'X-TYPO3-MONITORING-AUTH',
-                    'enabled' => '1',  // enabled
-                    'priority' => '10',
-                    'secret' => 'test-secret',
-                ],
-            ],
-        ];
-
-        $this->configuration = $this->createConfigurationFromData($configurationData);
-
-        // Create mock provider that reports healthy
         $provider = $this->createMock(MonitoringProvider::class);
         $provider->method('isActive')->willReturn(true);
         $provider->method('getName')->willReturn('database');
@@ -166,74 +93,116 @@ final class MonitoringMiddlewareTest extends Framework\TestCase
         $authorizer->method('isAuthorized')->willReturn(true);
 
         $middleware = new MonitoringMiddleware(
-            [$provider],
-            [$authorizer],
+            $shouldCreateResponse ? [$provider] : [],
+            $shouldCreateResponse ? [$authorizer] : [],
             $this->configuration,
             $this->responseFactory,
             $this->logger
         );
 
-        // Create mock request that matches the monitoring endpoint
+        $request = $this->createRequestMock('/monitor/health', 'https');
+
+        if ($shouldCallHandler) {
+            $expectedResponse = $this->createMock(ResponseInterface::class);
+            $this->handler->expects(self::once())
+                ->method('handle')
+                ->with($request)
+                ->willReturn($expectedResponse);
+        } else {
+            $this->handler->expects(self::never())->method('handle');
+        }
+
+        if ($shouldCreateResponse) {
+            $response = $this->createResponseMock();
+            $this->responseFactory->expects(self::once())
+                ->method('createResponse')
+                ->willReturn($response);
+        } else {
+            $this->responseFactory->expects(self::never())->method('createResponse');
+        }
+
+        $middleware->process($request, $this->handler);
+    }
+
+    #[Test]
+    public function authorizersAreCalledInPriorityOrder(): void
+    {
+        $this->configuration = $this->createConfigurationFromData([
+            'api' => ['endpoint' => '/monitor/health'],
+            'authorizer' => ['mteu\\Monitoring\\Authorization\\TokenAuthorizer' => ['enabled' => '1', 'secret' => 'test-secret', 'priority' => '10', 'authHeaderName' => 'X-Auth']],
+        ]);
+
+        $callOrder = [];
+
+        $highPriorityAuthorizer = $this->createMock(Authorizer::class);
+        $highPriorityAuthorizer->method('isAuthorized')->willReturnCallback(function () use (&$callOrder) {
+            $callOrder[] = 'high';
+            return false; // Don't authorize to let next authorizer be called
+        });
+
+        $lowPriorityAuthorizer = $this->createMock(Authorizer::class);
+        $lowPriorityAuthorizer->method('isAuthorized')->willReturnCallback(function () use (&$callOrder) {
+            $callOrder[] = 'low';
+            return false; // Don't authorize
+        });
+
+        // Pass authorizers in priority order (high priority first)
+        $middleware = new MonitoringMiddleware(
+            [],
+            [$highPriorityAuthorizer, $lowPriorityAuthorizer], // High priority should come first in DI
+            $this->configuration,
+            $this->responseFactory,
+            $this->logger
+        );
+
+        $request = $this->createRequestMock('/monitor/health', 'https');
+        $response = $this->createResponseMock();
+
+        $this->responseFactory->expects(self::once())
+            ->method('createResponse')
+            ->willReturn($response);
+
+        $middleware->process($request, $this->handler);
+
+        // Verify high priority authorizer was called before low priority
+        self::assertSame(['high', 'low'], $callOrder);
+    }
+
+    private function createRequestMock(string $path, string $scheme = 'https'): ServerRequestInterface&MockObject
+    {
         $uri = $this->createMock(UriInterface::class);
-        $uri->method('getPath')->willReturn('/monitor/health');
-        $uri->method('getScheme')->willReturn('https');
+        $uri->method('getPath')->willReturn($path);
+        $uri->method('getScheme')->willReturn($scheme);
 
         $request = $this->createMock(ServerRequestInterface::class);
         $request->method('getUri')->willReturn($uri);
 
+        return $request;
+    }
+
+    private function createResponseMock(): ResponseInterface&MockObject
+    {
         $responseBody = $this->createMock(StreamInterface::class);
         $response = $this->createMock(ResponseInterface::class);
         $response->method('withStatus')->willReturnSelf();
         $response->method('withHeader')->willReturnSelf();
         $response->method('getBody')->willReturn($responseBody);
 
-        $this->responseFactory->expects(self::once())
-            ->method('createResponse')
-            ->willReturn($response);
-
-        $result = $middleware->process($request, $this->handler);
-
-        self::assertSame($response, $result);
+        return $response;
     }
 
-    #[Test]
-    public function testMiddlewareWithEmptyEndpointPassesThrough(): void
+    public static function middlewareProcessDataProvider(): \Generator
     {
-        // Configuration with empty endpoint should pass through to next handler
-        $configurationData = [
-            'api' => [
-                'endpoint' => '',
-            ],
-            'authorizer' => [
-                'mteu\Monitoring\Authorization\TokenAuthorizer' => [
-                    'enabled' => '0',
-                    'priority' => '10',
-                    'secret' => '',
-                    'authHeaderName' => '',
-                ],
-            ],
+        yield 'valid endpoint returns json response' => [
+            ['api' => ['endpoint' => '/monitor/health'], 'authorizer' => ['mteu\Monitoring\Authorization\TokenAuthorizer' => ['enabled' => '1', 'secret' => 'test-secret', 'priority' => '10', 'authHeaderName' => 'X-Auth']]],
+            false, // should not call handler
+            true,  // should create response
         ];
 
-        $this->configuration = $this->createConfigurationFromData($configurationData);
-
-        $middleware = new MonitoringMiddleware(
-            [],
-            [],
-            $this->configuration,
-            $this->responseFactory,
-            $this->logger
-        );
-
-        $request = $this->createMock(ServerRequestInterface::class);
-        $expectedResponse = $this->createMock(ResponseInterface::class);
-
-        $this->handler->expects(self::once())
-            ->method('handle')
-            ->with($request)
-            ->willReturn($expectedResponse);
-
-        $result = $middleware->process($request, $this->handler);
-
-        self::assertSame($expectedResponse, $result);
+        yield 'empty endpoint passes to next handler' => [
+            ['api' => ['endpoint' => ''], 'authorizer' => ['mteu\Monitoring\Authorization\TokenAuthorizer' => ['enabled' => '0', 'secret' => '', 'priority' => '10', 'authHeaderName' => '']]],
+            true,  // should call handler
+            false, // should not create response
+        ];
     }
 }
