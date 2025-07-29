@@ -1,11 +1,11 @@
 # 📋 Documentation
 
-1. [Configuration](configuration.md)
-2. [Provider Development](providers.md)
-3. [Authorization](authorization.md)
-4. [API Reference](api.md)
-5. [Command-Line Interface](command-line.md)
-6. [Architecture](architecture.md)
+1. [Configuration](Configuration.md)
+2. [Provider Development](Providers.md)
+3. [Authorization](Authorization.md)
+4. [API Reference](API.md)
+5. [Command-Line Interface](Command-Line.md)
+6. [Architecture](Architecture.md)
 
 ## 🔍 Overview
 
@@ -38,10 +38,10 @@ Both interfaces support automatic service discovery through PHP attributes.
 ## 🚀 Getting Started
 
 1. Install: `composer require mteu/typo3-monitoring`
-2. [Configure the monitoring endpoint](configuration.md)
-3. [Set up authentication](authorization.md)
-4. [Create custom providers](providers.md)
-5. [Test your monitoring endpoint](api.md)
+2. [Configure the monitoring endpoint](Configuration.md)
+3. [Set up authentication](Authorization.md)
+4. [Create custom providers](Providers.md)
+5. [Test your monitoring endpoint](API.md)
 
 ## 🔒 Security Considerations
 

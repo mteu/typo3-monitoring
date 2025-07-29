@@ -26,7 +26,7 @@ post-deployment checks.
 
 ## 🚀 Features
 
-- [Extensible monitoring system](Documentation/architecture.md) with automatic service discovery (using DI) for custom
+- [Extensible monitoring system](Documentation/Architecture.md) with automatic service discovery (using DI) for custom
   authorization and monitoring checks.
 - Built-in **MiddlewareStatusProvider** for meta-level monitoring of the monitoring system itself
 - Supports caching for expensive monitoring operations
