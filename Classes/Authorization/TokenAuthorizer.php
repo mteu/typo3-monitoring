@@ -21,6 +21,7 @@ use mteu\Monitoring\Configuration\Authorizer\TokenAuthorizerConfiguration;
 use mteu\Monitoring\Configuration\MonitoringConfiguration;
 use Psr\Http\Message\ServerRequestInterface;
 use TYPO3\CMS\Core\Crypto\HashService;
+use TYPO3\CMS\Core\Utility\GeneralUtility;
 
 /**
  * TokenAuthorizer.
@@ -67,6 +68,8 @@ final readonly class TokenAuthorizer implements Authorizer
 
     public static function getPriority(): int
     {
-        return 10;
+        $extConf = GeneralUtility::makeInstance(TokenAuthorizerConfiguration::class);
+
+        return $extConf->getPriority();
     }
 }
