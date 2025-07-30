@@ -21,6 +21,7 @@ use mteu\Monitoring\Authorization\Authorizer;
 use mteu\Monitoring\Authorization\TokenAuthorizer;
 use mteu\Monitoring\Cache\MonitoringCacheManager;
 use mteu\Monitoring\Configuration\MonitoringConfiguration;
+use mteu\Monitoring\Crypto\HashServiceFactory;
 use mteu\Monitoring\Handler\MonitoringExecutionHandler;
 use mteu\Monitoring\Provider\CacheableMonitoringProvider;
 use mteu\Monitoring\Provider\MiddlewareStatusProvider;
@@ -34,7 +35,6 @@ use TYPO3\CMS\Backend\Routing\Exception\RouteNotFoundException;
 use TYPO3\CMS\Backend\Routing\UriBuilder;
 use TYPO3\CMS\Backend\Template\ModuleTemplateFactory;
 use TYPO3\CMS\Core\Authentication\BackendUserAuthentication;
-use TYPO3\CMS\Core\Crypto\HashService;
 use TYPO3\CMS\Core\Http\AllowedMethodsTrait;
 use TYPO3\CMS\Core\Http\Error\MethodNotAllowedException;
 use TYPO3\CMS\Core\Http\NormalizedParams;
@@ -69,7 +69,6 @@ final readonly class MonitoringController
         #[AutowireIterator(tag: 'monitoring.authorizer', defaultPriorityMethod: 'getPriority')]
         private iterable $authorizers,
         private ModuleTemplateFactory $moduleTemplateFactory,
-        private HashService $hashService,
         private FlashMessageService $flashMessageService,
         private LanguageServiceFactory $languageServiceFactory,
         private MonitoringExecutionHandler $executionHandler,
@@ -182,7 +181,8 @@ final readonly class MonitoringController
         if ($secret === '') {
             return '';
         }
-        return $this->hashService->hmac(
+        /** @phpstan-ignore method.notFound, staticMethod.deprecatedClass */
+        return HashServiceFactory::create()->hmac(
             $this->monitoringConfiguration->endpoint,
             $secret
         );
