@@ -25,6 +25,7 @@ use Psr\Http\Client\ClientExceptionInterface;
 use Psr\Http\Client\ClientInterface;
 use Psr\Http\Message\RequestFactoryInterface;
 use Psr\Log\LoggerInterface;
+use TYPO3\CMS\Core\Crypto\HashService;
 use TYPO3\CMS\Core\Site\SiteFinder;
 
 /**
@@ -61,17 +62,16 @@ final readonly class MiddlewareStatusProvider implements MonitoringProvider
 
     public function isActive(): bool
     {
-        // Only active if monitoring endpoint is configured and provider is enabled
         if ($this->monitoringConfiguration->endpoint === '') {
             return false;
         }
 
         // Prevent execution during self-requests by checking for the recursion protection header
-        if (array_key_exists('HTTP_X_SELFCARE_REQUEST', $_SERVER)) {
+        if (array_key_exists('HTTP_X_MIDDLEWARE_STATUS_REQUEST', $_SERVER)) {
             return false;
         }
 
-        return $this->monitoringConfiguration->selfCareProviderConfiguration->isEnabled();
+        return $this->monitoringConfiguration->providerConfiguration->isEnabled();
     }
 
     public function execute(): Result
@@ -80,13 +80,11 @@ final readonly class MiddlewareStatusProvider implements MonitoringProvider
             $baseUrl = $this->getBaseUrl();
             $monitoringUrl = rtrim($baseUrl, '/') . $this->monitoringConfiguration->endpoint;
 
-            // Create request with authorization header if token is configured
             $request = $this->requestFactory->createRequest('GET', $monitoringUrl);
 
             // Add recursion protection header to prevent infinite loops
-            $request = $request->withHeader('X-SELFCARE-REQUEST', '1');
+            $request = $request->withHeader('X-MIDDLEWARE-STATUS-REQUEST', '1');
 
-            // Add authorization header if token auth is enabled and configured
             if (
                 $this->monitoringConfiguration->tokenAuthorizerConfiguration->isEnabled()
                 && $this->monitoringConfiguration->tokenAuthorizerConfiguration->secret !== ''
@@ -96,27 +94,13 @@ final readonly class MiddlewareStatusProvider implements MonitoringProvider
                 $request = $request->withHeader($headerName, $token);
             }
 
-            // Make the request with a reasonable timeout
             $response = $this->httpClient->sendRequest($request);
 
-            // Check if response indicates healthy status
-            if ($response->getStatusCode() === 200) {
-                $body = $response->getBody()->getContents();
-                $data = json_decode($body, true, 512, JSON_THROW_ON_ERROR);
-
-                if (is_array($data) && array_key_exists('isHealthy', $data)) {
-                    $isHealthy = (bool)$data['isHealthy'];
-                    return new MonitoringResult(
-                        name: $this->getName(),
-                        isHealthy: $isHealthy,
-                        reason: $isHealthy ? null : 'Monitoring endpoint reported unhealthy state'
-                    );
-                }
-
+            if ($response->getStatusCode() === 200 || $response->getStatusCode() === 503) {
                 return new MonitoringResult(
                     name: $this->getName(),
-                    isHealthy: false,
-                    reason: 'Invalid response format from monitoring endpoint'
+                    isHealthy: true,
+                    reason: null
                 );
             }
 
@@ -127,7 +111,7 @@ final readonly class MiddlewareStatusProvider implements MonitoringProvider
             );
 
         } catch (ClientExceptionInterface $e) {
-            $this->logger->warning('SelfCare monitoring failed with HTTP client exception', [
+            $this->logger->warning('MiddlewareStatus monitoring failed with HTTP client exception', [
                 'exception' => $e->getMessage(),
                 'endpoint' => $this->monitoringConfiguration->endpoint,
             ]);
@@ -138,15 +122,8 @@ final readonly class MiddlewareStatusProvider implements MonitoringProvider
                 reason: 'HTTP request failed: ' . $e->getMessage()
             );
 
-        } catch (\JsonException) {
-            return new MonitoringResult(
-                name: $this->getName(),
-                isHealthy: false,
-                reason: 'Invalid JSON response from monitoring endpoint'
-            );
-
         } catch (\Exception $e) {
-            $this->logger->error('SelfCare monitoring failed with unexpected exception', [
+            $this->logger->error('MiddlewareStatus monitoring failed with unexpected exception', [
                 'exception' => $e->getMessage(),
                 'file' => $e->getFile(),
                 'line' => $e->getLine(),
@@ -205,10 +182,16 @@ final readonly class MiddlewareStatusProvider implements MonitoringProvider
         /** @var non-empty-string $additionalSecret */
         $additionalSecret = $this->monitoringConfiguration->tokenAuthorizerConfiguration->secret;
 
-        /** @phpstan-ignore method.notFound, staticMethod.deprecatedClass */
-        return HashServiceFactory::create()->hmac(
-            $this->monitoringConfiguration->endpoint,
-            $additionalSecret,
+        /** @phpstan-ignore staticMethod.deprecatedClass */
+        $hashService = HashServiceFactory::create();
+
+        if ($hashService instanceof HashService) {
+            return $hashService->hmac($this->monitoringConfiguration->endpoint, $additionalSecret);
+        }
+
+        /** @phpstan-ignore method.deprecatedClass, method.internalClass */
+        return $hashService->generateHmac(
+            $this->monitoringConfiguration->endpoint . $additionalSecret
         );
     }
 }

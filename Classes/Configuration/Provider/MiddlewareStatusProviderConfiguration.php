@@ -21,16 +21,16 @@ use mteu\TypedExtConf\Attribute\ExtConfProperty;
 use mteu\TypedExtConf\Attribute\ExtensionConfig;
 
 /**
- * SelfCareProviderConfiguration.
+ * MiddlewareStatusProviderConfiguration.
  *
  * @author Martin Adler <mteu@mailbox.org>
  * @license GPL-2.0-or-later
  */
 #[ExtensionConfig(extensionKey: 'monitoring')]
-final readonly class SelfCareProviderConfiguration implements ProviderConfiguration
+final readonly class MiddlewareStatusProviderConfiguration implements ProviderConfiguration
 {
     public function __construct(
-        #[ExtConfProperty(path: 'provider.mteu\\Monitoring\\Provider\\SelfCareProvider.enabled')]
+        #[ExtConfProperty(path: 'provider.mteu\\Monitoring\\Provider\\MiddlewareStatusProvider.enabled')]
         private bool $enabled = true,
     ) {}
 
