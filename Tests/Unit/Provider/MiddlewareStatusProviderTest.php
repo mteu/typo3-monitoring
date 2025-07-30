@@ -33,12 +33,8 @@ use Psr\Http\Message\RequestFactoryInterface;
 use Psr\Http\Message\RequestInterface;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Log\LoggerInterface;
-use TYPO3\CMS\Core\Crypto\HashService;
-use TYPO3\CMS\Core\Information\Typo3Version;
 use TYPO3\CMS\Core\Site\Entity\Site;
 use TYPO3\CMS\Core\Site\SiteFinder;
-use TYPO3\CMS\Core\Utility\GeneralUtility;
-use TYPO3\CMS\Extbase\Security\Cryptography\HashService as ExtbaseHashService;
 
 #[Framework\Attributes\CoversClass(MiddlewareStatusProvider::class)]
 final class MiddlewareStatusProviderTest extends Framework\TestCase
@@ -47,9 +43,6 @@ final class MiddlewareStatusProviderTest extends Framework\TestCase
     private RequestFactoryInterface&MockObject $requestFactory;
     private SiteFinder&MockObject $siteFinder;
     private LoggerInterface&MockObject $logger;
-
-    /** @phpstan-ignore property.deprecatedClass, property.internalClass */
-    private HashService|ExtbaseHashService $hashService;
 
     protected function setUp(): void
     {
@@ -61,14 +54,6 @@ final class MiddlewareStatusProviderTest extends Framework\TestCase
         $this->requestFactory = $this->createMock(RequestFactoryInterface::class);
         $this->siteFinder = $this->createMock(SiteFinder::class);
         $this->logger = $this->createMock(LoggerInterface::class);
-
-        $typo3Version = new Typo3Version();
-        if ($typo3Version->getMajorVersion() < 13) {
-            /** @phpstan-ignore classConstant.deprecatedClass, classConstant.internalClass */
-            $this->hashService = GeneralUtility::makeInstance(ExtbaseHashService::class);
-        } else {
-            $this->hashService = new HashService();
-        }
 
         $this->setupSiteFinder();
     }
@@ -186,8 +171,6 @@ final class MiddlewareStatusProviderTest extends Framework\TestCase
             $this->requestFactory,
             $this->siteFinder,
             $this->logger,
-            /** @phpstan-ignore argument.type */
-            $this->hashService
         );
     }
 
