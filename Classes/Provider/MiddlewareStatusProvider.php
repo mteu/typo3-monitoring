@@ -18,13 +18,13 @@ declare(strict_types=1);
 namespace mteu\Monitoring\Provider;
 
 use mteu\Monitoring\Configuration\MonitoringConfiguration;
+use mteu\Monitoring\Crypto\HashServiceFactory;
 use mteu\Monitoring\Result\MonitoringResult;
 use mteu\Monitoring\Result\Result;
 use Psr\Http\Client\ClientExceptionInterface;
 use Psr\Http\Client\ClientInterface;
 use Psr\Http\Message\RequestFactoryInterface;
 use Psr\Log\LoggerInterface;
-use TYPO3\CMS\Core\Crypto\HashService;
 use TYPO3\CMS\Core\Site\SiteFinder;
 
 /**
@@ -47,7 +47,6 @@ final readonly class MiddlewareStatusProvider implements MonitoringProvider
         private RequestFactoryInterface $requestFactory,
         private SiteFinder $siteFinder,
         private LoggerInterface $logger,
-        private HashService $hashService,
     ) {}
 
     public function getName(): string
@@ -206,7 +205,8 @@ final readonly class MiddlewareStatusProvider implements MonitoringProvider
         /** @var non-empty-string $additionalSecret */
         $additionalSecret = $this->monitoringConfiguration->tokenAuthorizerConfiguration->secret;
 
-        return $this->hashService->hmac(
+        /** @phpstan-ignore method.notFound, staticMethod.deprecatedClass */
+        return HashServiceFactory::create()->hmac(
             $this->monitoringConfiguration->endpoint,
             $additionalSecret,
         );
