@@ -35,6 +35,7 @@ use TYPO3\CMS\Backend\Routing\Exception\RouteNotFoundException;
 use TYPO3\CMS\Backend\Routing\UriBuilder;
 use TYPO3\CMS\Backend\Template\ModuleTemplateFactory;
 use TYPO3\CMS\Core\Authentication\BackendUserAuthentication;
+use TYPO3\CMS\Core\Crypto\HashService;
 use TYPO3\CMS\Core\Http\AllowedMethodsTrait;
 use TYPO3\CMS\Core\Http\Error\MethodNotAllowedException;
 use TYPO3\CMS\Core\Http\NormalizedParams;
@@ -103,9 +104,9 @@ final readonly class MonitoringController
             'authorizers' => $this->buildAuthorizerTemplateVariables(),
             'authorizerInterface' => Authorizer::class,
             'endpoint' => $params->getRequestHost() . $this->monitoringConfiguration->endpoint,
-            'isMiddlewareHealthy' => $this->executionHandler->executeProvider(
+            'middlewareStatusResult' => $this->executionHandler->executeProvider(
                 $this->getMiddlewareStatusProvider(),
-            )->isHealthy(),
+            ),
             'providers' => $this->buildProviderTemplateVariables(),
             'providerInterface' => MonitoringProvider::class,
             'monitoringMessageQueueIdentifier' => self::FLASHMESSAGE_QUEUE_IDENTIFIER,
@@ -124,7 +125,7 @@ final readonly class MonitoringController
             }
         }
 
-        throw new \LogicException('SelfCareProvider not found among tagged services.');
+        throw new \LogicException('MiddlewareStatusProvider not found among tagged services.');
     }
     /**
      * Process authorizers and build template variables
@@ -181,10 +182,17 @@ final readonly class MonitoringController
         if ($secret === '') {
             return '';
         }
-        /** @phpstan-ignore method.notFound, staticMethod.deprecatedClass */
-        return HashServiceFactory::create()->hmac(
-            $this->monitoringConfiguration->endpoint,
-            $secret
+
+        /** @phpstan-ignore staticMethod.deprecatedClass */
+        $hashService = HashServiceFactory::create();
+
+        if ($hashService instanceof HashService) {
+            return $hashService->hmac($this->monitoringConfiguration->endpoint, $secret);
+        }
+
+        /** @phpstan-ignore method.deprecatedClass, method.internalClass */
+        return $hashService->generateHmac(
+            $this->monitoringConfiguration->endpoint . $secret
         );
     }
 

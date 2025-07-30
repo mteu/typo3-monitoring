@@ -55,21 +55,6 @@ final class MonitoringMiddlewareTest extends Framework\TestCase
     }
 
     /**
-     * @param mixed[] $configurationData
-     */
-    private function createConfigurationFromData(array $configurationData): MonitoringConfiguration
-    {
-        $this->extensionConfiguration->expects(self::atLeastOnce())
-            ->method('get')
-            ->with('monitoring')
-            ->willReturn($configurationData);
-
-        $mapperFactory = new TreeMapperFactory();
-        $provider = new TypedExtensionConfigurationProvider($this->extensionConfiguration, $mapperFactory);
-        return $provider->get(MonitoringConfiguration::class);
-    }
-
-    /**
      * @param array{
      * api: array{endpoint: string},
      * authorizer: array<string, array{enabled: string, secret: string, priority: string, authHeaderName: string}>
@@ -166,6 +151,21 @@ final class MonitoringMiddlewareTest extends Framework\TestCase
 
         // Verify high priority authorizer was called before low priority
         self::assertSame(['high', 'low'], $callOrder);
+    }
+
+    /**
+     * @param mixed[] $configurationData
+     */
+    private function createConfigurationFromData(array $configurationData): MonitoringConfiguration
+    {
+        $this->extensionConfiguration->expects(self::atLeastOnce())
+            ->method('get')
+            ->with('monitoring')
+            ->willReturn($configurationData);
+
+        $mapperFactory = new TreeMapperFactory();
+        $provider = new TypedExtensionConfigurationProvider($this->extensionConfiguration, $mapperFactory);
+        return $provider->get(MonitoringConfiguration::class);
     }
 
     private function createRequestMock(string $path, string $scheme = 'https'): ServerRequestInterface&MockObject
