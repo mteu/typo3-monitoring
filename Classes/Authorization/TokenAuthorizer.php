@@ -19,8 +19,8 @@ namespace mteu\Monitoring\Authorization;
 
 use mteu\Monitoring\Configuration\Authorizer\TokenAuthorizerConfiguration;
 use mteu\Monitoring\Configuration\MonitoringConfiguration;
+use mteu\Monitoring\Crypto\HashServiceFactory;
 use Psr\Http\Message\ServerRequestInterface;
-use TYPO3\CMS\Core\Crypto\HashService;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
 
 /**
@@ -34,7 +34,6 @@ final readonly class TokenAuthorizer implements Authorizer
     private TokenAuthorizerConfiguration $tokenAuthorizerConfiguration;
 
     public function __construct(
-        private HashService $hashService,
         private MonitoringConfiguration $configuration,
     ) {
         $this->tokenAuthorizerConfiguration = $this->configuration->tokenAuthorizerConfiguration;
@@ -59,7 +58,8 @@ final readonly class TokenAuthorizer implements Authorizer
             return false;
         }
 
-        return $this->hashService->validateHmac(
+        /** @phpstan-ignore staticMethod.deprecatedClass, method.internalClass, method.deprecatedClass */
+        return HashServiceFactory::create()->validateHmac(
             $this->configuration->endpoint,
             $this->tokenAuthorizerConfiguration->secret,
             $authToken,
