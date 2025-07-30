@@ -25,6 +25,7 @@ use Psr\Http\Client\ClientExceptionInterface;
 use Psr\Http\Client\ClientInterface;
 use Psr\Http\Message\RequestFactoryInterface;
 use Psr\Log\LoggerInterface;
+use TYPO3\CMS\Core\Crypto\HashService;
 use TYPO3\CMS\Core\Site\SiteFinder;
 
 /**
@@ -181,10 +182,16 @@ final readonly class MiddlewareStatusProvider implements MonitoringProvider
         /** @var non-empty-string $additionalSecret */
         $additionalSecret = $this->monitoringConfiguration->tokenAuthorizerConfiguration->secret;
 
-        /** @phpstan-ignore method.notFound, staticMethod.deprecatedClass */
-        return HashServiceFactory::create()->hmac(
-            $this->monitoringConfiguration->endpoint,
-            $additionalSecret,
+        /** @phpstan-ignore staticMethod.deprecatedClass */
+        $hashService = HashServiceFactory::create();
+
+        if ($hashService instanceof HashService) {
+            return $hashService->hmac($this->monitoringConfiguration->endpoint, $additionalSecret);
+        }
+
+        /** @phpstan-ignore method.deprecatedClass, method.internalClass */
+        return $hashService->generateHmac(
+            $this->monitoringConfiguration->endpoint . $additionalSecret
         );
     }
 }
