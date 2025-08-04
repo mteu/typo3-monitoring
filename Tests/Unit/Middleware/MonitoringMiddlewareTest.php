@@ -22,6 +22,7 @@ use mteu\Monitoring\Configuration\MonitoringConfiguration;
 use mteu\Monitoring\Middleware\MonitoringMiddleware;
 use mteu\Monitoring\Provider\MonitoringProvider;
 use mteu\Monitoring\Result\MonitoringResult;
+use mteu\Monitoring\Result\Result;
 use mteu\TypedExtConf\Mapper\TreeMapperFactory;
 use mteu\TypedExtConf\Provider\TypedExtensionConfigurationProvider;
 use PHPUnit\Framework;
@@ -31,17 +32,18 @@ use PHPUnit\Framework\MockObject\MockObject;
 use Psr\Http\Message\ResponseFactoryInterface;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
-use Psr\Http\Message\StreamInterface;
-use Psr\Http\Message\UriInterface;
 use Psr\Http\Server\RequestHandlerInterface;
 use Psr\Log\LoggerInterface;
 use TYPO3\CMS\Core\Configuration\ExtensionConfiguration;
+use TYPO3\CMS\Core\Http\ResponseFactory;
+use TYPO3\CMS\Core\Http\ServerRequest;
+use TYPO3\CMS\Core\Http\Uri;
 
 #[Framework\Attributes\CoversClass(MonitoringMiddleware::class)]
 final class MonitoringMiddlewareTest extends Framework\TestCase
 {
     private ExtensionConfiguration&MockObject $extensionConfiguration;
-    private ResponseFactoryInterface&MockObject $responseFactory;
+    private ResponseFactoryInterface $responseFactory;
     private LoggerInterface&MockObject $logger;
     private RequestHandlerInterface&MockObject $handler;
     private MonitoringConfiguration $configuration;
@@ -49,7 +51,7 @@ final class MonitoringMiddlewareTest extends Framework\TestCase
     protected function setUp(): void
     {
         $this->extensionConfiguration = $this->createMock(ExtensionConfiguration::class);
-        $this->responseFactory = $this->createMock(ResponseFactoryInterface::class);
+        $this->responseFactory = new ResponseFactory();
         $this->logger = $this->createMock(LoggerInterface::class);
         $this->handler = $this->createMock(RequestHandlerInterface::class);
     }
@@ -69,13 +71,9 @@ final class MonitoringMiddlewareTest extends Framework\TestCase
     ): void {
         $this->configuration = $this->createConfigurationFromData($configurationData);
 
-        $provider = $this->createMock(MonitoringProvider::class);
-        $provider->method('isActive')->willReturn(true);
-        $provider->method('getName')->willReturn('database');
-        $provider->method('execute')->willReturn(new MonitoringResult('database', true));
+        $provider = $this->createHealthyProvider();
 
-        $authorizer = $this->createMock(Authorizer::class);
-        $authorizer->method('isAuthorized')->willReturn(true);
+        $authorizer = $this->createAuthorizedAuthorizer();
 
         $middleware = new MonitoringMiddleware(
             $shouldCreateResponse ? [$provider] : [],
@@ -97,15 +95,6 @@ final class MonitoringMiddlewareTest extends Framework\TestCase
             $this->handler->expects(self::never())->method('handle');
         }
 
-        if ($shouldCreateResponse) {
-            $response = $this->createResponseMock();
-            $this->responseFactory->expects(self::once())
-                ->method('createResponse')
-                ->willReturn($response);
-        } else {
-            $this->responseFactory->expects(self::never())->method('createResponse');
-        }
-
         $middleware->process($request, $this->handler);
     }
 
@@ -119,17 +108,8 @@ final class MonitoringMiddlewareTest extends Framework\TestCase
 
         $callOrder = [];
 
-        $highPriorityAuthorizer = $this->createMock(Authorizer::class);
-        $highPriorityAuthorizer->method('isAuthorized')->willReturnCallback(function () use (&$callOrder) {
-            $callOrder[] = 'high';
-            return false; // Don't authorize to let next authorizer be called
-        });
-
-        $lowPriorityAuthorizer = $this->createMock(Authorizer::class);
-        $lowPriorityAuthorizer->method('isAuthorized')->willReturnCallback(function () use (&$callOrder) {
-            $callOrder[] = 'low';
-            return false; // Don't authorize
-        });
+        $highPriorityAuthorizer = $this->createCallbackAuthorizer('high', false, $callOrder);
+        $lowPriorityAuthorizer = $this->createCallbackAuthorizer('low', false, $callOrder);
 
         // Pass authorizers in priority order (high priority first)
         $middleware = new MonitoringMiddleware(
@@ -141,11 +121,6 @@ final class MonitoringMiddlewareTest extends Framework\TestCase
         );
 
         $request = $this->createRequestMock('/monitor/health', 'https');
-        $response = $this->createResponseMock();
-
-        $this->responseFactory->expects(self::once())
-            ->method('createResponse')
-            ->willReturn($response);
 
         $middleware->process($request, $this->handler);
 
@@ -168,27 +143,88 @@ final class MonitoringMiddlewareTest extends Framework\TestCase
         return $provider->get(MonitoringConfiguration::class);
     }
 
-    private function createRequestMock(string $path, string $scheme = 'https'): ServerRequestInterface&MockObject
+    private function createRequestMock(string $path, string $scheme = 'https'): ServerRequestInterface
     {
-        $uri = $this->createMock(UriInterface::class);
-        $uri->method('getPath')->willReturn($path);
-        $uri->method('getScheme')->willReturn($scheme);
-
-        $request = $this->createMock(ServerRequestInterface::class);
-        $request->method('getUri')->willReturn($uri);
-
-        return $request;
+        $uri = new Uri($scheme . '://example.com' . $path);
+        return new ServerRequest($uri, 'GET');
     }
 
-    private function createResponseMock(): ResponseInterface&MockObject
+    private function createHealthyProvider(): MonitoringProvider
     {
-        $responseBody = $this->createMock(StreamInterface::class);
-        $response = $this->createMock(ResponseInterface::class);
-        $response->method('withStatus')->willReturnSelf();
-        $response->method('withHeader')->willReturnSelf();
-        $response->method('getBody')->willReturn($responseBody);
+        return new class () implements MonitoringProvider {
+            public function getName(): string
+            {
+                return 'database';
+            }
 
-        return $response;
+            public function getDescription(): string
+            {
+                return 'Test database provider for unit tests';
+            }
+
+            public function isActive(): bool
+            {
+                return true;
+            }
+
+            public function execute(): Result
+            {
+                return new MonitoringResult('database', true);
+            }
+        };
+    }
+
+    private function createAuthorizedAuthorizer(): Authorizer
+    {
+        return new class () implements Authorizer {
+            public function isActive(): bool
+            {
+                return true;
+            }
+
+            public function isAuthorized(ServerRequestInterface $request): bool
+            {
+                return true;
+            }
+
+            public static function getPriority(): int
+            {
+                return 10;
+            }
+        };
+    }
+
+    /**
+     * @param array<string> $callOrder
+     */
+    private function createCallbackAuthorizer(string $identifier, bool $returnValue, array &$callOrder): Authorizer
+    {
+        return new class ($identifier, $returnValue, $callOrder) implements Authorizer {
+            /**
+             * @param array<string> $callOrder
+             */
+            public function __construct(
+                private string $identifier,
+                private bool $returnValue,
+                private array &$callOrder
+            ) {}
+
+            public function isActive(): bool
+            {
+                return true;
+            }
+
+            public function isAuthorized(ServerRequestInterface $request): bool
+            {
+                $this->callOrder[] = $this->identifier;
+                return $this->returnValue;
+            }
+
+            public static function getPriority(): int
+            {
+                return 10;
+            }
+        };
     }
 
     public static function middlewareProcessDataProvider(): \Generator
