@@ -32,7 +32,7 @@ use TYPO3\TestingFramework\Core\Unit\UnitTestCase;
 final class ClassNameViewHelperTest extends UnitTestCase
 {
     protected bool $resetSingletonInstances = true;
-    
+
     private ClassNameViewHelper $subject;
 
     protected function setUp(): void
