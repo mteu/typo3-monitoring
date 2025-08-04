@@ -27,3 +27,22 @@ parameters:
 		- identifier: ergebnis.noParameterWithNullableTypeDeclaration
 		- identifier: ergebnis.noNamedArgument
 		- message: '#Interface must be located in "Contract" or "Contracts" namespace#'
+
+		# Allow TYPO3 internal classes in tests for real implementations
+		-
+			identifier: new.internalClass
+			path: ../../Tests/
+		-
+			identifier: method.internalClass
+			path: ../../Tests/
+
+		# Allow reference parameters in test callback authorizers
+		-
+			identifier: ergebnis.noParameterPassedByReference
+			path: ../../Tests/
+		-
+			identifier: symplify.noReference
+			path: ../../Tests/
+		-
+			identifier: property.onlyWritten
+			path: ../../Tests/
