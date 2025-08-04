@@ -1,20 +1,20 @@
 {
 	"require": {
-		"mteu/typo3-typed-extconf": "^0.2.0"
+		"mteu/typo3-typed-extconf": "0.2.2"
 	},
 	"require-dev": {
-		"armin/editorconfig-cli": "^2.1",
-		"ergebnis/composer-normalize": "^2.28",
-		"friendsofphp/php-cs-fixer": "^3.8",
-		"helmich/typo3-typoscript-lint": "^3.0",
-		"mteu/zealous-stan": "^0.6.3",
+		"armin/editorconfig-cli": "2.1.1",
+		"ergebnis/composer-normalize": "2.47.0",
+		"friendsofphp/php-cs-fixer": "3.85.1",
+		"helmich/typo3-typoscript-lint": "3.3.0",
+		"mteu/zealous-stan": "0.6.3",
 		"phpstan/extension-installer": "*",
 		"phpstan/phpstan": "^2.1",
 		"roave/security-advisories": "dev-latest",
 		"saschaegerer/phpstan-typo3": "^2.1",
-		"shipmonk/composer-dependency-analyser": "*",
-		"ssch/typo3-rector": "^3.6",
-		"typo3/coding-standards": "^0.8.0"
+		"shipmonk/composer-dependency-analyser": "1.8.3",
+		"ssch/typo3-rector": "3.6.0",
+		"typo3/coding-standards": "0.8.0"
 	},
 	"config": {
 		"allow-plugins": {
