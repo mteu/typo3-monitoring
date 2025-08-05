@@ -26,7 +26,6 @@ use mteu\Monitoring\Handler\MonitoringExecutionHandler;
 use mteu\Monitoring\Provider\CacheableMonitoringProvider;
 use mteu\Monitoring\Provider\MiddlewareStatusProvider;
 use mteu\Monitoring\Provider\MonitoringProvider;
-use mteu\Monitoring\Trait\SlugifyCacheKeyTrait;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use Symfony\Component\DependencyInjection\Attribute\AutowireIterator;
@@ -56,7 +55,6 @@ use TYPO3\CMS\Core\Type\ContextualFeedbackSeverity;
 final readonly class MonitoringController
 {
     use AllowedMethodsTrait;
-    use SlugifyCacheKeyTrait;
 
     private const string LOCALLANG_FILE = 'LLL:EXT:monitoring/Resources/Private/Language/locallang.be.xlf';
     private const string FLASHMESSAGE_QUEUE_IDENTIFIER = 'ext_monitoring_message_queue';
@@ -289,8 +287,7 @@ final readonly class MonitoringController
 
             // Check for cache expiration time
             if ($monitoringProvider instanceof CacheableMonitoringProvider) {
-                $cacheKey = $monitoringProvider->getCacheKey();
-                $expirationTime = $this->cacheManager->getCacheExpirationTime($this->slugifyString($cacheKey));
+                $expirationTime = $this->cacheManager->getCacheExpirationTime($monitoringProvider->getCacheKey());
 
                 if ($expirationTime !== null) {
                     $providerTemplateVariables[$monitoringProvider::class]['cacheExpiresAt'] = $expirationTime;
