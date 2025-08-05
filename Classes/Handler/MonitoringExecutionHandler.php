@@ -24,8 +24,7 @@ use mteu\Monitoring\Result\Result;
 use mteu\Monitoring\Trait\SlugifyCacheKeyTrait;
 
 /**
- * MonitoringExecutionService.
- *
+ * MonitoringExecutionHandler.
  * Handles execution of monitoring providers with caching support.
  *
  * @author Martin Adler <mteu@mailbox.org>

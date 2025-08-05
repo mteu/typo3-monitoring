@@ -17,6 +17,12 @@ declare(strict_types=1);
 
 namespace mteu\Monitoring\Trait;
 
+/**
+ * SlugifyCacheKeyTrait.
+ *
+ * @author Martin Adler <mteu@mailbox.org>
+ * @license GPL-2.0-or-later
+ */
 trait SlugifyCacheKeyTrait
 {
     /**

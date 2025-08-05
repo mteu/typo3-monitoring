@@ -17,6 +17,7 @@ parameters:
 			classesAllowedToBeExtended:
 				- Exception
 				- TYPO3\TestingFramework\Core\Unit\UnitTestCase
+				- TYPO3\TestingFramework\Core\Functional\FunctionalTestCase
 				- TYPO3Fluid\Fluid\Core\ViewHelper\AbstractViewHelper
 				- Symfony\Component\Console\Command\Command
 
