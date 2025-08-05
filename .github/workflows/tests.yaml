@@ -47,6 +47,10 @@ jobs:
       - name: Run unit tests
         run: composer test:unit
 
+      # Functional tests
+      - name: Run unit tests
+        run: composer test:functional
+
   tests-coverage:
     name: Test coverage
     runs-on: ubuntu-latest
