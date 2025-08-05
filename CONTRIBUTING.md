@@ -39,13 +39,13 @@ git checkout -b bugfix/issue-description
 
 #### Testing Commands
 ```bash
-# Run all tests
+# Run all tests (includes unit + functional)
 composer test
 
 # Run only unit tests
 composer test:unit
 
-# Run only functional tests
+# Run functional tests
 composer test:functional
 ```
 

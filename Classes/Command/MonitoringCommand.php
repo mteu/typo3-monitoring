@@ -27,7 +27,7 @@ use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\DependencyInjection\Attribute\AutowireIterator;
 
 /**
- * ExecuteMonitorCommand.
+ * MonitoringCommand.
  *
  * @author Martin Adler <mteu@mailbox.org>
  * @license GPL-2.0-or-later

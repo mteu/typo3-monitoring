@@ -15,8 +15,8 @@
 
 defined('TYPO3') or die();
 
-if (!isset($GLOBALS['TYPO3_CONF_VARS']['SYS']['caching']['cacheConfigurations']['monitoring'])) {
-    $GLOBALS['TYPO3_CONF_VARS']['SYS']['caching']['cacheConfigurations']['monitoring'] = [
+if (!isset($GLOBALS['TYPO3_CONF_VARS']['SYS']['caching']['cacheConfigurations']['typo3_monitoring'])) {
+    $GLOBALS['TYPO3_CONF_VARS']['SYS']['caching']['cacheConfigurations']['typo3_monitoring'] = [
         'frontend' => TYPO3\CMS\Core\Cache\Frontend\VariableFrontend::class,
         'backend' => TYPO3\CMS\Core\Cache\Backend\Typo3DatabaseBackend::class,
         'options' => [],

@@ -55,7 +55,12 @@ final readonly class MonitoringCacheManager
                 $cachedData = $cache->get($cacheKey);
 
                 if ($cachedData instanceof CachedMonitoringResult) {
-                    return $cachedData->getResult();
+                    if (!$cachedData->isExpired()) {
+                        return $cachedData->getResult();
+                    }
+
+                    // Remove expired cache entry
+                    $cache->remove($cacheKey);
                 }
             }
 
@@ -158,7 +163,7 @@ final readonly class MonitoringCacheManager
      */
     public function flushProviderCache(string $providerClass): bool
     {
-        return $this->flushByTags([$providerClass]);
+        return $this->flushByTags([str_replace('\\', '_', $providerClass)]);
     }
 
     public function flushByCacheKey(string $cacheKey): bool
