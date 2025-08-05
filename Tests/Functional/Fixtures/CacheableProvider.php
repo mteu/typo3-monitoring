@@ -59,7 +59,7 @@ final class CacheableProvider implements CacheableMonitoringProvider
 
     public function getCacheKey(): string
     {
-        return $this->identifier . '_cache_key';
+        return str_replace('\\', '.', $this->identifier);
     }
 
     public function getCacheLifetime(): int
