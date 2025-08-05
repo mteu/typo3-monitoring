@@ -36,6 +36,12 @@ use Psr\Log\LoggerInterface;
 use TYPO3\CMS\Core\Site\Entity\Site;
 use TYPO3\CMS\Core\Site\SiteFinder;
 
+/**
+ * MiddlewareStatusProviderTest.
+ *
+ * @author Martin Adler <mteu@mailbox.org>
+ * @license GPL-2.0-or-later
+ */
 #[Framework\Attributes\CoversClass(MiddlewareStatusProvider::class)]
 final class MiddlewareStatusProviderTest extends Framework\TestCase
 {

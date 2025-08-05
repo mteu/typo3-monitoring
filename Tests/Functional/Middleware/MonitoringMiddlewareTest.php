@@ -38,6 +38,12 @@ use TYPO3\CMS\Core\Http\ResponseFactory;
 use TYPO3\CMS\Core\Http\ServerRequest;
 use TYPO3\CMS\Core\Http\Uri;
 
+/**
+ * MonitoringMiddlewareTest.
+ *
+ * @author Martin Adler <mteu@mailbox.org>
+ * @license GPL-2.0-or-later
+ */
 final class MonitoringMiddlewareTest extends TestCase
 {
     private ResponseFactoryInterface $responseFactory;

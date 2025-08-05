@@ -19,6 +19,12 @@ namespace mteu\Monitoring\Tests\Unit\Stub;
 
 use mteu\Monitoring\Trait\SlugifyCacheKeyTrait;
 
+/**
+ * SlugifyCacheKeyTraitStub.
+ *
+ * @author Martin Adler <mteu@mailbox.org>
+ * @license GPL-2.0-or-later
+ */
 final readonly class SlugifyCacheKeyTraitStub
 {
     use SlugifyCacheKeyTrait;
