@@ -149,7 +149,7 @@ final class MonitoringExecutionHandlerTest extends FunctionalTestCase
         $this->executionHandler->executeProvider($this->provider);
 
         // Check cache expiration time is set
-        $cacheKey = $this->cacheManager->slugifyString($this->provider->getCacheKey());
+        $cacheKey = $this->provider->getCacheKey();
         $expirationTime = $this->cacheManager->getCacheExpirationTime($cacheKey);
 
         self::assertNotNull($expirationTime, 'Cache expiration time should be set');
@@ -193,8 +193,8 @@ final class MonitoringExecutionHandlerTest extends FunctionalTestCase
         self::assertSame(1, $provider2->getExecutionCount());
 
         // Verify cache keys are different
-        $key1 = $this->cacheManager->slugifyString($provider1->getCacheKey());
-        $key2 = $this->cacheManager->slugifyString($provider2->getCacheKey());
+        $key1 = $provider1->getCacheKey();
+        $key2 = $provider2->getCacheKey();
 
         self::assertNotEquals($key1, $key2, 'Cache keys should be unique to prevent collisions');
     }
