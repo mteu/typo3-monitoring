@@ -26,6 +26,7 @@ use mteu\Monitoring\Tests\Functional\Fixtures\ShortCacheProvider;
 use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\Attributes\Test;
 use TYPO3\CMS\Core\Cache\CacheManager;
+use TYPO3\CMS\Core\Cache\Exception\NoSuchCacheException;
 use TYPO3\TestingFramework\Core\Functional\FunctionalTestCase;
 
 /**
@@ -48,7 +49,7 @@ final class MonitoringExecutionHandlerTest extends FunctionalTestCase
                 'cacheConfigurations' => [
                     'typo3_monitoring' => [
                         'frontend' => 'TYPO3\\CMS\\Core\\Cache\\Frontend\\VariableFrontend',
-                        'backend' => 'TYPO3\\CMS\\Core\\Cache\\Backend\\SimpleFileBackend',
+                        'backend' => 'TYPO3\\CMS\\Core\\Cache\\Backend\\Typo3DatabaseBackend',
                         'options' => [],
                         'groups' => ['system'],
                     ],
@@ -202,19 +203,18 @@ final class MonitoringExecutionHandlerTest extends FunctionalTestCase
     #[Test]
     public function cacheMissingBackendHandling(): void
     {
-        // Test that missing cache backend is handled gracefully
-        $cacheManager = $this->get(CacheManager::class);
+        // Create a separate MonitoringCacheManager with a non-existent cache identifier
+        $cacheManagerMock = $this->createMock(CacheManager::class);
+        $cacheManagerMock->method('getCache')
+            ->willThrowException(new NoSuchCacheException('Cache does not exist', 1234567890));
 
-        // Remove the monitoring cache to simulate missing configuration
-        if ($cacheManager->hasCache('typo3_monitoring')) {
-            $cacheManager->flushCaches();
-        }
+        $monitoringCacheManager = new MonitoringCacheManager($cacheManagerMock);
 
         // This should handle NoSuchCacheException gracefully
-        $result = $this->cacheManager->getCachedResult('test-key');
+        $result = $monitoringCacheManager->getCachedResult('test-key');
         self::assertNull($result, 'Should return null when cache backend is missing');
 
-        $success = $this->cacheManager->setCachedResult('test-key', new MonitoringResult('test', true));
+        $success = $monitoringCacheManager->setCachedResult('test-key', new MonitoringResult('test', true));
         self::assertFalse($success, 'Should return false when cache backend is missing');
     }
 }
