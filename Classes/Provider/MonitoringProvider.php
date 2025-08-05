@@ -49,7 +49,8 @@ use Symfony\Component\DependencyInjection\Attribute\AutoconfigureTag;
 interface MonitoringProvider
 {
     /**
-     * The provider name is used as key in the json-result output on the health route, e.g. /monitor/health/
+     * The provider name must not be empty since it's used as key in the json-result output on the health route
+     * e.g. /monitor/health/
      *
      * @return non-empty-string
      */

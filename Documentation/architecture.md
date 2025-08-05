@@ -18,9 +18,22 @@ The monitoring system can be accessed through three channels:
 ## Key Components
 
 - **MonitoringMiddleware**: PSR-15 middleware handling HTTP requests
-- **Authorization Layer**: Multiple strategies with priority ordering  
+- **Authorization Layer**: Multiple strategies with priority ordering
 - **Provider System**: Auto-discovered monitoring checks via DI attributes
+- **Caching System**: Transparent caching for expensive monitoring operations
 - **Result Handling**: Aggregates provider outputs and formats responses
+
+## Caching Architecture
+
+The extension provides sophisticated caching capabilities for expensive monitoring operations:
+
+### Core Components
+
+- **MonitoringCacheManager**: Central cache management with TYPO3 caching framework integration
+- **MonitoringExecutionHandler**: Orchestrates provider execution with automatic cache handling
+- **CacheableMonitoringProvider**: Interface for providers that support caching
+- **CachedMonitoringResult**: Wrapper storing results with expiration metadata
+- **SlugifyCacheKeyTrait**: Ensures consistent cache key generation
 
 ## Extensibility
 
