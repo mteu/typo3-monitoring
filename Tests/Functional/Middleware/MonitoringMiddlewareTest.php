@@ -65,7 +65,7 @@ final class MonitoringMiddlewareTest extends FunctionalTestCase
     }
 
     #[Test]
-    public function middlewareReturnsHealthStatusWhenEndpointMatches(): void
+    public function returnsHealthStatusResponseForMatchingEndpoint(): void
     {
         $configuration = $this->createConfiguration('/health');
         $provider = $this->createHealthyProvider();
@@ -90,7 +90,7 @@ final class MonitoringMiddlewareTest extends FunctionalTestCase
     }
 
     #[Test]
-    public function middlewareReturns401WhenNotAuthorized(): void
+    public function returns401ResponseWhenAuthorizationFails(): void
     {
         $configuration = $this->createConfiguration('/health');
         $provider = $this->createHealthyProvider();
@@ -115,7 +115,7 @@ final class MonitoringMiddlewareTest extends FunctionalTestCase
     }
 
     #[Test]
-    public function middlewareReturns403WhenNotHttps(): void
+    public function returns403ResponseForNonHttpsRequests(): void
     {
         $configuration = $this->createConfiguration('/health');
         $provider = $this->createHealthyProvider();
@@ -140,7 +140,7 @@ final class MonitoringMiddlewareTest extends FunctionalTestCase
     }
 
     #[Test]
-    public function middlewarePassesToHandlerWhenEndpointDoesNotMatch(): void
+    public function passesRequestToNextHandlerWhenEndpointMismatches(): void
     {
         $configuration = $this->createConfiguration('/health');
         $provider = $this->createHealthyProvider();
@@ -168,7 +168,7 @@ final class MonitoringMiddlewareTest extends FunctionalTestCase
     }
 
     #[Test]
-    public function middlewarePassesToHandlerWhenEndpointIsEmpty(): void
+    public function passesRequestToNextHandlerWhenEndpointEmpty(): void
     {
         $configuration = $this->createConfiguration('');
         $provider = $this->createHealthyProvider();
@@ -196,7 +196,7 @@ final class MonitoringMiddlewareTest extends FunctionalTestCase
     }
 
     #[Test]
-    public function middlewareReturns503WhenServiceIsUnhealthy(): void
+    public function returns503ResponseWhenServiceReportsUnhealthyStatus(): void
     {
         $configuration = $this->createConfiguration('/health');
         $provider = $this->createUnhealthyProvider();

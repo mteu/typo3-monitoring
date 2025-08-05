@@ -100,7 +100,7 @@ final class MiddlewareStatusProviderTest extends Framework\TestCase
     }
 
     #[Test]
-    public function isActiveReturnsTrueWhenConditionsMet(): void
+    public function becomesActiveWhenAllConditionsAreSatisfied(): void
     {
         $provider = $this->createProvider();
         self::assertTrue($provider->isActive());

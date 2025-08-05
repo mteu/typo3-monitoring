@@ -17,6 +17,7 @@ declare(strict_types=1);
 
 namespace mteu\Monitoring\Cache;
 
+use mteu\Monitoring\Result\CachedMonitoringResult;
 use mteu\Monitoring\Result\Result;
 use TYPO3\CMS\Core\Cache\CacheManager;
 use TYPO3\CMS\Core\Cache\Exception\NoSuchCacheException;
