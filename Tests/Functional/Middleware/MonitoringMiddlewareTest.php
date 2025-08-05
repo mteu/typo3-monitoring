@@ -34,9 +34,11 @@ use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use Psr\Http\Server\RequestHandlerInterface;
 use Psr\Log\LoggerInterface;
+use TYPO3\CMS\Core\Core\Environment;
 use TYPO3\CMS\Core\Http\ResponseFactory;
 use TYPO3\CMS\Core\Http\ServerRequest;
 use TYPO3\CMS\Core\Http\Uri;
+use TYPO3\TestingFramework\Core\Functional\FunctionalTestCase;
 
 /**
  * MonitoringMiddlewareTest.
@@ -44,14 +46,21 @@ use TYPO3\CMS\Core\Http\Uri;
  * @author Martin Adler <mteu@mailbox.org>
  * @license GPL-2.0-or-later
  */
-final class MonitoringMiddlewareTest extends TestCase
+final class MonitoringMiddlewareTest extends FunctionalTestCase
 {
     private ResponseFactoryInterface $responseFactory;
     private LoggerInterface&MockObject $logger;
     private RequestHandlerInterface&MockObject $handler;
 
+    protected array $testExtensionsToLoad = [
+        'monitoring',
+        'typed_extconf',
+    ];
+
     protected function setUp(): void
     {
+        parent::setUp();
+
         $this->responseFactory = new ResponseFactory();
         $this->logger = $this->createMock(LoggerInterface::class);
         $this->handler = $this->createMock(RequestHandlerInterface::class);
