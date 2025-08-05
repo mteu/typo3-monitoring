@@ -18,7 +18,6 @@ declare(strict_types=1);
 namespace mteu\Monitoring\Cache;
 
 use mteu\Monitoring\Result\Result;
-use mteu\Monitoring\Trait\SlugifyCacheKeyTrait;
 use TYPO3\CMS\Core\Cache\CacheManager;
 use TYPO3\CMS\Core\Cache\Exception\NoSuchCacheException;
 use TYPO3\CMS\Core\Cache\Frontend\FrontendInterface;
@@ -35,7 +34,6 @@ use TYPO3\CMS\Core\Cache\Frontend\FrontendInterface;
  */
 final readonly class MonitoringCacheManager
 {
-    use SlugifyCacheKeyTrait;
     private const string CACHE_IDENTIFIER = 'typo3_monitoring';
 
     public function __construct(
@@ -160,7 +158,7 @@ final readonly class MonitoringCacheManager
      */
     public function flushProviderCache(string $providerClass): bool
     {
-        return $this->flushByTags([$this->slugifyString($providerClass)]);
+        return $this->flushByTags([$providerClass]);
     }
 
     public function flushByCacheKey(string $cacheKey): bool

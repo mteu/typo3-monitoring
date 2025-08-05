@@ -21,7 +21,6 @@ use mteu\Monitoring\Cache\MonitoringCacheManager;
 use mteu\Monitoring\Provider\CacheableMonitoringProvider;
 use mteu\Monitoring\Provider\MonitoringProvider;
 use mteu\Monitoring\Result\Result;
-use mteu\Monitoring\Trait\SlugifyCacheKeyTrait;
 
 /**
  * MonitoringExecutionService.
@@ -33,8 +32,6 @@ use mteu\Monitoring\Trait\SlugifyCacheKeyTrait;
  */
 final readonly class MonitoringExecutionHandler
 {
-    use SlugifyCacheKeyTrait;
-
     public function __construct(
         private MonitoringCacheManager $cacheManager,
     ) {}
@@ -56,9 +53,7 @@ final readonly class MonitoringExecutionHandler
      */
     private function executeWithCaching(CacheableMonitoringProvider $provider): Result
     {
-        $cacheKey = $this->slugifyString(
-            $provider->getCacheKey(),
-        );
+        $cacheKey = $provider->getCacheKey();
 
         $cachedResult = $this->cacheManager->getCachedResult($cacheKey);
 
@@ -68,7 +63,7 @@ final readonly class MonitoringExecutionHandler
 
         $result = $provider->execute();
 
-        $cacheTags = [$this->slugifyString($provider::class)];
+        $cacheTags = [$provider::class];
 
         $this->cacheManager->setCachedResult(
             $cacheKey,
