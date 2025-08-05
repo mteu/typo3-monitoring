@@ -25,6 +25,12 @@ namespace mteu\Monitoring\Provider;
  */
 interface CacheableMonitoringProvider extends MonitoringProvider
 {
+    /**
+     * Make sure to use a valid cache identifier. Also take care to choose a cache key that is accurate enough to
+     * distinguish different versions of the rendered content while being generic enough to stay efficient.
+     *
+     * @see: https://docs.typo3.org/m/typo3/reference-typoscript/main/en-us/Functions/Cache.html#key
+     */
     public function getCacheKey(): string;
     public function getCacheLifetime(): int;
 }

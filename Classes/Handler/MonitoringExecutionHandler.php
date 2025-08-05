@@ -23,8 +23,7 @@ use mteu\Monitoring\Provider\MonitoringProvider;
 use mteu\Monitoring\Result\Result;
 
 /**
- * MonitoringExecutionService.
- *
+ * MonitoringExecutionHandler.
  * Handles execution of monitoring providers with caching support.
  *
  * @author Martin Adler <mteu@mailbox.org>
@@ -53,7 +52,7 @@ final readonly class MonitoringExecutionHandler
      */
     private function executeWithCaching(CacheableMonitoringProvider $provider): Result
     {
-        $cacheKey = $provider->getCacheKey();
+        $cacheKey = $this->sanitizeCacheKey($provider->getCacheKey());
 
         $cachedResult = $this->cacheManager->getCachedResult($cacheKey);
 
@@ -63,15 +62,18 @@ final readonly class MonitoringExecutionHandler
 
         $result = $provider->execute();
 
-        $cacheTags = [$provider::class];
-
         $this->cacheManager->setCachedResult(
             $cacheKey,
             $result,
-            $cacheTags,
+            [str_replace('\\', '_', $provider::class)],
             $provider->getCacheLifetime()
         );
 
         return $result;
+    }
+
+    private function sanitizeCacheKey(string $string): string
+    {
+        return str_replace('\\', '_', $string);
     }
 }

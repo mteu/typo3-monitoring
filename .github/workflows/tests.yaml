@@ -43,9 +43,8 @@ jobs:
           dependency-versions: ${{ matrix.dependencies }}
           composer-options: --with=typo3/cms-core:"^${{ matrix.typo3-version }}"
 
-      # Run tests
-      - name: Run unit tests
-        run: composer test:unit
+      - name: Run tests
+        run: composer test
 
   tests-coverage:
     name: Test coverage
