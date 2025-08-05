@@ -37,7 +37,25 @@ use TYPO3\TestingFramework\Core\Functional\FunctionalTestCase;
 #[CoversClass(MonitoringExecutionHandler::class)]
 final class MonitoringExecutionHandlerTest extends FunctionalTestCase
 {
-    protected array $testExtensionsToLoad = ['typo3conf/ext/monitoring'];
+    protected array $testExtensionsToLoad = [
+        'monitoring',
+        'typed_extconf',
+    ];
+
+    protected array $configurationToUseInTestInstance = [
+        'SYS' => [
+            'caching' => [
+                'cacheConfigurations' => [
+                    'typo3_monitoring' => [
+                        'frontend' => 'TYPO3\\CMS\\Core\\Cache\\Frontend\\VariableFrontend',
+                        'backend' => 'TYPO3\\CMS\\Core\\Cache\\Backend\\SimpleFileBackend',
+                        'options' => [],
+                        'groups' => ['system'],
+                    ],
+                ],
+            ],
+        ],
+    ];
 
     private MonitoringExecutionHandler $executionHandler;
     private MonitoringCacheManager $cacheManager;
