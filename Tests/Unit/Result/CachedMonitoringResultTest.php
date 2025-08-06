@@ -20,10 +20,10 @@ namespace mteu\Monitoring\Tests\Unit\Result;
 use mteu\Monitoring\Result\CachedMonitoringResult;
 use mteu\Monitoring\Result\MonitoringResult;
 use mteu\Monitoring\Result\Result;
+use mteu\Monitoring\Tests\Unit\MonitoringTestCase;
 use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\Attributes\Test;
-use PHPUnit\Framework\TestCase;
 
 /**
  * CachedMonitoringResultTest.
@@ -34,12 +34,12 @@ use PHPUnit\Framework\TestCase;
  * @license GPL-2.0-or-later
  */
 #[CoversClass(CachedMonitoringResult::class)]
-final class CachedMonitoringResultTest extends TestCase
+final class CachedMonitoringResultTest extends MonitoringTestCase
 {
     #[Test]
     public function implementsResultInterface(): void
     {
-        $result = new MonitoringResult('test', true);
+        $result = $this->createHealthyResult();
         $cached = new CachedMonitoringResult($result, new \DateTimeImmutable(), 300);
 
         self::assertInstanceOf(Result::class, $cached);
