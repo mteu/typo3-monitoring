@@ -19,10 +19,10 @@ namespace mteu\Monitoring\Tests\Unit\Result;
 
 use mteu\Monitoring\Result\MonitoringResult;
 use mteu\Monitoring\Result\Result;
+use mteu\Monitoring\Tests\Unit\MonitoringTestCase;
 use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\Attributes\Test;
-use PHPUnit\Framework\TestCase;
 
 /**
  * MonitoringResultTest.
@@ -33,12 +33,12 @@ use PHPUnit\Framework\TestCase;
  * @license GPL-2.0-or-later
  */
 #[CoversClass(MonitoringResult::class)]
-final class MonitoringResultTest extends TestCase
+final class MonitoringResultTest extends MonitoringTestCase
 {
     #[Test]
     public function implementsResultInterface(): void
     {
-        $result = new MonitoringResult('test', true);
+        $result = $this->createHealthyResult();
 
         self::assertInstanceOf(Result::class, $result);
     }
@@ -63,16 +63,16 @@ final class MonitoringResultTest extends TestCase
     }
 
     /**
-     * @param list<MonitoringResult> $subResults
+     * @param list<bool> $subHealthStatuses
      */
     #[Test]
-    #[DataProvider('healthCalculationProvider')]
+    #[DataProvider('healthCalculationScenarios')]
     public function calculatesFinalHealthFromMainAndSubResults(
         bool $initialHealth,
-        array $subResults,
+        array $subHealthStatuses,
         bool $expectedHealth
     ): void {
-        $result = new MonitoringResult('test', $initialHealth, 'Test reason', $subResults);
+        $result = $this->createResultWithSubResults($subHealthStatuses, 'test', $initialHealth);
 
         self::assertSame($expectedHealth, $result->isHealthy());
     }
@@ -129,7 +129,7 @@ final class MonitoringResultTest extends TestCase
     }
 
     #[Test]
-    #[DataProvider('magicGetterProvider')]
+    #[DataProvider('propertyAccessScenarios')]
     public function magicGetterReturnsExpectedPropertyValues(
         string $name,
         bool $isHealthy,
@@ -169,17 +169,10 @@ final class MonitoringResultTest extends TestCase
             $result->addSubResult($subResult);
         }
 
+        $this->assertSerializationConsistency($result);
+        $this->assertResultProperties($result, $name, $isHealthy, $reason);
+
         $array = $result->toArray();
-        $json = $result->jsonSerialize();
-
-        self::assertSame($array, $json, 'Both methods should return identical results');
-        self::assertArrayHasKey('name', $array);
-        self::assertArrayHasKey('isHealthy', $array);
-        self::assertArrayHasKey('description', $array);
-        self::assertSame($name, $array['name']);
-        self::assertSame($isHealthy, $array['isHealthy']);
-        self::assertSame($reason, $array['description']);
-
         if (count($subResults) > 0) {
             self::assertArrayHasKey('subResults', $array);
             self::assertCount(count($subResults), ($array['subResults'] ?? []));
@@ -249,45 +242,6 @@ final class MonitoringResultTest extends TestCase
         ];
     }
 
-    public static function healthCalculationProvider(): \Generator
-    {
-        yield 'healthy with no sub-results' => [
-            true,
-            [],
-            true,
-        ];
-
-        yield 'unhealthy with no sub-results' => [
-            false,
-            [],
-            false,
-        ];
-
-        yield 'healthy main, healthy sub-results' => [
-            true,
-            [new MonitoringResult('sub-1', true), new MonitoringResult('sub-2', true)],
-            true,
-        ];
-
-        yield 'healthy main, mixed sub-results' => [
-            true,
-            [new MonitoringResult('sub-1', true), new MonitoringResult('sub-2', false)],
-            false,
-        ];
-
-        yield 'unhealthy main, healthy sub-results' => [
-            false,
-            [new MonitoringResult('sub-1', true), new MonitoringResult('sub-2', true)],
-            false,
-        ];
-
-        yield 'unhealthy main, unhealthy sub-results' => [
-            false,
-            [new MonitoringResult('sub-1', false), new MonitoringResult('sub-2', false)],
-            false,
-        ];
-    }
-
     public static function subResultsProvider(): \Generator
     {
         yield 'no initial, add some' => [
@@ -312,41 +266,6 @@ final class MonitoringResultTest extends TestCase
                 new MonitoringResult('initial-2', false),
             ],
             [],
-        ];
-    }
-
-    public static function magicGetterProvider(): \Generator
-    {
-        yield 'get name property' => [
-            'test-service',
-            true,
-            'All good',
-            'name',
-            'test-service',
-        ];
-
-        yield 'get isHealthy property' => [
-            'test-service',
-            false,
-            'Error occurred',
-            'isHealthy',
-            false,
-        ];
-
-        yield 'get description property' => [
-            'test-service',
-            true,
-            'Service operational',
-            'description',
-            'Service operational',
-        ];
-
-        yield 'get description property when null' => [
-            'test-service',
-            true,
-            null,
-            'description',
-            null,
         ];
     }
 
