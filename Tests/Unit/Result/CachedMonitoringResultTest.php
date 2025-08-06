@@ -86,6 +86,9 @@ final class CachedMonitoringResultTest extends TestCase
         self::assertSame($expectedExpired, $cached->isExpired());
     }
 
+    /**
+     * @param list<MonitoringResult> $subResults
+     */
     #[Test]
     #[DataProvider('resultDelegationProvider')]
     public function delegatesAllResultMethodsToWrappedInstance(
@@ -109,6 +112,9 @@ final class CachedMonitoringResultTest extends TestCase
         self::assertSame($subResults, $cached->getSubResults());
     }
 
+    /**
+     * @param list<MonitoringResult> $subResults
+     */
     #[Test]
     #[DataProvider('serializationProvider')]
     public function serializationMethodsProduceIdenticalOutput(
@@ -124,6 +130,14 @@ final class CachedMonitoringResultTest extends TestCase
 
         $cached = new CachedMonitoringResult($result, new \DateTimeImmutable(), 300);
 
+        /**
+         * @var array{
+         *      name: string,
+         *      isHealthy: bool,
+         *      description: string|null,
+         *      subResults?: array<int, mixed>
+         *  } $array
+         */
         $array = $cached->toArray();
         $json = $cached->jsonSerialize();
 
@@ -136,7 +150,7 @@ final class CachedMonitoringResultTest extends TestCase
 
         if (count($subResults) > 0) {
             self::assertArrayHasKey('subResults', $array);
-            self::assertCount(count($subResults), $array['subResults']);
+            self::assertCount(count($subResults), ($array['subResults'] ?? []));
         }
     }
 

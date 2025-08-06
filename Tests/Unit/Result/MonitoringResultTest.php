@@ -43,6 +43,9 @@ final class MonitoringResultTest extends TestCase
         self::assertInstanceOf(Result::class, $result);
     }
 
+    /**
+     * @param list<MonitoringResult> $subResults
+     */
     #[Test]
     #[DataProvider('constructorDataProvider')]
     public function constructorInitializesStateFromParameters(
@@ -59,6 +62,9 @@ final class MonitoringResultTest extends TestCase
         self::assertSame(count($subResults) > 0, $result->hasSubResults());
     }
 
+    /**
+     * @param list<MonitoringResult> $subResults
+     */
     #[Test]
     #[DataProvider('healthCalculationProvider')]
     public function calculatesFinalHealthFromMainAndSubResults(
@@ -96,6 +102,10 @@ final class MonitoringResultTest extends TestCase
         self::assertSame($result, $returned, 'Should return self for fluent interface');
     }
 
+    /**
+     * @param list<MonitoringResult> $initialSubResults
+     * @param list<MonitoringResult> $additionalResults
+     */
     #[Test]
     #[DataProvider('subResultsProvider')]
     public function managesSubResultCollectionWithProperOrdering(array $initialSubResults, array $additionalResults): void
@@ -143,6 +153,9 @@ final class MonitoringResultTest extends TestCase
         $result->__get('invalid');
     }
 
+    /**
+     * @param list<MonitoringResult> $subResults
+     */
     #[Test]
     #[DataProvider('serializationProvider')]
     public function serializationMethodsProduceConsistentArrayOutput(
@@ -169,9 +182,9 @@ final class MonitoringResultTest extends TestCase
 
         if (count($subResults) > 0) {
             self::assertArrayHasKey('subResults', $array);
-            self::assertCount(count($subResults), $array['subResults']);
+            self::assertCount(count($subResults), ($array['subResults'] ?? []));
 
-            foreach ($array['subResults'] as $subArray) {
+            foreach (($array['subResults'] ?? []) as $subArray) {
                 self::assertIsArray($subArray);
                 self::assertArrayHasKey('name', $subArray);
                 self::assertArrayHasKey('isHealthy', $subArray);
@@ -182,6 +195,9 @@ final class MonitoringResultTest extends TestCase
         }
     }
 
+    /**
+     * @param list<array{name: string, health: bool, reason?: string|null}> $subResultsData
+     */
     #[Test]
     #[DataProvider('healthWithSubResultsProvider')]
     public function healthCalculationConsidersSubResultHealthStatus(
@@ -191,6 +207,13 @@ final class MonitoringResultTest extends TestCase
     ): void {
         $result = new MonitoringResult('main', $mainHealth);
 
+        /**
+         * @var array{
+         *     name: string,
+         *     health: bool,
+         *     reason: ?string,
+         * } $subData
+         */
         foreach ($subResultsData as $subData) {
             $subResult = new MonitoringResult($subData['name'], $subData['health'], $subData['reason'] ?? null);
             $result->addSubResult($subResult);
