@@ -16,10 +16,11 @@ parameters:
 		noExtends:
 			classesAllowedToBeExtended:
 				- Exception
-				- TYPO3\TestingFramework\Core\Unit\UnitTestCase
-				- TYPO3\TestingFramework\Core\Functional\FunctionalTestCase
-				- TYPO3Fluid\Fluid\Core\ViewHelper\AbstractViewHelper
 				- Symfony\Component\Console\Command\Command
+				- TYPO3Fluid\Fluid\Core\ViewHelper\AbstractViewHelper
+				- TYPO3\TestingFramework\Core\Functional\FunctionalTestCase
+				- TYPO3\TestingFramework\Core\Unit\UnitTestCase
+				- mteu\Monitoring\Tests\Unit\MonitoringTestCase
 
 	ignoreErrors:
 		- identifier: ergebnis.noConstructorParameterWithDefaultValue
