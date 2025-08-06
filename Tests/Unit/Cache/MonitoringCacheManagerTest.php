@@ -17,15 +17,14 @@ declare(strict_types=1);
 
 namespace mteu\Monitoring\Tests\Unit\Cache;
 
-use mteu\Monitoring\Cache\CachedMonitoringResult;
 use mteu\Monitoring\Cache\MonitoringCacheManager;
+use mteu\Monitoring\Result\CachedMonitoringResult;
 use mteu\Monitoring\Result\MonitoringResult;
 use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\TestCase;
 use TYPO3\CMS\Core\Cache\CacheManager;
 use TYPO3\CMS\Core\Cache\Exception\NoSuchCacheException;
-use TYPO3\CMS\Core\Cache\Frontend\FrontendInterface;
 
 /**
  * MonitoringCacheManagerTest.
@@ -47,7 +46,7 @@ final class MonitoringCacheManagerTest extends TestCase
     }
 
     #[Test]
-    public function getCachedResultHandlesMissingCacheGracefully(): void
+    public function returnsNullWhenCacheBackendUnavailable(): void
     {
         $cacheManager = $this->createMock(CacheManager::class);
         $cacheManager->method('getCache')
@@ -60,32 +59,31 @@ final class MonitoringCacheManagerTest extends TestCase
     }
 
     #[Test]
-    public function expiredCacheResultIsProperlyHandled(): void
+    public function detectsAndHandlesExpiredCacheEntries(): void
     {
-        // Test our expiration logic through CachedMonitoringResult
         $monitoringResult = new MonitoringResult('test', true);
         $expiredCachedResult = new CachedMonitoringResult(
             $monitoringResult,
-            new \DateTimeImmutable('-20 minutes'), // Expired (15 min lifetime)
-            900 // 15 minutes
+            new \DateTimeImmutable('-20 minutes'),
+            900
         );
 
         self::assertTrue($expiredCachedResult->isExpired(), 'CachedMonitoringResult should detect expiration');
 
         $validCachedResult = new CachedMonitoringResult(
             $monitoringResult,
-            new \DateTimeImmutable('-5 minutes'), // Not expired
-            900 // 15 minutes
+            new \DateTimeImmutable('-5 minutes'),
+            900
         );
 
         self::assertFalse($validCachedResult->isExpired(), 'CachedMonitoringResult should detect valid cache');
     }
 
     #[Test]
-    public function cachedMonitoringResultCalculatesExpirationCorrectly(): void
+    public function calculatesExpirationTimeUsingCachedAtAndLifetime(): void
     {
         $cachedAt = new \DateTimeImmutable('-5 minutes');
-        $lifetime = 900; // 15 minutes
+        $lifetime = 900;
         $expectedExpiration = $cachedAt->add(new \DateInterval('PT' . $lifetime . 'S'));
 
         $monitoringResult = new MonitoringResult('test', true);
@@ -99,7 +97,7 @@ final class MonitoringCacheManagerTest extends TestCase
     }
 
     #[Test]
-    public function setCachedResultHandlesMissingCacheGracefully(): void
+    public function returnsFalseWhenCacheBackendUnavailableForStorage(): void
     {
         $cacheManager = $this->createMock(CacheManager::class);
         $cacheManager->method('getCache')
@@ -120,7 +118,7 @@ final class MonitoringCacheManagerTest extends TestCase
     }
 
     #[Test]
-    public function flushByTagsHandlesMissingCacheGracefully(): void
+    public function returnsFalseWhenCacheBackendUnavailableForTagFlush(): void
     {
         $cacheManager = $this->createMock(CacheManager::class);
         $cacheManager->method('getCache')
@@ -135,18 +133,16 @@ final class MonitoringCacheManagerTest extends TestCase
     #[Test]
     public function flushProviderCacheConvertsClassNameToTag(): void
     {
-        // Test the class name to tag conversion logic
         $providerClass = 'App\\Provider\\TestProvider';
         $expectedTag = 'App_Provider_TestProvider';
 
-        // We're testing our conversion logic, not TYPO3's flush behavior
         $actualTag = str_replace('\\', '_', $providerClass);
 
         self::assertSame($expectedTag, $actualTag, 'Class name should be converted to valid cache tag');
     }
 
     #[Test]
-    public function flushByCacheKeyHandlesMissingCacheGracefully(): void
+    public function returnsFalseWhenCacheBackendUnavailableForKeyFlush(): void
     {
         $cacheManager = $this->createMock(CacheManager::class);
         $cacheManager->method('getCache')
@@ -159,7 +155,7 @@ final class MonitoringCacheManagerTest extends TestCase
     }
 
     #[Test]
-    public function flushAllHandlesMissingCacheGracefully(): void
+    public function returnsFalseWhenCacheBackendUnavailableForFlushAll(): void
     {
         $cacheManager = $this->createMock(CacheManager::class);
         $cacheManager->method('getCache')

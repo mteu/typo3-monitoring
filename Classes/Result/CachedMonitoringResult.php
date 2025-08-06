@@ -15,19 +15,18 @@ declare(strict_types=1);
  * The TYPO3 project - inspiring people to share!
  */
 
-namespace mteu\Monitoring\Cache;
-
-use mteu\Monitoring\Result\Result;
+namespace mteu\Monitoring\Result;
 
 /**
  * CachedMonitoringResult.
  *
- * Wrapper for cached monitoring results that includes expiration information
+ * Wrapper for cached monitoring results that includes expiration information.
+ * Implements Result interface using decorator pattern to delegate to wrapped result.
  *
  * @author Martin Adler <mteu@mailbox.org>
  * @license GPL-2.0-or-later
  */
-final readonly class CachedMonitoringResult
+final readonly class CachedMonitoringResult implements Result
 {
     public function __construct(
         private Result $result,
@@ -58,5 +57,60 @@ final readonly class CachedMonitoringResult
         $serverTimezone = new \DateTimeZone(date_default_timezone_get());
         $now = new \DateTimeImmutable('now', $serverTimezone);
         return $this->getExpiresAt() < $now;
+    }
+
+    // Result interface implementation - delegate to wrapped result
+    public function getName(): string
+    {
+        return $this->result->getName();
+    }
+
+    public function isHealthy(): bool
+    {
+        return $this->result->isHealthy();
+    }
+
+    public function getReason(): ?string
+    {
+        return $this->result->getReason();
+    }
+
+    /**
+     * @return Result[]
+     */
+    public function getSubResults(): array
+    {
+        return $this->result->getSubResults();
+    }
+
+    public function hasSubResults(): bool
+    {
+        return $this->result->hasSubResults();
+    }
+
+    /**
+     * @return array{
+     *     name: string,
+     *     isHealthy: bool,
+     *     description: string|null,
+     *     subResults?: array<int, mixed>
+     * }
+     */
+    public function toArray(): array
+    {
+        return $this->result->toArray();
+    }
+
+    /**
+     * @return array{
+     *     name: string,
+     *     isHealthy: bool,
+     *     description: string|null,
+     *     subResults?: array<int, mixed>
+     * }
+     */
+    public function jsonSerialize(): array
+    {
+        return $this->result->jsonSerialize();
     }
 }

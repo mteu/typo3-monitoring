@@ -65,66 +65,61 @@ final class MonitoringCacheManagerTest extends FunctionalTestCase
     }
 
     #[Test]
-    public function ourCacheManagerBasicOperationsWork(): void
+    public function cacheManagerHandlesStoreAndRetrieveOperations(): void
     {
         $result = new MonitoringResult('test-service', true, 'Service is healthy');
         $cacheKey = 'test-cache-key';
 
-        // Test store and retrieve
         $stored = $this->cacheManager->setCachedResult($cacheKey, $result);
-        self::assertTrue($stored, 'Our implementation should store results');
+        self::assertTrue($stored, 'Should store results successfully');
 
         $retrieved = $this->cacheManager->getCachedResult($cacheKey);
-        self::assertNotNull($retrieved, 'Our implementation should retrieve stored results');
+        self::assertNotNull($retrieved, 'Should retrieve stored results');
         self::assertSame($result->getName(), $retrieved->getName());
         self::assertSame($result->isHealthy(), $retrieved->isHealthy());
         self::assertSame($result->getReason(), $retrieved->getReason());
     }
 
     #[Test]
-    public function ourImplementationHandlesNonExistentKeys(): void
+    public function returnsNullForNonExistentCacheKeys(): void
     {
         $result = $this->cacheManager->getCachedResult('non-existent-key');
-        self::assertNull($result, 'Our implementation should return null for non-existent keys');
+        self::assertNull($result, 'Should return null for non-existent keys');
     }
 
     #[Test]
-    public function ourDefaultLifetimeLogicWorks(): void
+    public function appliesDefaultLifetimeWhenZeroProvided(): void
     {
         $defaultLifetime = $this->cacheManager->getCacheLifetime();
-        self::assertSame(900, $defaultLifetime, 'Our default lifetime should be 15 minutes (900 seconds)');
-        
+        self::assertSame(900, $defaultLifetime, 'Default lifetime should be 15 minutes (900 seconds)');
+
         $result = new MonitoringResult('test-service', true);
         $stored = $this->cacheManager->setCachedResult('default-test', $result, [], 0);
         self::assertTrue($stored, 'Should store with default lifetime when 0 provided');
     }
 
     #[Test]
-    public function ourExpirationHandlingWorks(): void
+    public function tracksExpirationTimeAccuratelyForCustomLifetime(): void
     {
-        // Test that our implementation sets expiration times correctly
         $result = new MonitoringResult('test-service', true);
         $stored = $this->cacheManager->setCachedResult('expiration-test', $result, [], 3600);
         self::assertTrue($stored, 'Should store with custom lifetime');
 
-        // Verify expiration time is set
         $expirationTime = $this->cacheManager->getCacheExpirationTime('expiration-test');
-        self::assertNotNull($expirationTime, 'Our implementation should set expiration time');
-        
-        // Verify it's approximately 1 hour from now (allow some tolerance)
+        self::assertNotNull($expirationTime, 'Should set expiration time');
+
         $expectedTime = new \DateTimeImmutable('+3600 seconds');
         $timeDiff = abs($expirationTime->getTimestamp() - $expectedTime->getTimestamp());
         self::assertLessThan(10, $timeDiff, 'Expiration should be approximately correct');
     }
 
     #[Test]
-    public function ourProviderCacheFlushWorks(): void
+    public function flushProviderCacheInvalidatesCorrectEntries(): void
     {
         $result = new MonitoringResult('provider-test', true);
         $providerClass = 'mteu\\Monitoring\\Provider\\TestProvider';
-        
-        // Our flushProviderCache should work with real cache backend
+
         $flushed = $this->cacheManager->flushProviderCache($providerClass);
-        self::assertTrue($flushed, 'Our provider cache flush should work');
+        self::assertTrue($flushed, 'Provider cache flush should succeed');
     }
 }

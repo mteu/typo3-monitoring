@@ -75,7 +75,7 @@ final class MonitoringExecutionHandlerTest extends FunctionalTestCase
     }
 
     #[Test]
-    public function cacheableProviderResultsAreCachedOnFirstExecution(): void
+    public function cacheableProviderStoresResultOnInitialExecution(): void
     {
         // First execution should execute provider and cache result
         $result1 = $this->executionHandler->executeProvider($this->provider);
@@ -86,7 +86,7 @@ final class MonitoringExecutionHandlerTest extends FunctionalTestCase
     }
 
     #[Test]
-    public function cacheableProviderUsesCacheOnSecondExecution(): void
+    public function cacheableProviderRetrievesResultFromCacheOnSubsequentCall(): void
     {
         // First execution - should miss cache and execute provider
         $result1 = $this->executionHandler->executeProvider($this->provider);
@@ -122,7 +122,7 @@ final class MonitoringExecutionHandlerTest extends FunctionalTestCase
     }
 
     #[Test]
-    public function cacheInvalidationWorksCorrectly(): void
+    public function cacheInvalidationForcesProviderReexecution(): void
     {
         // First execution - cache miss
         $result1 = $this->executionHandler->executeProvider($this->provider);
@@ -144,7 +144,7 @@ final class MonitoringExecutionHandlerTest extends FunctionalTestCase
     }
 
     #[Test]
-    public function cacheExpirationIsTracked(): void
+    public function expirationTimeIsRecordedForCachedResults(): void
     {
         // Execute provider to cache result
         $this->executionHandler->executeProvider($this->provider);
@@ -158,7 +158,7 @@ final class MonitoringExecutionHandlerTest extends FunctionalTestCase
     }
 
     #[Test]
-    public function shortLivedCacheExpires(): void
+    public function expiredCacheEntriesAreNotReused(): void
     {
         $shortCacheProvider = new ShortCacheProvider();
 
@@ -180,7 +180,7 @@ final class MonitoringExecutionHandlerTest extends FunctionalTestCase
     }
 
     #[Test]
-    public function cacheKeyCollisionTest(): void
+    public function differentProvidersGenerateUniqueCacheKeys(): void
     {
         $provider1 = new CacheableProvider('provider-1');
         $provider2 = new CacheableProvider('provider_1'); // Different but might collide after slugification
@@ -201,7 +201,7 @@ final class MonitoringExecutionHandlerTest extends FunctionalTestCase
     }
 
     #[Test]
-    public function cacheMissingBackendHandling(): void
+    public function missingCacheBackendHandledGracefully(): void
     {
         // Create a separate MonitoringCacheManager with a non-existent cache identifier
         $cacheManagerMock = $this->createMock(CacheManager::class);
