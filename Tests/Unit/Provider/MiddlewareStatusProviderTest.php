@@ -43,6 +43,7 @@ use TYPO3\CMS\Core\Site\SiteFinder;
  * @license GPL-2.0-or-later
  */
 #[Framework\Attributes\CoversClass(MiddlewareStatusProvider::class)]
+#[Framework\Attributes\BackupGlobals(true)]
 final class MiddlewareStatusProviderTest extends Framework\TestCase
 {
     private ClientInterface&MockObject $httpClient;
@@ -91,12 +92,8 @@ final class MiddlewareStatusProviderTest extends Framework\TestCase
             $_SERVER['HTTP_X_MIDDLEWARE_STATUS_REQUEST'] = '1';
         }
 
-        try {
-            $provider = $this->createProvider($endpoint, $providerEnabled);
-            self::assertFalse($provider->isActive());
-        } finally {
-            unset($_SERVER['HTTP_X_MIDDLEWARE_STATUS_REQUEST']);
-        }
+        $provider = $this->createProvider($endpoint, $providerEnabled);
+        self::assertFalse($provider->isActive());
     }
 
     #[Test]
