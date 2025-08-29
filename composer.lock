@@ -5168,16 +5168,16 @@
         },
         {
             "name": "typo3fluid/fluid",
-            "version": "4.4.2",
+            "version": "4.4.3",
             "source": {
                 "type": "git",
                 "url": "https://github.com/TYPO3/Fluid.git",
-                "reference": "c551ff159ef2d35b70ee23cf3057423427bca62a"
+                "reference": "c821755d38c08f5130ad09828717d09dc9a562f4"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/TYPO3/Fluid/zipball/c551ff159ef2d35b70ee23cf3057423427bca62a",
-                "reference": "c551ff159ef2d35b70ee23cf3057423427bca62a",
+                "url": "https://api.github.com/repos/TYPO3/Fluid/zipball/c821755d38c08f5130ad09828717d09dc9a562f4",
+                "reference": "c821755d38c08f5130ad09828717d09dc9a562f4",
                 "shasum": ""
             },
             "require": {
@@ -5223,7 +5223,7 @@
                 "issues": "https://github.com/TYPO3/Fluid/issues",
                 "source": "https://github.com/TYPO3/Fluid"
             },
-            "time": "2025-08-06T10:17:20+00:00"
+            "time": "2025-08-28T12:02:19+00:00"
         }
     ],
     "packages-dev": [
