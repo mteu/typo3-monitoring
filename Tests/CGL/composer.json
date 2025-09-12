@@ -1,6 +1,6 @@
 {
 	"require": {
-		"mteu/typo3-typed-extconf": "0.2.2"
+		"mteu/typo3-typed-extconf": "0.2.3"
 	},
 	"require-dev": {
 		"armin/editorconfig-cli": "2.1.1",
