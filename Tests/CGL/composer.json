@@ -9,7 +9,7 @@
 		"helmich/typo3-typoscript-lint": "3.3.0",
 		"mteu/zealous-stan": "0.6.3",
 		"phpstan/extension-installer": "1.4.3",
-		"phpstan/phpstan": "2.1.26",
+		"phpstan/phpstan": "2.1.27",
 		"roave/security-advisories": "dev-latest",
 		"saschaegerer/phpstan-typo3": "2.1.1",
 		"shipmonk/composer-dependency-analyser": "1.8.3",
