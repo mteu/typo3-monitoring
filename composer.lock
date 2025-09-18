@@ -1278,16 +1278,16 @@
         },
         {
             "name": "mteu/typo3-typed-extconf",
-            "version": "0.2.3",
+            "version": "0.2.4",
             "source": {
                 "type": "git",
                 "url": "https://github.com/mteu/typo3-typed-extconf.git",
-                "reference": "db5ad734b9a5900fc23fc656893152a42dde4089"
+                "reference": "9db7a906503a0d0cdd09f5cc57446a8b093b60e5"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/mteu/typo3-typed-extconf/zipball/db5ad734b9a5900fc23fc656893152a42dde4089",
-                "reference": "db5ad734b9a5900fc23fc656893152a42dde4089",
+                "url": "https://api.github.com/repos/mteu/typo3-typed-extconf/zipball/9db7a906503a0d0cdd09f5cc57446a8b093b60e5",
+                "reference": "9db7a906503a0d0cdd09f5cc57446a8b093b60e5",
                 "shasum": ""
             },
             "require": {
@@ -1339,9 +1339,9 @@
             "description": "Aims to provide a type-safe extension configuration management for TYPO3, ensuring proper types instead of string-only values from backend configuration or mixed types from config/system/settings.php",
             "support": {
                 "issues": "https://github.com/mteu/typo3-typed-extconf/issues",
-                "source": "https://github.com/mteu/typo3-typed-extconf/tree/0.2.3"
+                "source": "https://github.com/mteu/typo3-typed-extconf/tree/0.2.4"
             },
-            "time": "2025-09-11T20:15:34+00:00"
+            "time": "2025-09-18T14:21:39+00:00"
         },
         {
             "name": "nette/php-generator",
