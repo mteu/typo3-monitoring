@@ -125,38 +125,6 @@ final readonly class MonitoringController
 
         throw new \LogicException('MiddlewareStatusProvider not found among tagged services.');
     }
-    /**
-     * Process authorizers and build template variables
-     *
-     * @return array<class-string, array{
-     *     isActive: bool,
-     *     priority: int,
-     *     authHeaderName?: string,
-     *     authToken?: string
-     * }>
-     */
-    private function buildAuthorizerTemplateVariables(): array
-    {
-        $templateVariables = $this->collectAuthorizerStatuses();
-
-        $tokenConfig = $this->monitoringConfiguration->tokenAuthorizerConfiguration;
-
-        if (!$tokenConfig->isEnabled()) {
-            return $templateVariables;
-        }
-
-        $templateVariables[TokenAuthorizer::class]['authHeaderName'] = $tokenConfig->authHeaderName;
-
-        $secret = $tokenConfig->secret;
-
-        if ($secret === '') {
-            return $templateVariables;
-        }
-
-        $templateVariables[TokenAuthorizer::class]['authToken'] = $this->generateAuthToken($tokenConfig->secret);
-
-        return $templateVariables;
-    }
 
     /**
      * @return array<class-string, array{isActive: bool, priority: int}>
@@ -262,7 +230,7 @@ final readonly class MonitoringController
 
         foreach ($this->monitoringProviders as $monitoringProvider) {
 
-            // Don't actually execute and display this metaprovider in the backend.
+            // Don't execute and display this meta-provider in the backend.
             if ($monitoringProvider instanceof MiddlewareStatusProvider) {
                 continue;
             }
@@ -296,5 +264,42 @@ final readonly class MonitoringController
         }
 
         return $providerTemplateVariables;
+    }
+
+    /**
+     * Process authorizers and build template variables
+     *
+     * @return array{}|non-empty-array<class-string, array{
+     *     isActive: bool,
+     *     priority: int,
+     *     authHeaderName?: string,
+     *     authToken?: string
+     * }>
+     */
+    private function buildAuthorizerTemplateVariables(): array
+    {
+        $templateVariables = $this->collectAuthorizerStatuses();
+
+        if ($templateVariables === []) {
+            return [];
+        }
+
+        $tokenConfig = $this->monitoringConfiguration->tokenAuthorizerConfiguration;
+
+        if (!$tokenConfig->isEnabled()) {
+            return $templateVariables;
+        }
+
+        $templateVariables[TokenAuthorizer::class]['authHeaderName'] = $tokenConfig->authHeaderName;
+
+        $secret = $tokenConfig->secret;
+
+        if ($secret === '') {
+            return $templateVariables;
+        }
+
+        $templateVariables[TokenAuthorizer::class]['authToken'] = $this->generateAuthToken($tokenConfig->secret);
+
+        return $templateVariables;
     }
 }
