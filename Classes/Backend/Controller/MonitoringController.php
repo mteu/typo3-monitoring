@@ -269,12 +269,7 @@ final readonly class MonitoringController
     /**
      * Process authorizers and build template variables
      *
-     * @return array{}|non-empty-array<class-string, array{
-     *     isActive: bool,
-     *     priority: int,
-     *     authHeaderName?: string,
-     *     authToken?: string
-     * }>
+     * @return array{}|non-empty-array<class-string, array{authHeaderName: string, authToken?: string}|array{isActive: bool, priority: int, authHeaderName?: string, authToken?: string}>
      */
     private function buildAuthorizerTemplateVariables(): array
     {
