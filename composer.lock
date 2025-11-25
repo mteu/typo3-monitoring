@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "6bee6fa390a0d8fbb883abf462bdae29",
+    "content-hash": "14435e7f7e177e64152418226d9d9a35",
     "packages": [
         {
             "name": "bacon/bacon-qr-code",
@@ -1279,16 +1279,16 @@
         },
         {
             "name": "mteu/typo3-typed-extconf",
-            "version": "0.2.6",
+            "version": "0.3.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/mteu/typo3-typed-extconf.git",
-                "reference": "d0357830dc04e74673c2da85222e602e22be9303"
+                "reference": "043d991158a3360322fbdb71e0639c2d1a971358"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/mteu/typo3-typed-extconf/zipball/d0357830dc04e74673c2da85222e602e22be9303",
-                "reference": "d0357830dc04e74673c2da85222e602e22be9303",
+                "url": "https://api.github.com/repos/mteu/typo3-typed-extconf/zipball/043d991158a3360322fbdb71e0639c2d1a971358",
+                "reference": "043d991158a3360322fbdb71e0639c2d1a971358",
                 "shasum": ""
             },
             "require": {
@@ -1340,9 +1340,9 @@
             "description": "Aims to provide a type-safe extension configuration management for TYPO3, ensuring proper types instead of string-only values from backend configuration or mixed types from config/system/settings.php",
             "support": {
                 "issues": "https://github.com/mteu/typo3-typed-extconf/issues",
-                "source": "https://github.com/mteu/typo3-typed-extconf/tree/0.2.6"
+                "source": "https://github.com/mteu/typo3-typed-extconf/tree/0.3.0"
             },
-            "time": "2025-11-24T09:31:25+00:00"
+            "time": "2025-11-25T08:08:37+00:00"
         },
         {
             "name": "nette/php-generator",
