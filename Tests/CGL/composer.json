@@ -13,7 +13,7 @@
 		"roave/security-advisories": "dev-latest",
 		"saschaegerer/phpstan-typo3": "2.1.1",
 		"shipmonk/composer-dependency-analyser": "1.8.4",
-		"ssch/typo3-rector": "3.10.2",
+		"ssch/typo3-rector": "3.11.0",
 		"typo3/coding-standards": "0.8.0"
 	},
 	"config": {
