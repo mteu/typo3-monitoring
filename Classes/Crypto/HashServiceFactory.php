@@ -33,7 +33,6 @@ use TYPO3\CMS\Extbase\Security\Cryptography\HashService as ExtbaseHashService;
  */
 final readonly class HashServiceFactory
 {
-    /** @phpstan-ignore return.internalClass  */
     public static function create(): HashService|ExtbaseHashService
     {
         $typo3 = new Typo3Version();
@@ -42,7 +41,6 @@ final readonly class HashServiceFactory
             return new HashService();
         }
 
-        /** @phpstan-ignore classConstant.internalClass */
         return GeneralUtility::makeInstance(ExtbaseHashService::class);
     }
 }
