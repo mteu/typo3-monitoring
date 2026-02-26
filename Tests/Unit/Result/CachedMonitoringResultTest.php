@@ -168,6 +168,9 @@ final class CachedMonitoringResultTest extends MonitoringTestCase
         self::assertSame($expectedTimezone, $expiresAt->getTimezone()->getName(), 'Should use server timezone for consistency');
     }
 
+    /**
+     * @return \Generator<string, array{\DateTimeImmutable, int, \DateTimeImmutable}>
+     */
     public static function expirationDataProvider(): \Generator
     {
         $baseTime = new \DateTimeImmutable('2023-01-01 12:00:00');
@@ -197,6 +200,9 @@ final class CachedMonitoringResultTest extends MonitoringTestCase
         ];
     }
 
+    /**
+     * @return \Generator<string, array{\DateTimeImmutable, int, bool}>
+     */
     public static function expirationStatusProvider(): \Generator
     {
         $now = new \DateTimeImmutable();
@@ -232,6 +238,9 @@ final class CachedMonitoringResultTest extends MonitoringTestCase
         ];
     }
 
+    /**
+     * @return \Generator<string, array{string, bool, string|null, array<MonitoringResult>}>
+     */
     public static function resultDelegationProvider(): \Generator
     {
         yield 'simple healthy result' => [
@@ -274,6 +283,9 @@ final class CachedMonitoringResultTest extends MonitoringTestCase
         ];
     }
 
+    /**
+     * @return \Generator<string, array{string, bool, string|null, array<MonitoringResult>}>
+     */
     public static function serializationProvider(): \Generator
     {
         yield 'simple result serialization' => [
