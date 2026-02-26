@@ -54,7 +54,6 @@ final class MiddlewareStatusProviderTest extends Framework\TestCase
     protected function setUp(): void
     {
         // Initialize TYPO3 configuration for HashService
-        // @phpstan-ignore-next-line offsetAccess.nonOffsetAccessible
         $GLOBALS['TYPO3_CONF_VARS']['SYS']['encryptionKey'] = 'test-encryption-key-for-unit-tests';
 
         $this->httpClient = $this->createMock(ClientInterface::class);

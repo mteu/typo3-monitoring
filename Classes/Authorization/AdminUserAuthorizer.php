@@ -52,7 +52,6 @@ final readonly class AdminUserAuthorizer implements Authorizer
     public function isAuthorized(ServerRequestInterface $request): bool
     {
         return
-            /** @phpstan-ignore-next-line  */
             $this->context->getPropertyFromAspect('backend.user', 'isAdmin') &&
             $this->context->getPropertyFromAspect('backend.user', 'isLoggedIn');
     }
