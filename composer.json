@@ -22,7 +22,7 @@
 		"symfony/dependency-injection": "^7.3",
 		"typo3/cms-backend": "~12.4.31 || ~13.4.12",
 		"typo3/cms-core": "~12.4.31 || ~13.4.12",
-		"typo3fluid/fluid": "^2.15.0 || ^4.3"
+		"typo3fluid/fluid": "^5.0"
 	},
 	"require-dev": {
 		"composer/class-map-generator": "^1.1",
