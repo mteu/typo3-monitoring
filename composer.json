@@ -29,7 +29,7 @@
 		"eliashaeussler/version-bumper": "^3.0",
 		"ergebnis/composer-normalize": "^2.47",
 		"phpunit/phpcov": "^10.0 || ^11.0.0",
-		"phpunit/phpunit": "^11.5 || ^12.1",
+		"phpunit/phpunit": "^13.0",
 		"roave/security-advisories": "dev-latest",
 		"typo3/testing-framework": "^8.2 || ^9.2"
 	},
