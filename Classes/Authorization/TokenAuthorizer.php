@@ -59,7 +59,7 @@ final readonly class TokenAuthorizer implements Authorizer
             return false;
         }
 
-        /** @phpstan-ignore staticMethod.deprecatedClass */
+        /** phpstan-ignored in baseline staticMethod.deprecatedClass */
         $hashService = HashServiceFactory::create();
 
         if ($hashService instanceof HashService) {
@@ -70,7 +70,7 @@ final readonly class TokenAuthorizer implements Authorizer
             );
         }
 
-        /** @phpstan-ignore method.deprecatedClass, method.internalClass */
+        /** phpstan-ignored in baseline method.deprecatedClass, method.internalClass */
         return $hashService->validateHmac(
             $this->configuration->endpoint . $this->tokenAuthorizerConfiguration->secret,
             $authToken,

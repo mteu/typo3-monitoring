@@ -182,14 +182,14 @@ final readonly class MiddlewareStatusProvider implements MonitoringProvider
         /** @var non-empty-string $additionalSecret */
         $additionalSecret = $this->monitoringConfiguration->tokenAuthorizerConfiguration->secret;
 
-        /** @phpstan-ignore staticMethod.deprecatedClass */
+        /** ignored in baseline staticMethod.deprecatedClass */
         $hashService = HashServiceFactory::create();
 
         if ($hashService instanceof HashService) {
             return $hashService->hmac($this->monitoringConfiguration->endpoint, $additionalSecret);
         }
 
-        /** @phpstan-ignore method.deprecatedClass, method.internalClass */
+        /** phpstan-ignored in baseline method.deprecatedClass, method.internalClass */
         return $hashService->generateHmac(
             $this->monitoringConfiguration->endpoint . $additionalSecret
         );

@@ -149,14 +149,14 @@ final readonly class MonitoringController
             return '';
         }
 
-        /** @phpstan-ignore staticMethod.deprecatedClass */
+        /** ignored in baseline staticMethod.deprecatedClass */
         $hashService = HashServiceFactory::create();
 
         if ($hashService instanceof HashService) {
             return $hashService->hmac($this->monitoringConfiguration->endpoint, $secret);
         }
 
-        /** @phpstan-ignore method.deprecatedClass, method.internalClass */
+        /** ignored in baseline method.deprecatedClass, method.internalClass */
         return $hashService->generateHmac(
             $this->monitoringConfiguration->endpoint . $secret
         );
@@ -193,7 +193,6 @@ final readonly class MonitoringController
 
         $messageQueue->addMessage($message);
 
-        /** @phpstan-ignore method.internalClass, new.internalClass */
         return new RedirectResponse(
             $this->uriBuilder->buildUriFromRequest($request),
         );
