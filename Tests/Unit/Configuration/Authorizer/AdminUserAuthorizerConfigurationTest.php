@@ -55,6 +55,9 @@ final class AdminUserAuthorizerConfigurationTest extends Framework\TestCase
         self::assertSame(-10, $subject->getPriority());
     }
 
+    /**
+     * @return \Generator<string, array{bool, int}>
+     */
     public static function configurationDataProvider(): \Generator
     {
         yield 'enabled with positive priority' => [true, 25];

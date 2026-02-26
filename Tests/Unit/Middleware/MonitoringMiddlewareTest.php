@@ -233,6 +233,9 @@ final class MonitoringMiddlewareTest extends Framework\TestCase
         };
     }
 
+    /**
+     * @return \Generator<string, array{array<string, mixed>, bool, bool}>
+     */
     public static function middlewareProcessDataProvider(): \Generator
     {
         yield 'valid endpoint returns json response' => [

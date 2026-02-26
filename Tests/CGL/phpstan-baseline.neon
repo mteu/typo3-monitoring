@@ -83,12 +83,6 @@ parameters:
 			path: ../../Classes/Crypto/HashServiceFactory.php
 
 		-
-			rawMessage: 'Return type of method mteu\Monitoring\Crypto\HashServiceFactory::create() has typehint with internal class TYPO3\CMS\Extbase\Security\Cryptography\HashService.'
-			identifier: return.internalClass
-			count: 1
-			path: ../../Classes/Crypto/HashServiceFactory.php
-
-		-
 			rawMessage: '''
 				Call to method create() of deprecated class mteu\Monitoring\Crypto\HashServiceFactory:
 				Will be removed once support for v12 is dropped

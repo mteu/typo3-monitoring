@@ -65,6 +65,9 @@ final class TokenAuthorizerConfigurationTest extends Framework\TestCase
         self::assertSame('', $subject->authHeaderName);
     }
 
+    /**
+     * @return \Generator<string, array{bool, int, string, string}>
+     */
     public static function configurationDataProvider(): \Generator
     {
         yield 'enabled with values' => [true, 50, 'secure-token-123', 'X-API-Token'];
