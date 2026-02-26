@@ -1,0 +1,127 @@
+parameters:
+	ignoreErrors:
+		-
+			rawMessage: 'Only booleans are allowed in &&, mixed given on the left side.'
+			identifier: booleanAnd.leftNotBoolean
+			count: 1
+			path: ../../Classes/Authorization/AdminUserAuthorizer.php
+
+		-
+			rawMessage: 'Only booleans are allowed in &&, mixed given on the right side.'
+			identifier: booleanAnd.rightNotBoolean
+			count: 1
+			path: ../../Classes/Authorization/AdminUserAuthorizer.php
+
+		-
+			rawMessage: '''
+				Call to method create() of deprecated class mteu\Monitoring\Crypto\HashServiceFactory:
+				Will be removed once support for v12 is dropped
+			'''
+			identifier: staticMethod.deprecatedClass
+			count: 1
+			path: ../../Classes/Authorization/TokenAuthorizer.php
+
+		-
+			rawMessage: '''
+				Call to method validateHmac() of deprecated class TYPO3\CMS\Extbase\Security\Cryptography\HashService:
+				will be removed in TYPO3 v14.0. Use \TYPO3\CMS\Core\Crypto\HashService instead.
+
+				Note: Remove used exception codes in AbstractExceptionHandler::IGNORED_HMAC_EXCEPTION_CODES in v14.0
+			'''
+			identifier: method.deprecatedClass
+			count: 1
+			path: ../../Classes/Authorization/TokenAuthorizer.php
+
+		-
+			rawMessage: 'Call to method validateHmac() of internal class TYPO3\CMS\Extbase\Security\Cryptography\HashService from outside its root namespace TYPO3.'
+			identifier: method.internalClass
+			count: 1
+			path: ../../Classes/Authorization/TokenAuthorizer.php
+
+		-
+			rawMessage: 'Call to method __construct() of internal class TYPO3\CMS\Core\Http\RedirectResponse from outside its root namespace TYPO3.'
+			identifier: method.internalClass
+			count: 1
+			path: ../../Classes/Backend/Controller/MonitoringController.php
+
+		-
+			rawMessage: '''
+				Call to method create() of deprecated class mteu\Monitoring\Crypto\HashServiceFactory:
+				Will be removed once support for v12 is dropped
+			'''
+			identifier: staticMethod.deprecatedClass
+			count: 1
+			path: ../../Classes/Backend/Controller/MonitoringController.php
+
+		-
+			rawMessage: '''
+				Call to method generateHmac() of deprecated class TYPO3\CMS\Extbase\Security\Cryptography\HashService:
+				will be removed in TYPO3 v14.0. Use \TYPO3\CMS\Core\Crypto\HashService instead.
+
+				Note: Remove used exception codes in AbstractExceptionHandler::IGNORED_HMAC_EXCEPTION_CODES in v14.0
+			'''
+			identifier: method.deprecatedClass
+			count: 1
+			path: ../../Classes/Backend/Controller/MonitoringController.php
+
+		-
+			rawMessage: 'Call to method generateHmac() of internal class TYPO3\CMS\Extbase\Security\Cryptography\HashService from outside its root namespace TYPO3.'
+			identifier: method.internalClass
+			count: 1
+			path: ../../Classes/Backend/Controller/MonitoringController.php
+
+		-
+			rawMessage: Instantiation of internal class TYPO3\CMS\Core\Http\RedirectResponse.
+			identifier: new.internalClass
+			count: 1
+			path: ../../Classes/Backend/Controller/MonitoringController.php
+
+		-
+			rawMessage: Access to constant on internal class TYPO3\CMS\Extbase\Security\Cryptography\HashService.
+			identifier: classConstant.internalClass
+			count: 1
+			path: ../../Classes/Crypto/HashServiceFactory.php
+
+		-
+			rawMessage: 'Return type of method mteu\Monitoring\Crypto\HashServiceFactory::create() has typehint with internal class TYPO3\CMS\Extbase\Security\Cryptography\HashService.'
+			identifier: return.internalClass
+			count: 1
+			path: ../../Classes/Crypto/HashServiceFactory.php
+
+		-
+			rawMessage: '''
+				Call to method create() of deprecated class mteu\Monitoring\Crypto\HashServiceFactory:
+				Will be removed once support for v12 is dropped
+			'''
+			identifier: staticMethod.deprecatedClass
+			count: 1
+			path: ../../Classes/Provider/MiddlewareStatusProvider.php
+
+		-
+			rawMessage: '''
+				Call to method generateHmac() of deprecated class TYPO3\CMS\Extbase\Security\Cryptography\HashService:
+				will be removed in TYPO3 v14.0. Use \TYPO3\CMS\Core\Crypto\HashService instead.
+
+				Note: Remove used exception codes in AbstractExceptionHandler::IGNORED_HMAC_EXCEPTION_CODES in v14.0
+			'''
+			identifier: method.deprecatedClass
+			count: 1
+			path: ../../Classes/Provider/MiddlewareStatusProvider.php
+
+		-
+			rawMessage: 'Call to method generateHmac() of internal class TYPO3\CMS\Extbase\Security\Cryptography\HashService from outside its root namespace TYPO3.'
+			identifier: method.internalClass
+			count: 1
+			path: ../../Classes/Provider/MiddlewareStatusProvider.php
+
+		-
+			rawMessage: Cannot access offset 'SYS' on mixed.
+			identifier: offsetAccess.nonOffsetAccessible
+			count: 1
+			path: ../Unit/Provider/MiddlewareStatusProviderTest.php
+
+		-
+			rawMessage: Cannot access offset 'encryptionKey' on mixed.
+			identifier: offsetAccess.nonOffsetAccessible
+			count: 1
+			path: ../Unit/Provider/MiddlewareStatusProviderTest.php
