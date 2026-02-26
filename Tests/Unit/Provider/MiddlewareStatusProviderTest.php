@@ -210,6 +210,9 @@ final class MiddlewareStatusProviderTest extends Framework\TestCase
         $this->httpClient->method('sendRequest')->willThrowException($exception);
     }
 
+    /**
+     * @return \Generator<string, array{string, bool, bool}>
+     */
     public static function inactiveConditions(): \Generator
     {
         yield 'empty endpoint' => ['', true, false];
@@ -217,6 +220,9 @@ final class MiddlewareStatusProviderTest extends Framework\TestCase
         yield 'recursion header present' => ['/monitor/health', true, true];
     }
 
+    /**
+     * @return \Generator<string, array{int, bool}>
+     */
     public static function httpStatusCodes(): \Generator
     {
         yield 'HTTP 200 OK' => [200, true];
@@ -227,6 +233,9 @@ final class MiddlewareStatusProviderTest extends Framework\TestCase
         yield 'HTTP 500 Internal Server Error' => [500, false];
     }
 
+    /**
+     * @return \Generator<string, array{\Throwable, string, string}>
+     */
     public static function exceptionTypes(): \Generator
     {
         $clientException = new class ('Connection failed') extends \Exception implements ClientExceptionInterface {};

@@ -215,6 +215,9 @@ final class MonitoringResultTest extends MonitoringTestCase
         self::assertSame($expectedFinalHealth, $result->isHealthy());
     }
 
+    /**
+     * @return \Generator<string, array{string, bool, string|null, array<MonitoringResult>}>
+     */
     public static function constructorDataProvider(): \Generator
     {
         yield 'minimal constructor' => [
@@ -242,6 +245,9 @@ final class MonitoringResultTest extends MonitoringTestCase
         ];
     }
 
+    /**
+     * @return \Generator<string, array{array<MonitoringResult>, array<MonitoringResult>}>
+     */
     public static function subResultsProvider(): \Generator
     {
         yield 'no initial, add some' => [
@@ -269,6 +275,9 @@ final class MonitoringResultTest extends MonitoringTestCase
         ];
     }
 
+    /**
+     * @return \Generator<string, array{string, bool, string|null, array<MonitoringResult>}>
+     */
     public static function serializationProvider(): \Generator
     {
         yield 'simple result' => [
@@ -304,6 +313,9 @@ final class MonitoringResultTest extends MonitoringTestCase
         ];
     }
 
+    /**
+     * @return \Generator<string, array{bool, array<array{name: string, health: bool, reason: string}>, bool}>
+     */
     public static function healthWithSubResultsProvider(): \Generator
     {
         yield 'main healthy, all subs healthy' => [
