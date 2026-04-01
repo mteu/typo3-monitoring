@@ -1282,16 +1282,16 @@
         },
         {
             "name": "mteu/typo3-typed-extconf",
-            "version": "1.1.2",
+            "version": "1.2.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/mteu/typo3-typed-extconf.git",
-                "reference": "3907075d5d2639d2551924138a428a84b2a91a39"
+                "reference": "cd8989dceed674da5caa37c7e559780e8fafc785"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/mteu/typo3-typed-extconf/zipball/3907075d5d2639d2551924138a428a84b2a91a39",
-                "reference": "3907075d5d2639d2551924138a428a84b2a91a39",
+                "url": "https://api.github.com/repos/mteu/typo3-typed-extconf/zipball/cd8989dceed674da5caa37c7e559780e8fafc785",
+                "reference": "cd8989dceed674da5caa37c7e559780e8fafc785",
                 "shasum": ""
             },
             "require": {
@@ -1300,7 +1300,7 @@
                 "nette/php-generator": "^4.1.6",
                 "php": "~8.2.0 || ~8.3.0 || ~8.4.0 || ~8.5.0",
                 "symfony/console": "^7.3",
-                "typo3/cms-core": "~13.4.18 || ~14.1.0"
+                "typo3/cms-core": "~13.4.18 || ~14.2.0"
             },
             "require-dev": {
                 "composer/class-map-generator": "^1.1",
@@ -1343,9 +1343,9 @@
             "description": "Typed Extension Configuration - Aims to provide a type-safe extension configuration management for TYPO3, ensuring proper types instead of string-only values from backend configuration or mixed types from config/system/settings.php",
             "support": {
                 "issues": "https://github.com/mteu/typo3-typed-extconf/issues",
-                "source": "https://github.com/mteu/typo3-typed-extconf/tree/1.1.2"
+                "source": "https://github.com/mteu/typo3-typed-extconf/tree/1.2.0"
             },
-            "time": "2026-02-23T08:03:24+00:00"
+            "time": "2026-03-31T17:34:11+00:00"
         },
         {
             "name": "nette/php-generator",
