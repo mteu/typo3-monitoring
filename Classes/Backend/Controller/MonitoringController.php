@@ -21,7 +21,6 @@ use mteu\Monitoring\Authorization\Authorizer;
 use mteu\Monitoring\Authorization\TokenAuthorizer;
 use mteu\Monitoring\Cache\MonitoringCacheManager;
 use mteu\Monitoring\Configuration\MonitoringConfiguration;
-use mteu\Monitoring\Crypto\HashServiceFactory;
 use mteu\Monitoring\Handler\MonitoringExecutionHandler;
 use mteu\Monitoring\Provider\CacheableMonitoringProvider;
 use mteu\Monitoring\Provider\MiddlewareStatusProvider;
@@ -74,6 +73,7 @@ final readonly class MonitoringController
         private MonitoringCacheManager $cacheManager,
         private MonitoringConfiguration $monitoringConfiguration,
         private UriBuilder $uriBuilder,
+        private HashService $hashService,
     ) {}
 
     /**
@@ -149,17 +149,7 @@ final readonly class MonitoringController
             return '';
         }
 
-        /** ignored in baseline staticMethod.deprecatedClass */
-        $hashService = HashServiceFactory::create();
-
-        if ($hashService instanceof HashService) {
-            return $hashService->hmac($this->monitoringConfiguration->endpoint, $secret);
-        }
-
-        /** ignored in baseline method.deprecatedClass, method.internalClass */
-        return $hashService->generateHmac(
-            $this->monitoringConfiguration->endpoint . $secret
-        );
+        return $this->hashService->hmac($this->monitoringConfiguration->endpoint, $secret);
     }
 
     /**

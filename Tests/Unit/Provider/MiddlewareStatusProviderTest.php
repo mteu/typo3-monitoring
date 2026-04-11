@@ -33,6 +33,7 @@ use Psr\Http\Message\RequestFactoryInterface;
 use Psr\Http\Message\RequestInterface;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Log\LoggerInterface;
+use TYPO3\CMS\Core\Crypto\HashService;
 use TYPO3\CMS\Core\Site\Entity\Site;
 use TYPO3\CMS\Core\Site\SiteFinder;
 
@@ -173,6 +174,7 @@ final class MiddlewareStatusProviderTest extends Framework\TestCase
             $this->requestFactory,
             $this->siteFinder,
             $this->logger,
+            new HashService(),
         );
     }
 
