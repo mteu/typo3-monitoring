@@ -113,13 +113,25 @@ curl -s -H "X-TYPO3-MONITORING-AUTH: <auth-token>" \
 ```
 
 **Token Generation:**
-The HMAC token is generated using TYPO3's HashService with the endpoint path and your configured secret:
+The HMAC token is generated using TYPO3's HashService with the endpoint path and your configured secret.
 
 ```php
-$hashService = \TYPO3\CMS\Core\Utility\GeneralUtility::makeInstance(\TYPO3\CMS\Core\Crypto\HashService::class);
-$token = $hashService->hmac('/monitor/health', 'your-secure-secret');
-```
+use TYPO3\CMS\Core\Crypto\HashService;
 
+final readonly class TokenGenerator
+{
+    public function __construct(
+        private HashService $hashService,
+    ) {}
+
+    public function generate(string $endpoint, string $secret): string
+    {
+        return $this->hashService->hmac($endpoint, $secret);
+    }
+}
+
+// $token = $tokenGenerator->generate('/monitor/health', 'your-secure-secret');
+```
 ## 📝 Response Format
 
 The monitoring endpoint returns JSON with the following structure:
