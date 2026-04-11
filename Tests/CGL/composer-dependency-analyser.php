@@ -29,7 +29,6 @@ $configuration
     ->addPathsToExclude([
         $rootPath . '/Tests/CGL',
     ])
-    ->ignoreErrorsOnPath($rootPath . '/Classes/Crypto', [ComposerDependencyAnalyser\Config\ErrorType::SHADOW_DEPENDENCY])
 ;
 
 return $configuration;
