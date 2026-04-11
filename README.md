@@ -24,6 +24,13 @@ post-deployment checks.
 > This package is still in early development and must be considered unfit for production use. Bear with me.
 > We'll get there.
 
+## 🦊 TYPO3 Support
+
+|           | TYPO3 v12 | TYPO3 v13 | TYPO3 v14 |
+|-----------|-----------|-----------|-----------|
+| =< v0.4.x | ✅         | ✅         | ❌         |
+| v0.5.x    | ❌         | ✅         | ✅         |
+
 ## 🚀 Features
 
 - [Extensible monitoring system](Documentation/Architecture.md) with automatic service discovery (using DI) for custom
