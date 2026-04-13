@@ -26,8 +26,8 @@
 			"eliashaeussler/version-bumper": true,
 			"ergebnis/composer-normalize": true,
 			"phpstan/extension-installer": true,
-			"typo3/class-alias-loader": true,
-			"typo3/cms-composer-installers": true
+			"typo3/class-alias-loader": false,
+			"typo3/cms-composer-installers": false
 		},
 		"lock": false,
 		"sort-packages": true
