@@ -13,7 +13,7 @@
 		"phpstan/phpstan-deprecation-rules": "2.0.4",
 		"phpstan/phpstan-strict-rules": "2.0.10",
 		"roave/security-advisories": "dev-latest",
-		"saschaegerer/phpstan-typo3": "2.1.1",
+		"saschaegerer/phpstan-typo3": "3.0.1",
 		"shipmonk/composer-dependency-analyser": "1.8.4",
 		"shipmonk/phpstan-rules": "4.3.7",
 		"spaze/phpstan-disallowed-calls": "4.10.0",
@@ -26,8 +26,8 @@
 			"eliashaeussler/version-bumper": true,
 			"ergebnis/composer-normalize": true,
 			"phpstan/extension-installer": true,
-			"typo3/class-alias-loader": true,
-			"typo3/cms-composer-installers": true
+			"typo3/class-alias-loader": false,
+			"typo3/cms-composer-installers": false
 		},
 		"lock": false,
 		"sort-packages": true
