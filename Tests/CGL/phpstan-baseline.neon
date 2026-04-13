@@ -13,18 +13,6 @@ parameters:
 			path: ../../Classes/Authorization/AdminUserAuthorizer.php
 
 		-
-			rawMessage: 'Call to method __construct() of internal class TYPO3\CMS\Core\Http\RedirectResponse from outside its root namespace TYPO3.'
-			identifier: method.internalClass
-			count: 1
-			path: ../../Classes/Backend/Controller/MonitoringController.php
-
-		-
-			rawMessage: Instantiation of internal class TYPO3\CMS\Core\Http\RedirectResponse.
-			identifier: new.internalClass
-			count: 1
-			path: ../../Classes/Backend/Controller/MonitoringController.php
-
-		-
 			rawMessage: Cannot access offset 'SYS' on mixed.
 			identifier: offsetAccess.nonOffsetAccessible
 			count: 1
