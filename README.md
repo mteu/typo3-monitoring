@@ -73,6 +73,7 @@ composer require mteu/typo3-monitoring
             'monitoring' => [
                 'api' => [
                     'endpoint' => '/monitor/health',
+                    'enforceHttps' => false,
                 ],
                 'authorizer' => [
                     'mteu\Monitoring\Authorization\TokenAuthorizer' => [
@@ -153,9 +154,7 @@ The monitoring endpoint returns JSON with the following structure:
 HTTP status codes:
 - `200` All services healthy
 - `401` Unauthorized access
-- `403` Unsupported protocol (only when `api.enforceHttps` is enabled — see
-  [Configuration](Documentation/configuration.md); TLS is best terminated at
-  the web server / ingress, so this check is opt-in)
+- `403` Unsupported protocol (only when `api.enforceHttps` is enabled)
 - `503` One or more services unhealthy
 
 ## 🧑‍💻 Development
