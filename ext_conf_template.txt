@@ -1,6 +1,8 @@
 api {
     # cat=api/endpoint; type=string; label=Endpoint Route
     endpoint=/monitor/health
+    # cat=api/enforceHttps; type=boolean; label=Enforce HTTPS:Reject monitoring requests that are not HTTPS. TLS is best terminated at the web server / ingress; only enable this once $GLOBALS['TYPO3_CONF_VARS']['SYS']['reverseProxyIP'] / 'reverseProxySSL' (trusted proxies) are configured correctly, otherwise legitimate requests behind a proxy will be rejected.
+    enforceHttps=0
 }
 
 authorizer {

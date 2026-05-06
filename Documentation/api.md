@@ -61,6 +61,11 @@ Access while logged in as TYPO3 backend administrator.
 }
 ```
 
+> Only returned when `api.enforceHttps` is enabled. By default the extension
+> does not enforce HTTPS in PHP — TLS termination is expected to happen at the
+> web server / ingress. See [Configuration](configuration.md) for details and
+> the trusted-proxy caveats.
+
 ## Status Codes
 
 | Code | Meaning             | Description                        |

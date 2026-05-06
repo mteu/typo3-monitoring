@@ -33,6 +33,7 @@ use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use Psr\Http\Server\RequestHandlerInterface;
 use Psr\Log\LoggerInterface;
+use TYPO3\CMS\Core\Http\NormalizedParams;
 use TYPO3\CMS\Core\Http\ResponseFactory;
 use TYPO3\CMS\Core\Http\ServerRequest;
 use TYPO3\CMS\Core\Http\Uri;
@@ -115,9 +116,9 @@ final class MonitoringMiddlewareTest extends FunctionalTestCase
     }
 
     #[Test]
-    public function returns403ResponseForNonHttpsRequests(): void
+    public function returns403ResponseForNonHttpsRequestsWhenEnforced(): void
     {
-        $configuration = $this->createConfiguration('/health');
+        $configuration = $this->createConfiguration('/health', enforceHttps: true);
         $provider = $this->createHealthyProvider();
         $authorizer = $this->createAuthorizedAuthorizer();
 
@@ -137,6 +138,55 @@ final class MonitoringMiddlewareTest extends FunctionalTestCase
 
         self::assertInstanceOf(ResponseInterface::class, $result);
         self::assertSame(403, $result->getStatusCode());
+    }
+
+    #[Test]
+    public function allowsPlainHttpRequestWhenEnforceHttpsIsDisabled(): void
+    {
+        $configuration = $this->createConfiguration('/health');
+        $provider = $this->createHealthyProvider();
+        $authorizer = $this->createAuthorizedAuthorizer();
+
+        $middleware = new MonitoringMiddleware(
+            [$provider],
+            [$authorizer],
+            $configuration,
+            $this->responseFactory,
+            $this->logger
+        );
+
+        $request = $this->createHttpRequest('/health');
+
+        $this->handler->expects(self::never())->method('handle');
+
+        $result = $middleware->process($request, $this->handler);
+
+        self::assertSame(200, $result->getStatusCode());
+    }
+
+    #[Test]
+    public function acceptsHttpRequestWhenNormalizedParamsReportsHttps(): void
+    {
+        $configuration = $this->createConfiguration('/health', enforceHttps: true);
+        $provider = $this->createHealthyProvider();
+        $authorizer = $this->createAuthorizedAuthorizer();
+
+        $middleware = new MonitoringMiddleware(
+            [$provider],
+            [$authorizer],
+            $configuration,
+            $this->responseFactory,
+            $this->logger
+        );
+
+        $request = $this->createHttpRequest('/health')
+            ->withAttribute('normalizedParams', $this->createNormalizedParams(true));
+
+        $this->handler->expects(self::never())->method('handle');
+
+        $result = $middleware->process($request, $this->handler);
+
+        self::assertSame(200, $result->getStatusCode());
     }
 
     #[Test]
@@ -220,7 +270,7 @@ final class MonitoringMiddlewareTest extends FunctionalTestCase
         self::assertSame(503, $result->getStatusCode());
     }
 
-    private function createConfiguration(string $endpoint): MonitoringConfiguration
+    private function createConfiguration(string $endpoint, bool $enforceHttps = false): MonitoringConfiguration
     {
         $tokenAuthorizerConfig = new TokenAuthorizerConfiguration();
         $adminUserAuthorizerConfig = new AdminUserAuthorizerConfiguration();
@@ -230,7 +280,8 @@ final class MonitoringMiddlewareTest extends FunctionalTestCase
             $tokenAuthorizerConfig,
             $adminUserAuthorizerConfig,
             $providerConfig,
-            $endpoint
+            $endpoint,
+            $enforceHttps,
         );
     }
 
@@ -334,6 +385,14 @@ final class MonitoringMiddlewareTest extends FunctionalTestCase
     {
         $uri = new Uri('http://example.com' . $path);
         return new ServerRequest($uri, 'GET');
+    }
+
+    private function createNormalizedParams(bool $isHttps): NormalizedParams
+    {
+        $normalizedParams = $this->createMock(NormalizedParams::class);
+        $normalizedParams->method('isHttps')->willReturn($isHttps);
+
+        return $normalizedParams;
     }
 
 }

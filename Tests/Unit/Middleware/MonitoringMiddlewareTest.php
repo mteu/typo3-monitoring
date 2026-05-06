@@ -35,6 +35,7 @@ use Psr\Http\Message\ServerRequestInterface;
 use Psr\Http\Server\RequestHandlerInterface;
 use Psr\Log\LoggerInterface;
 use TYPO3\CMS\Core\Configuration\ExtensionConfiguration;
+use TYPO3\CMS\Core\Http\NormalizedParams;
 use TYPO3\CMS\Core\Http\ResponseFactory;
 use TYPO3\CMS\Core\Http\ServerRequest;
 use TYPO3\CMS\Core\Http\Uri;
@@ -196,6 +197,91 @@ final class MonitoringMiddlewareTest extends Framework\TestCase
 
         // Verify high priority authorizer was called before low priority
         self::assertSame(['high', 'low'], $callOrder);
+    }
+
+    #[Test]
+    public function normalizedParamsHttpsAttributeIsHonoredForReverseProxyRequests(): void
+    {
+        $this->configuration = $this->createConfigurationFromData([
+            'api' => ['endpoint' => '/monitor/health', 'enforceHttps' => '1'],
+            'authorizer' => ['mteu\\Monitoring\\Authorization\\TokenAuthorizer' => ['enabled' => '1', 'secret' => 'test-secret', 'priority' => '10', 'authHeaderName' => 'X-Auth']],
+        ]);
+
+        $middleware = new MonitoringMiddleware(
+            [$this->createHealthyProvider()],
+            [$this->createAuthorizedAuthorizer()],
+            $this->configuration,
+            $this->responseFactory,
+            $this->logger,
+        );
+
+        $request = $this->createRequestMock('/monitor/health', 'http')
+            ->withAttribute('normalizedParams', $this->createNormalizedParamsMock(true));
+
+        $this->handler->expects(self::never())->method('handle');
+
+        $response = $middleware->process($request, $this->handler);
+
+        self::assertSame(200, $response->getStatusCode());
+    }
+
+    #[Test]
+    public function normalizedParamsHttpsAttributeIsHonoredWhenSchemeIsHttpsButProxyReportsHttp(): void
+    {
+        $this->configuration = $this->createConfigurationFromData([
+            'api' => ['endpoint' => '/monitor/health', 'enforceHttps' => '1'],
+            'authorizer' => ['mteu\\Monitoring\\Authorization\\TokenAuthorizer' => ['enabled' => '1', 'secret' => 'test-secret', 'priority' => '10', 'authHeaderName' => 'X-Auth']],
+        ]);
+
+        $middleware = new MonitoringMiddleware(
+            [$this->createHealthyProvider()],
+            [$this->createAuthorizedAuthorizer()],
+            $this->configuration,
+            $this->responseFactory,
+            $this->logger,
+        );
+
+        $request = $this->createRequestMock('/monitor/health', 'https')
+            ->withAttribute('normalizedParams', $this->createNormalizedParamsMock(false));
+
+        $this->handler->expects(self::never())->method('handle');
+
+        $response = $middleware->process($request, $this->handler);
+
+        self::assertSame(403, $response->getStatusCode());
+    }
+
+    #[Test]
+    public function plainHttpRequestIsAllowedWhenEnforceHttpsIsDisabled(): void
+    {
+        $this->configuration = $this->createConfigurationFromData([
+            'api' => ['endpoint' => '/monitor/health', 'enforceHttps' => '0'],
+            'authorizer' => ['mteu\\Monitoring\\Authorization\\TokenAuthorizer' => ['enabled' => '1', 'secret' => 'test-secret', 'priority' => '10', 'authHeaderName' => 'X-Auth']],
+        ]);
+
+        $middleware = new MonitoringMiddleware(
+            [$this->createHealthyProvider()],
+            [$this->createAuthorizedAuthorizer()],
+            $this->configuration,
+            $this->responseFactory,
+            $this->logger,
+        );
+
+        $request = $this->createRequestMock('/monitor/health', 'http');
+
+        $this->handler->expects(self::never())->method('handle');
+
+        $response = $middleware->process($request, $this->handler);
+
+        self::assertSame(200, $response->getStatusCode());
+    }
+
+    private function createNormalizedParamsMock(bool $isHttps): NormalizedParams
+    {
+        $normalizedParams = $this->createMock(NormalizedParams::class);
+        $normalizedParams->method('isHttps')->willReturn($isHttps);
+
+        return $normalizedParams;
     }
 
     /**
