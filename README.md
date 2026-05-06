@@ -243,7 +243,7 @@ This extension is inspired by [`cpsit/monitoring`](https://github.com/CPS-IT/mon
 interface. I've transformed and extended the underlying concept into a TYPO3 specific implementation.
 
 ## ⭐ License
-This extension is licensed under the [GPL-2.0-or-later](LICENSE.md) license.
+This extension is licensed under the [GPL-2.0-or-later](LICENSE.txt) license.
 
 ## 💬 Support
 For issues and feature requests, please use the [GitHub issue tracker](https://github.com/mteu/typo3-monitoring/issues).
