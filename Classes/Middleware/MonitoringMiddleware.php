@@ -119,11 +119,15 @@ final readonly class MonitoringMiddleware implements MiddlewareInterface
 
     /**
      * Checks if request is authorized by any of the registered authorizers. First one take the win.
+     *
      */
     private function isAuthorized(ServerRequestInterface $request): bool
     {
-        // array_any cannot act on iterable here
         foreach ($this->authorizers as $authorizer) {
+            if (!$authorizer->isActive()) {
+                continue;
+            }
+
             if ($authorizer->isAuthorized($request)) {
                 return true;
             }
