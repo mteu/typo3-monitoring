@@ -9,6 +9,7 @@ return [
         'monitoring' => [
             'api' => [
                 'endpoint' => '/monitor/health',
+                'enforceHttps' => false,
             ],
             'authorizer' => [
                 'mteu\Monitoring\Authorization\TokenAuthorizer' => [
@@ -37,6 +38,14 @@ return [
 
 ### API
 - **`endpoint`**: URL path for monitoring endpoint (default: `/monitor/health`)
+- **`enforceHttps`**: Reject monitoring requests that are not HTTPS (default: `false`).
+  TLS termination should happen at the web server / ingress, not in PHP — leave
+  this off unless you have a specific reason to enable it. When enabled, the
+  middleware uses TYPO3's `NormalizedParams::isHttps()`, which honors the
+  trusted-proxy configuration in `$GLOBALS['TYPO3_CONF_VARS']['SYS']['reverseProxyIP']`
+  and `reverseProxySSL`. Make sure those are configured correctly first;
+  otherwise legitimate requests behind a reverse proxy will be rejected with a
+  `403 unsupported-protocol` response.
 
 ### Token Authorizer
 - **`enabled`**: Enable token authentication (default: `false`)

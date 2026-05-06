@@ -153,7 +153,9 @@ The monitoring endpoint returns JSON with the following structure:
 HTTP status codes:
 - `200` All services healthy
 - `401` Unauthorized access
-- `403` Unsupported protocol
+- `403` Unsupported protocol (only when `api.enforceHttps` is enabled — see
+  [Configuration](Documentation/configuration.md); TLS is best terminated at
+  the web server / ingress, so this check is opt-in)
 - `503` One or more services unhealthy
 
 ## 🧑‍💻 Development
