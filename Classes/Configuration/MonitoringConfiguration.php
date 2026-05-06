@@ -38,5 +38,7 @@ final readonly class MonitoringConfiguration
         public MiddlewareStatusProviderConfiguration $providerConfiguration,
         #[ExtConfProperty(path: 'api.endpoint')]
         public string $endpoint = 'monitor/health',
+        #[ExtConfProperty(path: 'api.enforceHttps')]
+        public bool $enforceHttps = false,
     ) {}
 }
