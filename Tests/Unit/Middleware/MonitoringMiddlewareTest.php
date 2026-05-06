@@ -105,6 +105,70 @@ final class MonitoringMiddlewareTest extends Framework\TestCase
     }
 
     #[Test]
+    public function inactiveAuthorizerIsSkippedAndNeverConsulted(): void
+    {
+        $this->configuration = $this->createConfigurationFromData([
+            'api' => ['endpoint' => '/monitor/health'],
+            'authorizer' => ['mteu\\Monitoring\\Authorization\\TokenAuthorizer' => ['enabled' => '0', 'secret' => '', 'priority' => '10', 'authHeaderName' => 'X-Auth']],
+        ]);
+
+        $callOrder = [];
+        $inactiveButWouldAuthorize = $this->createCallbackAuthorizer(
+            identifier: 'inactive',
+            returnValue: true,
+            callOrder: $callOrder,
+            isActive: false,
+        );
+
+        $middleware = new MonitoringMiddleware(
+            [$this->createHealthyProvider()],
+            [$inactiveButWouldAuthorize],
+            $this->configuration,
+            $this->responseFactory,
+            $this->logger,
+        );
+
+        $this->handler->expects(self::never())->method('handle');
+
+        $response = $middleware->process(
+            $this->createRequestMock('/monitor/health', 'https'),
+            $this->handler,
+        );
+
+        self::assertSame(401, $response->getStatusCode());
+        self::assertSame([], $callOrder, 'isAuthorized() must not be called on an inactive authorizer');
+    }
+
+    #[Test]
+    public function activeAuthorizerStillGrantsAccessWhenAnotherIsInactive(): void
+    {
+        $this->configuration = $this->createConfigurationFromData([
+            'api' => ['endpoint' => '/monitor/health'],
+            'authorizer' => ['mteu\\Monitoring\\Authorization\\TokenAuthorizer' => ['enabled' => '1', 'secret' => 'test-secret', 'priority' => '10', 'authHeaderName' => 'X-Auth']],
+        ]);
+
+        $callOrder = [];
+        $inactive = $this->createCallbackAuthorizer('inactive', false, $callOrder, isActive: false);
+        $active = $this->createCallbackAuthorizer('active', true, $callOrder, isActive: true);
+
+        $middleware = new MonitoringMiddleware(
+            [$this->createHealthyProvider()],
+            [$inactive, $active],
+            $this->configuration,
+            $this->responseFactory,
+            $this->logger,
+        );
+
+        $response = $middleware->process(
+            $this->createRequestMock('/monitor/health', 'https'),
+            $this->handler,
+        );
+
+        self::assertSame(200, $response->getStatusCode());
+        self::assertSame(['active'], $callOrder);
+    }
+
+    #[Test]
     public function authorizersAreCalledInPriorityOrder(): void
     {
         $this->configuration = $this->createConfigurationFromData([
@@ -203,21 +267,26 @@ final class MonitoringMiddlewareTest extends Framework\TestCase
     /**
      * @param array<string> $callOrder
      */
-    private function createCallbackAuthorizer(string $identifier, bool $returnValue, array &$callOrder): Authorizer
-    {
-        return new class ($identifier, $returnValue, $callOrder) implements Authorizer {
+    private function createCallbackAuthorizer(
+        string $identifier,
+        bool $returnValue,
+        array &$callOrder,
+        bool $isActive = true,
+    ): Authorizer {
+        return new class ($identifier, $returnValue, $callOrder, $isActive) implements Authorizer {
             /**
              * @param array<string> $callOrder
              */
             public function __construct(
                 private string $identifier,
                 private bool $returnValue,
-                private array &$callOrder
+                private array &$callOrder,
+                private bool $isActive,
             ) {}
 
             public function isActive(): bool
             {
-                return true;
+                return $this->isActive;
             }
 
             public function isAuthorized(ServerRequestInterface $request): bool
