@@ -28,6 +28,7 @@ use Psr\Http\Server\MiddlewareInterface;
 use Psr\Http\Server\RequestHandlerInterface;
 use Psr\Log\LoggerInterface;
 use Symfony\Component\DependencyInjection\Attribute\AutowireIterator;
+use TYPO3\CMS\Core\Http\NormalizedParams;
 
 /**
  * MonitoringMiddleware.
@@ -60,7 +61,7 @@ final readonly class MonitoringMiddleware implements MiddlewareInterface
             return $handler->handle($request);
         }
 
-        if (!$this->isHttps($request)) {
+        if ($this->monitoringConfiguration->enforceHttps && !$this->isHttps($request)) {
             try {
                 return $this->jsonResponse(
                     [
@@ -114,12 +115,17 @@ final readonly class MonitoringMiddleware implements MiddlewareInterface
 
     private function isHttps(ServerRequestInterface $request): bool
     {
+        $normalizedParams = $request->getAttribute('normalizedParams');
+
+        if ($normalizedParams instanceof NormalizedParams) {
+            return $normalizedParams->isHttps();
+        }
+
         return $request->getUri()->getScheme() === 'https';
     }
 
     /**
      * Checks if request is authorized by any of the registered authorizers. First one take the win.
-     *
      */
     private function isAuthorized(ServerRequestInterface $request): bool
     {
