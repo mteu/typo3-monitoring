@@ -6,7 +6,7 @@ The monitoring extension provides CLI commands for:
 - Debugging and testing monitoring providers
 - Batch monitoring operations
 
-## 📜 Available Commands
+## Available Commands
 
 ### monitoring:run
 
@@ -48,7 +48,7 @@ The command outputs:
 - **Cache Indicators**: `(cached)` for providers with cached results
 - **Color Coding**: Green for healthy, red for unhealthy providers
 
-## 💻 Usage Examples
+## Usage Examples
 
 ### Basic Health Check
 
