@@ -19,14 +19,14 @@ $EM_CONF[$_EXTKEY] = [
     'description' => 'Exposes health state information of selected components in your TYPO3 instance to be integrated in external monitoring',
     'category' => 'be',
     'version' => '0.4.3',
-    'state' => 'alpha',
+    'state' => 'beta',
     'author' => 'Martin Adler',
     'author_email' => 'mteu@mailbox.org',
     'constraints' => [
         'depends' => [
-            'typo3' => '12.4.31-13.4.99',
-            'php' => '8.3.0-8.4.99',
-            'typed_extconf' => '0.3.0-1.1.99',
+            'typo3' => '13.4.23-14.3.99',
+            'php' => '8.3.0-8.5.99',
+            'typed_extconf' => '1.3.0-1.3.99',
         ],
     ],
 ];
