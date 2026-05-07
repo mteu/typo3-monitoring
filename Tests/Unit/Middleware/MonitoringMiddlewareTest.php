@@ -18,9 +18,13 @@ declare(strict_types=1);
 namespace mteu\Monitoring\Tests\Unit\Middleware;
 
 use mteu\Monitoring\Authorization\Authorizer;
+use mteu\Monitoring\Cache\MonitoringCacheManager;
 use mteu\Monitoring\Configuration\MonitoringConfiguration;
+use mteu\Monitoring\Handler\MonitoringExecutionHandler;
 use mteu\Monitoring\Middleware\MonitoringMiddleware;
+use mteu\Monitoring\Provider\CacheableMonitoringProvider;
 use mteu\Monitoring\Provider\MonitoringProvider;
+use mteu\Monitoring\Result\CachedMonitoringResult;
 use mteu\Monitoring\Result\MonitoringResult;
 use mteu\Monitoring\Result\Result;
 use mteu\TypedExtConf\Mapper\TreeMapperFactory;
@@ -34,6 +38,9 @@ use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use Psr\Http\Server\RequestHandlerInterface;
 use Psr\Log\LoggerInterface;
+use TYPO3\CMS\Core\Cache\CacheManager;
+use TYPO3\CMS\Core\Cache\Exception\NoSuchCacheException;
+use TYPO3\CMS\Core\Cache\Frontend\FrontendInterface;
 use TYPO3\CMS\Core\Configuration\ExtensionConfiguration;
 use TYPO3\CMS\Core\Http\NormalizedParams;
 use TYPO3\CMS\Core\Http\ResponseFactory;
@@ -87,7 +94,8 @@ final class MonitoringMiddlewareTest extends Framework\TestCase
             $shouldCreateResponse ? [$authorizer] : [],
             $this->configuration,
             $this->responseFactory,
-            $this->logger
+            $this->logger,
+            $this->createExecutionHandler(),
         );
 
         $request = $this->createRequestMock('/monitor/health', 'https');
@@ -127,6 +135,7 @@ final class MonitoringMiddlewareTest extends Framework\TestCase
             $this->configuration,
             $this->responseFactory,
             $this->logger,
+            $this->createExecutionHandler(),
         );
 
         $this->handler->expects(self::never())->method('handle');
@@ -158,6 +167,7 @@ final class MonitoringMiddlewareTest extends Framework\TestCase
             $this->configuration,
             $this->responseFactory,
             $this->logger,
+            $this->createExecutionHandler(),
         );
 
         $response = $middleware->process(
@@ -188,7 +198,8 @@ final class MonitoringMiddlewareTest extends Framework\TestCase
             [$highPriorityAuthorizer, $lowPriorityAuthorizer], // High priority should come first in DI
             $this->configuration,
             $this->responseFactory,
-            $this->logger
+            $this->logger,
+            $this->createExecutionHandler(),
         );
 
         $request = $this->createRequestMock('/monitor/health', 'https');
@@ -213,6 +224,7 @@ final class MonitoringMiddlewareTest extends Framework\TestCase
             $this->configuration,
             $this->responseFactory,
             $this->logger,
+            $this->createExecutionHandler(),
         );
 
         $request = $this->createRequestMock('/monitor/health', 'http')
@@ -239,6 +251,7 @@ final class MonitoringMiddlewareTest extends Framework\TestCase
             $this->configuration,
             $this->responseFactory,
             $this->logger,
+            $this->createExecutionHandler(),
         );
 
         $request = $this->createRequestMock('/monitor/health', 'https')
@@ -265,6 +278,7 @@ final class MonitoringMiddlewareTest extends Framework\TestCase
             $this->configuration,
             $this->responseFactory,
             $this->logger,
+            $this->createExecutionHandler(),
         );
 
         $request = $this->createRequestMock('/monitor/health', 'http');
@@ -274,6 +288,143 @@ final class MonitoringMiddlewareTest extends Framework\TestCase
         $response = $middleware->process($request, $this->handler);
 
         self::assertSame(200, $response->getStatusCode());
+    }
+
+    private function createExecutionHandler(?MonitoringCacheManager $cacheManager = null): MonitoringExecutionHandler
+    {
+        if ($cacheManager === null) {
+            $typo3CacheManager = $this->createMock(CacheManager::class);
+            $typo3CacheManager->method('getCache')
+                ->willThrowException(new NoSuchCacheException('no cache in unit tests', 1234567890));
+            $cacheManager = new MonitoringCacheManager($typo3CacheManager);
+        }
+
+        return new MonitoringExecutionHandler($cacheManager);
+    }
+
+    #[Test]
+    public function providerIsExecutedOnlyOncePerRequest(): void
+    {
+        $this->configuration = $this->createConfigurationFromData([
+            'api' => ['endpoint' => '/monitor/health'],
+            'authorizer' => ['mteu\\Monitoring\\Authorization\\TokenAuthorizer' => ['enabled' => '1', 'secret' => 'test-secret', 'priority' => '10', 'authHeaderName' => 'X-Auth']],
+        ]);
+
+        $provider = new class () implements MonitoringProvider {
+            private int $executionCount = 0;
+            public function getName(): string
+            {
+                return 'counted';
+            }
+            public function getDescription(): string
+            {
+                return 'Counts how often execute() is called.';
+            }
+            public function isActive(): bool
+            {
+                return true;
+            }
+            public function execute(): Result
+            {
+                $this->executionCount++;
+                return new MonitoringResult('counted', true);
+            }
+            public function getExecutionCount(): int
+            {
+                return $this->executionCount;
+            }
+        };
+
+        $middleware = new MonitoringMiddleware(
+            [$provider],
+            [$this->createAuthorizedAuthorizer()],
+            $this->configuration,
+            $this->responseFactory,
+            $this->logger,
+            $this->createExecutionHandler(),
+        );
+
+        $middleware->process($this->createRequestMock('/monitor/health', 'https'), $this->handler);
+
+        self::assertSame(1, $provider->getExecutionCount());
+    }
+
+    #[Test]
+    public function cacheableProviderIsRoutedThroughCacheManager(): void
+    {
+        $this->configuration = $this->createConfigurationFromData([
+            'api' => ['endpoint' => '/monitor/health'],
+            'authorizer' => ['mteu\\Monitoring\\Authorization\\TokenAuthorizer' => ['enabled' => '1', 'secret' => 'test-secret', 'priority' => '10', 'authHeaderName' => 'X-Auth']],
+        ]);
+
+        $cacheableProvider = new class () implements CacheableMonitoringProvider {
+            private int $executionCount = 0;
+            public function getName(): string
+            {
+                return 'cacheable';
+            }
+            public function getDescription(): string
+            {
+                return 'Cacheable provider used to verify cache routing.';
+            }
+            public function isActive(): bool
+            {
+                return true;
+            }
+            public function execute(): Result
+            {
+                $this->executionCount++;
+                return new MonitoringResult('cacheable', true);
+            }
+            public function getCacheKey(): string
+            {
+                return 'cacheable-key';
+            }
+            public function getCacheLifetime(): int
+            {
+                return 60;
+            }
+            public function getExecutionCount(): int
+            {
+                return $this->executionCount;
+            }
+        };
+
+        $cachedResult = new CachedMonitoringResult(
+            new MonitoringResult('cacheable', true),
+            new \DateTimeImmutable('now'),
+            60,
+        );
+
+        $frontend = $this->createMock(FrontendInterface::class);
+        $frontend->method('has')->with('cacheable-key')->willReturn(true);
+        $frontend->expects(self::once())
+            ->method('get')
+            ->with('cacheable-key')
+            ->willReturn($cachedResult);
+        $frontend->expects(self::never())->method('set');
+
+        $typo3CacheManager = $this->createMock(CacheManager::class);
+        $typo3CacheManager->method('getCache')->willReturn($frontend);
+
+        $cacheManager = new MonitoringCacheManager($typo3CacheManager);
+
+        $middleware = new MonitoringMiddleware(
+            [$cacheableProvider],
+            [$this->createAuthorizedAuthorizer()],
+            $this->configuration,
+            $this->responseFactory,
+            $this->logger,
+            $this->createExecutionHandler($cacheManager),
+        );
+
+        $response = $middleware->process(
+            $this->createRequestMock('/monitor/health', 'https'),
+            $this->handler,
+        );
+
+        self::assertSame(200, $response->getStatusCode());
+        self::assertSame(0, $cacheableProvider->getExecutionCount(), 'Cached provider must not re-execute when cache is warm');
     }
 
     private function createNormalizedParamsMock(bool $isHttps): NormalizedParams
