@@ -77,11 +77,15 @@
             </p>
         </div>
         <div class="card-footer">
-            <f:link.page additionalParams="{action: 'flushProviderCache', providerClass: class, class: 'btn btn-default'}">
-                <span class="text-primary inside">
-                    <f:translate key="LLL:EXT:monitoring/Resources/Private/Language/locallang.be.xlf:provider.cache.flush.button" />
-                </span>
-            </f:link.page>
+            <form method="post" action="{flushProviderCacheUri}">
+                <input type="hidden" name="providerClass" value="{class}" />
+                <input type="hidden" name="formToken" value="{provider.flushToken}" />
+                <button type="submit" class="btn btn-default">
+                    <span class="text-primary inside">
+                        <f:translate key="LLL:EXT:monitoring/Resources/Private/Language/locallang.be.xlf:provider.cache.flush.button" />
+                    </span>
+                </button>
+            </form>
         </div>
     </div>
 
