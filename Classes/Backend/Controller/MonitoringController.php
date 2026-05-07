@@ -34,6 +34,7 @@ use TYPO3\CMS\Backend\Routing\UriBuilder;
 use TYPO3\CMS\Backend\Template\ModuleTemplateFactory;
 use TYPO3\CMS\Core\Authentication\BackendUserAuthentication;
 use TYPO3\CMS\Core\Crypto\HashService;
+use TYPO3\CMS\Core\FormProtection\FormProtectionFactory;
 use TYPO3\CMS\Core\Http\AllowedMethodsTrait;
 use TYPO3\CMS\Core\Http\Error\MethodNotAllowedException;
 use TYPO3\CMS\Core\Http\NormalizedParams;
@@ -57,6 +58,8 @@ final readonly class MonitoringController
 
     private const string LOCALLANG_FILE = 'LLL:EXT:monitoring/Resources/Private/Language/locallang.be.xlf';
     private const string FLASHMESSAGE_QUEUE_IDENTIFIER = 'ext_monitoring_message_queue';
+    private const string CSRF_TOKEN_FORM_NAME = 'tx_monitoring_flush_provider_cache';
+    private const string CSRF_TOKEN_ACTION = 'flushProviderCache';
 
     public function __construct(
         /** @var MonitoringProvider[] $monitoringProviders */
@@ -74,6 +77,7 @@ final readonly class MonitoringController
         private MonitoringConfiguration $monitoringConfiguration,
         private UriBuilder $uriBuilder,
         private HashService $hashService,
+        private FormProtectionFactory $formProtectionFactory,
     ) {}
 
     /**
@@ -82,16 +86,6 @@ final readonly class MonitoringController
     public function __invoke(ServerRequestInterface $request): ResponseInterface
     {
         $this->assertAllowedHttpMethod($request, 'GET');
-
-        // Handle flush action if present
-        $action = $request->getQueryParams()['action'] ?? '';
-
-        /** @var string $providerClass */
-        $providerClass = $request->getQueryParams()['providerClass'] ?? '';
-
-        if ($action === 'flushProviderCache' && $providerClass !== '') {
-            return $this->handleFlushProviderCache($providerClass, $request);
-        }
 
         $template = $this->moduleTemplateFactory->create($request);
 
@@ -105,9 +99,10 @@ final readonly class MonitoringController
             'middlewareStatusResult' => $this->executionHandler->executeProvider(
                 $this->getMiddlewareStatusProvider(),
             ),
-            'providers' => $this->buildProviderTemplateVariables(),
+            'providers' => $this->buildProviderTemplateVariables($request),
             'providerInterface' => MonitoringProvider::class,
             'monitoringMessageQueueIdentifier' => self::FLASHMESSAGE_QUEUE_IDENTIFIER,
+            'flushProviderCacheUri' => (string)$this->uriBuilder->buildUriFromRoute('monitoring_flush_provider_cache'),
         ];
 
         return $template
@@ -153,13 +148,38 @@ final readonly class MonitoringController
     }
 
     /**
-     * Handle flush cache action with flash messages and redirect
+     * Handle flush cache action with flash messages and redirect.
+     *
+     * Wired to a POST-only route (`monitoring_flush_provider_cache`) and
+     * protected with a backend form token to mitigate CSRF.
+     *
+     * @throws MethodNotAllowedException
      * @throws RouteNotFoundException
      */
-    private function handleFlushProviderCache(string $providerClass, ServerRequestInterface $request): ResponseInterface
+    public function flushProviderCache(ServerRequestInterface $request): ResponseInterface
     {
+        $this->assertAllowedHttpMethod($request, 'POST');
+
+        $parsedBody = $request->getParsedBody();
+        $parsedBody = is_array($parsedBody) ? $parsedBody : [];
+        $providerClass = is_string($parsedBody['providerClass'] ?? null) ? $parsedBody['providerClass'] : '';
+        $token = is_string($parsedBody['formToken'] ?? null) ? $parsedBody['formToken'] : '';
+
         $languageService = $this->getLanguageService();
         $messageQueue = $this->flashMessageService->getMessageQueueByIdentifier(self::FLASHMESSAGE_QUEUE_IDENTIFIER);
+        $redirectUri = $this->uriBuilder->buildUriFromRoute('monitoring');
+
+        $formProtection = $this->formProtectionFactory->createFromRequest($request);
+
+        if ($providerClass === '' || !$formProtection->validateToken($token, self::CSRF_TOKEN_FORM_NAME, self::CSRF_TOKEN_ACTION, $providerClass)) {
+            $messageQueue->addMessage(new FlashMessage(
+                $languageService->sL(self::LOCALLANG_FILE . ':provider.cache.flush.csrf.message'),
+                $languageService->sL(self::LOCALLANG_FILE . ':provider.cache.flush.csrf.title'),
+                ContextualFeedbackSeverity::ERROR,
+            ));
+
+            return new RedirectResponse($redirectUri);
+        }
 
         if ($this->cacheManager->flushProviderCache($providerClass)) {
             $message = new FlashMessage(
@@ -183,9 +203,7 @@ final readonly class MonitoringController
 
         $messageQueue->addMessage($message);
 
-        return new RedirectResponse(
-            $this->uriBuilder->buildUriFromRequest($request),
-        );
+        return new RedirectResponse($redirectUri);
     }
 
     private function getLanguageService(): LanguageService
@@ -210,11 +228,13 @@ final readonly class MonitoringController
      *     description: string,
      *     cacheLifetime?: int,
      *     subResults?: array<\mteu\Monitoring\Result\Result>,
-     *     cacheExpiresAt?: \DateTimeImmutable
+     *     cacheExpiresAt?: \DateTimeImmutable,
+     *     flushToken?: string
      * }>
      */
-    private function buildProviderTemplateVariables(): array
+    private function buildProviderTemplateVariables(ServerRequestInterface $request): array
     {
+        $formProtection = $this->formProtectionFactory->createFromRequest($request);
         $providerTemplateVariables = [];
 
         foreach ($this->monitoringProviders as $monitoringProvider) {
@@ -236,6 +256,11 @@ final readonly class MonitoringController
 
             if ($monitoringProvider instanceof CacheableMonitoringProvider) {
                 $providerTemplateVariables[$monitoringProvider::class]['cacheLifetime'] = $monitoringProvider->getCacheLifetime();
+                $providerTemplateVariables[$monitoringProvider::class]['flushToken'] = $formProtection->generateToken(
+                    self::CSRF_TOKEN_FORM_NAME,
+                    self::CSRF_TOKEN_ACTION,
+                    $monitoringProvider::class,
+                );
             }
 
             if ($result->hasSubResults()) {

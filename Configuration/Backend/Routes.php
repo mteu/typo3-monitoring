@@ -22,6 +22,7 @@ return [
     ],
     'monitoring_flush_provider_cache' => [
         'path' => '/monitoring/flush-provider-cache',
+        'methods' => ['POST'],
         'target' => \mteu\Monitoring\Backend\Controller\MonitoringController::class . '::flushProviderCache',
     ],
 ];
