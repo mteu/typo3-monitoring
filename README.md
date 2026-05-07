@@ -21,8 +21,7 @@ gives an insight into the health state of custom TYPO3 components through an API
 post-deployment checks.
 
 > [!WARNING]
-> This package is still in early development and must be considered unfit for production use. Bear with me.
-> We'll get there.
+> This package is in testing. Be cautious when using `EXT:monitoring` in production.
 
 ## 🦊 TYPO3 Support
 
@@ -35,12 +34,11 @@ post-deployment checks.
 
 - [Extensible monitoring system](Documentation/Architecture.md) with automatic service discovery (using DI) for custom
   authorization and monitoring checks.
-- Built-in **MiddlewareStatusProvider** for meta-level monitoring of the monitoring system itself
 - Supports caching for expensive monitoring operations
 - Delivers health reports in three ways:
-  - **JSON response**: Returns structured responses for the overall health status
-  - **CLI command**: Command-line interface for running monitoring checks
-  - **Backend Module**: TYPO3 backend module
+  - Structured JSON responses for the overall health status
+  - Command-line interface for running monitoring checks
+  - Backend Module
 
 
 ## 🔥 Quick Start
@@ -55,85 +53,42 @@ composer require mteu/typo3-monitoring
 
 ### Configuration
 
-1. Configure the extension in the TYPO3 backend:
-   - Go to **Admin Tools → Settings → Extension Configuration**
-   - Select `monitoring`
-   - Set the monitoring endpoint path (default: `/monitor/health`)
-   - Configure authorizer settings for token-based and admin user authentication
+```php
+# config/system/settings.php
 
-2. Or better yet configure the settings programmatically:
-    ```php
-    # config/system/settings.php
+<?php
 
-    <?php
-
-    return [
-        // ..
-        'EXTENSIONS' => [
-            'monitoring' => [
-                'api' => [
-                    'endpoint' => '/monitor/health',
-                    'enforceHttps' => false,
+return [
+    // ..
+    'EXTENSIONS' => [
+        'monitoring' => [
+            'api' => [
+                'endpoint' => '/monitor/health',
+                'enforceHttps' => false,
+            ],
+            'authorizer' => [
+                'mteu\Monitoring\Authorization\TokenAuthorizer' => [
+                    'enabled' => true,
+                    'secret' => 'your-secure-secret',
+                    'authHeaderName' => 'X-TYPO3-MONITORING-AUTH',
+                    'priority' => 10,
                 ],
-                'authorizer' => [
-                    'mteu\Monitoring\Authorization\TokenAuthorizer' => [
-                        'enabled' => true,
-                        'secret' => 'your-secure-secret',
-                        'authHeaderName' => 'X-TYPO3-MONITORING-AUTH',
-                        'priority' => 10,
-                    ],
-                    'mteu\Monitoring\Authorization\AdminUserAuthorizer' => [
-                        'enabled' => true,
-                        'priority' => -10,
-                    ],
+                'mteu\Monitoring\Authorization\AdminUserAuthorizer' => [
+                    'enabled' => true,
+                    'priority' => -10,
                 ],
             ],
         ],
-        // ..
-   ];
-    ```
-
-3. Access your monitoring endpoint while authenticated as backend user with the role of Admin or System Maintainer:
-   ```
-   https://<your-site>/monitor/health
-   ```
-
-### Authentication
-
-This extension ships two authentication methods natively:
-
-#### Admin User Authentication
-Access the endpoint while logged in as a TYPO3 backend administrator.
-
-#### Token-based Authentication
-Add the configured auth header (default: `X-TYPO3-MONITORING-AUTH`) with an HMAC signature:
-
-```bash
-curl -s -H "X-TYPO3-MONITORING-AUTH: <auth-token>" \
-     https://<your-site>/monitor/health | jq '.'
+    ],
+    // ..
+];
 ```
 
-**Token Generation:**
-The HMAC token is generated using TYPO3's HashService with the endpoint path and your configured secret.
-
-```php
-use TYPO3\CMS\Core\Crypto\HashService;
-
-final readonly class TokenGenerator
-{
-    public function __construct(
-        private HashService $hashService,
-    ) {}
-
-    public function generate(string $endpoint, string $secret): string
-    {
-        return $this->hashService->hmac($endpoint, $secret);
-    }
-}
-
-// $token = $tokenGenerator->generate('/monitor/health', 'your-secure-secret');
+### Endpoint
+Access your monitoring endpoint while authenticated as backend user with the role of Admin or System Maintainer:
 ```
-## 📝 Response Format
+GET https://<your-site>/monitor/health
+```
 
 The monitoring endpoint returns JSON with the following structure:
 
@@ -156,6 +111,42 @@ HTTP status codes:
 - `401` Unauthorized access
 - `403` Unsupported protocol (only when `api.enforceHttps` is enabled)
 - `503` One or more services unhealthy
+
+### Authentication
+
+This extension ships two authentication methods natively:
+
+#### Admin User Authentication
+Access the endpoint while logged in as a TYPO3 backend administrator.
+
+#### Token-based Authentication
+Add the configured auth header (default: `X-TYPO3-MONITORING-AUTH`) with an HMAC signature:
+
+```bash
+curl -s -H "X-TYPO3-MONITORING-AUTH: <auth-token>" \
+     https://<your-site>/monitor/health | jq '.'
+```
+
+**Token Generation:**
+The HMAC token is generated using TYPO3's HashService with the endpoint path and your configured secret (which acts more like a salt).
+
+```php
+use TYPO3\CMS\Core\Crypto\HashService;
+
+final readonly class TokenGenerator
+{
+    public function __construct(
+        private HashService $hashService,
+    ) {}
+
+    public function generate(string $endpoint, string $secret): string
+    {
+        return $this->hashService->hmac($endpoint, $secret);
+    }
+}
+
+// $token = $tokenGenerator->generate('/monitor/health', 'your-secure-secret');
+```
 
 ## 🧑‍💻 Development
 
@@ -236,8 +227,8 @@ Please have a look at the extension [documentation](Documentation/README.md). It
 the possibilities you have in extending and customizing this extension for your specific TYPO3 components.
 
 ## 🔒 Security
-Please refer to our [security policy](SECURITY.md) if you discover a security vulnerability in
-this extension. Be warned, though. I cannot afford bounty. This is private project.
+Please refer to the [Security Policy](SECURITY.md) if you discover a security vulnerability in
+this extension. Be warned, though. I cannot afford bounty. This is a private project.
 
 ## 💛 Acknowledgements
 This extension is inspired by [`cpsit/monitoring`](https://github.com/CPS-IT/monitoring) and its generic approach to offer an extensible provider
