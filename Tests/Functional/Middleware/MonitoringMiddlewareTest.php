@@ -22,6 +22,7 @@ use mteu\Monitoring\Configuration\Authorizer\AdminUserAuthorizerConfiguration;
 use mteu\Monitoring\Configuration\Authorizer\TokenAuthorizerConfiguration;
 use mteu\Monitoring\Configuration\MonitoringConfiguration;
 use mteu\Monitoring\Configuration\Provider\MiddlewareStatusProviderConfiguration;
+use mteu\Monitoring\Handler\MonitoringExecutionHandler;
 use mteu\Monitoring\Middleware\MonitoringMiddleware;
 use mteu\Monitoring\Provider\MonitoringProvider;
 use mteu\Monitoring\Result\MonitoringResult;
@@ -77,7 +78,8 @@ final class MonitoringMiddlewareTest extends FunctionalTestCase
             [$authorizer],
             $configuration,
             $this->responseFactory,
-            $this->logger
+            $this->logger,
+            $this->get(MonitoringExecutionHandler::class),
         );
 
         $request = $this->createHttpsRequest('/health');
@@ -102,7 +104,8 @@ final class MonitoringMiddlewareTest extends FunctionalTestCase
             [$authorizer],
             $configuration,
             $this->responseFactory,
-            $this->logger
+            $this->logger,
+            $this->get(MonitoringExecutionHandler::class),
         );
 
         $request = $this->createHttpsRequest('/health');
@@ -127,7 +130,8 @@ final class MonitoringMiddlewareTest extends FunctionalTestCase
             [$authorizer],
             $configuration,
             $this->responseFactory,
-            $this->logger
+            $this->logger,
+            $this->get(MonitoringExecutionHandler::class),
         );
 
         $request = $this->createHttpRequest('/health');
@@ -152,7 +156,8 @@ final class MonitoringMiddlewareTest extends FunctionalTestCase
             [$authorizer],
             $configuration,
             $this->responseFactory,
-            $this->logger
+            $this->logger,
+            $this->get(MonitoringExecutionHandler::class),
         );
 
         $request = $this->createHttpRequest('/health');
@@ -176,7 +181,8 @@ final class MonitoringMiddlewareTest extends FunctionalTestCase
             [$authorizer],
             $configuration,
             $this->responseFactory,
-            $this->logger
+            $this->logger,
+            $this->get(MonitoringExecutionHandler::class),
         );
 
         $request = $this->createHttpRequest('/health')
@@ -201,7 +207,8 @@ final class MonitoringMiddlewareTest extends FunctionalTestCase
             [$authorizer],
             $configuration,
             $this->responseFactory,
-            $this->logger
+            $this->logger,
+            $this->get(MonitoringExecutionHandler::class),
         );
 
         $request = $this->createHttpsRequest('/different-path');
@@ -229,7 +236,8 @@ final class MonitoringMiddlewareTest extends FunctionalTestCase
             [$authorizer],
             $configuration,
             $this->responseFactory,
-            $this->logger
+            $this->logger,
+            $this->get(MonitoringExecutionHandler::class),
         );
 
         $request = $this->createHttpsRequest('/health');
@@ -257,7 +265,8 @@ final class MonitoringMiddlewareTest extends FunctionalTestCase
             [$authorizer],
             $configuration,
             $this->responseFactory,
-            $this->logger
+            $this->logger,
+            $this->get(MonitoringExecutionHandler::class),
         );
 
         $request = $this->createHttpsRequest('/health');

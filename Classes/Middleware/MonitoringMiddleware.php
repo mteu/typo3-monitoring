@@ -19,6 +19,7 @@ namespace mteu\Monitoring\Middleware;
 
 use mteu\Monitoring\Authorization\Authorizer;
 use mteu\Monitoring\Configuration\MonitoringConfiguration;
+use mteu\Monitoring\Handler\MonitoringExecutionHandler;
 use mteu\Monitoring\Provider\MiddlewareStatusProvider;
 use mteu\Monitoring\Provider\MonitoringProvider;
 use Psr\Http\Message\ResponseFactoryInterface;
@@ -49,6 +50,7 @@ final readonly class MonitoringMiddleware implements MiddlewareInterface
         private MonitoringConfiguration $monitoringConfiguration,
         private ResponseFactoryInterface $responseFactory,
         private LoggerInterface $logger,
+        private MonitoringExecutionHandler $executionHandler,
     ) {}
 
     public function process(ServerRequestInterface $request, RequestHandlerInterface $handler): ResponseInterface
@@ -92,15 +94,18 @@ final readonly class MonitoringMiddleware implements MiddlewareInterface
         }
 
         try {
+            $status = $this->getHealthStatus();
+            $isHealthy = !in_array(false, $status, true);
+
             return $this->jsonResponse(
                 [
-                    'isHealthy' => $this->isHealthy(),
+                    'isHealthy' => $isHealthy,
                     'services' => array_map(
                         static fn(bool $serviceStatus): string => $serviceStatus ? 'healthy' : 'unhealthy',
-                        $this->getHealthStatus()
+                        $status
                     ),
                 ],
-                $this->isHealthy() ? 200 : 503,
+                $isHealthy ? 200 : 503,
             );
         } catch (\JsonException $e) {
             $this->logger->error($e->getMessage());
@@ -156,16 +161,11 @@ final readonly class MonitoringMiddleware implements MiddlewareInterface
                     continue;
                 }
 
-                $status[$provider->getName()] = $provider->execute()->isHealthy();
+                $status[$provider->getName()] = $this->executionHandler->executeProvider($provider)->isHealthy();
             }
         }
 
         return $status;
-    }
-
-    private function isHealthy(): bool
-    {
-        return !in_array(false, $this->getHealthStatus(), true);
     }
 
     /**
