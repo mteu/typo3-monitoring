@@ -29,21 +29,13 @@ use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use Symfony\Component\DependencyInjection\Attribute\AutowireIterator;
 use TYPO3\CMS\Backend\Attribute\AsController;
-use TYPO3\CMS\Backend\Routing\Exception\RouteNotFoundException;
 use TYPO3\CMS\Backend\Routing\UriBuilder;
 use TYPO3\CMS\Backend\Template\ModuleTemplateFactory;
-use TYPO3\CMS\Core\Authentication\BackendUserAuthentication;
 use TYPO3\CMS\Core\Crypto\HashService;
 use TYPO3\CMS\Core\FormProtection\FormProtectionFactory;
 use TYPO3\CMS\Core\Http\AllowedMethodsTrait;
 use TYPO3\CMS\Core\Http\Error\MethodNotAllowedException;
 use TYPO3\CMS\Core\Http\NormalizedParams;
-use TYPO3\CMS\Core\Http\RedirectResponse;
-use TYPO3\CMS\Core\Localization\LanguageService;
-use TYPO3\CMS\Core\Localization\LanguageServiceFactory;
-use TYPO3\CMS\Core\Messaging\FlashMessage;
-use TYPO3\CMS\Core\Messaging\FlashMessageService;
-use TYPO3\CMS\Core\Type\ContextualFeedbackSeverity;
 
 /**
  * MonitoringController.
@@ -56,10 +48,7 @@ final readonly class MonitoringController
 {
     use AllowedMethodsTrait;
 
-    private const string LOCALLANG_FILE = 'LLL:EXT:monitoring/Resources/Private/Language/locallang.be.xlf';
     private const string FLASHMESSAGE_QUEUE_IDENTIFIER = 'ext_monitoring_message_queue';
-    private const string CSRF_TOKEN_FORM_NAME = 'tx_monitoring_flush_provider_cache';
-    private const string CSRF_TOKEN_ACTION = 'flushProviderCache';
 
     public function __construct(
         /** @var MonitoringProvider[] $monitoringProviders */
@@ -70,8 +59,6 @@ final readonly class MonitoringController
         #[AutowireIterator(tag: 'monitoring.authorizer', defaultPriorityMethod: 'getPriority')]
         private iterable $authorizers,
         private ModuleTemplateFactory $moduleTemplateFactory,
-        private FlashMessageService $flashMessageService,
-        private LanguageServiceFactory $languageServiceFactory,
         private MonitoringExecutionHandler $executionHandler,
         private MonitoringCacheManager $cacheManager,
         private MonitoringConfiguration $monitoringConfiguration,
@@ -148,76 +135,6 @@ final readonly class MonitoringController
     }
 
     /**
-     * Handle flush cache action with flash messages and redirect.
-     *
-     * Wired to a POST-only route (`monitoring_flush_provider_cache`) and
-     * protected with a backend form token to mitigate CSRF.
-     *
-     * @throws MethodNotAllowedException
-     * @throws RouteNotFoundException
-     */
-    public function flushProviderCache(ServerRequestInterface $request): ResponseInterface
-    {
-        $this->assertAllowedHttpMethod($request, 'POST');
-
-        $parsedBody = $request->getParsedBody();
-        $parsedBody = is_array($parsedBody) ? $parsedBody : [];
-        $providerClass = is_string($parsedBody['providerClass'] ?? null) ? $parsedBody['providerClass'] : '';
-        $token = is_string($parsedBody['formToken'] ?? null) ? $parsedBody['formToken'] : '';
-
-        $languageService = $this->getLanguageService();
-        $messageQueue = $this->flashMessageService->getMessageQueueByIdentifier(self::FLASHMESSAGE_QUEUE_IDENTIFIER);
-        $redirectUri = $this->uriBuilder->buildUriFromRoute('monitoring');
-
-        $formProtection = $this->formProtectionFactory->createFromRequest($request);
-
-        if ($providerClass === '' || !$formProtection->validateToken($token, self::CSRF_TOKEN_FORM_NAME, self::CSRF_TOKEN_ACTION, $providerClass)) {
-            $messageQueue->addMessage(new FlashMessage(
-                $languageService->sL(self::LOCALLANG_FILE . ':provider.cache.flush.csrf.message'),
-                $languageService->sL(self::LOCALLANG_FILE . ':provider.cache.flush.csrf.title'),
-                ContextualFeedbackSeverity::ERROR,
-            ));
-
-            return new RedirectResponse($redirectUri);
-        }
-
-        if ($this->cacheManager->flushProviderCache($providerClass)) {
-            $message = new FlashMessage(
-                sprintf(
-                    $languageService->sL(self::LOCALLANG_FILE . ':provider.cache.flush.success.message'),
-                    $providerClass,
-                ),
-                $languageService->sL(self::LOCALLANG_FILE . ':provider.cache.flush.success.title'),
-                ContextualFeedbackSeverity::OK,
-            );
-        } else {
-            $message = new FlashMessage(
-                sprintf(
-                    $languageService->sL(self::LOCALLANG_FILE . ':provider.cache.flush.error.message'),
-                    $providerClass,
-                ),
-                $languageService->sL(self::LOCALLANG_FILE . ':provider.cache.flush.error.title'),
-                ContextualFeedbackSeverity::ERROR,
-            );
-        }
-
-        $messageQueue->addMessage($message);
-
-        return new RedirectResponse($redirectUri);
-    }
-
-    private function getLanguageService(): LanguageService
-    {
-        $backendUser = $GLOBALS['BE_USER'] ?? null;
-
-        if ($backendUser instanceof BackendUserAuthentication) {
-            return $this->languageServiceFactory->createFromUserPreferences($backendUser);
-        }
-
-        return $this->languageServiceFactory->createFromUserPreferences(null);
-    }
-
-    /**
      * Build template variables for all monitoring providers
      *
      * @return array<class-string<\mteu\Monitoring\Provider\MonitoringProvider>, array{
@@ -257,8 +174,8 @@ final readonly class MonitoringController
             if ($monitoringProvider instanceof CacheableMonitoringProvider) {
                 $providerTemplateVariables[$monitoringProvider::class]['cacheLifetime'] = $monitoringProvider->getCacheLifetime();
                 $providerTemplateVariables[$monitoringProvider::class]['flushToken'] = $formProtection->generateToken(
-                    self::CSRF_TOKEN_FORM_NAME,
-                    self::CSRF_TOKEN_ACTION,
+                    FlushProviderCacheController::CSRF_TOKEN_FORM_NAME,
+                    FlushProviderCacheController::CSRF_TOKEN_ACTION,
                     $monitoringProvider::class,
                 );
             }
