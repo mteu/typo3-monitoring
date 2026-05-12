@@ -102,6 +102,12 @@
 			<trans-unit id="provider.cache.flush.error.message">
 				<source>Failed to flush cache for provider "%s".</source>
 			</trans-unit>
+			<trans-unit id="provider.cache.flush.csrf.title">
+				<source>Cache Flush Rejected</source>
+			</trans-unit>
+			<trans-unit id="provider.cache.flush.csrf.message">
+				<source>The cache flush request could not be verified. Please retry from the monitoring module.</source>
+			</trans-unit>
 			<trans-unit id="api.error.title">
 				<source>API Error</source>
 			</trans-unit>
