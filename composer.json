@@ -26,7 +26,7 @@
 	},
 	"require-dev": {
 		"composer/class-map-generator": "^1.1",
-		"eliashaeussler/version-bumper": "^3.0",
+		"eliashaeussler/version-bumper": "^3.3",
 		"ergebnis/composer-normalize": "^2.47",
 		"phpunit/phpcov": "^11.0.0 || ^12.0.0",
 		"phpunit/phpunit": "^12.1 || ^13.1",
