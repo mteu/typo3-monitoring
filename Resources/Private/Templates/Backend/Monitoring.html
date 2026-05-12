@@ -30,7 +30,7 @@
 
     <f:if condition="{providers}">
         <f:then>
-            <f:render partial="Backend/Provider/List" arguments="{providers: providers, providerInterface: providerInterface}" />
+            <f:render partial="Backend/Provider/List" arguments="{providers: providers, providerInterface: providerInterface, flushProviderCacheUri: flushProviderCacheUri}" />
         </f:then>
         <f:else>
             <div class="alert alert-info">
