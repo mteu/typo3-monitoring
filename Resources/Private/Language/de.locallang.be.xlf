@@ -101,7 +101,7 @@
 			</trans-unit>
 			<trans-unit id="authorizers.no_authorizers_found.content">
 				<source>Authorizers must either be enabled in the extension configuration or implement %s to become available.</source>
-				<target>Autorisatoren müssen entweder über die Extension Settings aktiviert werden oder %s implementieren, um verfügbar zu werden.<target/>
+				<target>Autorisatoren müssen entweder über die Extension Settings aktiviert werden oder %s implementieren, um verfügbar zu werden.</target>
 			</trans-unit>
 			<trans-unit id="detail.header.component">
 				<source>Component</source>
