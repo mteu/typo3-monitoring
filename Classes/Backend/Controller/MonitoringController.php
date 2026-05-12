@@ -29,20 +29,13 @@ use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use Symfony\Component\DependencyInjection\Attribute\AutowireIterator;
 use TYPO3\CMS\Backend\Attribute\AsController;
-use TYPO3\CMS\Backend\Routing\Exception\RouteNotFoundException;
 use TYPO3\CMS\Backend\Routing\UriBuilder;
 use TYPO3\CMS\Backend\Template\ModuleTemplateFactory;
-use TYPO3\CMS\Core\Authentication\BackendUserAuthentication;
 use TYPO3\CMS\Core\Crypto\HashService;
+use TYPO3\CMS\Core\FormProtection\FormProtectionFactory;
 use TYPO3\CMS\Core\Http\AllowedMethodsTrait;
 use TYPO3\CMS\Core\Http\Error\MethodNotAllowedException;
 use TYPO3\CMS\Core\Http\NormalizedParams;
-use TYPO3\CMS\Core\Http\RedirectResponse;
-use TYPO3\CMS\Core\Localization\LanguageService;
-use TYPO3\CMS\Core\Localization\LanguageServiceFactory;
-use TYPO3\CMS\Core\Messaging\FlashMessage;
-use TYPO3\CMS\Core\Messaging\FlashMessageService;
-use TYPO3\CMS\Core\Type\ContextualFeedbackSeverity;
 
 /**
  * MonitoringController.
@@ -55,7 +48,6 @@ final readonly class MonitoringController
 {
     use AllowedMethodsTrait;
 
-    private const string LOCALLANG_FILE = 'LLL:EXT:monitoring/Resources/Private/Language/locallang.be.xlf';
     private const string FLASHMESSAGE_QUEUE_IDENTIFIER = 'ext_monitoring_message_queue';
 
     public function __construct(
@@ -67,13 +59,12 @@ final readonly class MonitoringController
         #[AutowireIterator(tag: 'monitoring.authorizer', defaultPriorityMethod: 'getPriority')]
         private iterable $authorizers,
         private ModuleTemplateFactory $moduleTemplateFactory,
-        private FlashMessageService $flashMessageService,
-        private LanguageServiceFactory $languageServiceFactory,
         private MonitoringExecutionHandler $executionHandler,
         private MonitoringCacheManager $cacheManager,
         private MonitoringConfiguration $monitoringConfiguration,
         private UriBuilder $uriBuilder,
         private HashService $hashService,
+        private FormProtectionFactory $formProtectionFactory,
     ) {}
 
     /**
@@ -82,16 +73,6 @@ final readonly class MonitoringController
     public function __invoke(ServerRequestInterface $request): ResponseInterface
     {
         $this->assertAllowedHttpMethod($request, 'GET');
-
-        // Handle flush action if present
-        $action = $request->getQueryParams()['action'] ?? '';
-
-        /** @var string $providerClass */
-        $providerClass = $request->getQueryParams()['providerClass'] ?? '';
-
-        if ($action === 'flushProviderCache' && $providerClass !== '') {
-            return $this->handleFlushProviderCache($providerClass, $request);
-        }
 
         $template = $this->moduleTemplateFactory->create($request);
 
@@ -105,9 +86,10 @@ final readonly class MonitoringController
             'middlewareStatusResult' => $this->executionHandler->executeProvider(
                 $this->getMiddlewareStatusProvider(),
             ),
-            'providers' => $this->buildProviderTemplateVariables(),
+            'providers' => $this->buildProviderTemplateVariables($request),
             'providerInterface' => MonitoringProvider::class,
             'monitoringMessageQueueIdentifier' => self::FLASHMESSAGE_QUEUE_IDENTIFIER,
+            'flushProviderCacheUri' => (string)$this->uriBuilder->buildUriFromRoute('monitoring_flush_provider_cache'),
         ];
 
         return $template
@@ -153,53 +135,6 @@ final readonly class MonitoringController
     }
 
     /**
-     * Handle flush cache action with flash messages and redirect
-     * @throws RouteNotFoundException
-     */
-    private function handleFlushProviderCache(string $providerClass, ServerRequestInterface $request): ResponseInterface
-    {
-        $languageService = $this->getLanguageService();
-        $messageQueue = $this->flashMessageService->getMessageQueueByIdentifier(self::FLASHMESSAGE_QUEUE_IDENTIFIER);
-
-        if ($this->cacheManager->flushProviderCache($providerClass)) {
-            $message = new FlashMessage(
-                sprintf(
-                    $languageService->sL(self::LOCALLANG_FILE . ':provider.cache.flush.success.message'),
-                    $providerClass,
-                ),
-                $languageService->sL(self::LOCALLANG_FILE . ':provider.cache.flush.success.title'),
-                ContextualFeedbackSeverity::OK,
-            );
-        } else {
-            $message = new FlashMessage(
-                sprintf(
-                    $languageService->sL(self::LOCALLANG_FILE . ':provider.cache.flush.error.message'),
-                    $providerClass,
-                ),
-                $languageService->sL(self::LOCALLANG_FILE . ':provider.cache.flush.error.title'),
-                ContextualFeedbackSeverity::ERROR,
-            );
-        }
-
-        $messageQueue->addMessage($message);
-
-        return new RedirectResponse(
-            $this->uriBuilder->buildUriFromRequest($request),
-        );
-    }
-
-    private function getLanguageService(): LanguageService
-    {
-        $backendUser = $GLOBALS['BE_USER'] ?? null;
-
-        if ($backendUser instanceof BackendUserAuthentication) {
-            return $this->languageServiceFactory->createFromUserPreferences($backendUser);
-        }
-
-        return $this->languageServiceFactory->createFromUserPreferences(null);
-    }
-
-    /**
      * Build template variables for all monitoring providers
      *
      * @return array<class-string<\mteu\Monitoring\Provider\MonitoringProvider>, array{
@@ -210,11 +145,13 @@ final readonly class MonitoringController
      *     description: string,
      *     cacheLifetime?: int,
      *     subResults?: array<\mteu\Monitoring\Result\Result>,
-     *     cacheExpiresAt?: \DateTimeImmutable
+     *     cacheExpiresAt?: \DateTimeImmutable,
+     *     flushToken?: string
      * }>
      */
-    private function buildProviderTemplateVariables(): array
+    private function buildProviderTemplateVariables(ServerRequestInterface $request): array
     {
+        $formProtection = $this->formProtectionFactory->createFromRequest($request);
         $providerTemplateVariables = [];
 
         foreach ($this->monitoringProviders as $monitoringProvider) {
@@ -236,6 +173,11 @@ final readonly class MonitoringController
 
             if ($monitoringProvider instanceof CacheableMonitoringProvider) {
                 $providerTemplateVariables[$monitoringProvider::class]['cacheLifetime'] = $monitoringProvider->getCacheLifetime();
+                $providerTemplateVariables[$monitoringProvider::class]['flushToken'] = $formProtection->generateToken(
+                    FlushProviderCacheController::CSRF_TOKEN_FORM_NAME,
+                    FlushProviderCacheController::CSRF_TOKEN_ACTION,
+                    $monitoringProvider::class,
+                );
             }
 
             if ($result->hasSubResults()) {
