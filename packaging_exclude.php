@@ -35,6 +35,7 @@ return [
         'gitignore',
         'packaging_exclude.php',
         'php-cs-fixer.php',
+        'phpunit.deprecation-baseline.xml',
         'phpunit.functional.xml',
         'phpunit.result.cache',
         'phpunit.unit.xml',

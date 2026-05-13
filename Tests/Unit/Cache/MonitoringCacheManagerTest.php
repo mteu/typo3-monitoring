@@ -20,6 +20,7 @@ namespace mteu\Monitoring\Tests\Unit\Cache;
 use mteu\Monitoring\Cache\MonitoringCacheManager;
 use mteu\Monitoring\Result\CachedMonitoringResult;
 use mteu\Monitoring\Result\MonitoringResult;
+use PHPUnit\Framework\Attributes\AllowMockObjectsWithoutExpectations;
 use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\TestCase;
@@ -46,6 +47,7 @@ final class MonitoringCacheManagerTest extends TestCase
     }
 
     #[Test]
+    #[AllowMockObjectsWithoutExpectations]
     public function returnsNullWhenCacheBackendUnavailable(): void
     {
         $cacheManager = $this->createMock(CacheManager::class);
@@ -59,6 +61,7 @@ final class MonitoringCacheManagerTest extends TestCase
     }
 
     #[Test]
+    #[AllowMockObjectsWithoutExpectations]
     public function detectsAndHandlesExpiredCacheEntries(): void
     {
         $monitoringResult = new MonitoringResult('test', true);
@@ -80,6 +83,7 @@ final class MonitoringCacheManagerTest extends TestCase
     }
 
     #[Test]
+    #[AllowMockObjectsWithoutExpectations]
     public function calculatesExpirationTimeUsingCachedAtAndLifetime(): void
     {
         $cachedAt = new \DateTimeImmutable('-5 minutes');
@@ -97,6 +101,7 @@ final class MonitoringCacheManagerTest extends TestCase
     }
 
     #[Test]
+    #[AllowMockObjectsWithoutExpectations]
     public function returnsFalseWhenCacheBackendUnavailableForStorage(): void
     {
         $cacheManager = $this->createMock(CacheManager::class);
@@ -110,6 +115,7 @@ final class MonitoringCacheManagerTest extends TestCase
     }
 
     #[Test]
+    #[AllowMockObjectsWithoutExpectations]
     public function getCacheLifetimeReturnsDefaultValue(): void
     {
         $result = $this->monitoringCacheManager->getCacheLifetime();
@@ -118,6 +124,7 @@ final class MonitoringCacheManagerTest extends TestCase
     }
 
     #[Test]
+    #[AllowMockObjectsWithoutExpectations]
     public function returnsFalseWhenCacheBackendUnavailableForTagFlush(): void
     {
         $cacheManager = $this->createMock(CacheManager::class);
@@ -131,6 +138,7 @@ final class MonitoringCacheManagerTest extends TestCase
     }
 
     #[Test]
+    #[AllowMockObjectsWithoutExpectations]
     public function flushProviderCacheConvertsClassNameToTag(): void
     {
         $providerClass = 'App\\Provider\\TestProvider';
@@ -142,6 +150,7 @@ final class MonitoringCacheManagerTest extends TestCase
     }
 
     #[Test]
+    #[AllowMockObjectsWithoutExpectations]
     public function returnsFalseWhenCacheBackendUnavailableForKeyFlush(): void
     {
         $cacheManager = $this->createMock(CacheManager::class);
@@ -155,6 +164,7 @@ final class MonitoringCacheManagerTest extends TestCase
     }
 
     #[Test]
+    #[AllowMockObjectsWithoutExpectations]
     public function returnsFalseWhenCacheBackendUnavailableForFlushAll(): void
     {
         $cacheManager = $this->createMock(CacheManager::class);
@@ -168,6 +178,7 @@ final class MonitoringCacheManagerTest extends TestCase
     }
 
     #[Test]
+    #[AllowMockObjectsWithoutExpectations]
     public function getCacheThrowsExceptionWhenCacheBackendMissing(): void
     {
         $cacheManager = $this->createMock(CacheManager::class);

@@ -23,6 +23,7 @@ use mteu\Monitoring\Configuration\Authorizer\TokenAuthorizerConfiguration;
 use mteu\Monitoring\Configuration\MonitoringConfiguration;
 use mteu\Monitoring\Configuration\Provider\MiddlewareStatusProviderConfiguration;
 use PHPUnit\Framework;
+use PHPUnit\Framework\Attributes\AllowMockObjectsWithoutExpectations;
 use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\Attributes\Test;
@@ -58,6 +59,7 @@ final class AdminUserAuthorizerTest extends Framework\TestCase
     }
 
     #[Test]
+    #[AllowMockObjectsWithoutExpectations]
     #[DataProvider('isActiveReflectsEnabledFlagProvider')]
     public function isActiveReflectsConfiguredEnabledFlag(bool $enabled): void
     {
@@ -78,6 +80,7 @@ final class AdminUserAuthorizerTest extends Framework\TestCase
     }
 
     #[Test]
+    #[AllowMockObjectsWithoutExpectations]
     #[DataProvider('isAuthorizedTruthTable')]
     public function isAuthorizedRequiresBothIsAdminAndIsLoggedInAspects(
         bool $isAdmin,
@@ -109,6 +112,7 @@ final class AdminUserAuthorizerTest extends Framework\TestCase
     }
 
     #[Test]
+    #[AllowMockObjectsWithoutExpectations]
     public function isAuthorizedReturnsFalseWhenBackendUserAspectIsMissing(): void
     {
         $this->context

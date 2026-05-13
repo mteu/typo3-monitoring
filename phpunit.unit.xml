@@ -13,8 +13,6 @@
     <coverage>
         <report>
             <php outputFile=".build/coverage/php/unit.cov"/>
-            <html outputDirectory=".build/coverage/html/unit/"/>
-            <text outputFile="php://stdout" showUncoveredFiles="true"/>
         </report>
     </coverage>
     <logging>
@@ -22,7 +20,7 @@
     </logging>
     <source>
         <include>
-            <directory suffix=".php">Classes</directory>
+            <directory>Classes</directory>
         </include>
     </source>
 </phpunit>
