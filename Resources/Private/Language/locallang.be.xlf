@@ -13,7 +13,7 @@
 				<source>Available Providers</source>
 			</trans-unit>
 			<trans-unit id="providers.modal.title">
-				<source>MonitoringProviders</source>
+				<source>Providers</source>
 			</trans-unit>
 			<trans-unit id="providers.modal.content">
 				<source>Providers must implement %s to become available.</source>
