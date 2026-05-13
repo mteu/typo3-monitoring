@@ -24,6 +24,7 @@ use mteu\Monitoring\Configuration\Provider\MiddlewareStatusProviderConfiguration
 use mteu\Monitoring\Provider\MiddlewareStatusProvider;
 use mteu\Monitoring\Result\MonitoringResult;
 use PHPUnit\Framework;
+use PHPUnit\Framework\Attributes\AllowMockObjectsWithoutExpectations;
 use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\MockObject\MockObject;
@@ -66,6 +67,7 @@ final class MiddlewareStatusProviderTest extends Framework\TestCase
     }
 
     #[Test]
+    #[AllowMockObjectsWithoutExpectations]
     public function getName(): void
     {
         $provider = $this->createProvider();
@@ -73,6 +75,7 @@ final class MiddlewareStatusProviderTest extends Framework\TestCase
     }
 
     #[Test]
+    #[AllowMockObjectsWithoutExpectations]
     public function getDescription(): void
     {
         $provider = $this->createProvider();
@@ -82,6 +85,7 @@ final class MiddlewareStatusProviderTest extends Framework\TestCase
     }
 
     #[Test]
+    #[AllowMockObjectsWithoutExpectations]
     #[DataProvider('inactiveConditions')]
     public function isActiveReturnsFalseWhenConditionsNotMet(
         string $endpoint,
@@ -97,6 +101,7 @@ final class MiddlewareStatusProviderTest extends Framework\TestCase
     }
 
     #[Test]
+    #[AllowMockObjectsWithoutExpectations]
     public function becomesActiveWhenAllConditionsAreSatisfied(): void
     {
         $provider = $this->createProvider();
@@ -104,6 +109,7 @@ final class MiddlewareStatusProviderTest extends Framework\TestCase
     }
 
     #[Test]
+    #[AllowMockObjectsWithoutExpectations]
     #[DataProvider('httpStatusCodes')]
     public function executeHandlesHttpStatusCodes(int $statusCode, bool $expectedHealthy): void
     {
@@ -127,6 +133,7 @@ final class MiddlewareStatusProviderTest extends Framework\TestCase
      * @param 'warning'|'error' $expectedLogMethod
      */
     #[Test]
+    #[AllowMockObjectsWithoutExpectations]
     #[DataProvider('exceptionTypes')]
     public function executeHandlesExceptions(
         \Exception $exception,

@@ -30,6 +30,7 @@ use mteu\Monitoring\Result\Result;
 use mteu\TypedExtConf\Mapper\TreeMapperFactory;
 use mteu\TypedExtConf\Provider\TypedExtensionConfigurationProvider;
 use PHPUnit\Framework;
+use PHPUnit\Framework\Attributes\AllowMockObjectsWithoutExpectations;
 use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\MockObject\MockObject;
@@ -77,6 +78,7 @@ final class MonitoringMiddlewareTest extends Framework\TestCase
      * } $configurationData
      */
     #[Test]
+    #[AllowMockObjectsWithoutExpectations]
     #[DataProvider('middlewareProcessDataProvider')]
     public function middlewareProcessesRequestCorrectly(
         array $configurationData,
@@ -114,6 +116,7 @@ final class MonitoringMiddlewareTest extends Framework\TestCase
     }
 
     #[Test]
+    #[AllowMockObjectsWithoutExpectations]
     public function inactiveAuthorizerIsSkippedAndNeverConsulted(): void
     {
         $this->configuration = $this->createConfigurationFromData([
@@ -150,6 +153,7 @@ final class MonitoringMiddlewareTest extends Framework\TestCase
     }
 
     #[Test]
+    #[AllowMockObjectsWithoutExpectations]
     public function activeAuthorizerStillGrantsAccessWhenAnotherIsInactive(): void
     {
         $this->configuration = $this->createConfigurationFromData([
@@ -180,6 +184,7 @@ final class MonitoringMiddlewareTest extends Framework\TestCase
     }
 
     #[Test]
+    #[AllowMockObjectsWithoutExpectations]
     public function authorizersAreCalledInPriorityOrder(): void
     {
         $this->configuration = $this->createConfigurationFromData([
@@ -211,6 +216,7 @@ final class MonitoringMiddlewareTest extends Framework\TestCase
     }
 
     #[Test]
+    #[AllowMockObjectsWithoutExpectations]
     public function normalizedParamsHttpsAttributeIsHonoredForReverseProxyRequests(): void
     {
         $this->configuration = $this->createConfigurationFromData([
@@ -238,6 +244,7 @@ final class MonitoringMiddlewareTest extends Framework\TestCase
     }
 
     #[Test]
+    #[AllowMockObjectsWithoutExpectations]
     public function normalizedParamsHttpsAttributeIsHonoredWhenSchemeIsHttpsButProxyReportsHttp(): void
     {
         $this->configuration = $this->createConfigurationFromData([
@@ -265,6 +272,7 @@ final class MonitoringMiddlewareTest extends Framework\TestCase
     }
 
     #[Test]
+    #[AllowMockObjectsWithoutExpectations]
     public function plainHttpRequestIsAllowedWhenEnforceHttpsIsDisabled(): void
     {
         $this->configuration = $this->createConfigurationFromData([
@@ -303,6 +311,7 @@ final class MonitoringMiddlewareTest extends Framework\TestCase
     }
 
     #[Test]
+    #[AllowMockObjectsWithoutExpectations]
     public function providerIsExecutedOnlyOncePerRequest(): void
     {
         $this->configuration = $this->createConfigurationFromData([
@@ -350,6 +359,7 @@ final class MonitoringMiddlewareTest extends Framework\TestCase
     }
 
     #[Test]
+    #[AllowMockObjectsWithoutExpectations]
     public function cacheableProviderIsRoutedThroughCacheManager(): void
     {
         $this->configuration = $this->createConfigurationFromData([
@@ -448,6 +458,7 @@ final class MonitoringMiddlewareTest extends Framework\TestCase
     }
 
     #[Test]
+    #[AllowMockObjectsWithoutExpectations]
     #[DataProvider('disallowedHttpMethodProvider')]
     public function rejectsDisallowedHttpMethodsWith405AndAllowHeader(string $method): void
     {
@@ -485,6 +496,7 @@ final class MonitoringMiddlewareTest extends Framework\TestCase
     }
 
     #[Test]
+    #[AllowMockObjectsWithoutExpectations]
     public function getRequestStillReturnsHealthyJson(): void
     {
         $this->configuration = $this->createConfigurationFromData([
@@ -510,6 +522,7 @@ final class MonitoringMiddlewareTest extends Framework\TestCase
     }
 
     #[Test]
+    #[AllowMockObjectsWithoutExpectations]
     public function headRequestReturnsSameStatusAndHeadersWithEmptyBody(): void
     {
         $this->configuration = $this->createConfigurationFromData([
