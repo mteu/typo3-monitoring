@@ -161,7 +161,6 @@ use mteu\Monitoring\Provider\MonitoringProvider;
 use mteu\Monitoring\Result\MonitoringResult;
 use Symfony\Component\DependencyInjection\Attribute\AutoconfigureTag;
 
-#[AutoconfigureTag(tag: 'monitoring.provider')]
 final class MyMonitoringProvider implements MonitoringProvider
 {
     public function getName(): string
