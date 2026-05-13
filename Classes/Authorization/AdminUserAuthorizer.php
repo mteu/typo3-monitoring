@@ -46,14 +46,15 @@ final readonly class AdminUserAuthorizer implements Authorizer
         return $this->adminUserConfiguration->isEnabled();
     }
 
-    /**
-     * @throws AspectNotFoundException
-     */
     public function isAuthorized(ServerRequestInterface $request): bool
     {
-        return
-            $this->context->getPropertyFromAspect('backend.user', 'isAdmin') &&
-            $this->context->getPropertyFromAspect('backend.user', 'isLoggedIn');
+        try {
+            return
+                (bool)$this->context->getPropertyFromAspect('backend.user', 'isAdmin') &&
+                (bool)$this->context->getPropertyFromAspect('backend.user', 'isLoggedIn');
+        } catch (AspectNotFoundException) {
+            return false;
+        }
     }
 
     public static function getPriority(): int
