@@ -436,6 +436,106 @@ final class MonitoringMiddlewareTest extends Framework\TestCase
     }
 
     /**
+     * @return \Generator<string, array{string}>
+     */
+    public static function disallowedHttpMethodProvider(): \Generator
+    {
+        yield 'POST' => ['POST'];
+        yield 'PUT' => ['PUT'];
+        yield 'PATCH' => ['PATCH'];
+        yield 'DELETE' => ['DELETE'];
+        yield 'OPTIONS' => ['OPTIONS'];
+    }
+
+    #[Test]
+    #[DataProvider('disallowedHttpMethodProvider')]
+    public function rejectsDisallowedHttpMethodsWith405AndAllowHeader(string $method): void
+    {
+        $this->configuration = $this->createConfigurationFromData([
+            'api' => ['endpoint' => '/monitor/health'],
+            'authorizer' => ['mteu\\Monitoring\\Authorization\\TokenAuthorizer' => ['enabled' => '1', 'secret' => 'test-secret', 'priority' => '10', 'authHeaderName' => 'X-Auth']],
+        ]);
+
+        $callOrder = [];
+        $authorizer = $this->createCallbackAuthorizer('only-active', true, $callOrder);
+
+        $middleware = new MonitoringMiddleware(
+            [$this->createHealthyProvider()],
+            [$authorizer],
+            $this->configuration,
+            $this->responseFactory,
+            $this->logger,
+            $this->createExecutionHandler(),
+        );
+
+        $request = (new ServerRequest(new Uri('https://example.com/monitor/health'), $method));
+
+        $this->handler->expects(self::never())->method('handle');
+
+        $response = $middleware->process($request, $this->handler);
+
+        self::assertSame(405, $response->getStatusCode());
+        self::assertSame('GET, HEAD', $response->getHeaderLine('Allow'));
+        self::assertSame([], $callOrder, 'Authorization must not run for a rejected method');
+
+        $body = (string)$response->getBody();
+        self::assertNotSame('', $body, '405 responses include a JSON body');
+        $decoded = json_decode($body, true, 512, JSON_THROW_ON_ERROR);
+        self::assertSame(['code' => 405, 'error' => 'method-not-allowed'], $decoded);
+    }
+
+    #[Test]
+    public function getRequestStillReturnsHealthyJson(): void
+    {
+        $this->configuration = $this->createConfigurationFromData([
+            'api' => ['endpoint' => '/monitor/health'],
+            'authorizer' => ['mteu\\Monitoring\\Authorization\\TokenAuthorizer' => ['enabled' => '1', 'secret' => 'test-secret', 'priority' => '10', 'authHeaderName' => 'X-Auth']],
+        ]);
+
+        $middleware = new MonitoringMiddleware(
+            [$this->createHealthyProvider()],
+            [$this->createAuthorizedAuthorizer()],
+            $this->configuration,
+            $this->responseFactory,
+            $this->logger,
+            $this->createExecutionHandler(),
+        );
+
+        $request = new ServerRequest(new Uri('https://example.com/monitor/health'), 'GET');
+
+        $response = $middleware->process($request, $this->handler);
+
+        self::assertSame(200, $response->getStatusCode());
+        self::assertNotSame('', (string)$response->getBody(), 'GET keeps the JSON body');
+    }
+
+    #[Test]
+    public function headRequestReturnsSameStatusAndHeadersWithEmptyBody(): void
+    {
+        $this->configuration = $this->createConfigurationFromData([
+            'api' => ['endpoint' => '/monitor/health'],
+            'authorizer' => ['mteu\\Monitoring\\Authorization\\TokenAuthorizer' => ['enabled' => '1', 'secret' => 'test-secret', 'priority' => '10', 'authHeaderName' => 'X-Auth']],
+        ]);
+
+        $middleware = new MonitoringMiddleware(
+            [$this->createHealthyProvider()],
+            [$this->createAuthorizedAuthorizer()],
+            $this->configuration,
+            $this->responseFactory,
+            $this->logger,
+            $this->createExecutionHandler(),
+        );
+
+        $request = new ServerRequest(new Uri('https://example.com/monitor/health'), 'HEAD');
+
+        $response = $middleware->process($request, $this->handler);
+
+        self::assertSame(200, $response->getStatusCode());
+        self::assertSame('application/json; charset=utf-8', $response->getHeaderLine('Content-Type'));
+        self::assertSame('', (string)$response->getBody(), 'HEAD responses must not contain a body');
+    }
+
+    /**
      * @param mixed[] $configurationData
      */
     private function createConfigurationFromData(array $configurationData): MonitoringConfiguration

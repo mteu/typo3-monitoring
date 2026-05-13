@@ -39,6 +39,11 @@ use TYPO3\CMS\Core\Http\NormalizedParams;
  */
 final readonly class MonitoringMiddleware implements MiddlewareInterface
 {
+    /**
+     * @var list<non-empty-string>
+     */
+    private const array ALLOWED_METHODS = ['GET', 'HEAD'];
+
     public function __construct(
         /** @var iterable<MonitoringProvider> $monitoringProviders */
         #[AutowireIterator(tag: 'monitoring.provider')]
@@ -63,6 +68,24 @@ final readonly class MonitoringMiddleware implements MiddlewareInterface
             return $handler->handle($request);
         }
 
+        $writeBody = $request->getMethod() !== 'HEAD';
+
+        if (!in_array($request->getMethod(), self::ALLOWED_METHODS, true)) {
+            try {
+                return $this->jsonResponse(
+                    [
+                        'code' => 405,
+                        'error' => 'method-not-allowed',
+                    ],
+                    405,
+                    $writeBody,
+                )->withHeader('Allow', implode(', ', self::ALLOWED_METHODS));
+            } catch (\JsonException $e) {
+                $this->logger->error($e->getMessage());
+                return $handler->handle($request);
+            }
+        }
+
         if ($this->monitoringConfiguration->enforceHttps && !$this->isHttps($request)) {
             try {
                 return $this->jsonResponse(
@@ -71,6 +94,7 @@ final readonly class MonitoringMiddleware implements MiddlewareInterface
                         'error' => 'unsupported-protocol',
                     ],
                     403,
+                    $writeBody,
                 );
             } catch (\JsonException $e) {
                 $this->logger->error($e->getMessage());
@@ -86,6 +110,7 @@ final readonly class MonitoringMiddleware implements MiddlewareInterface
                         'error' => 'unauthorized',
                     ],
                     401,
+                    $writeBody,
                 );
             } catch (\JsonException $e) {
                 $this->logger->error($e->getMessage());
@@ -106,6 +131,7 @@ final readonly class MonitoringMiddleware implements MiddlewareInterface
                     ),
                 ],
                 $isHealthy ? 200 : 503,
+                $writeBody,
             );
         } catch (\JsonException $e) {
             $this->logger->error($e->getMessage());
@@ -172,14 +198,16 @@ final readonly class MonitoringMiddleware implements MiddlewareInterface
      * @param array{code: int, error: string}|array{isHealthy: bool, services: array<non-empty-string, 'healthy'|'unhealthy'>} $data
      * @throws \JsonException
      */
-    private function jsonResponse(array $data, int $statusCode = 200): ResponseInterface
+    private function jsonResponse(array $data, int $statusCode = 200, bool $writeBody = true): ResponseInterface
     {
         $response = $this->responseFactory
             ->createResponse()
             ->withStatus($statusCode)
             ->withHeader('Content-Type', 'application/json; charset=utf-8');
 
-        $response->getBody()->write(json_encode($data, JSON_THROW_ON_ERROR));
+        if ($writeBody) {
+            $response->getBody()->write(json_encode($data, JSON_THROW_ON_ERROR));
+        }
 
         return $response;
     }
