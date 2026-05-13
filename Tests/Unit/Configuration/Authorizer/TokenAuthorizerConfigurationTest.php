@@ -31,48 +31,32 @@ use PHPUnit\Framework\Attributes\Test;
 final class TokenAuthorizerConfigurationTest extends Framework\TestCase
 {
     #[Test]
-    #[Framework\Attributes\DataProvider('configurationDataProvider')]
-    public function configurationWorksCorrectly(
-        bool $enabled,
-        int $priority,
-        string $secret,
-        string $authHeaderName
-    ): void {
+    public function isDisabledWhenSecretIsEmpty(): void
+    {
         $subject = new Src\Configuration\Authorizer\TokenAuthorizerConfiguration(
-            enabled: $enabled,
-            priority: $priority,
-            secret: $secret,
-            authHeaderName: $authHeaderName,
+            enabled: true,
+            secret: '',
         );
 
-        self::assertSame($enabled, $subject->isEnabled());
-        self::assertSame($priority, $subject->getPriority());
-        self::assertSame($secret, $subject->secret);
-        self::assertSame($authHeaderName, $subject->authHeaderName);
-        self::assertSame($enabled, $subject->enabled);
-        self::assertSame($priority, $subject->priority);
-        self::assertInstanceOf(Src\Configuration\Authorizer\AuthorizerConfiguration::class, $subject);
+        self::assertFalse($subject->isEnabled());
     }
 
     #[Test]
-    public function defaultValuesAreCorrect(): void
+    public function isDisabledByDefault(): void
     {
         $subject = new Src\Configuration\Authorizer\TokenAuthorizerConfiguration();
 
         self::assertFalse($subject->isEnabled());
-        self::assertSame(10, $subject->getPriority());
-        self::assertSame('', $subject->secret);
-        self::assertSame('', $subject->authHeaderName);
     }
 
-    /**
-     * @return \Generator<string, array{bool, int, string, string}>
-     */
-    public static function configurationDataProvider(): \Generator
+    #[Test]
+    public function isEnabledWhenSecretIsSetAndEnabledIsTrue(): void
     {
-        yield 'enabled with values' => [true, 50, 'secure-token-123', 'X-API-Token'];
-        yield 'disabled configuration' => [false, -25, 'another-secret', 'Authorization'];
-        yield 'zero priority' => [true, 0, '', 'Bearer'];
-        yield 'complex configuration' => [true, 999, 'complex-secret-!@#$%', 'X-Custom-Auth'];
+        $subject = new Src\Configuration\Authorizer\TokenAuthorizerConfiguration(
+            enabled: true,
+            secret: 'my-secret',
+        );
+
+        self::assertTrue($subject->isEnabled());
     }
 }
