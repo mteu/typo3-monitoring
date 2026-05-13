@@ -204,7 +204,6 @@ final class MonitoringCommandTest extends Framework\TestCase
     {
 
         return new readonly class ($name, $isActive, $isHealthy) implements MonitoringProvider {
-
             public function __construct(
                 private string $name,
                 private bool $active,

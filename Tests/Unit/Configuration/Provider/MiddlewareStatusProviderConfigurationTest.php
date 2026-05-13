@@ -15,27 +15,26 @@ declare(strict_types=1);
  * The TYPO3 project - inspiring people to share!
  */
 
-namespace mteu\Monitoring\Tests\Unit\Configuration\Authorizer;
+namespace mteu\Monitoring\Tests\Unit\Configuration\Provider;
 
 use mteu\Monitoring as Src;
 use PHPUnit\Framework;
 use PHPUnit\Framework\Attributes\Test;
 
 /**
- * AdminUserAuthorizerConfigurationTest.
+ * MiddlewareStatusProviderConfigurationTest.
  *
  * @author Martin Adler <mteu@mailbox.org>
  * @license GPL-2.0-or-later
  */
-#[Framework\Attributes\CoversClass(Src\Configuration\Authorizer\AdminUserAuthorizerConfiguration::class)]
-final class AdminUserAuthorizerConfigurationTest extends Framework\TestCase
+#[Framework\Attributes\CoversClass(Src\Configuration\Provider\MiddlewareStatusProviderConfiguration::class)]
+final class MiddlewareStatusProviderConfigurationTest extends Framework\TestCase
 {
     #[Test]
     public function defaultValuesAreCorrect(): void
     {
-        $subject = new Src\Configuration\Authorizer\AdminUserAuthorizerConfiguration();
+        $subject = new Src\Configuration\Provider\MiddlewareStatusProviderConfiguration();
 
-        self::assertFalse($subject->isEnabled());
-        self::assertSame(-10, $subject->getPriority());
+        self::assertTrue($subject->isEnabled());
     }
 }

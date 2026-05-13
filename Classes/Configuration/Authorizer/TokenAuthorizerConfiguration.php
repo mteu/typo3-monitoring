@@ -40,6 +40,10 @@ final readonly class TokenAuthorizerConfiguration implements AuthorizerConfigura
 
     public function isEnabled(): bool
     {
+        if ($this->secret === '') {
+            return false;
+        }
+
         return $this->enabled;
     }
 
