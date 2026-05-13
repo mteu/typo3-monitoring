@@ -16,12 +16,12 @@
 				<target>Verfügbare Provider</target>
 			</trans-unit>
 			<trans-unit id="providers.modal.title">
-				<source>MonitoringProviders</source>
-				<target>MonitoringProvider</target>
+				<source>Providers</source>
+				<target>Provider</target>
 			</trans-unit>
 			<trans-unit id="providers.modal.content">
 				<source>Providers must implement %s to become available.</source>
-				<target>MonitoringProvider müssen %s implementieren, um verfügbar zu werden.</target>
+				<target>Provider müssen %s implementieren, um verfügbar zu werden.</target>
 			</trans-unit>
 			<trans-unit id="cache.flush.button">
 				<source>Flush Caches</source>
@@ -57,11 +57,11 @@
 			</trans-unit>
 			<trans-unit id="status.healthy">
 				<source>healthy</source>
-				<target>gesund</target>
+				<target>OK</target>
 			</trans-unit>
 			<trans-unit id="status.unhealthy">
 				<source>unhealthy</source>
-				<target>ungesund</target>
+				<target>Fehler</target>
 			</trans-unit>
 			<trans-unit id="status.inactive">
 				<source>inactive</source>
@@ -73,7 +73,7 @@
 			</trans-unit>
 			<trans-unit id="provider.cache.lifetime">
 				<source>The monitoring result is cached with an active cache lifetime of %s minutes.</source>
-				<target>Das Monitoringergebnis ist mit einer Cache-Lebenszeit von %s Minuten gecacht.</target>
+				<target>Das Monitoringergebnis ist mit einer Lebenszeit von %s Minuten gecacht.</target>
 			</trans-unit>
 			<trans-unit id="provider.cache.expires_at">
 				<source>Expires at %s</source>
@@ -93,15 +93,15 @@
 			</trans-unit>
 			<trans-unit id="providers.no_providers_found.content">
 				<source>Providers must implement %s to become available.</source>
-				<target>Monitoring-Provider müssen %s implementieren, um verfügbar zu werden.</target>
+				<target>Provider müssen %s implementieren, um verfügbar zu werden.</target>
 			</trans-unit>
 			<trans-unit id="authorizers.no_authorizers_found">
 				<source>No monitoring authorizers found.</source>
-				<target>Keine Monitoring-Autorisatoren gefunden.</target>
+				<target>Keine Monitoring-Authorizer gefunden.</target>
 			</trans-unit>
 			<trans-unit id="authorizers.no_authorizers_found.content">
 				<source>Authorizers must either be enabled in the extension configuration or implement %s to become available.</source>
-				<target>Autorisatoren müssen entweder über die Extension Settings aktiviert werden oder %s implementieren, um verfügbar zu werden.</target>
+				<target>Authorizer müssen entweder über die Extension Settings aktiviert werden oder %s implementieren, um verfügbar zu werden.</target>
 			</trans-unit>
 			<trans-unit id="detail.header.component">
 				<source>Component</source>
