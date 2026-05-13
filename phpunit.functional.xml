@@ -20,14 +20,12 @@
     <coverage>
         <report>
             <php outputFile=".build/coverage/php/functional.cov"/>
-            <html outputDirectory=".build/coverage/html/functional/"/>
-            <text outputFile="php://stdout" showUncoveredFiles="true"/>
         </report>
     </coverage>
     <logging>
         <junit outputFile=".build/coverage/junit/functional.xml"/>
     </logging>
-    <source>
+    <source baseline="phpunit.deprecation-baseline.xml">
         <include>
             <directory>Classes</directory>
         </include>

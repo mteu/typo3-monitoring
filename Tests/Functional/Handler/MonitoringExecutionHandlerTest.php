@@ -23,6 +23,7 @@ use mteu\Monitoring\Result\MonitoringResult;
 use mteu\Monitoring\Tests\Functional\Fixtures\CacheableProvider;
 use mteu\Monitoring\Tests\Functional\Fixtures\NonCacheableProvider;
 use mteu\Monitoring\Tests\Functional\Fixtures\ShortCacheProvider;
+use PHPUnit\Framework\Attributes\AllowMockObjectsWithoutExpectations;
 use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\Attributes\Test;
 use TYPO3\CMS\Core\Cache\CacheManager;
@@ -201,6 +202,7 @@ final class MonitoringExecutionHandlerTest extends FunctionalTestCase
     }
 
     #[Test]
+    #[AllowMockObjectsWithoutExpectations]
     public function missingCacheBackendHandledGracefully(): void
     {
         // Create a separate MonitoringCacheManager with a non-existent cache identifier

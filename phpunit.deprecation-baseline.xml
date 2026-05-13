@@ -1,0 +1,19 @@
+<?xml version="1.0"?>
+<files version="1">
+ <file path=".build/vendor/typo3/cms-core/Classes/Package/PackageManager.php">
+  <line number="936" hash="8f3e2257409cdb8fabb85e9a19591d1b4ac5ec6b">
+   <issue><![CDATA[Extension "monitoring" is having an ext_emconf.php file, which is deprecated. Additionally the composer.json is missing "version" and "providesPackages" declaration. See https://docs.typo3.org/permalink/changelog:deprecation-108345-1774126701@14.3 for details.]]></issue>
+   <issue><![CDATA[Extension "monitoring" is having an ext_emconf.php file, which is deprecated. Additionally the composer.json is missing "version" and "providesPackages" declaration. See https://docs.typo3.org/permalink/changelog:deprecation-108345-1774126701@14.3 for details.]]></issue>
+   <issue><![CDATA[Extension "monitoring" is having an ext_emconf.php file, which is deprecated. Additionally the composer.json is missing "version" and "providesPackages" declaration. See https://docs.typo3.org/permalink/changelog:deprecation-108345-1774126701@14.3 for details.]]></issue>
+   <issue><![CDATA[Extension "monitoring" is having an ext_emconf.php file, which is deprecated. Additionally the composer.json is missing "version" and "providesPackages" declaration. See https://docs.typo3.org/permalink/changelog:deprecation-108345-1774126701@14.3 for details.]]></issue>
+   <issue><![CDATA[Extension "monitoring" is having an ext_emconf.php file, which is deprecated. Additionally the composer.json is missing "version" and "providesPackages" declaration. See https://docs.typo3.org/permalink/changelog:deprecation-108345-1774126701@14.3 for details.]]></issue>
+   <issue><![CDATA[Extension "monitoring" is having an ext_emconf.php file, which is deprecated. Additionally the composer.json is missing "version" and "providesPackages" declaration. See https://docs.typo3.org/permalink/changelog:deprecation-108345-1774126701@14.3 for details.]]></issue>
+   <issue><![CDATA[Extension "typed_extconf" is having an ext_emconf.php file, which is deprecated. Additionally the composer.json is missing "version" and "providesPackages" declaration. See https://docs.typo3.org/permalink/changelog:deprecation-108345-1774126701@14.3 for details.]]></issue>
+   <issue><![CDATA[Extension "typed_extconf" is having an ext_emconf.php file, which is deprecated. Additionally the composer.json is missing "version" and "providesPackages" declaration. See https://docs.typo3.org/permalink/changelog:deprecation-108345-1774126701@14.3 for details.]]></issue>
+   <issue><![CDATA[Extension "typed_extconf" is having an ext_emconf.php file, which is deprecated. Additionally the composer.json is missing "version" and "providesPackages" declaration. See https://docs.typo3.org/permalink/changelog:deprecation-108345-1774126701@14.3 for details.]]></issue>
+   <issue><![CDATA[Extension "typed_extconf" is having an ext_emconf.php file, which is deprecated. Additionally the composer.json is missing "version" and "providesPackages" declaration. See https://docs.typo3.org/permalink/changelog:deprecation-108345-1774126701@14.3 for details.]]></issue>
+   <issue><![CDATA[Extension "typed_extconf" is having an ext_emconf.php file, which is deprecated. Additionally the composer.json is missing "version" and "providesPackages" declaration. See https://docs.typo3.org/permalink/changelog:deprecation-108345-1774126701@14.3 for details.]]></issue>
+   <issue><![CDATA[Extension "typed_extconf" is having an ext_emconf.php file, which is deprecated. Additionally the composer.json is missing "version" and "providesPackages" declaration. See https://docs.typo3.org/permalink/changelog:deprecation-108345-1774126701@14.3 for details.]]></issue>
+  </line>
+ </file>
+</files>

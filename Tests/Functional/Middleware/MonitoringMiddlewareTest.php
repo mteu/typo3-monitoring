@@ -27,6 +27,7 @@ use mteu\Monitoring\Middleware\MonitoringMiddleware;
 use mteu\Monitoring\Provider\MonitoringProvider;
 use mteu\Monitoring\Result\MonitoringResult;
 use mteu\Monitoring\Result\Result;
+use PHPUnit\Framework\Attributes\AllowMockObjectsWithoutExpectations;
 use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\MockObject\MockObject;
 use Psr\Http\Message\ResponseFactoryInterface;
@@ -67,6 +68,7 @@ final class MonitoringMiddlewareTest extends FunctionalTestCase
     }
 
     #[Test]
+    #[AllowMockObjectsWithoutExpectations]
     public function returnsHealthStatusResponseForMatchingEndpoint(): void
     {
         $configuration = $this->createConfiguration('/health');
@@ -93,6 +95,7 @@ final class MonitoringMiddlewareTest extends FunctionalTestCase
     }
 
     #[Test]
+    #[AllowMockObjectsWithoutExpectations]
     public function returns401ResponseWhenAuthorizationFails(): void
     {
         $configuration = $this->createConfiguration('/health');
@@ -119,6 +122,7 @@ final class MonitoringMiddlewareTest extends FunctionalTestCase
     }
 
     #[Test]
+    #[AllowMockObjectsWithoutExpectations]
     public function returns403ResponseForNonHttpsRequestsWhenEnforced(): void
     {
         $configuration = $this->createConfiguration('/health', enforceHttps: true);
@@ -145,6 +149,7 @@ final class MonitoringMiddlewareTest extends FunctionalTestCase
     }
 
     #[Test]
+    #[AllowMockObjectsWithoutExpectations]
     public function allowsPlainHttpRequestWhenEnforceHttpsIsDisabled(): void
     {
         $configuration = $this->createConfiguration('/health');
@@ -170,6 +175,7 @@ final class MonitoringMiddlewareTest extends FunctionalTestCase
     }
 
     #[Test]
+    #[AllowMockObjectsWithoutExpectations]
     public function acceptsHttpRequestWhenNormalizedParamsReportsHttps(): void
     {
         $configuration = $this->createConfiguration('/health', enforceHttps: true);
@@ -196,6 +202,7 @@ final class MonitoringMiddlewareTest extends FunctionalTestCase
     }
 
     #[Test]
+    #[AllowMockObjectsWithoutExpectations]
     public function passesRequestToNextHandlerWhenEndpointMismatches(): void
     {
         $configuration = $this->createConfiguration('/health');
@@ -225,6 +232,7 @@ final class MonitoringMiddlewareTest extends FunctionalTestCase
     }
 
     #[Test]
+    #[AllowMockObjectsWithoutExpectations]
     public function passesRequestToNextHandlerWhenEndpointEmpty(): void
     {
         $configuration = $this->createConfiguration('');
@@ -254,6 +262,7 @@ final class MonitoringMiddlewareTest extends FunctionalTestCase
     }
 
     #[Test]
+    #[AllowMockObjectsWithoutExpectations]
     public function returns503ResponseWhenServiceReportsUnhealthyStatus(): void
     {
         $configuration = $this->createConfiguration('/health');

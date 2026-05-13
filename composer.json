@@ -56,7 +56,11 @@
 	},
 	"extra": {
 		"typo3/cms": {
+			"Package": {
+				"providesPackages": {}
+			},
 			"extension-key": "monitoring",
+			"version": "0.5.0",
 			"web-dir": ".build/web"
 		}
 	},
@@ -73,14 +77,15 @@
 			"@test:unit"
 		],
 		"test:coverage": [
-			"@test:coverage:functional",
-			"@test:coverage:unit",
+			"rm -rf .build/coverage/php && mkdir -p .build/coverage/php",
+			"phpunit -c phpunit.functional.xml",
+			"phpunit -c phpunit.unit.xml",
 			"@test:coverage:merge"
 		],
-		"test:coverage:functional": "phpunit -c phpunit.functional.xml",
-		"test:coverage:merge": "phpcov merge --html .build/coverage/merged_html --clover .build/coverage/clover.xml --text php://stdout .build/coverage/php ",
-		"test:coverage:unit": "phpunit -c phpunit.unit.xml",
-		"test:functional": "@test:coverage:functional --no-coverage",
-		"test:unit": "@test:coverage:unit --no-coverage"
+		"test:coverage:functional": "phpunit -c phpunit.functional.xml --coverage-text",
+		"test:coverage:merge": "phpcov merge --html .build/coverage/merged --clover .build/coverage/clover.xml .build/coverage/php",
+		"test:coverage:unit": "phpunit -c phpunit.unit.xml --coverage-text",
+		"test:functional": "phpunit -c phpunit.functional.xml --no-coverage",
+		"test:unit": "phpunit -c phpunit.unit.xml --no-coverage"
 	}
 }
