@@ -202,6 +202,45 @@ final class MonitoringExecutionHandlerTest extends FunctionalTestCase
     }
 
     #[Test]
+    public function executeProviderWithMetadataReportsCacheMissOnFirstRun(): void
+    {
+        $outcome = $this->executionHandler->executeProviderWithMetadata($this->provider);
+
+        self::assertFalse($outcome->fromCache, 'First run must not be reported as a cache hit');
+        self::assertSame(1, $this->provider->getExecutionCount());
+    }
+
+    #[Test]
+    public function executeProviderWithMetadataReportsCacheHitOnSubsequentRun(): void
+    {
+        $this->executionHandler->executeProviderWithMetadata($this->provider);
+        $outcome = $this->executionHandler->executeProviderWithMetadata($this->provider);
+
+        self::assertTrue($outcome->fromCache, 'Warm cache must be reported as a cache hit');
+        self::assertSame(1, $this->provider->getExecutionCount(), 'Provider must not execute again');
+    }
+
+    #[Test]
+    public function executeProviderWithMetadataBypassesCacheWhenUseCacheIsFalse(): void
+    {
+        $this->executionHandler->executeProviderWithMetadata($this->provider);
+        $outcome = $this->executionHandler->executeProviderWithMetadata($this->provider, useCache: false);
+
+        self::assertFalse($outcome->fromCache, 'useCache=false must skip the cache lookup');
+        self::assertSame(2, $this->provider->getExecutionCount(), 'Provider must run again when cache is bypassed');
+    }
+
+    #[Test]
+    public function executeProviderWithMetadataReportsNonCacheableProvidersAsUncached(): void
+    {
+        $nonCacheableProvider = new NonCacheableProvider();
+
+        $outcome = $this->executionHandler->executeProviderWithMetadata($nonCacheableProvider);
+
+        self::assertFalse($outcome->fromCache);
+    }
+
+    #[Test]
     #[AllowMockObjectsWithoutExpectations]
     public function missingCacheBackendHandledGracefully(): void
     {
