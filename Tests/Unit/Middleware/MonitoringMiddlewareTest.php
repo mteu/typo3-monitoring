@@ -549,6 +549,48 @@ final class MonitoringMiddlewareTest extends Framework\TestCase
     }
 
     /**
+     * @return \Generator<string, array{string}>
+     */
+    public static function endpointInputFormProvider(): \Generator
+    {
+        yield 'canonical leading slash' => ['/monitor/health'];
+        yield 'missing leading slash (DTO default regression)' => ['monitor/health'];
+        yield 'trailing slash' => ['/monitor/health/'];
+        yield 'redundant slashes' => ['//monitor/health//'];
+    }
+
+    #[Test]
+    #[AllowMockObjectsWithoutExpectations]
+    #[DataProvider('endpointInputFormProvider')]
+    public function endpointMatchesRegardlessOfConfiguredSlashForm(string $configuredEndpoint): void
+    {
+        $this->configuration = $this->createConfigurationFromData([
+            'api' => ['endpoint' => $configuredEndpoint],
+            'authorizer' => ['mteu\\Monitoring\\Authorization\\TokenAuthorizer' => ['enabled' => '1', 'secret' => 'test-secret', 'priority' => '10', 'authHeaderName' => 'X-Auth']],
+        ]);
+
+        $middleware = new MonitoringMiddleware(
+            [$this->createHealthyProvider()],
+            [$this->createAuthorizedAuthorizer()],
+            $this->configuration,
+            $this->responseFactory,
+            $this->logger,
+            $this->createExecutionHandler(),
+        );
+
+        // The request path always has a single leading slash (PSR-7). The
+        // health endpoint must match no matter which slash form the operator
+        // configured, otherwise the middleware silently passes everything
+        // through and the endpoint effectively does not exist.
+        $response = $middleware->process(
+            new ServerRequest(new Uri('https://example.com/monitor/health'), 'GET'),
+            $this->handler,
+        );
+
+        self::assertSame(200, $response->getStatusCode());
+    }
+
+    /**
      * @param mixed[] $configurationData
      */
     private function createConfigurationFromData(array $configurationData): MonitoringConfiguration

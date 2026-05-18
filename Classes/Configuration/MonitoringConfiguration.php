@@ -23,7 +23,7 @@ use mteu\TypedExtConf\Attribute\ExtConfProperty;
 use mteu\TypedExtConf\Attribute\ExtensionConfig;
 
 /**
- * MonitoringConfiguration DTO.
+ * MonitoringConfiguration.
  *
  * @author Martin Adler <mteu@mailbox.org>
  * @license GPL-2.0-or-later
@@ -31,12 +31,39 @@ use mteu\TypedExtConf\Attribute\ExtensionConfig;
 #[ExtensionConfig(extensionKey: 'monitoring')]
 final readonly class MonitoringConfiguration
 {
+    /**
+     * Normalized endpoint path: either an empty string (endpoint disabled) or
+     * a single leading slash with no trailing slash. Both consumers
+     * (MonitoringMiddleware::isValid(), MiddlewareStatusProvider::execute())
+     * assume this exact shape, so it is normalized here.
+     */
+    public string $endpoint;
+
     public function __construct(
         public TokenAuthorizerConfiguration $tokenAuthorizerConfiguration,
         public AdminUserAuthorizerConfiguration $adminUserAuthorizerConfiguration,
         #[ExtConfProperty(path: 'api.endpoint')]
-        public string $endpoint = 'monitor/health',
+        string $endpoint = '/monitor/health',
         #[ExtConfProperty(path: 'api.enforceHttps')]
         public bool $enforceHttps = false,
-    ) {}
+    ) {
+        $this->endpoint = self::normalizeEndpoint($endpoint);
+    }
+
+    /**
+     * Forces a single leading slash and strips trailing slashes so the value
+     * always matches PSR-7's `UriInterface::getPath()` form. An empty (or
+     * whitespace-only) configured value disables the endpoint and is
+     * preserved as an empty string.
+     */
+    private static function normalizeEndpoint(string $endpoint): string
+    {
+        $trimmed = trim($endpoint);
+
+        if ($trimmed === '') {
+            return '';
+        }
+
+        return '/' . trim($trimmed, '/');
+    }
 }
