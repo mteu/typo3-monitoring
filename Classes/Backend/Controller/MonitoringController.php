@@ -141,7 +141,7 @@ final readonly class MonitoringController
      *     name: string,
      *     isCached: bool,
      *     isActive: bool,
-     *     isHealthy: bool,
+     *     isHealthy?: bool,
      *     description: string,
      *     cacheLifetime?: int,
      *     subResults?: array<\mteu\Monitoring\Result\Result>,
@@ -161,15 +161,23 @@ final readonly class MonitoringController
                 continue;
             }
 
-            $result = $this->executionHandler->executeProvider($monitoringProvider);
+            $isActive = $monitoringProvider->isActive();
 
             $providerTemplateVariables[$monitoringProvider::class] = [
                 'name' => $monitoringProvider->getName(),
                 'isCached' => $monitoringProvider instanceof CacheableMonitoringProvider,
-                'isActive' => $monitoringProvider->isActive(),
-                'isHealthy' => $result->isHealthy(),
+                'isActive' => $isActive,
                 'description' => $monitoringProvider->getDescription(),
             ];
+
+            if ($isActive) {
+                $result = $this->executionHandler->executeProvider($monitoringProvider);
+                $providerTemplateVariables[$monitoringProvider::class]['isHealthy'] = $result->isHealthy();
+
+                if ($result->hasSubResults()) {
+                    $providerTemplateVariables[$monitoringProvider::class]['subResults'] = $result->getSubResults();
+                }
+            }
 
             if ($monitoringProvider instanceof CacheableMonitoringProvider) {
                 $providerTemplateVariables[$monitoringProvider::class]['cacheLifetime'] = $monitoringProvider->getCacheLifetime();
@@ -178,10 +186,6 @@ final readonly class MonitoringController
                     FlushProviderCacheController::CSRF_TOKEN_ACTION,
                     $monitoringProvider::class,
                 );
-            }
-
-            if ($result->hasSubResults()) {
-                $providerTemplateVariables[$monitoringProvider::class]['subResults'] = $result->getSubResults();
             }
 
             // Check for cache expiration time
