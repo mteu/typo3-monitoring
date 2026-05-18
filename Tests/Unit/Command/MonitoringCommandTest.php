@@ -17,14 +17,16 @@ declare(strict_types=1);
 
 namespace mteu\Monitoring\Tests\Unit\Command;
 
+use mteu\Monitoring\Cache\MonitoringCacheManager;
 use mteu\Monitoring\Command\MonitoringCommand;
-use mteu\Monitoring\Provider\CacheableMonitoringProvider;
+use mteu\Monitoring\Handler\MonitoringExecutionHandler;
 use mteu\Monitoring\Provider\MonitoringProvider;
 use mteu\Monitoring\Result\MonitoringResult;
 use PHPUnit\Framework;
 use PHPUnit\Framework\Attributes\Test;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Tester\CommandTester;
+use TYPO3\CMS\Core\Cache\CacheManager;
 
 /**
  * MonitoringCommandTest.
@@ -40,7 +42,7 @@ final class MonitoringCommandTest extends Framework\TestCase
     {
         $inactiveProvider = $this->createProvider('Inactive', isActive: false, isHealthy: true);
 
-        $tester = new CommandTester(new MonitoringCommand([$inactiveProvider]));
+        $tester = new CommandTester(new MonitoringCommand([$inactiveProvider], $this->createExecutionHandler()));
         $exitCode = $tester->execute([]);
 
         self::assertSame(Command::INVALID, $exitCode);
@@ -52,7 +54,7 @@ final class MonitoringCommandTest extends Framework\TestCase
     {
         $healthy = $this->createProvider('HealthyProvider', isActive: true, isHealthy: true);
 
-        $tester = new CommandTester(new MonitoringCommand([$healthy]));
+        $tester = new CommandTester(new MonitoringCommand([$healthy], $this->createExecutionHandler()));
         $exitCode = $tester->execute([]);
 
         $display = $tester->getDisplay();
@@ -67,7 +69,7 @@ final class MonitoringCommandTest extends Framework\TestCase
     {
         $unhealthy = $this->createProvider('BrokenProvider', isActive: true, isHealthy: false);
 
-        $tester = new CommandTester(new MonitoringCommand([$unhealthy]));
+        $tester = new CommandTester(new MonitoringCommand([$unhealthy], $this->createExecutionHandler()));
         $exitCode = $tester->execute([]);
 
         $display = $tester->getDisplay();
@@ -82,49 +84,13 @@ final class MonitoringCommandTest extends Framework\TestCase
         $active = $this->createProvider('ActiveProvider', isActive: true, isHealthy: true);
         $inactive = $this->createProvider('InactiveProvider', isActive: false, isHealthy: true);
 
-        $tester = new CommandTester(new MonitoringCommand([$active, $inactive]));
+        $tester = new CommandTester(new MonitoringCommand([$active, $inactive], $this->createExecutionHandler()));
         $exitCode = $tester->execute([]);
 
         $display = $tester->getDisplay();
         self::assertSame(Command::SUCCESS, $exitCode);
         self::assertStringContainsString('ActiveProvider', $display);
         self::assertStringNotContainsString('InactiveProvider', $display);
-    }
-
-    #[Test]
-    public function marksCacheableProvidersAsCachedInOutput(): void
-    {
-        $cacheable = new class () implements CacheableMonitoringProvider {
-            public function getName(): string
-            {
-                return 'CacheableProvider';
-            }
-            public function getDescription(): string
-            {
-                return '';
-            }
-            public function isActive(): bool
-            {
-                return true;
-            }
-            public function execute(): MonitoringResult
-            {
-                return new MonitoringResult('CacheableProvider', true);
-            }
-            public function getCacheKey(): string
-            {
-                return 'cache-key';
-            }
-            public function getCacheLifetime(): int
-            {
-                return 60;
-            }
-        };
-
-        $tester = new CommandTester(new MonitoringCommand([$cacheable]));
-        $tester->execute([]);
-
-        self::assertStringContainsString('(cached)', $tester->getDisplay());
     }
 
     #[Test]
@@ -168,7 +134,7 @@ final class MonitoringCommandTest extends Framework\TestCase
             }
         };
 
-        $tester = new CommandTester(new MonitoringCommand([$healthy, $unhealthy]));
+        $tester = new CommandTester(new MonitoringCommand([$healthy, $unhealthy], $this->createExecutionHandler()));
         $exitCode = $tester->execute([]);
 
         $display = $tester->getDisplay();
@@ -183,7 +149,7 @@ final class MonitoringCommandTest extends Framework\TestCase
     {
         $plain = $this->createProvider('PlainProvider', isActive: true, isHealthy: true);
 
-        $tester = new CommandTester(new MonitoringCommand([$plain]));
+        $tester = new CommandTester(new MonitoringCommand([$plain], $this->createExecutionHandler()));
         $tester->execute([]);
 
         $display = $tester->getDisplay();
@@ -194,10 +160,20 @@ final class MonitoringCommandTest extends Framework\TestCase
     #[Test]
     public function commandIsRegisteredWithExpectedNameAndDescription(): void
     {
-        $command = new MonitoringCommand([]);
+        $command = new MonitoringCommand([], $this->createExecutionHandler());
 
         self::assertSame('monitoring:run', $command->getName());
         self::assertSame('This command runs monitoring.', $command->getDescription());
+    }
+
+    /**
+     * Builds a real execution handler whose cache backend is absent, so every
+     * provider runs fresh and is never reported from cache. Warm-cache and
+     * {@code --no-cache} behaviour is covered by the functional command test.
+     */
+    private function createExecutionHandler(): MonitoringExecutionHandler
+    {
+        return new MonitoringExecutionHandler(new MonitoringCacheManager(new CacheManager()));
     }
 
     private function createProvider(string $name, bool $isActive, bool $isHealthy): MonitoringProvider
