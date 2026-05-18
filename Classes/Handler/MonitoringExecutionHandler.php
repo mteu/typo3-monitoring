@@ -24,7 +24,6 @@ use mteu\Monitoring\Result\Result;
 
 /**
  * MonitoringExecutionHandler.
- * Handles execution of monitoring providers with caching support.
  *
  * @author Martin Adler <mteu@mailbox.org>
  * @license GPL-2.0-or-later
@@ -36,28 +35,40 @@ final readonly class MonitoringExecutionHandler
     ) {}
 
     /**
-     * Executes a monitoring provider with caching support if applicable.
+     * Executes a provider and returns the pure result only
      */
     public function executeProvider(MonitoringProvider $provider): Result
     {
-        if ($provider instanceof CacheableMonitoringProvider) {
-            return $this->executeWithCaching($provider);
-        }
-
-        return $provider->execute();
+        return $this->executeProviderWithMetadata($provider)->result;
     }
 
     /**
-     * Executes a cacheable provider with cache lookup and storage.
+     * Executes a provider and reports whether the result was served from cache.
      */
-    private function executeWithCaching(CacheableMonitoringProvider $provider): Result
+    public function executeProviderWithMetadata(MonitoringProvider $provider, bool $useCache = true): ProviderExecutionOutcome
     {
-        $cacheKey = $this->sanitizeCacheKey($provider->getCacheKey());
+        return $provider instanceof CacheableMonitoringProvider
+            ? $this->executeWithCaching($provider, $useCache)
+            : $this->executeWithoutCaching($provider);
+    }
 
-        $cachedResult = $this->cacheManager->getCachedResult($cacheKey);
+    private function executeWithoutCaching(MonitoringProvider $provider): ProviderExecutionOutcome
+    {
+        return new ProviderExecutionOutcome($provider->execute(), false);
+    }
 
-        if ($cachedResult !== null) {
-            return $cachedResult;
+    private function executeWithCaching(
+        CacheableMonitoringProvider $provider,
+        bool $useCache,
+    ): ProviderExecutionOutcome {
+        $cacheKey = $this->sanitizeIdentifier($provider->getCacheKey());
+
+        if ($useCache) {
+            $cachedResult = $this->cacheManager->getCachedResult($cacheKey);
+
+            if ($cachedResult !== null) {
+                return new ProviderExecutionOutcome($cachedResult, true);
+            }
         }
 
         $result = $provider->execute();
@@ -65,15 +76,15 @@ final readonly class MonitoringExecutionHandler
         $this->cacheManager->setCachedResult(
             $cacheKey,
             $result,
-            [str_replace('\\', '_', $provider::class)],
-            $provider->getCacheLifetime()
+            [$this->sanitizeIdentifier($provider::class)],
+            $provider->getCacheLifetime(),
         );
 
-        return $result;
+        return new ProviderExecutionOutcome($result, false);
     }
 
-    private function sanitizeCacheKey(string $string): string
+    private function sanitizeIdentifier(string $identifier): string
     {
-        return str_replace('\\', '_', $string);
+        return str_replace('\\', '_', $identifier);
     }
 }

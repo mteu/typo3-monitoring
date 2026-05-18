@@ -17,12 +17,13 @@ declare(strict_types=1);
 
 namespace mteu\Monitoring\Command;
 
-use mteu\Monitoring\Provider\CacheableMonitoringProvider;
+use mteu\Monitoring\Handler\MonitoringExecutionHandler;
+use mteu\Monitoring\Handler\ProviderExecutionOutcome;
 use mteu\Monitoring\Provider\MonitoringProvider;
-use mteu\Monitoring\Result\Result;
 use Symfony\Component\Console\Attribute\AsCommand;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputInterface;
+use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\DependencyInjection\Attribute\AutowireIterator;
 
@@ -39,6 +40,7 @@ final class MonitoringCommand extends Command
         /** @var iterable<MonitoringProvider> $monitoringProviders */
         #[AutowireIterator(tag: 'monitoring.provider')]
         private readonly iterable $monitoringProviders,
+        private readonly MonitoringExecutionHandler $executionHandler,
     ) {
         parent::__construct(name: 'monitoring:run');
     }
@@ -47,72 +49,73 @@ final class MonitoringCommand extends Command
     protected function configure(): void
     {
         $this->setDescription('This command runs monitoring.');
-
-        // todo: ./vendor/bin typo3 monitoring:run all --no-cache
+        $this->addOption(
+            'no-cache',
+            null,
+            InputOption::VALUE_NONE,
+            'Bypass the monitoring cache and force a fresh execution of every provider.',
+        );
     }
 
     #[\Override]
     protected function execute(InputInterface $input, OutputInterface $output): int
     {
-        $activeProvidersResult = $this->getActiveProvidersResult();
+        $useCache = $input->getOption('no-cache') === false;
+        $outcomes = $this->executeActiveProviders($useCache);
 
-        if (count($activeProvidersResult) === 0) {
+        if (count($outcomes) === 0) {
             $output->writeln('No active providers available. Skipping.');
 
             return Command::INVALID;
         }
 
         $output->writeln('Checking Monitoring status');
-        foreach ($activeProvidersResult as $providerClass => $result) {
+        foreach ($outcomes as $outcome) {
+            $result = $outcome->result;
             $output->writeln(sprintf(
                 '%s %s%s',
                 $result->isHealthy() ? ' ✅' : '🚨',
                 $result->isHealthy() ? '<info>' . $result->getName() . '</info>' : '<error>' . $result->getName() . '</error>',
-                $this->isCacheableProvider($providerClass) ? ' (cached)' : '',
+                $outcome->fromCache ? ' (cached)' : '',
             ));
         }
 
-        $isHealthy = $this->areAllResultsHealthy($activeProvidersResult);
+        $isHealthy = $this->areAllOutcomesHealthy($outcomes);
         $output->writeln('Monitoring status: ' . ($isHealthy ? 'OK' : 'FAILED'));
 
         return $isHealthy ? Command::SUCCESS : Command::FAILURE;
     }
 
     /**
-     * @return array<class-string<MonitoringProvider>, Result>
+     * @return array<class-string<MonitoringProvider>, ProviderExecutionOutcome>
      */
-    private function getActiveProvidersResult(): array
+    private function executeActiveProviders(bool $useCache): array
     {
-        $status = [];
+        $outcomes = [];
 
         foreach ($this->monitoringProviders as $provider) {
             if ($provider->isActive()) {
-                $status[$provider::class] = $provider->execute();
+                $outcomes[$provider::class] = $this->executionHandler->executeProviderWithMetadata(
+                    $provider,
+                    $useCache,
+                );
             }
         }
 
-        return $status;
+        return $outcomes;
     }
 
     /**
-    * @param array<class-string<MonitoringProvider>, Result> $results
+    * @param array<class-string<MonitoringProvider>, ProviderExecutionOutcome> $outcomes
     */
-    private function areAllResultsHealthy(array $results): bool
+    private function areAllOutcomesHealthy(array $outcomes): bool
     {
-        foreach ($results as $result) {
-            if (!$result->isHealthy()) {
+        foreach ($outcomes as $outcome) {
+            if (!$outcome->result->isHealthy()) {
                 return false;
             }
         }
 
         return true;
-    }
-
-    /**
-     * @param class-string<MonitoringProvider> $providerClass
-     */
-    private function isCacheableProvider(string $providerClass): bool
-    {
-        return is_subclass_of($providerClass, CacheableMonitoringProvider::class);
     }
 }
