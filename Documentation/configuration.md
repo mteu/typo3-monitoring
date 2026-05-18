@@ -23,12 +23,6 @@ return [
                     'priority' => -10,
                 ],
             ],
-            'provider' => [
-                # built-in provider. not actually listed in the backend module.
-                'mteu\Monitoring\Provider\MiddlewareStatusProvider' => [
-                    'enabled' => true,
-                ],
-            ],
         ],
     ],
 ];
