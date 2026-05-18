@@ -1,13 +1,2 @@
 parameters:
-	ignoreErrors:
-		-
-			rawMessage: Cannot access offset 'SYS' on mixed.
-			identifier: offsetAccess.nonOffsetAccessible
-			count: 1
-			path: ../Unit/Provider/MiddlewareStatusProviderTest.php
-
-		-
-			rawMessage: Cannot access offset 'encryptionKey' on mixed.
-			identifier: offsetAccess.nonOffsetAccessible
-			count: 1
-			path: ../Unit/Provider/MiddlewareStatusProviderTest.php
+	ignoreErrors: []

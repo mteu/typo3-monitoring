@@ -21,7 +21,6 @@ use mteu\Monitoring\Authorization\Authorizer;
 use mteu\Monitoring\Configuration\Authorizer\AdminUserAuthorizerConfiguration;
 use mteu\Monitoring\Configuration\Authorizer\TokenAuthorizerConfiguration;
 use mteu\Monitoring\Configuration\MonitoringConfiguration;
-use mteu\Monitoring\Configuration\Provider\MiddlewareStatusProviderConfiguration;
 use mteu\Monitoring\Handler\MonitoringExecutionHandler;
 use mteu\Monitoring\Middleware\MonitoringMiddleware;
 use mteu\Monitoring\Provider\MonitoringProvider;
@@ -292,12 +291,10 @@ final class MonitoringMiddlewareTest extends FunctionalTestCase
     {
         $tokenAuthorizerConfig = new TokenAuthorizerConfiguration();
         $adminUserAuthorizerConfig = new AdminUserAuthorizerConfiguration();
-        $providerConfig = new MiddlewareStatusProviderConfiguration();
 
         return new MonitoringConfiguration(
             $tokenAuthorizerConfig,
             $adminUserAuthorizerConfig,
-            $providerConfig,
             $endpoint,
             $enforceHttps,
         );

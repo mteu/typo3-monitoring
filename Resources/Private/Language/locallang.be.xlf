@@ -108,12 +108,6 @@
 			<trans-unit id="provider.cache.flush.csrf.message">
 				<source>The cache flush request could not be verified. Please retry from the monitoring module.</source>
 			</trans-unit>
-			<trans-unit id="api.error.title">
-				<source>API Error</source>
-			</trans-unit>
-			<trans-unit id="api.error.message">
-				<source>Check the endpoint at:</source>
-			</trans-unit>
 		</body>
 	</file>
 </xliff>
