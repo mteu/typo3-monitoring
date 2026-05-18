@@ -234,10 +234,6 @@ public function isActive(): bool
 }
 ```
 
-## Built-in Providers
-
-- **MiddlewareStatusProvider**: Meta-monitoring of the monitoring system itself
-
 ## Best Practices
 
 - Keep checks lightweight and fast

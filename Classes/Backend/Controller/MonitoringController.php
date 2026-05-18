@@ -23,7 +23,6 @@ use mteu\Monitoring\Cache\MonitoringCacheManager;
 use mteu\Monitoring\Configuration\MonitoringConfiguration;
 use mteu\Monitoring\Handler\MonitoringExecutionHandler;
 use mteu\Monitoring\Provider\CacheableMonitoringProvider;
-use mteu\Monitoring\Provider\MiddlewareStatusProvider;
 use mteu\Monitoring\Provider\MonitoringProvider;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
@@ -83,9 +82,6 @@ final readonly class MonitoringController
             'authorizers' => $this->buildAuthorizerTemplateVariables(),
             'authorizerInterface' => Authorizer::class,
             'endpoint' => $params->getRequestHost() . $this->monitoringConfiguration->endpoint,
-            'middlewareStatusResult' => $this->executionHandler->executeProvider(
-                $this->getMiddlewareStatusProvider(),
-            ),
             'providers' => $this->buildProviderTemplateVariables($request),
             'providerInterface' => MonitoringProvider::class,
             'monitoringMessageQueueIdentifier' => self::FLASHMESSAGE_QUEUE_IDENTIFIER,
@@ -95,17 +91,6 @@ final readonly class MonitoringController
         return $template
             ->assignMultiple($templateVariables)
             ->renderResponse('Backend/Monitoring');
-    }
-
-    private function getMiddlewareStatusProvider(): MonitoringProvider
-    {
-        foreach ($this->monitoringProviders as $service) {
-            if ($service instanceof MiddlewareStatusProvider) {
-                return $service;
-            }
-        }
-
-        throw new \LogicException('MiddlewareStatusProvider not found among tagged services.');
     }
 
     /**
@@ -155,12 +140,6 @@ final readonly class MonitoringController
         $providerTemplateVariables = [];
 
         foreach ($this->monitoringProviders as $monitoringProvider) {
-
-            // Don't execute and display this meta-provider in the backend.
-            if ($monitoringProvider instanceof MiddlewareStatusProvider) {
-                continue;
-            }
-
             $result = $this->executionHandler->executeProvider($monitoringProvider);
 
             $providerTemplateVariables[$monitoringProvider::class] = [

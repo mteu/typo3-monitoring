@@ -20,7 +20,6 @@ namespace mteu\Monitoring\Middleware;
 use mteu\Monitoring\Authorization\Authorizer;
 use mteu\Monitoring\Configuration\MonitoringConfiguration;
 use mteu\Monitoring\Handler\MonitoringExecutionHandler;
-use mteu\Monitoring\Provider\MiddlewareStatusProvider;
 use mteu\Monitoring\Provider\MonitoringProvider;
 use Psr\Http\Message\ResponseFactoryInterface;
 use Psr\Http\Message\ResponseInterface;
@@ -182,11 +181,6 @@ final readonly class MonitoringMiddleware implements MiddlewareInterface
 
         foreach ($this->monitoringProviders as $provider) {
             if ($provider->isActive()) {
-
-                if ($provider instanceof MiddlewareStatusProvider) {
-                    continue;
-                }
-
                 $status[$provider->getName()] = $this->executionHandler->executeProvider($provider)->isHealthy();
             }
         }
