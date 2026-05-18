@@ -23,10 +23,3 @@ authorizer {
         priority=-10
     }
 }
-
-provider {
-    mteu\Monitoring\Provider\MiddlewareStatusProvider {
-        # cat=MiddlewareStatusProvider/Enabled; type=boolean; label=Enable MiddlewareStatusProvider:Enables monitoring of the monitoring middleware itself by making self-requests
-        enabled=1
-    }
-}
