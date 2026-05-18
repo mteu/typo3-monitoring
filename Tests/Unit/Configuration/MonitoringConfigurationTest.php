@@ -20,7 +20,6 @@ namespace mteu\Monitoring\Tests\Unit\Configuration;
 use mteu\Monitoring\Configuration\Authorizer\AdminUserAuthorizerConfiguration;
 use mteu\Monitoring\Configuration\Authorizer\TokenAuthorizerConfiguration;
 use mteu\Monitoring\Configuration\MonitoringConfiguration;
-use mteu\Monitoring\Configuration\Provider\MiddlewareStatusProviderConfiguration;
 use PHPUnit\Framework;
 use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\Attributes\DataProvider;
@@ -76,7 +75,6 @@ final class MonitoringConfigurationTest extends Framework\TestCase
         return new MonitoringConfiguration(
             new TokenAuthorizerConfiguration(),
             new AdminUserAuthorizerConfiguration(),
-            new MiddlewareStatusProviderConfiguration(),
         );
     }
 
@@ -85,7 +83,6 @@ final class MonitoringConfigurationTest extends Framework\TestCase
         return new MonitoringConfiguration(
             new TokenAuthorizerConfiguration(),
             new AdminUserAuthorizerConfiguration(),
-            new MiddlewareStatusProviderConfiguration(),
             $endpoint,
         );
     }
