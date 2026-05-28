@@ -57,6 +57,14 @@ final class MonitoringResult implements Result
         return true;
     }
 
+    /**
+     * Fluid-friendly accessor for {@see isHealthy()}.
+     */
+    public function getIsHealthy(): bool
+    {
+        return $this->isHealthy();
+    }
+
     public function setHealthy(bool $isHealthy): Result
     {
         $this->isHealthy = $isHealthy;
@@ -94,22 +102,6 @@ final class MonitoringResult implements Result
         $this->subResults[] = $result;
 
         return $result;
-    }
-
-    /**
-     * Magic getter for Fluid templates to access private properties as way dirty workaround to Fluid's inability to
-     * invoke the `isHealthy()` method instead of directly accessing the property with the exact same name.
-     */
-    public function __get(string $property): mixed
-    {
-        return match ($property) {
-            'name' => $this->name,
-            'isHealthy' => $this->isHealthy,
-            'description' => $this->reason,
-            default => throw new \InvalidArgumentException(
-                sprintf('Property "%s" does not exist on %s', $property, self::class)
-            ),
-        };
     }
 
     /**
