@@ -148,16 +148,4 @@ abstract class MonitoringTestCase extends TestCase
         yield 'unhealthy parent, unhealthy subs' => [false, [false, false], false];
     }
 
-    /**
-     * Creates common property test scenarios for magic getter testing.
-     *
-     * @return \Generator<string, array{0: string, 1: bool, 2: string|null, 3: string, 4: mixed}>
-     */
-    final public static function propertyAccessScenarios(): \Generator
-    {
-        yield 'name property access' => ['test-service', true, 'All good', 'name', 'test-service'];
-        yield 'isHealthy property access' => ['test-service', false, 'Error occurred', 'isHealthy', false];
-        yield 'description property with value' => ['test-service', true, 'Service operational', 'description', 'Service operational'];
-        yield 'description property when null' => ['test-service', true, null, 'description', null];
-    }
 }
