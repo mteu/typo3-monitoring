@@ -5,6 +5,11 @@ api {
     enforceHttps=0
 }
 
+cache {
+    # cat=cache/defaultLifetime; type=int+; label=Default cache lifetime (seconds):Fleet-wide default lifetime for monitoring results in seconds. Individual CacheableMonitoringProvider implementations may override this via getCacheLifetime(). Defaults to 900 (15 minutes).
+    defaultLifetime=900
+}
+
 authorizer {
     mteu\Monitoring\Authorization\TokenAuthorizer {
         # cat=TokenAuthorizer/Enabled//10; type=boolean; label=Enable TokenAuthorizer: Enables the access to health status via Token in the Request Header
