@@ -128,29 +128,20 @@ final class MonitoringResultTest extends MonitoringTestCase
         self::assertSame($allExpected, $result->getSubResults(), 'Order should be maintained');
     }
 
+    /**
+     * @param list<bool> $subHealthStatuses
+     */
     #[Test]
-    #[DataProvider('propertyAccessScenarios')]
-    public function magicGetterReturnsExpectedPropertyValues(
-        string $name,
-        bool $isHealthy,
-        ?string $reason,
-        string $property,
-        mixed $expectedValue
+    #[DataProvider('healthCalculationScenarios')]
+    public function getIsHealthyMatchesIsHealthyIncludingSubResultFolding(
+        bool $initialHealth,
+        array $subHealthStatuses,
+        bool $expectedHealth
     ): void {
-        $result = new MonitoringResult($name, $isHealthy, $reason);
+        $result = $this->createResultWithSubResults($subHealthStatuses, 'test', $initialHealth);
 
-        self::assertSame($expectedValue, $result->__get($property));
-    }
-
-    #[Test]
-    public function magicGetterThrowsForInvalidProperty(): void
-    {
-        $result = new MonitoringResult('test', true);
-
-        $this->expectException(\InvalidArgumentException::class);
-        $this->expectExceptionMessage('Property "invalid" does not exist');
-
-        $result->__get('invalid');
+        self::assertSame($expectedHealth, $result->getIsHealthy());
+        self::assertSame($result->isHealthy(), $result->getIsHealthy());
     }
 
     /**
