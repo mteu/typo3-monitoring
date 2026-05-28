@@ -48,6 +48,8 @@ final readonly class MonitoringConfiguration
         string $endpoint = '/monitor/health',
         #[ExtConfProperty(path: 'api.enforceHttps')]
         public bool $enforceHttps = false,
+        #[ExtConfProperty(path: 'cache.defaultLifetime')]
+        public int $cacheDefaultLifetime = 900,
     ) {
         $this->endpoint = self::normalizeEndpoint($endpoint);
     }
