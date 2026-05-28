@@ -17,6 +17,7 @@ declare(strict_types=1);
 
 namespace mteu\Monitoring\Cache;
 
+use mteu\Monitoring\Configuration\MonitoringConfiguration;
 use mteu\Monitoring\Result\CachedMonitoringResult;
 use mteu\Monitoring\Result\Result;
 use TYPO3\CMS\Core\Cache\CacheManager;
@@ -36,9 +37,11 @@ use TYPO3\CMS\Core\Cache\Frontend\FrontendInterface;
 final readonly class MonitoringCacheManager
 {
     private const string CACHE_IDENTIFIER = 'typo3_monitoring';
+    private const int FALLBACK_LIFETIME = 60 * 15;
 
     public function __construct(
         private CacheManager $cacheManager,
+        private ?MonitoringConfiguration $configuration = null,
     ) {}
 
     /**
@@ -138,11 +141,16 @@ final readonly class MonitoringCacheManager
     /**
      * Gets the default cache lifetime in seconds.
      *
-     * @return int Default cache lifetime (15 minutes)
+     * Reads `cache.defaultLifetime` from the extension configuration when
+     * available, falling back to 15 minutes when no configuration is wired.
      */
     public function getCacheLifetime(): int
     {
-        return 60 * 15;
+        if ($this->configuration === null) {
+            return self::FALLBACK_LIFETIME;
+        }
+
+        return $this->configuration->cacheDefaultLifetime;
     }
 
     /**

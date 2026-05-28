@@ -18,6 +18,10 @@ declare(strict_types=1);
 namespace mteu\Monitoring\Tests\Unit\Cache;
 
 use mteu\Monitoring\Cache\MonitoringCacheManager;
+use mteu\Monitoring\Configuration\Authorizer\AdminUserAuthorizerConfiguration;
+use mteu\Monitoring\Configuration\Authorizer\TokenAuthorizerConfiguration;
+use mteu\Monitoring\Configuration\MonitoringConfiguration;
+use mteu\Monitoring\Configuration\Provider\MiddlewareStatusProviderConfiguration;
 use mteu\Monitoring\Result\CachedMonitoringResult;
 use mteu\Monitoring\Result\MonitoringResult;
 use PHPUnit\Framework\Attributes\AllowMockObjectsWithoutExpectations;
@@ -121,6 +125,37 @@ final class MonitoringCacheManagerTest extends TestCase
         $result = $this->monitoringCacheManager->getCacheLifetime();
 
         self::assertSame(900, $result, 'Should return 15 minutes (900 seconds) as default');
+    }
+
+    #[Test]
+    public function getCacheLifetimeHonorsConfiguredDefault(): void
+    {
+        $cacheManager = $this->createMock(CacheManager::class);
+        $monitoringCacheManager = new MonitoringCacheManager(
+            $cacheManager,
+            $this->createConfiguration(cacheDefaultLifetime: 60),
+        );
+
+        self::assertSame(60, $monitoringCacheManager->getCacheLifetime());
+    }
+
+    #[Test]
+    public function getCacheLifetimeFallsBackToBuiltInDefaultWhenConfigurationOmitted(): void
+    {
+        $cacheManager = $this->createMock(CacheManager::class);
+        $monitoringCacheManager = new MonitoringCacheManager($cacheManager);
+
+        self::assertSame(900, $monitoringCacheManager->getCacheLifetime());
+    }
+
+    private function createConfiguration(int $cacheDefaultLifetime): MonitoringConfiguration
+    {
+        return new MonitoringConfiguration(
+            new TokenAuthorizerConfiguration(true, 10, 'secret', 'X-TYPO3-MONITORING-AUTH'),
+            new AdminUserAuthorizerConfiguration(),
+            new MiddlewareStatusProviderConfiguration(),
+            cacheDefaultLifetime: $cacheDefaultLifetime,
+        );
     }
 
     #[Test]
