@@ -28,3 +28,14 @@ authorizer {
         priority=-10
     }
 }
+
+provider {
+    mteu\Monitoring\Provider\SchedulerProvider {
+        # cat=SchedulerProvider/Enabled//10; type=boolean; label=Enable SchedulerProvider:Monitors the TYPO3 scheduler. Inactive when the scheduler extension is not installed.
+        enabled=1
+        # cat=SchedulerProvider/Heartbeat//20; type=int+; label=Heartbeat threshold (seconds):Maximum age of the last scheduler run before the heartbeat is reported unhealthy. Detects a broken cron job. Set to 0 to disable. Defaults to 900 (15 minutes).
+        heartbeatThreshold=900
+        # cat=SchedulerProvider/Overdue//30; type=int+; label=Overdue threshold (seconds):Grace period added to a task's scheduled execution time before it is reported as overdue. Set to 0 to disable (recommended with long or irregular tasks).
+        overdueThreshold=0
+    }
+}
