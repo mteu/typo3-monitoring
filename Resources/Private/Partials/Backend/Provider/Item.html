@@ -53,7 +53,7 @@
         </f:if>
 
         <f:if condition="{provider.isCached}">
-            <f:render section="CachingDetails" arguments="{provider: provider}" />
+            <f:render section="CachingDetails" arguments="{provider: provider, flushProviderCacheUri: flushProviderCacheUri}" />
         </f:if>
 
         <f:if condition="{provider.isActive}">
