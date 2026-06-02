@@ -21,7 +21,6 @@ use mteu\Monitoring\Cache\MonitoringCacheManager;
 use mteu\Monitoring\Configuration\Authorizer\AdminUserAuthorizerConfiguration;
 use mteu\Monitoring\Configuration\Authorizer\TokenAuthorizerConfiguration;
 use mteu\Monitoring\Configuration\MonitoringConfiguration;
-use mteu\Monitoring\Configuration\Provider\MiddlewareStatusProviderConfiguration;
 use mteu\Monitoring\Result\CachedMonitoringResult;
 use mteu\Monitoring\Result\MonitoringResult;
 use PHPUnit\Framework\Attributes\AllowMockObjectsWithoutExpectations;
@@ -153,7 +152,6 @@ final class MonitoringCacheManagerTest extends TestCase
         return new MonitoringConfiguration(
             new TokenAuthorizerConfiguration(true, 10, 'secret', 'X-TYPO3-MONITORING-AUTH'),
             new AdminUserAuthorizerConfiguration(),
-            new MiddlewareStatusProviderConfiguration(),
             cacheDefaultLifetime: $cacheDefaultLifetime,
         );
     }
