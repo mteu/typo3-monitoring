@@ -87,6 +87,7 @@ final readonly class FlushProviderCacheController
                 $languageService->sL(self::LOCALLANG_FILE . ':provider.cache.flush.csrf.message'),
                 $languageService->sL(self::LOCALLANG_FILE . ':provider.cache.flush.csrf.title'),
                 ContextualFeedbackSeverity::ERROR,
+                true,
             ));
 
             return new RedirectResponse($redirectUri);
@@ -100,6 +101,7 @@ final readonly class FlushProviderCacheController
                 ),
                 $languageService->sL(self::LOCALLANG_FILE . ':provider.cache.flush.success.title'),
                 ContextualFeedbackSeverity::OK,
+                true,
             );
         } else {
             $message = new FlashMessage(
@@ -109,6 +111,7 @@ final readonly class FlushProviderCacheController
                 ),
                 $languageService->sL(self::LOCALLANG_FILE . ':provider.cache.flush.error.title'),
                 ContextualFeedbackSeverity::ERROR,
+                true,
             );
         }
 
