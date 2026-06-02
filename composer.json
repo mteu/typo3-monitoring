@@ -60,7 +60,7 @@
 				"providesPackages": {}
 			},
 			"extension-key": "monitoring",
-			"version": "0.5.0",
+			"version": "0.5.1",
 			"web-dir": ".build/web"
 		}
 	},
