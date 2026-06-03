@@ -100,14 +100,14 @@ final readonly class SchedulerProvider implements MonitoringProvider
     private function checkHeartbeat(): Result
     {
         if (!$this->configuration->isHeartbeatCheckEnabled()) {
-            return new MonitoringResult('SchedulerHeartbeat', true, 'Heartbeat check disabled.');
+            return new MonitoringResult('Scheduler', true, 'Heartbeat check disabled.');
         }
 
         $lastRun = $this->heartbeat->getLastRunEndTime();
 
         if ($lastRun === null) {
             return new MonitoringResult(
-                'SchedulerHeartbeat',
+                'Scheduler',
                 false,
                 'No scheduler run has been recorded yet. Verify the cron job is set up.',
             );
@@ -117,7 +117,7 @@ final readonly class SchedulerProvider implements MonitoringProvider
 
         if ($age > $this->configuration->heartbeatThreshold) {
             return new MonitoringResult(
-                'SchedulerHeartbeat',
+                'Scheduler',
                 false,
                 sprintf(
                     'Scheduler last ran %s ago (at %s), exceeding the threshold of %d seconds.',
@@ -129,7 +129,7 @@ final readonly class SchedulerProvider implements MonitoringProvider
         }
 
         return new MonitoringResult(
-            'SchedulerHeartbeat',
+            'Scheduler',
             true,
             sprintf('Scheduler last ran at %s.', date(\DateTimeInterface::ATOM, $lastRun)),
         );
@@ -140,15 +140,15 @@ final readonly class SchedulerProvider implements MonitoringProvider
         try {
             $count = $this->taskGateway->countFailedTasks();
         } catch (\Throwable $exception) {
-            return $this->reportQueryFailure('FailedTasks', $exception);
+            return $this->reportQueryFailure('Failed Tasks', $exception);
         }
 
         if ($count === 0) {
-            return new MonitoringResult('FailedTasks', true, 'No task reported an execution failure.');
+            return new MonitoringResult('Failed Tasks', true, 'No task reported an execution failure.');
         }
 
         return new MonitoringResult(
-            'FailedTasks',
+            'Failed Tasks',
             false,
             sprintf(
                 '%d task(s) reported an execution failure%s',
@@ -165,15 +165,15 @@ final readonly class SchedulerProvider implements MonitoringProvider
         try {
             $count = $this->taskGateway->countOverdueTasks($overdueBefore);
         } catch (\Throwable $exception) {
-            return $this->reportQueryFailure('OverdueTasks', $exception);
+            return $this->reportQueryFailure('Overdue Tasks', $exception);
         }
 
         if ($count === 0) {
-            return new MonitoringResult('OverdueTasks', true, 'No task is overdue.');
+            return new MonitoringResult('Overdue Tasks', true, 'No task is overdue.');
         }
 
         return new MonitoringResult(
-            'OverdueTasks',
+            'Overdue Tasks',
             false,
             sprintf(
                 '%d task(s) are overdue by more than %d seconds%s',
