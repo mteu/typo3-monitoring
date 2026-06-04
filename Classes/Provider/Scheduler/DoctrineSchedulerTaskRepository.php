@@ -34,8 +34,8 @@ use TYPO3\CMS\Core\Database\Query\QueryBuilder;
  * @author Martin Adler <mteu@mailbox.org>
  * @license GPL-2.0-or-later
  */
-#[AsAlias(SchedulerTaskGateway::class)]
-final readonly class DoctrineSchedulerTaskGateway implements SchedulerTaskGateway
+#[AsAlias(SchedulerTaskRepository::class)]
+final readonly class DoctrineSchedulerTaskRepository implements SchedulerTaskRepository
 {
     private const string TABLE = 'tx_scheduler_task';
 
@@ -68,7 +68,7 @@ final readonly class DoctrineSchedulerTaskGateway implements SchedulerTaskGatewa
     {
         $queryBuilder = $this->createRestrictedQueryBuilder();
         $queryBuilder
-            ->select('uid', 'description')
+            ->select('uid', 'description', 'taskType')
             ->andWhere(
                 $queryBuilder->expr()->neq(
                     'lastexecution_failure',
@@ -84,7 +84,7 @@ final readonly class DoctrineSchedulerTaskGateway implements SchedulerTaskGatewa
     public function getOverdueTaskSample(int $overdueBefore, int $limit): array
     {
         $queryBuilder = $this->createRestrictedQueryBuilder();
-        $queryBuilder->select('uid', 'description');
+        $queryBuilder->select('uid', 'description', 'taskType');
         $this->applyOverdueConstraint($queryBuilder, $overdueBefore);
         $queryBuilder->setMaxResults($limit);
 
@@ -136,19 +136,14 @@ final readonly class DoctrineSchedulerTaskGateway implements SchedulerTaskGatewa
         foreach ($queryBuilder->executeQuery()->fetchAllAssociative() as $row) {
             $uid = $row['uid'] ?? null;
 
-            $uidInt = match (true) {
-                is_int($uid) => $uid,
-                is_string($uid) && $uid === (string)(int)$uid && $uid[0] !== '-' => (int)$uid,
-                default => null,
-            };
-
-            if ($uidInt === null || $uidInt < 1) {
+            if (!is_scalar($uid)) {
                 continue;
             }
 
             $description = is_string($row['description'] ?? null) ? $row['description'] : '';
+            $taskType = is_string($row['taskType']) ? $row['taskType'] : '';
 
-            $tasks[] = new SchedulerTask($uidInt, $description);
+            $tasks[] = new SchedulerTask((int)$uid, $description !== '' ? $description : $taskType);
         }
 
         return $tasks;

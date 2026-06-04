@@ -25,7 +25,7 @@ use mteu\Monitoring\Result\Result;
 use mteu\Monitoring\Tests\Unit\Fixtures\Clock\FrozenClock;
 use mteu\Monitoring\Tests\Unit\Fixtures\Extension\InMemoryExtensionState;
 use mteu\Monitoring\Tests\Unit\Fixtures\Scheduler\InMemorySchedulerHeartbeat;
-use mteu\Monitoring\Tests\Unit\Fixtures\Scheduler\InMemorySchedulerTaskGateway;
+use mteu\Monitoring\Tests\Unit\Fixtures\Scheduler\InMemorySchedulerTaskRepository;
 use mteu\Monitoring\Tests\Unit\Fixtures\Scheduler\InMemoryTaskLinkBuilder;
 use PHPUnit\Framework;
 use PHPUnit\Framework\Attributes\Test;
@@ -104,7 +104,7 @@ final class SchedulerMonitoringTest extends Framework\TestCase
         self::assertCount(2, $result->getSubResults());
 
         $names = array_map(static fn(Result $r): string => $r->getName(), $result->getSubResults());
-        self::assertNotContains('OverdueTasks', $names);
+        self::assertNotContains('Overdue Tasks', $names);
     }
 
     #[Test]
@@ -115,14 +115,14 @@ final class SchedulerMonitoringTest extends Framework\TestCase
         self::assertFalse($result->isHealthy());
 
         $heartbeat = $result->getSubResults()[0];
-        self::assertSame('SchedulerHeartbeat', $heartbeat->getName());
+        self::assertSame('Scheduler', $heartbeat->getName());
         self::assertFalse($heartbeat->isHealthy());
     }
 
     #[Test]
     public function staleHeartbeatReasonStatesTheRealAgeNotASingleSecond(): void
     {
-        // 10000 s -> "2 hours and 46 minutes". The old %d/formatAge bug printed "1 seconds".
+        // 10 000 s = 2 h 46 m 40 s; formatAge drops seconds when minutes > 0 → "2 hours and 46 minutes".
         $result = $this->createProvider(lastRunEnd: self::NOW - 10_000)->execute();
 
         $reason = (string)$result->getSubResults()[0]->getReason();
@@ -143,13 +143,24 @@ final class SchedulerMonitoringTest extends Framework\TestCase
     public function executeReportsUnhealthyWhenTasksFailed(): void
     {
         $result = $this->createProvider(failedCount: 3)->execute();
+        $failed = $result->getSubResults()[1];
+        self::assertStringContainsString('3 tasks', (string)$failed->getReason());
+
+        $result = $this->createProvider(failedCount: 1)->execute();
+        $failed = $result->getSubResults()[1];
+        self::assertStringContainsString('1 task', (string)$failed->getReason());
+
+        self::assertSame('Failed Tasks', $failed->getName());
+        self::assertFalse($failed->isHealthy());
+    }
+
+    #[Test]
+    public function unhealthyResultCarriesTopLevelReason(): void
+    {
+        $result = $this->createProvider(failedCount: 1)->execute();
 
         self::assertFalse($result->isHealthy());
-
-        $failed = $result->getSubResults()[1];
-        self::assertSame('FailedTasks', $failed->getName());
-        self::assertFalse($failed->isHealthy());
-        self::assertStringContainsString('3 task(s)', (string)$failed->getReason());
+        self::assertStringContainsString('One or more scheduler health checks failed. See sub-results for details.', (string)$result->getReason());
     }
 
     #[Test]
@@ -162,15 +173,33 @@ final class SchedulerMonitoringTest extends Framework\TestCase
         )->execute();
 
         $overdue = $result->getSubResults()[2];
-        self::assertSame('OverdueTasks', $overdue->getName());
+        self::assertSame('Overdue Tasks', $overdue->getName());
 
         $reason = (string)$overdue->getReason();
         self::assertStringContainsString('#7 (Cleanup task)', $reason);
         self::assertStringContainsString('https://example.com/typo3/record/edit', $reason);
     }
 
+    #[Test]
+    public function failedReasonIncludesADeepLinkToTheTask(): void
+    {
+        $result = $this->createProvider(
+            failedCount: 1,
+            failedSample: [new SchedulerTask(42, 'Import task')],
+            taskLinkBaseUri: 'https://example.com/typo3/record/edit',
+        )->execute();
+
+        $failed = $result->getSubResults()[1];
+        self::assertSame('Failed Tasks', $failed->getName());
+
+        $reason = (string)$failed->getReason();
+        self::assertStringContainsString('#42 (Import task)', $reason);
+        self::assertStringContainsString('https://example.com/typo3/record/edit', $reason);
+    }
+
     /**
      * @param list<SchedulerTask> $overdueSample
+     * @param list<SchedulerTask> $failedSample
      */
     private function createProvider(
         ?SchedulerProviderConfiguration $configuration = null,
@@ -178,14 +207,16 @@ final class SchedulerMonitoringTest extends Framework\TestCase
         int $failedCount = 0,
         int $overdueCount = 0,
         array $overdueSample = [],
+        array $failedSample = [],
         bool $schedulerLoaded = true,
         ?string $taskLinkBaseUri = null,
     ): SchedulerProvider {
         return new SchedulerProvider(
             $configuration ?? new SchedulerProviderConfiguration(),
-            new InMemorySchedulerTaskGateway(
+            new InMemorySchedulerTaskRepository(
                 failedCount: $failedCount,
                 overdueCount: $overdueCount,
+                failedSample: $failedSample,
                 overdueSample: $overdueSample,
             ),
             new InMemorySchedulerHeartbeat($lastRunEnd),

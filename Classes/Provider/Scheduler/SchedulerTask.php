@@ -25,25 +25,19 @@ namespace mteu\Monitoring\Provider\Scheduler;
  */
 final readonly class SchedulerTask
 {
-    /**
-     * @param positive-int $uid
-     */
     public function __construct(
         public int $uid,
-        public string $description,
-    ) {
-        if ($uid < 1) {
-            throw new \InvalidArgumentException(
-                sprintf('Scheduler task uid must be a positive integer, got %d.', $uid),
-                1717400000,
-            );
-        }
-    }
+        public string $label,
+    ) {}
 
-    public function label(): string
+    public function getLabel(): string
     {
-        $description = $this->description !== '' ? $this->description : 'no description';
+        $description = $this->label !== '' ? $this->label : 'no description';
 
-        return sprintf('#%d (%s)', $this->uid, $description);
+        return sprintf(
+            '#%d (%s)',
+            $this->uid,
+            $description,
+        );
     }
 }

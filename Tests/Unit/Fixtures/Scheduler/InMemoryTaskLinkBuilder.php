@@ -39,4 +39,19 @@ final readonly class InMemoryTaskLinkBuilder implements SchedulerTaskLinkBuilder
 
         return $this->baseUri . (str_contains($this->baseUri, '?') ? '&' : '?') . 'uid=' . $uid;
     }
+
+    public function renderEditLink(int $uid, string $label): ?string
+    {
+        $href = $this->buildEditLink($uid);
+
+        if ($href === null) {
+            return null;
+        }
+
+        return sprintf(
+            '<a href="%s">%s</a>',
+            $this->buildEditLink($uid),
+            $label,
+        );
+    }
 }

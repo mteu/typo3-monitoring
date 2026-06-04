@@ -26,5 +26,6 @@ namespace mteu\Monitoring\Provider\Scheduler;
  */
 interface SchedulerTaskLinkBuilder
 {
-    public function buildEditLink(int $uid): ?string;
+    public function renderEditLink(int $uid, string $label): ?string;
+
 }

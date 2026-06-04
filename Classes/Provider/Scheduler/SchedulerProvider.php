@@ -49,7 +49,7 @@ final readonly class SchedulerProvider implements MonitoringProvider
 
     public function __construct(
         private SchedulerProviderConfiguration $configuration,
-        private SchedulerTaskGateway $taskGateway,
+        private SchedulerTaskRepository $taskGateway,
         private SchedulerHeartbeat $heartbeat,
         private Clock $clock,
         private SchedulerTaskLinkBuilder $linkBuilder,
@@ -151,9 +151,10 @@ final readonly class SchedulerProvider implements MonitoringProvider
             'Failed Tasks',
             false,
             sprintf(
-                '%d task(s) reported an execution failure%s',
+                '%d task%s reported an execution failure%s',
                 $count,
-                $this->describeSample($this->safeFailedSample()),
+                $count > 1 ? 's' : '',
+                $this->renderSampleList($this->safeFailedSample()),
             ),
         );
     }
@@ -176,10 +177,11 @@ final readonly class SchedulerProvider implements MonitoringProvider
             'Overdue Tasks',
             false,
             sprintf(
-                '%d task(s) are overdue by more than %d seconds%s',
+                '%d task%s are overdue by more than %d seconds%s',
                 $count,
+                $count > 1 ? 's' : '',
                 $this->configuration->overdueThreshold,
-                $this->describeSample($this->safeOverdueSample($overdueBefore)),
+                $this->renderSampleList($this->safeOverdueSample($overdueBefore)),
             ),
         );
     }
@@ -225,14 +227,10 @@ final readonly class SchedulerProvider implements MonitoringProvider
         $labels = [];
 
         foreach ($tasks as $task) {
-            $label = $task->label();
-            $uri = $this->linkBuilder->buildEditLink($task->uid);
-
-            if ($uri !== null) {
-                $label .= ' ' . $uri;
-            }
-
-            $labels[] = $label;
+            $labels[] = $this->linkBuilder->renderEditLink(
+                $task->uid,
+                $task->getLabel()
+            ) ?? $task->getLabel();
         }
 
         return $labels;
@@ -241,13 +239,18 @@ final readonly class SchedulerProvider implements MonitoringProvider
     /**
      * @param list<string> $sample
      */
-    private function describeSample(array $sample): string
+    private function renderSampleList(array $sample): string
     {
         if ($sample === []) {
             return '.';
         }
 
-        return ': ' . implode(', ', $sample) . '.';
+        $items = array_map(
+            static fn(string $item): string => '<li>' . $item . '</li>',
+            $sample,
+        );
+
+        return ':<ul>' . implode('', $items) . '</ul>';
     }
 
     private function reportQueryFailure(string $name, \Throwable $exception): Result

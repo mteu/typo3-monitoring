@@ -24,7 +24,7 @@ namespace mteu\Monitoring\Provider\Scheduler;
  * @author Martin Adler <mteu@mailbox.org>
  * @license GPL-2.0-or-later
  */
-interface SchedulerTaskGateway
+interface SchedulerTaskRepository
 {
     public function countFailedTasks(): int;
 

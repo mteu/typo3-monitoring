@@ -18,7 +18,7 @@ declare(strict_types=1);
 namespace mteu\Monitoring\Tests\Unit\Fixtures\Scheduler;
 
 use mteu\Monitoring\Provider\Scheduler\SchedulerTask;
-use mteu\Monitoring\Provider\Scheduler\SchedulerTaskGateway;
+use mteu\Monitoring\Provider\Scheduler\SchedulerTaskRepository;
 
 /**
  * InMemorySchedulerTaskGateway.
@@ -26,7 +26,7 @@ use mteu\Monitoring\Provider\Scheduler\SchedulerTaskGateway;
  * @author Martin Adler <mteu@mailbox.org>
  * @license GPL-2.0-or-later
  */
-final readonly class InMemorySchedulerTaskGateway implements SchedulerTaskGateway
+final readonly class InMemorySchedulerTaskRepository implements SchedulerTaskRepository
 {
     /**
      * @param list<SchedulerTask> $failedSample
