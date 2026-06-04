@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "cf00ec8378a6fe9c894ebd49125f9ff3",
+    "content-hash": "9096df9b8d0e04aca0d5429750d73d0d",
     "packages": [
         {
             "name": "bacon/bacon-qr-code",
@@ -733,25 +733,26 @@
         },
         {
             "name": "guzzlehttp/guzzle",
-            "version": "7.10.6",
+            "version": "7.11.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/guzzle/guzzle.git",
-                "reference": "e7412b3180912c01650cc66647f18c1d1cbe9b94"
+                "reference": "c987f8ce84b8434fa430795eca0f3430663da72b"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/guzzle/guzzle/zipball/e7412b3180912c01650cc66647f18c1d1cbe9b94",
-                "reference": "e7412b3180912c01650cc66647f18c1d1cbe9b94",
+                "url": "https://api.github.com/repos/guzzle/guzzle/zipball/c987f8ce84b8434fa430795eca0f3430663da72b",
+                "reference": "c987f8ce84b8434fa430795eca0f3430663da72b",
                 "shasum": ""
             },
             "require": {
                 "ext-json": "*",
-                "guzzlehttp/promises": "^2.3",
-                "guzzlehttp/psr7": "^2.8",
+                "guzzlehttp/promises": "^2.5",
+                "guzzlehttp/psr7": "^2.11",
                 "php": "^7.2.5 || ^8.0",
                 "psr/http-client": "^1.0",
-                "symfony/deprecation-contracts": "^2.2 || ^3.0"
+                "symfony/deprecation-contracts": "^2.5 || ^3.0",
+                "symfony/polyfill-php80": "^1.24"
             },
             "provide": {
                 "psr/http-client-implementation": "1.0"
@@ -840,7 +841,7 @@
             ],
             "support": {
                 "issues": "https://github.com/guzzle/guzzle/issues",
-                "source": "https://github.com/guzzle/guzzle/tree/7.10.6"
+                "source": "https://github.com/guzzle/guzzle/tree/7.11.0"
             },
             "funding": [
                 {
@@ -856,24 +857,25 @@
                     "type": "tidelift"
                 }
             ],
-            "time": "2026-06-01T13:06:22+00:00"
+            "time": "2026-06-02T12:40:51+00:00"
         },
         {
             "name": "guzzlehttp/promises",
-            "version": "2.4.1",
+            "version": "2.5.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/guzzle/promises.git",
-                "reference": "09e8a212562fb1fb6a512c4156ed71525969d6c2"
+                "reference": "4360e982f87f5f258bf872d094647791db2f4c8e"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/guzzle/promises/zipball/09e8a212562fb1fb6a512c4156ed71525969d6c2",
-                "reference": "09e8a212562fb1fb6a512c4156ed71525969d6c2",
+                "url": "https://api.github.com/repos/guzzle/promises/zipball/4360e982f87f5f258bf872d094647791db2f4c8e",
+                "reference": "4360e982f87f5f258bf872d094647791db2f4c8e",
                 "shasum": ""
             },
             "require": {
-                "php": "^7.2.5 || ^8.0"
+                "php": "^7.2.5 || ^8.0",
+                "symfony/deprecation-contracts": "^2.5 || ^3.0"
             },
             "require-dev": {
                 "bamarni/composer-bin-plugin": "^1.8.2",
@@ -923,7 +925,7 @@
             ],
             "support": {
                 "issues": "https://github.com/guzzle/promises/issues",
-                "source": "https://github.com/guzzle/promises/tree/2.4.1"
+                "source": "https://github.com/guzzle/promises/tree/2.5.0"
             },
             "funding": [
                 {
@@ -939,27 +941,29 @@
                     "type": "tidelift"
                 }
             ],
-            "time": "2026-05-20T22:57:30+00:00"
+            "time": "2026-06-02T12:23:43+00:00"
         },
         {
             "name": "guzzlehttp/psr7",
-            "version": "2.10.4",
+            "version": "2.11.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/guzzle/psr7.git",
-                "reference": "d2a1a094e396da8957e797489fddaf860c340cfc"
+                "reference": "bbb5e61349fa5cb822b3e87842b951088b76b81f"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/guzzle/psr7/zipball/d2a1a094e396da8957e797489fddaf860c340cfc",
-                "reference": "d2a1a094e396da8957e797489fddaf860c340cfc",
+                "url": "https://api.github.com/repos/guzzle/psr7/zipball/bbb5e61349fa5cb822b3e87842b951088b76b81f",
+                "reference": "bbb5e61349fa5cb822b3e87842b951088b76b81f",
                 "shasum": ""
             },
             "require": {
                 "php": "^7.2.5 || ^8.0",
                 "psr/http-factory": "^1.0",
                 "psr/http-message": "^1.1 || ^2.0",
-                "ralouphie/getallheaders": "^3.0"
+                "ralouphie/getallheaders": "^3.0",
+                "symfony/deprecation-contracts": "^2.5 || ^3.0",
+                "symfony/polyfill-php80": "^1.24"
             },
             "provide": {
                 "psr/http-factory-implementation": "1.0",
@@ -1040,7 +1044,7 @@
             ],
             "support": {
                 "issues": "https://github.com/guzzle/psr7/issues",
-                "source": "https://github.com/guzzle/psr7/tree/2.10.4"
+                "source": "https://github.com/guzzle/psr7/tree/2.11.0"
             },
             "funding": [
                 {
@@ -1056,7 +1060,7 @@
                     "type": "tidelift"
                 }
             ],
-            "time": "2026-05-29T12:59:07+00:00"
+            "time": "2026-06-02T12:30:48+00:00"
         },
         {
             "name": "lolli42/finediff",
@@ -3955,6 +3959,90 @@
             "time": "2026-05-26T12:51:13+00:00"
         },
         {
+            "name": "symfony/polyfill-php80",
+            "version": "v1.37.0",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/symfony/polyfill-php80.git",
+                "reference": "dfb55726c3a76ea3b6459fcfda1ec2d80a682411"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/symfony/polyfill-php80/zipball/dfb55726c3a76ea3b6459fcfda1ec2d80a682411",
+                "reference": "dfb55726c3a76ea3b6459fcfda1ec2d80a682411",
+                "shasum": ""
+            },
+            "require": {
+                "php": ">=7.2"
+            },
+            "type": "library",
+            "extra": {
+                "thanks": {
+                    "url": "https://github.com/symfony/polyfill",
+                    "name": "symfony/polyfill"
+                }
+            },
+            "autoload": {
+                "files": [
+                    "bootstrap.php"
+                ],
+                "psr-4": {
+                    "Symfony\\Polyfill\\Php80\\": ""
+                },
+                "classmap": [
+                    "Resources/stubs"
+                ]
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Ion Bazan",
+                    "email": "ion.bazan@gmail.com"
+                },
+                {
+                    "name": "Nicolas Grekas",
+                    "email": "p@tchwork.com"
+                },
+                {
+                    "name": "Symfony Community",
+                    "homepage": "https://symfony.com/contributors"
+                }
+            ],
+            "description": "Symfony polyfill backporting some PHP 8.0+ features to lower PHP versions",
+            "homepage": "https://symfony.com",
+            "keywords": [
+                "compatibility",
+                "polyfill",
+                "portable",
+                "shim"
+            ],
+            "support": {
+                "source": "https://github.com/symfony/polyfill-php80/tree/v1.37.0"
+            },
+            "funding": [
+                {
+                    "url": "https://symfony.com/sponsor",
+                    "type": "custom"
+                },
+                {
+                    "url": "https://github.com/fabpot",
+                    "type": "github"
+                },
+                {
+                    "url": "https://github.com/nicolas-grekas",
+                    "type": "github"
+                },
+                {
+                    "url": "https://tidelift.com/funding/github/packagist/symfony/symfony",
+                    "type": "tidelift"
+                }
+            ],
+            "time": "2026-04-10T16:19:22+00:00"
+        },
+        {
             "name": "symfony/polyfill-php83",
             "version": "v1.38.1",
             "source": {
@@ -5806,16 +5894,16 @@
         },
         {
             "name": "eliashaeussler/version-bumper",
-            "version": "4.0.2",
+            "version": "4.0.3",
             "source": {
                 "type": "git",
                 "url": "https://github.com/eliashaeussler/version-bumper.git",
-                "reference": "f9a809acf0a8e12916edde330f7fb97eb1800489"
+                "reference": "a519b7b12d40c19a9bcec38f7652b923bfb00d03"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/eliashaeussler/version-bumper/zipball/f9a809acf0a8e12916edde330f7fb97eb1800489",
-                "reference": "f9a809acf0a8e12916edde330f7fb97eb1800489",
+                "url": "https://api.github.com/repos/eliashaeussler/version-bumper/zipball/a519b7b12d40c19a9bcec38f7652b923bfb00d03",
+                "reference": "a519b7b12d40c19a9bcec38f7652b923bfb00d03",
                 "shasum": ""
             },
             "require": {
@@ -5835,7 +5923,7 @@
             },
             "require-dev": {
                 "armin/editorconfig-cli": "^2.0",
-                "composer/composer": "~2.2.28 || ~2.9.8",
+                "composer/composer": "~2.2.28 || ~2.10.0",
                 "eliashaeussler/php-cs-fixer-config": "^3.0",
                 "eliashaeussler/phpstan-config": "^4.0",
                 "eliashaeussler/rector-config": "^4.0",
@@ -5871,9 +5959,9 @@
             "description": "Composer plugin to bump project versions during release preparations",
             "support": {
                 "issues": "https://github.com/eliashaeussler/version-bumper/issues",
-                "source": "https://github.com/eliashaeussler/version-bumper/tree/4.0.2"
+                "source": "https://github.com/eliashaeussler/version-bumper/tree/4.0.3"
             },
-            "time": "2026-05-28T14:54:12+00:00"
+            "time": "2026-06-04T05:37:13+00:00"
         },
         {
             "name": "ergebnis/composer-normalize",
@@ -6340,6 +6428,176 @@
                 "source": "https://github.com/ergebnis/json-schema-validator"
             },
             "time": "2025-09-06T11:37:35+00:00"
+        },
+        {
+            "name": "helhum/config-loader",
+            "version": "v0.12.6",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/helhum/config-loader.git",
+                "reference": "4538ad189ebbb319d97697f350401150dd7a6155"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/helhum/config-loader/zipball/4538ad189ebbb319d97697f350401150dd7a6155",
+                "reference": "4538ad189ebbb319d97697f350401150dd7a6155",
+                "shasum": ""
+            },
+            "require": {
+                "php": ">=7.2"
+            },
+            "require-dev": {
+                "php-parallel-lint/php-parallel-lint": "^1.2",
+                "phpunit/phpunit": "^8.5",
+                "symfony/yaml": "^2.8 || ^3.3 || ^4.0 || ^5.0 || ^6.0"
+            },
+            "suggest": {
+                "ext-yaml": "For improved performance when parsing yaml files you should use the PECL YAML Parser php extension",
+                "symfony/yaml": "To be able to parse yaml files, you will need symfony/yaml"
+            },
+            "type": "library",
+            "extra": {
+                "branch-alias": {
+                    "dev-main": "1.0.x-dev"
+                }
+            },
+            "autoload": {
+                "psr-4": {
+                    "Helhum\\ConfigLoader\\": "src"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "GPL-2.0-or-later"
+            ],
+            "description": "Generic config loader with context and environment support.",
+            "support": {
+                "issues": "https://github.com/helhum/config-loader/issues",
+                "source": "https://github.com/helhum/config-loader/tree/v0.12.6"
+            },
+            "funding": [
+                {
+                    "url": "https://www.paypal.me/helhum/19.99",
+                    "type": "custom"
+                },
+                {
+                    "url": "https://github.com/helhum",
+                    "type": "github"
+                }
+            ],
+            "time": "2024-12-16T10:48:26+00:00"
+        },
+        {
+            "name": "helhum/typo3-console",
+            "version": "v9.0.0",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/TYPO3-Console/TYPO3-Console.git",
+                "reference": "a4ede24b93c69e5e05309c1cf47c598c4cda37df"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/TYPO3-Console/TYPO3-Console/zipball/a4ede24b93c69e5e05309c1cf47c598c4cda37df",
+                "reference": "a4ede24b93c69e5e05309c1cf47c598c4cda37df",
+                "shasum": ""
+            },
+            "require": {
+                "composer-runtime-api": "^2.1",
+                "helhum/config-loader": ">=0.9 <0.13",
+                "php": ">=8.2",
+                "symfony/console": "^5.4 || ^6.4 || ^7.0",
+                "symfony/process": "^5.4 || ^6.4 || ^7.0",
+                "typo3/cms-backend": "^12.4.18 || ^13.1 || ^14.3",
+                "typo3/cms-composer-installers": "^4.0@rc || >=5.0",
+                "typo3/cms-core": "^12.4.18 || ^13.1 || ^14.3",
+                "typo3/cms-extbase": "^12.4.18 || ^13.1 || ^14.3",
+                "typo3/cms-fluid": "^12.4.18 || ^13.1 || ^14.3",
+                "typo3/cms-frontend": "^12.4.18 || ^13.1 || ^14.3",
+                "typo3/cms-install": "^12.4.18 || ^13.1 || ^14.3"
+            },
+            "replace": {
+                "typo3-ter/typo3-console": "self.version"
+            },
+            "require-dev": {
+                "dg/bypass-finals": "^1.4",
+                "friendsofphp/php-cs-fixer": "^3.57",
+                "paragonie/sodium_compat_ext_sodium": "^1.0",
+                "php-parallel-lint/php-parallel-lint": "^1.2",
+                "phpunit/phpunit": "^9.5.25",
+                "symfony/expression-language": "^5.4 || ^6.4 || ^7.0",
+                "symfony/filesystem": "^5.4 || ^6.4 || ^7.0",
+                "typo3-console/create-reference-command": "^1.0",
+                "typo3-console/sql-command": "^1.0",
+                "typo3/cms-extensionmanager": "^12.4.18 || ^13.1 || ^14.3",
+                "typo3/cms-filemetadata": "^12.4.18 || ^13.1 || ^14.3",
+                "typo3/cms-fluid-styled-content": "^12.4.18 || ^13.1 || ^14.3",
+                "typo3/cms-recordlist": "^12.4.18 || ^13.1 || ^14.3",
+                "typo3/cms-reports": "^12.4.18 || ^13.1 || ^14.3"
+            },
+            "type": "typo3-cms-extension",
+            "extra": {
+                "typo3/cms": {
+                    "Package": {
+                        "protected": true,
+                        "serviceProvider": "Helhum\\Typo3Console\\ServiceProvider",
+                        "partOfMinimalUsableSystem": true
+                    },
+                    "version": "9.0.0",
+                    "extension-key": "typo3_console",
+                    "providesPackages": {
+                        "symfony/console": "Resources/Private/ExtensionArtifacts/Libraries/",
+                        "helhum/config-loader": ""
+                    }
+                },
+                "branch-alias": {
+                    "dev-main": "9.0.x-dev"
+                }
+            },
+            "autoload": {
+                "psr-4": {
+                    "Helhum\\Typo3Console\\": [
+                        "Classes/Console/",
+                        "Classes/Compatibility/"
+                    ]
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "GPL-2.0-or-later"
+            ],
+            "authors": [
+                {
+                    "name": "Helmut Hummel",
+                    "email": "info@helhum.io",
+                    "homepage": "https://helhum.io",
+                    "role": "Developer"
+                }
+            ],
+            "description": "A reliable and powerful command line interface for TYPO3 CMS",
+            "homepage": "https://insight.helhum.io/post/104528981610/about-the-beauty-and-power-of-typo3-console",
+            "keywords": [
+                "cli",
+                "command",
+                "commandline",
+                "console",
+                "typo3"
+            ],
+            "support": {
+                "docs": "https://docs.typo3.org/p/helhum/typo3-console/main/en-us/",
+                "issues": "https://github.com/TYPO3-Console/TYPO3-Console/issues",
+                "source": "https://github.com/TYPO3-Console/TYPO3-Console"
+            },
+            "funding": [
+                {
+                    "url": "https://www.paypal.me/helhum/19.99",
+                    "type": "custom"
+                },
+                {
+                    "url": "https://github.com/helhum",
+                    "type": "github"
+                }
+            ],
+            "time": "2026-05-19T11:25:15+00:00"
         },
         {
             "name": "justinrainbow/json-schema",
@@ -7581,12 +7839,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/Roave/SecurityAdvisories.git",
-                "reference": "e87a6b92f5a78dab4061c1c933a8ada5a88d569e"
+                "reference": "dbed7be7bb408eef2d3812a0d173671940f92a9a"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/Roave/SecurityAdvisories/zipball/e87a6b92f5a78dab4061c1c933a8ada5a88d569e",
-                "reference": "e87a6b92f5a78dab4061c1c933a8ada5a88d569e",
+                "url": "https://api.github.com/repos/Roave/SecurityAdvisories/zipball/dbed7be7bb408eef2d3812a0d173671940f92a9a",
+                "reference": "dbed7be7bb408eef2d3812a0d173671940f92a9a",
                 "shasum": ""
             },
             "conflict": {
@@ -7649,7 +7907,7 @@
                 "azuracast/azuracast": "<=0.23.5",
                 "b13/seo_basics": "<0.8.2",
                 "backdrop/backdrop": "<=1.32",
-                "backpack/crud": "<3.4.9",
+                "backpack/crud": "<4.0.63|>=4.1,<4.1.69|>=5,<5.0.13",
                 "backpack/filemanager": "<2.0.2|>=3,<3.0.9",
                 "bacula-web/bacula-web": "<9.7.1",
                 "badaso/core": "<=2.9.11",
@@ -7817,6 +8075,7 @@
                 "drupal/umami_analytics": "<1.0.1",
                 "duncanmcclean/guest-entries": "<3.1.2",
                 "dweeves/magmi": "<=0.7.24",
+                "easycorp/easyadmin-bundle": ">=4,<4.29.10|>=5,<5.0.10",
                 "ec-cube/ec-cube": "<2.4.4|>=2.11,<=2.17.1|>=3,<=3.0.18.0-patch4|>=4,<=4.3.1",
                 "ecodev/newsletter": "<=4",
                 "ectouch/ectouch": "<=2.7.2",
@@ -7900,13 +8159,13 @@
                 "friendsoftypo3/tt-address": "<8.1.2|>=9,<9.1.1|>=10,<10.0.1",
                 "froala/wysiwyg-editor": "<=4.3",
                 "frosh/adminer-platform": "<2.2.1",
-                "froxlor/froxlor": "<=2.3.6",
+                "froxlor/froxlor": "<2.3.7",
                 "frozennode/administrator": "<=5.0.12",
                 "fuel/core": "<1.8.1",
                 "funadmin/funadmin": "<=7.1.0.0-RC6",
                 "gaoming13/wechat-php-sdk": "<=1.10.2",
                 "genix/cms": "<=1.1.11",
-                "georgringer/news": "<11.4.4|>=12,<12.3.2|>=13,<13.0.2|>=14,<14.0.3",
+                "georgringer/news": "<10.0.4|>=11,<11.4.4|>=12,<12.3.2|>=13,<13.0.2|>=14,<14.0.3",
                 "geshi/geshi": "<=1.0.9.1",
                 "getformwork/formwork": "<=2.3.3",
                 "getgrav/grav": "<=2.0.0.0-RC1",
@@ -7960,6 +8219,7 @@
                 "illuminate/cookie": ">=4,<=4.0.11|>=4.1,<6.18.31|>=7,<7.22.4",
                 "illuminate/database": "<6.20.26|>=7,<7.30.5|>=8,<8.40",
                 "illuminate/encryption": ">=4,<=4.0.11|>=4.1,<=4.1.31|>=4.2,<=4.2.22|>=5,<=5.0.35|>=5.1,<=5.1.46|>=5.2,<=5.2.45|>=5.3,<=5.3.31|>=5.4,<=5.4.36|>=5.5,<5.5.40|>=5.6,<5.6.15",
+                "illuminate/mail": ">=9,<12.60|>=13,<13.10",
                 "illuminate/view": "<6.20.42|>=7,<7.30.6|>=8,<8.75",
                 "imdbphp/imdbphp": "<=5.1.1",
                 "impresscms/impresscms": "<=1.4.5",
@@ -8028,7 +8288,7 @@
                 "lara-zeus/artemis": ">=1,<=1.0.6",
                 "lara-zeus/dynamic-dashboard": ">=3,<=3.0.1",
                 "laravel/fortify": "<1.11.1",
-                "laravel/framework": "<10.48.29|>=11,<11.44.1|>=12,<12.1.1",
+                "laravel/framework": "<12.60|>=13,<13.10",
                 "laravel/laravel": ">=5.4,<5.4.22",
                 "laravel/passport": ">=13,<13.7.1",
                 "laravel/pulse": "<1.3.1",
@@ -8662,7 +8922,7 @@
                     "type": "tidelift"
                 }
             ],
-            "time": "2026-05-31T20:27:34+00:00"
+            "time": "2026-06-03T22:45:07+00:00"
         },
         {
             "name": "sebastian/cli-parser",
@@ -10252,6 +10512,83 @@
                 }
             ],
             "description": "TYPO3 CMS Frontend",
+            "homepage": "https://typo3.community/",
+            "support": {
+                "chat": "https://typo3.community/meet/slack/",
+                "docs": "https://docs.typo3.org/",
+                "forum": "https://talk.typo3.org/",
+                "issues": "https://forge.typo3.org/issues/",
+                "rss": "https://news.typo3.com/rss/",
+                "security": "https://typo3.org/security/",
+                "source": "https://github.com/TYPO3/typo3/"
+            },
+            "funding": [
+                {
+                    "url": "https://typo3.org/membership",
+                    "type": "membership"
+                }
+            ],
+            "time": "2026-05-26T09:37:47+00:00"
+        },
+        {
+            "name": "typo3/cms-install",
+            "version": "v14.3.2",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/TYPO3-CMS/install.git",
+                "reference": "033b815b778af0a6bd1a55fd8a8755dc7f42d9e4"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/TYPO3-CMS/install/zipball/033b815b778af0a6bd1a55fd8a8755dc7f42d9e4",
+                "reference": "033b815b778af0a6bd1a55fd8a8755dc7f42d9e4",
+                "shasum": ""
+            },
+            "require": {
+                "doctrine/dbal": "~4.4.3",
+                "guzzlehttp/promises": "^2.0.3",
+                "nikic/php-parser": "^5.4.0",
+                "symfony/finder": "^7.4.8",
+                "symfony/http-foundation": "^7.4.8",
+                "typo3/cms-core": "14.3.2",
+                "typo3/cms-extbase": "14.3.2",
+                "typo3/cms-fluid": "14.3.2"
+            },
+            "conflict": {
+                "typo3/cms": "*"
+            },
+            "type": "typo3-cms-framework",
+            "extra": {
+                "typo3/cms": {
+                    "Package": {
+                        "protected": true,
+                        "serviceProvider": "TYPO3\\CMS\\Install\\ServiceProvider",
+                        "partOfFactoryDefault": true,
+                        "partOfMinimalUsableSystem": true
+                    },
+                    "extension-key": "install"
+                },
+                "branch-alias": {
+                    "dev-main": "14.3.x-dev"
+                }
+            },
+            "autoload": {
+                "psr-4": {
+                    "TYPO3\\CMS\\Install\\": "Classes/"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "GPL-2.0-or-later"
+            ],
+            "authors": [
+                {
+                    "name": "TYPO3 Core Team",
+                    "email": "typo3cms@typo3.org",
+                    "role": "Developer"
+                }
+            ],
+            "description": "TYPO3 CMS Install Tool - The Install Tool is used for installation, upgrade, system administration and setup tasks.",
             "homepage": "https://typo3.community/",
             "support": {
                 "chat": "https://typo3.community/meet/slack/",

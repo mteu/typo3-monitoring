@@ -6,5 +6,5 @@
 /packages
 /tailor-version-artefact
 /var
-/.ddev
+/.ddev/*
 !/.ddev/config.yaml
