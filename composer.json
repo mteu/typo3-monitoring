@@ -27,9 +27,11 @@
 		"composer/class-map-generator": "^1.1",
 		"eliashaeussler/version-bumper": "^4.0",
 		"ergebnis/composer-normalize": "^2.47",
+		"helhum/typo3-console": "^9.0",
 		"phpunit/phpcov": "^11.0.0 || ^12.0.0",
 		"phpunit/phpunit": "^12.1 || ^13.1",
 		"roave/security-advisories": "dev-latest",
+		"typo3/cms-styleguide": "^14.3",
 		"typo3/testing-framework": "^9.2"
 	},
 	"autoload": {

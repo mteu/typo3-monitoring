@@ -17,24 +17,30 @@ declare(strict_types=1);
 
 namespace mteu\Monitoring\Backend\Controller;
 
-use mteu\Monitoring\Authorization\Authorizer;
-use mteu\Monitoring\Authorization\TokenAuthorizer;
 use mteu\Monitoring\Cache\MonitoringCacheManager;
 use mteu\Monitoring\Configuration\MonitoringConfiguration;
 use mteu\Monitoring\Handler\MonitoringExecutionHandler;
 use mteu\Monitoring\Provider\CacheableMonitoringProvider;
+use mteu\Monitoring\Provider\MiddlewareStatusProvider;
 use mteu\Monitoring\Provider\MonitoringProvider;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use Symfony\Component\DependencyInjection\Attribute\AutowireIterator;
 use TYPO3\CMS\Backend\Attribute\AsController;
 use TYPO3\CMS\Backend\Routing\UriBuilder;
+use TYPO3\CMS\Backend\Template\Components\ButtonBar;
+use TYPO3\CMS\Backend\Template\Components\Buttons\LinkButton;
+use TYPO3\CMS\Backend\Template\ModuleTemplate;
 use TYPO3\CMS\Backend\Template\ModuleTemplateFactory;
-use TYPO3\CMS\Core\Crypto\HashService;
+use TYPO3\CMS\Core\Authentication\BackendUserAuthentication;
 use TYPO3\CMS\Core\FormProtection\FormProtectionFactory;
 use TYPO3\CMS\Core\Http\AllowedMethodsTrait;
 use TYPO3\CMS\Core\Http\Error\MethodNotAllowedException;
 use TYPO3\CMS\Core\Http\NormalizedParams;
+use TYPO3\CMS\Core\Imaging\IconFactory;
+use TYPO3\CMS\Core\Imaging\IconSize;
+use TYPO3\CMS\Core\Localization\LanguageService;
+use TYPO3\CMS\Core\Localization\LanguageServiceFactory;
 
 /**
  * MonitoringController.
@@ -47,23 +53,21 @@ final readonly class MonitoringController
 {
     use AllowedMethodsTrait;
 
+    private const string LOCALLANG_FILE = 'LLL:EXT:monitoring/Resources/Private/Language/locallang.be.xlf';
     private const string FLASHMESSAGE_QUEUE_IDENTIFIER = 'ext_monitoring_message_queue';
 
     public function __construct(
         /** @var MonitoringProvider[] $monitoringProviders */
         #[AutowireIterator(tag: 'monitoring.provider')]
         private iterable $monitoringProviders,
-
-        /** @var Authorizer[] $authorizers */
-        #[AutowireIterator(tag: 'monitoring.authorizer', defaultPriorityMethod: 'getPriority')]
-        private iterable $authorizers,
         private ModuleTemplateFactory $moduleTemplateFactory,
         private MonitoringExecutionHandler $executionHandler,
         private MonitoringCacheManager $cacheManager,
         private MonitoringConfiguration $monitoringConfiguration,
         private UriBuilder $uriBuilder,
-        private HashService $hashService,
         private FormProtectionFactory $formProtectionFactory,
+        private IconFactory $iconFactory,
+        private LanguageServiceFactory $languageServiceFactory,
     ) {}
 
     /**
@@ -78,9 +82,9 @@ final readonly class MonitoringController
         /** @var NormalizedParams $params */
         $params = $request->getAttribute('normalizedParams');
 
+        $this->registerDocHeaderButtons($template);
+
         $templateVariables = [
-            'authorizers' => $this->buildAuthorizerTemplateVariables(),
-            'authorizerInterface' => Authorizer::class,
             'endpoint' => $params->getRequestHost() . $this->monitoringConfiguration->endpoint,
             'providers' => $this->buildProviderTemplateVariables($request),
             'providerInterface' => MonitoringProvider::class,
@@ -93,30 +97,17 @@ final readonly class MonitoringController
             ->renderResponse('Backend/Monitoring');
     }
 
-    /**
-     * @return array<class-string, array{isActive: bool, priority: int}>
-     */
-    private function collectAuthorizerStatuses(): array
+    private function registerDocHeaderButtons(ModuleTemplate $template): void
     {
-        $statuses = [];
+        $buttonBar = $template->getDocHeaderComponent()->getButtonBar();
 
-        foreach ($this->authorizers as $authorizer) {
-            $statuses[$authorizer::class] = [
-                'isActive' => $authorizer->isActive(),
-                'priority' => $authorizer::getPriority(),
-            ];
-        }
+        $authorizerButton = (new LinkButton())
+            ->setHref((string)$this->uriBuilder->buildUriFromRoute('monitoring.authorizers'))
+            ->setTitle($this->getLanguageService()->sL(self::LOCALLANG_FILE . ':authorizers.title'))
+            ->setShowLabelText(true)
+            ->setIcon($this->iconFactory->getIcon('actions-lock', IconSize::SMALL));
 
-        return $statuses;
-    }
-
-    private function generateAuthToken(string $secret): string
-    {
-        if ($secret === '') {
-            return '';
-        }
-
-        return $this->hashService->hmac($this->monitoringConfiguration->endpoint, $secret);
+        $buttonBar->addButton($authorizerButton, ButtonBar::BUTTON_POSITION_LEFT);
     }
 
     /**
@@ -140,6 +131,12 @@ final readonly class MonitoringController
         $providerTemplateVariables = [];
 
         foreach ($this->monitoringProviders as $monitoringProvider) {
+
+            // Don't execute and display this meta-provider in the backend.
+            if ($monitoringProvider instanceof MiddlewareStatusProvider) {
+                continue;
+            }
+
             $isActive = $monitoringProvider->isActive();
 
             $providerTemplateVariables[$monitoringProvider::class] = [
@@ -180,35 +177,14 @@ final readonly class MonitoringController
         return $providerTemplateVariables;
     }
 
-    /**
-     * Process authorizers and build template variables
-     *
-     * @return array{}|non-empty-array<class-string, array{authHeaderName: string, authToken?: string}|array{isActive: bool, priority: int, authHeaderName?: string, authToken?: string}>
-     */
-    private function buildAuthorizerTemplateVariables(): array
+    private function getLanguageService(): LanguageService
     {
-        $templateVariables = $this->collectAuthorizerStatuses();
+        $backendUser = $GLOBALS['BE_USER'] ?? null;
 
-        if ($templateVariables === []) {
-            return [];
+        if ($backendUser instanceof BackendUserAuthentication) {
+            return $this->languageServiceFactory->createFromUserPreferences($backendUser);
         }
 
-        $tokenConfig = $this->monitoringConfiguration->tokenAuthorizerConfiguration;
-
-        if (!$tokenConfig->isEnabled()) {
-            return $templateVariables;
-        }
-
-        $templateVariables[TokenAuthorizer::class]['authHeaderName'] = $tokenConfig->authHeaderName;
-
-        $secret = $tokenConfig->secret;
-
-        if ($secret === '') {
-            return $templateVariables;
-        }
-
-        $templateVariables[TokenAuthorizer::class]['authToken'] = $this->generateAuthToken($tokenConfig->secret);
-
-        return $templateVariables;
+        return $this->languageServiceFactory->createFromUserPreferences(null);
     }
 }

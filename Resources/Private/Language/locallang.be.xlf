@@ -4,10 +4,13 @@
 		<header/>
 		<body>
 			<trans-unit id="module.title">
-				<source>TYPO3 Monitoring</source>
+				<source>Monitoring</source>
 			</trans-unit>
 			<trans-unit id="module.description">
 				<source>This extension seeks to give an insight into the health state of various components in this TYPO3 instance.</source>
+			</trans-unit>
+			<trans-unit id="module.backToOverview">
+				<source>Overview</source>
 			</trans-unit>
 			<trans-unit id="providers.title">
 				<source>Available Providers</source>
@@ -33,8 +36,14 @@
 			<trans-unit id="authorizers.priority">
 				<source>Priority:</source>
 			</trans-unit>
-			<trans-unit id="auth.token.button">
-				<source>Show Authorization Token</source>
+			<trans-unit id="auth.token.button.example">
+				<source>Example</source>
+			</trans-unit>
+			<trans-unit id="auth.token.button.copy">
+				<source>Copy Token</source>
+			</trans-unit>
+			<trans-unit id="auth.button.endpoint">
+				<source>Open in browser</source>
 			</trans-unit>
 			<trans-unit id="auth.token.modal.title">
 				<source>Authorization Token</source>
