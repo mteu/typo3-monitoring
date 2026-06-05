@@ -24,7 +24,14 @@
     <td>
         {authorizer.description}
         <f:if condition="{className -> monitoring:className()} == 'TokenAuthorizer'">
-            <a class="t3js-modal-trigger" data-content="meh" style="text-decoration: underline; cursor: pointer"><f:translate key="LLL:EXT:monitoring/Resources/Private/Language/locallang.be.xlf:auth.token.button.example" /></a>
+            <a class="t3js-modal-trigger"
+               data-title="{f:translate(key: 'LLL:EXT:monitoring/Resources/Private/Language/locallang.be.xlf:auth.token.button.example')}"
+               data-content="curl -s -H '{authorizer.authHeaderName -> f:if(condition: authorizer.authHeaderName, then: authorizer.authHeaderName, else: 'X-TYPO3-MONITORING')}:{authorizer.authToken -> f:if(condition: authorizer.authToken, then: authorizer.authToken, else: '<authentication-token>')}' {endpoint -> f:if(condition: endpoint, then: endpoint, else: 'https://your-site.com/your-monitoring-endpoint')} | jq '.'"
+               style="text-decoration: underline; cursor: pointer"
+            >
+                <f:translate key="LLL:EXT:monitoring/Resources/Private/Language/locallang.be.xlf:auth.token.button.example" />
+            </a>
+
             <f:if condition="{authorizer.isEnabled} && {authorizer.emptySecret}">
                 <p>
                     <core:icon identifier="overlay-warning" size="small" />
@@ -40,7 +47,6 @@
                     <f:if condition="{authorizer.authToken} && {endpoint} && {authorizer.authHeaderName} && {authorizer.isActive}">
                         <f:then>
                             <button type="button" class="btn btn-default t3js-modal-trigger" data-title="{f:translate(key: 'LLL:EXT:monitoring/Resources/Private/Language/locallang.be.xlf:auth.token.modal.title')}" data-content="curl -s -H '{authorizer.authHeaderName}: {authorizer.authToken}' {endpoint} | jq '.'"><f:translate key="LLL:EXT:monitoring/Resources/Private/Language/locallang.be.xlf:auth.token.button.copy" /></button>
-                            <button type="button" class="btn btn-default t3js-modal-trigger" data-title="{f:translate(key: 'LLL:EXT:monitoring/Resources/Private/Language/locallang.be.xlf:auth.token.modal.title')}" data-content="curl -s -H '{authorizer.authHeaderName}: {authorizer.authToken}' {endpoint} | jq '.'"><f:translate key="LLL:EXT:monitoring/Resources/Private/Language/locallang.be.xlf:auth.token.button.example" /></button>
                         </f:then>
                         <f:else>
                             <button type="button" class="btn btn-default" disabled><f:translate key="LLL:EXT:monitoring/Resources/Private/Language/locallang.be.xlf:auth.token.button.copy" /></button>

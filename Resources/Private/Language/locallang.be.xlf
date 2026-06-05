@@ -37,7 +37,7 @@
 				<source>Priority</source>
 			</trans-unit>
 			<trans-unit id="auth.token.button.example">
-				<source>Example request</source>
+				<source>View example request.</source>
 			</trans-unit>
 			<trans-unit id="auth.token.button.copy">
 				<source>Copy Auth Header</source>

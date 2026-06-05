@@ -42,7 +42,7 @@ final readonly class TokenAuthorizer implements Authorizer
 
     public function getDescription(): string
     {
-        return 'HMAC-based authentication using TYPO3\'s HashService.';
+        return 'Allows access to endpoint with a custom authentication header.';
     }
 
     public function isActive(): bool
