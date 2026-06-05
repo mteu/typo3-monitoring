@@ -40,6 +40,11 @@ final readonly class TokenAuthorizer implements Authorizer
         $this->tokenAuthorizerConfiguration = $this->configuration->tokenAuthorizerConfiguration;
     }
 
+    public function getDescription(): string
+    {
+        return 'HMAC-based authentication using TYPO3\'s HashService.';
+    }
+
     public function isActive(): bool
     {
         return

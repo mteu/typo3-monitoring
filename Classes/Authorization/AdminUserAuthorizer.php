@@ -57,6 +57,11 @@ final readonly class AdminUserAuthorizer implements Authorizer
         }
     }
 
+    public function getDescription(): string
+    {
+        return 'Allows access to enpoint for logged-in TYPO3 backend administrators.';
+    }
+
     public static function getPriority(): int
     {
         $extConf = GeneralUtility::makeInstance(AdminUserAuthorizerConfiguration::class);

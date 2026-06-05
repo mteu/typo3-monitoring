@@ -113,6 +113,7 @@ final readonly class AuthorizerController
             $statuses[$authorizer::class] = [
                 'isActive' => $authorizer->isActive(),
                 'priority' => $authorizer::getPriority(),
+                'description' => $authorizer->getDescription(),
             ];
         }
 
@@ -143,18 +144,18 @@ final readonly class AuthorizerController
 
         $tokenConfig = $this->monitoringConfiguration->tokenAuthorizerConfiguration;
 
+        if ($tokenConfig->secret === '') {
+            $templateVariables[TokenAuthorizer::class]['emptySecret'] = true;
+            $templateVariables[TokenAuthorizer::class]['isEnabled'] = $tokenConfig->enabled;
+
+            return $templateVariables;
+        }
+
         if (!$tokenConfig->isEnabled()) {
             return $templateVariables;
         }
 
         $templateVariables[TokenAuthorizer::class]['authHeaderName'] = $tokenConfig->authHeaderName;
-
-        $secret = $tokenConfig->secret;
-
-        if ($secret === '') {
-            return $templateVariables;
-        }
-
         $templateVariables[TokenAuthorizer::class]['authToken'] = $this->generateAuthToken($tokenConfig->secret);
 
         return $templateVariables;
