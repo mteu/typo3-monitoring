@@ -103,7 +103,7 @@ final readonly class AuthorizerController
     }
 
     /**
-     * @return array<class-string, array{isActive: bool, priority: int}>
+     * @return array<class-string, array{isActive: bool, priority: int, description: string}>
      */
     private function collectAuthorizerStatuses(): array
     {
@@ -132,7 +132,7 @@ final readonly class AuthorizerController
     /**
      * Process authorizers and build template variables
      *
-     * @return array{}|non-empty-array<class-string, array{authHeaderName: string, authToken?: string}|array{isActive: bool, priority: int, authHeaderName?: string, authToken?: string}>
+     * @return array{}|non-empty-array<class-string, array{authHeaderName: string, authToken?: string}|array{isActive: bool, priority: int, emptySecret?: true, isEnabled?: bool, authHeaderName?: string, authToken?: string}>
      */
     private function buildAuthorizerTemplateVariables(): array
     {

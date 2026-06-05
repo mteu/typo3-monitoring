@@ -14,11 +14,11 @@
             <th>Name</th>
             <th><f:translate key="LLL:EXT:monitoring/Resources/Private/Language/locallang.be.xlf:authorizers.priority" /></th>
             <th>Description</th>
-            <th>Actions</th>
+            <th></th>
         </thead>
         <tbody>
             <f:for each="{authorizers}" as="authorizer" key="class" iteration="iterator">
-                <f:render partial="Backend/Authorizer/Item" arguments="{authorizer: authorizer, className: class, endpoint: endpoint}" />
+                <f:render partial="Backend/Authorizer/Item" arguments="{authorizer: authorizer, className: class, endpoint: endpoint, settingsUrl: settingsUrl}" />
             </f:for>
         </tbody>
     </table>

@@ -649,6 +649,11 @@ final class MonitoringMiddlewareTest extends Framework\TestCase
                 return true;
             }
 
+            public function getDescription(): string
+            {
+                return 'Description text';
+            }
+
             public static function getPriority(): int
             {
                 return 10;
@@ -685,6 +690,11 @@ final class MonitoringMiddlewareTest extends Framework\TestCase
             {
                 $this->callOrder[] = $this->identifier;
                 return $this->returnValue;
+            }
+
+            public function getDescription(): string
+            {
+                return 'Description text';
             }
 
             public static function getPriority(): int

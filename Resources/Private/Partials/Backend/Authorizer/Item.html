@@ -7,7 +7,6 @@
 >
 
 <f:layout name="Module" />
-
 <tr>
     <td>
         {className -> monitoring:className()}
@@ -22,48 +21,54 @@
         {authorizer.priority}
     </td>
     <td>
-        {authorizer.description}
-        <f:if condition="{className -> monitoring:className()} == 'TokenAuthorizer'">
-            <a class="t3js-modal-trigger"
-               data-title="{f:translate(key: 'LLL:EXT:monitoring/Resources/Private/Language/locallang.be.xlf:auth.token.button.example')}"
-               data-content="curl -s -H '{authorizer.authHeaderName -> f:if(condition: authorizer.authHeaderName, then: authorizer.authHeaderName, else: 'X-TYPO3-MONITORING')}:{authorizer.authToken -> f:if(condition: authorizer.authToken, then: authorizer.authToken, else: '<authentication-token>')}' {endpoint -> f:if(condition: endpoint, then: endpoint, else: 'https://your-site.com/your-monitoring-endpoint')} | jq '.'"
-               style="text-decoration: underline; cursor: pointer"
-            >
-                <f:translate key="LLL:EXT:monitoring/Resources/Private/Language/locallang.be.xlf:auth.token.button.example" />
-            </a>
+        <f:switch expression="{className -> monitoring:className()}">
+            <f:case value="TokenAuthorizer">
+                {authorizer.description}
 
-            <f:if condition="{authorizer.isEnabled} && {authorizer.emptySecret}">
-                <p>
-                    <core:icon identifier="overlay-warning" size="small" />
-                    <f:translate key="LLL:EXT:monitoring/Resources/Private/Language/locallang.be.xlf:settings.api.secret.missing"/>
-                </p>
-            </f:if>
-        </f:if>
+                <a class="t3js-modal-trigger"
+                   data-title="{f:translate(key: 'LLL:EXT:monitoring/Resources/Private/Language/locallang.be.xlf:auth.token.button.example')}"
+                   data-content="curl -s -H '{authorizer.authHeaderName -> f:if(condition: authorizer.authHeaderName, then: authorizer.authHeaderName, else: 'X-TYPO3-MONITORING')}:{authorizer.authToken -> f:if(condition: authorizer.authToken, then: authorizer.authToken, else: '<authentication-token>')}' {endpoint -> f:if(condition: endpoint, then: endpoint, else: 'https://your-site.com/your-monitoring-endpoint')} | jq '.'"
+                   style="text-decoration: underline; cursor: pointer"
+                >
+                    <f:translate key="LLL:EXT:monitoring/Resources/Private/Language/locallang.be.xlf:auth.token.button.example" />
+                </a>
+
+                <f:if condition="{authorizer.isEnabled} && {authorizer.emptySecret}">
+                    <p>
+                        <core:icon identifier="overlay-warning" size="small" />
+                        <f:translate key="LLL:EXT:monitoring/Resources/Private/Language/locallang.be.xlf:settings.api.secret.missing"/>
+                    </p>
+                </f:if>
+            </f:case>
+            <f:case value="AdminUserAuthorizer">
+                {authorizer.description}
+
+                <f:be.pageRenderer includeJavaScriptModules="{0: '@mteu/typo3-monitoring/sophisticated-modal.js'}" />
+                <a
+                    style="text-decoration: underline; cursor: pointer"
+                    data-sophisticated-modal
+                    data-sophisticated-modal-url="{endpoint}"
+                    data-sophisticated-modal-title="{f:translate(key: 'LLL:EXT:monitoring/Resources/Private/Language/locallang.be.xlf:auth.button.preview')}"
+                >
+                    <f:translate key="LLL:EXT:monitoring/Resources/Private/Language/locallang.be.xlf:auth.button.preview" />
+                </a>
+            </f:case>
+            <f:defaultCase>
+                {authorizer.description}
+            </f:defaultCase>
+        </f:switch>
     </td>
     <td class="col-control">
         <div class="btn-group btn-group-sm" role="group">
             <f:switch expression="{className -> monitoring:className()}">
                 <f:case value="TokenAuthorizer">
                     <f:if condition="{authorizer.authToken} && {endpoint} && {authorizer.authHeaderName} && {authorizer.isActive}">
-                        <f:then>
-                            <button type="button" class="btn btn-default t3js-modal-trigger" data-title="{f:translate(key: 'LLL:EXT:monitoring/Resources/Private/Language/locallang.be.xlf:auth.token.modal.title')}" data-content="curl -s -H '{authorizer.authHeaderName}: {authorizer.authToken}' {endpoint} | jq '.'"><f:translate key="LLL:EXT:monitoring/Resources/Private/Language/locallang.be.xlf:auth.token.button.copy" /></button>
-                        </f:then>
-                        <f:else>
-                            <button type="button" class="btn btn-default" disabled><f:translate key="LLL:EXT:monitoring/Resources/Private/Language/locallang.be.xlf:auth.token.button.copy" /></button>
-                        </f:else>
+                        <f:render section="CopyButton" arguments="{value: '{authorizer.authHeaderName}:{authorizer.authToken}', label: '{f:translate(key: \'LLL:EXT:monitoring/Resources/Private/Language/locallang.be.xlf:auth.token.copy.button\')}'}" />
                     </f:if>
-                    <f:be.link route="tools_toolssettings" additionalAttributes="{type: 'button', class: 'btn btn-default'}">
-                        Settings
-                    </f:be.link>
                 </f:case>
                 <f:case value="AdminUserAuthorizer">
                     <f:if condition="{endpoint} && {authorizer.isActive}">
-                        <a type="button" target="_blank" title="Access endpoint in browser" class="btn btn-default" href="{endpoint}">
-                            <f:translate key="LLL:EXT:monitoring/Resources/Private/Language/locallang.be.xlf:auth.button.endpoint" />
-                        </a>
-                        <a type="button" class="btn btn-default">
-                            Settings
-                        </a>
+                        <f:render section="CopyButton" arguments="{value: endpoint, label: '{f:translate(key: \'LLL:EXT:monitoring/Resources/Private/Language/locallang.be.xlf:auth.endpoint.copy.button\')}'}" />
                     </f:if>
                 </f:case>
                 <f:defaultCase></f:defaultCase>
@@ -72,9 +77,18 @@
     </td>
 </tr>
 
+<f:section name="CopyButton">
+    <f:be.pageRenderer includeJavaScriptModules="{0: '@mteu/typo3-monitoring/copy-button.js'}" />
 
-
-
-
-
+    <button
+        type="button"
+        class="btn btn-primary t3js-monitoring-copy-button"
+        data-monitoring-clipboard-value="{value}"
+        data-monitoring-clipboard-label-default="{label}"
+        data-monitoring-clipboard-label-success="{f:translate(key: 'LLL:EXT:monitoring/Resources/Private/Language/locallang.be.xlf:auth.token.copy.success')}"
+        data-monitoring-clipboard-label-error="{f:translate(key: 'LLL:EXT:monitoring/Resources/Private/Language/locallang.be.xlf:auth.token.copy.error')}"
+    >
+        {label}
+    </button>
+</f:section>
 </html>

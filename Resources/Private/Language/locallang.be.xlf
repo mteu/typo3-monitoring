@@ -39,11 +39,20 @@
 			<trans-unit id="auth.token.button.example">
 				<source>View example request.</source>
 			</trans-unit>
-			<trans-unit id="auth.token.button.copy">
+			<trans-unit id="auth.token.copy.button">
 				<source>Copy Auth Header</source>
 			</trans-unit>
-			<trans-unit id="auth.button.endpoint">
-				<source>Open in browser</source>
+			<trans-unit id="auth.token.copy.success">
+				<source>Copied to clipboard</source>
+			</trans-unit>
+			<trans-unit id="auth.token.copy.error">
+				<source>Could not copy — see browser console.</source>
+			</trans-unit>
+			<trans-unit id="auth.endpoint.copy.button">
+				<source>Copy Endpoint</source>
+			</trans-unit>
+			<trans-unit id="auth.button.preview">
+				<source>Preview monitoring response.</source>
 			</trans-unit>
 			<trans-unit id="auth.token.modal.title">
 				<source>Authorization Token</source>

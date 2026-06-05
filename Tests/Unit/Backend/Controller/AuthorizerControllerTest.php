@@ -55,6 +55,11 @@ final class AuthorizerControllerTest extends Framework\TestCase
                 return true;
             }
 
+            public function getDescription(): string
+            {
+                return 'Description text.';
+            }
+
             public static function getPriority(): int
             {
                 return 30;
@@ -70,6 +75,11 @@ final class AuthorizerControllerTest extends Framework\TestCase
             public function isAuthorized(ServerRequestInterface $request): bool
             {
                 return false;
+            }
+
+            public function getDescription(): string
+            {
+                return 'Description text';
             }
 
             public static function getPriority(): int
