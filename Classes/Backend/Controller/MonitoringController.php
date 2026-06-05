@@ -21,7 +21,6 @@ use mteu\Monitoring\Cache\MonitoringCacheManager;
 use mteu\Monitoring\Configuration\MonitoringConfiguration;
 use mteu\Monitoring\Handler\MonitoringExecutionHandler;
 use mteu\Monitoring\Provider\CacheableMonitoringProvider;
-use mteu\Monitoring\Provider\MiddlewareStatusProvider;
 use mteu\Monitoring\Provider\MonitoringProvider;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
@@ -131,11 +130,6 @@ final readonly class MonitoringController
         $providerTemplateVariables = [];
 
         foreach ($this->monitoringProviders as $monitoringProvider) {
-
-            // Don't execute and display this meta-provider in the backend.
-            if ($monitoringProvider instanceof MiddlewareStatusProvider) {
-                continue;
-            }
 
             $isActive = $monitoringProvider->isActive();
 
