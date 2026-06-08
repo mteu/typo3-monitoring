@@ -352,42 +352,12 @@ final class MonitoringMiddlewareTest extends FunctionalTestCase
 
     private function createAuthorizedAuthorizer(): Authorizer
     {
-        return new class () implements Authorizer {
-            public function isActive(): bool
-            {
-                return true;
-            }
-
-            public function isAuthorized(ServerRequestInterface $request): bool
-            {
-                return true;
-            }
-
-            public static function getPriority(): int
-            {
-                return 10;
-            }
-        };
+        return new AuthorizedAuthorizerStub();
     }
 
     private function createUnauthorizedAuthorizer(): Authorizer
     {
-        return new class () implements Authorizer {
-            public function isActive(): bool
-            {
-                return true;
-            }
-
-            public function isAuthorized(ServerRequestInterface $request): bool
-            {
-                return false;
-            }
-
-            public static function getPriority(): int
-            {
-                return 10;
-            }
-        };
+        return new UnauthorizedAuthorizerStub();
     }
 
     private function createHttpsRequest(string $path): ServerRequestInterface
@@ -410,4 +380,52 @@ final class MonitoringMiddlewareTest extends FunctionalTestCase
         return $normalizedParams;
     }
 
+}
+
+// @todo: move to own files
+final class AuthorizedAuthorizerStub implements Authorizer
+{
+    public function isActive(): bool
+    {
+        return true;
+    }
+
+    public function isAuthorized(ServerRequestInterface $request): bool
+    {
+        return true;
+    }
+
+    public function getDescription(): string
+    {
+        return 'Authorized stub';
+    }
+
+    public static function getPriority(): int
+    {
+        return 10;
+    }
+}
+
+// @todo: move to own files
+final class UnauthorizedAuthorizerStub implements Authorizer
+{
+    public function isActive(): bool
+    {
+        return true;
+    }
+
+    public function isAuthorized(ServerRequestInterface $request): bool
+    {
+        return false;
+    }
+
+    public function getDescription(): string
+    {
+        return 'Unauthorized stub';
+    }
+
+    public static function getPriority(): int
+    {
+        return 10;
+    }
 }

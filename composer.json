@@ -33,6 +33,7 @@
 		"phpunit/phpunit": "^12.1 || ^13.1",
 		"roave/security-advisories": "dev-latest",
 		"typo3/cms-scheduler": "^13.4.23 || ^14.3.0",
+		"typo3/cms-styleguide": "^13.4 || ^14.3",
 		"typo3/testing-framework": "^9.2"
 	},
 	"autoload": {
