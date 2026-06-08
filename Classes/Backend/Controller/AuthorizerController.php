@@ -132,7 +132,15 @@ final readonly class AuthorizerController
     /**
      * Process authorizers and build template variables
      *
-     * @return array{}|non-empty-array<class-string, array{authHeaderName: string, authToken?: string}|array{isActive: bool, priority: int, emptySecret?: true, isEnabled?: bool, authHeaderName?: string, authToken?: string}>
+     * @return array{}|non-empty-array<class-string, array{
+     *     isActive: bool,
+     *     priority: int,
+     *     description: string,
+     *     emptySecret?: true,
+     *     isEnabled?: bool,
+     *     authHeaderName?: string,
+     *     authToken?: string,
+     * }>
      */
     private function buildAuthorizerTemplateVariables(): array
     {
@@ -144,9 +152,16 @@ final readonly class AuthorizerController
 
         $tokenConfig = $this->monitoringConfiguration->tokenAuthorizerConfiguration;
 
+        if (!array_key_exists(TokenAuthorizer::class, $templateVariables)) {
+            return $templateVariables;
+        }
+
+        $tokenVariables = $templateVariables[TokenAuthorizer::class];
+
         if ($tokenConfig->secret === '') {
-            $templateVariables[TokenAuthorizer::class]['emptySecret'] = true;
-            $templateVariables[TokenAuthorizer::class]['isEnabled'] = $tokenConfig->enabled;
+            $tokenVariables['emptySecret'] = true;
+            $tokenVariables['isEnabled'] = $tokenConfig->enabled;
+            $templateVariables[TokenAuthorizer::class] = $tokenVariables;
 
             return $templateVariables;
         }
@@ -155,8 +170,9 @@ final readonly class AuthorizerController
             return $templateVariables;
         }
 
-        $templateVariables[TokenAuthorizer::class]['authHeaderName'] = $tokenConfig->authHeaderName;
-        $templateVariables[TokenAuthorizer::class]['authToken'] = $this->generateAuthToken($tokenConfig->secret);
+        $tokenVariables['authHeaderName'] = $tokenConfig->authHeaderName;
+        $tokenVariables['authToken'] = $this->generateAuthToken($tokenConfig->secret);
+        $templateVariables[TokenAuthorizer::class] = $tokenVariables;
 
         return $templateVariables;
     }
