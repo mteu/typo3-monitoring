@@ -15,15 +15,9 @@ declare(strict_types=1);
  * The TYPO3 project - inspiring people to share!
  */
 
-use TYPO3\CMS\Core\Imaging\IconProvider\SvgIconProvider;
-
 return [
-    'legacyModuleIcon' => [
-        'provider' => SvgIconProvider::class,
-        'source' => 'EXT:monitoring/Resources/Public/Icons/Extension.svg',
-    ],
-    'moduleIcon' => [
-        'provider' => SvgIconProvider::class,
-        'source' => 'EXT:monitoring/Resources/Public/Icons/module.svg',
+    'dependencies' => ['backend'],
+    'imports' => [
+        '@mteu/typo3-monitoring/' => 'EXT:monitoring/Resources/Public/JavaScript/',
     ],
 ];

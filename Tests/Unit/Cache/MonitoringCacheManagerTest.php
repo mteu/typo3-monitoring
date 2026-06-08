@@ -127,6 +127,7 @@ final class MonitoringCacheManagerTest extends TestCase
     }
 
     #[Test]
+    #[AllowMockObjectsWithoutExpectations]
     public function getCacheLifetimeHonorsConfiguredDefault(): void
     {
         $cacheManager = $this->createMock(CacheManager::class);
@@ -139,6 +140,7 @@ final class MonitoringCacheManagerTest extends TestCase
     }
 
     #[Test]
+    #[AllowMockObjectsWithoutExpectations]
     public function getCacheLifetimeFallsBackToBuiltInDefaultWhenConfigurationOmitted(): void
     {
         $cacheManager = $this->createMock(CacheManager::class);

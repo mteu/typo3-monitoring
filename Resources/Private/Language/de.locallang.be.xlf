@@ -4,12 +4,16 @@
 		<header/>
 		<body>
 			<trans-unit id="module.title">
-				<source>TYPO3 Monitoring</source>
-				<target>TYPO3 Monitoring</target>
+				<source>Monitoring</source>
+				<target>Monitoring</target>
 			</trans-unit>
 			<trans-unit id="module.description">
 				<source>This extension seeks to give an insight into the health state of various components in this TYPO3 instance.</source>
 				<target>Diese Extension bietet einen Einblick in den Gesundheitsstatus verschiedener Komponenten innerhalb dieser TYPO3-Instanz.</target>
+			</trans-unit>
+			<trans-unit id="module.backToOverview">
+				<source>Overview</source>
+				<target>Übersicht</target>
 			</trans-unit>
 			<trans-unit id="providers.title">
 				<source>Available Providers</source>
@@ -40,12 +44,28 @@
 				<target>Bitte ein Monitoring-Secret in den Extension-Settings hinterlegen, um eine Autorisierung mittels Token zu ermöglichen.</target>
 			</trans-unit>
 			<trans-unit id="authorizers.priority">
-				<source>Priority: </source>
-				<target>Priorität: </target>
+				<source>Priority</source>
+				<target>Priorität</target>
 			</trans-unit>
-			<trans-unit id="auth.token.button">
-				<source>Show Authorization Token</source>
-				<target>Autorisierungstoken anzeigen</target>
+			<trans-unit id="auth.token.button.example">
+				<source>View example request.</source>
+				<target>Beispielrequest anzeigen.</target>
+			</trans-unit>
+			<trans-unit id="auth.token.copy.button">
+				<source>Copy Auth Header</source>
+			</trans-unit>
+			<trans-unit id="auth.token.copy.success">
+				<source>Copied to clipboard</source>
+			</trans-unit>
+			<trans-unit id="auth.token.copy.error">
+				<source>Could not copy — see browser console.</source>
+			</trans-unit>
+			<trans-unit id="auth.endpoint.copy.button">
+				<source>Copy Endpoint</source>
+			</trans-unit>
+			<trans-unit id="auth.button.preview">
+				<source>Preview monitoring response.</source>
+				<target>Vorschau der Monitoring Response.</target>
 			</trans-unit>
 			<trans-unit id="auth.token.modal.title">
 				<source>Authorization Token</source>

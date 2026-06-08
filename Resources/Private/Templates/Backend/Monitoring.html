@@ -35,34 +35,7 @@
                             <f:translate key="LLL:EXT:monitoring/Resources/Private/Language/locallang.be.xlf:providers.no_providers_found.title" />
                         </div>
                         <p class="alert-message">
-                            <f:translate key="LLL:EXT:monitoring/Resources/Private/Language/locallang.be.xlf:providers.no_providers_found.content"
-                                         arguments="{0: providerInterface}" />
-                        </p>
-                    </div>
-                </div>
-            </div>
-        </f:else>
-    </f:if>
-
-    <f:if condition="{authorizers}">
-        <f:then>
-            <f:render partial="Backend/Authorizer/List" arguments="{authorizers: authorizers, endpoint: endpoint}" />
-        </f:then>
-        <f:else>
-            <div class="alert alert-info">
-                <div class="alert-inner">
-                    <div class="alert-icon">
-                        <span class="icon-emphasized">
-                            <core:icon identifier="actions-info" />
-                        </span>
-                    </div>
-                    <div class="alert-content">
-                        <div class="alert-title">
-                            <f:translate key="LLL:EXT:monitoring/Resources/Private/Language/locallang.be.xlf:authorizers.no_authorizers_found" />
-                        </div>
-                        <p class="alert-message">
-                            <f:translate key="LLL:EXT:monitoring/Resources/Private/Language/locallang.be.xlf:authorizers.no_authorizers_found.content"
-                                         arguments="{0: authorizerInterface}" />
+                            <f:translate key="LLL:EXT:monitoring/Resources/Private/Language/locallang.be.xlf:providers.no_providers_found.content" arguments="{0: providerInterface}" />
                         </p>
                     </div>
                 </div>
