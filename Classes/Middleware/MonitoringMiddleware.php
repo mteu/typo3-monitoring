@@ -21,6 +21,7 @@ use mteu\Monitoring\Authorization\Authorizer;
 use mteu\Monitoring\Configuration\MonitoringConfiguration;
 use mteu\Monitoring\Handler\MonitoringExecutionHandler;
 use mteu\Monitoring\Provider\MonitoringProvider;
+use mteu\Monitoring\Result\Result;
 use Psr\Http\Message\ResponseFactoryInterface;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
@@ -118,16 +119,13 @@ final readonly class MonitoringMiddleware implements MiddlewareInterface
         }
 
         try {
-            $status = $this->getHealthStatus();
-            $isHealthy = !in_array(false, $status, true);
+            $results = $this->collectResults();
+            $isHealthy = $this->isOverallHealthy($results);
 
             return $this->jsonResponse(
                 [
                     'isHealthy' => $isHealthy,
-                    'services' => array_map(
-                        static fn(bool $serviceStatus): string => $serviceStatus ? 'healthy' : 'unhealthy',
-                        $status
-                    ),
+                    'services' => $this->summarizeResults($results),
                 ],
                 $isHealthy ? 200 : 503,
                 $writeBody,
@@ -173,23 +171,74 @@ final readonly class MonitoringMiddleware implements MiddlewareInterface
     }
 
     /**
-     * @return array<non-empty-string, bool>
+     * @return array<non-empty-string, Result>
      */
-    private function getHealthStatus(): array
+    private function collectResults(): array
     {
-        $status = [];
+        $results = [];
 
         foreach ($this->monitoringProviders as $provider) {
             if ($provider->isActive()) {
-                $status[$provider->getName()] = $this->executionHandler->executeProvider($provider)->isHealthy();
+                $results[$provider->getName()] = $this->executionHandler->executeProvider($provider);
             }
         }
 
-        return $status;
+        return $results;
     }
 
     /**
-     * @param array{code: int, error: string}|array{isHealthy: bool, services: array<non-empty-string, 'healthy'|'unhealthy'>} $data
+     * @param array<non-empty-string, Result> $results
+     */
+    private function isOverallHealthy(array $results): bool
+    {
+        foreach ($results as $result) {
+            if (!$result->isHealthy()) {
+                return false;
+            }
+        }
+
+        return true;
+    }
+
+    /**
+     * Reduces each provider result to its status, optionally listing the status
+     * of every sub-result. Reasons and deeper detail stay in the backend module.
+     *
+     * @param array<non-empty-string, Result> $results
+     * @return array<non-empty-string, array{status: 'healthy'|'unhealthy', subResults?: array<string, 'healthy'|'unhealthy'>}>
+     */
+    private function summarizeResults(array $results): array
+    {
+        $summary = [];
+
+        foreach ($results as $name => $result) {
+            $entry = ['status' => $this->statusLabel($result->isHealthy())];
+
+            $subResults = $result->getSubResults();
+            if ($subResults !== []) {
+                $subStatus = [];
+                foreach ($subResults as $subResult) {
+                    $subStatus[$subResult->getName()] = $this->statusLabel($subResult->isHealthy());
+                }
+                $entry['subResults'] = $subStatus;
+            }
+
+            $summary[$name] = $entry;
+        }
+
+        return $summary;
+    }
+
+    /**
+     * @return 'healthy'|'unhealthy'
+     */
+    private function statusLabel(bool $isHealthy): string
+    {
+        return $isHealthy ? 'healthy' : 'unhealthy';
+    }
+
+    /**
+     * @param array{code: int, error: string}|array{isHealthy: bool, services: array<non-empty-string, array{status: 'healthy'|'unhealthy', subResults?: array<string, 'healthy'|'unhealthy'>}>} $data
      * @throws \JsonException
      */
     private function jsonResponse(array $data, int $statusCode = 200, bool $writeBody = true): ResponseInterface
