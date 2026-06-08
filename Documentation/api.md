@@ -21,13 +21,24 @@ Access while logged in as TYPO3 backend administrator.
 
 ## Responses
 
+Each service maps to an object with its overall `status`. Providers that report
+sub-results additionally list the status of each sub-result under `subResults`.
+
 ### Success (200 OK)
 ```json
 {
     "isHealthy": true,
     "services": {
-        "ServiceName": "healthy",
-        "AnotherService": "healthy"
+        "SuccessfulService": {
+            "status": "healthy"
+        },
+        "AnotherService": {
+            "status": "healthy",
+            "subResults": {
+                "SubCheck A": "healthy",
+                "SubCheck B": "healthy"
+            }
+        }
     }
 }
 ```
@@ -37,8 +48,16 @@ Access while logged in as TYPO3 backend administrator.
 {
     "isHealthy": false,
     "services": {
-        "ServiceName": "healthy",
-        "FailingService": "unhealthy"
+        "SuccessfulService": {
+            "status": "healthy"
+        },
+        "FailingService": {
+            "status": "unhealthy",
+            "subResults": {
+                "SubCheck A": "healthy",
+                "SubCheck B": "unhealthy"
+            }
+        }
     }
 }
 ```
@@ -75,4 +94,3 @@ Access while logged in as TYPO3 backend administrator.
 | 403  | Forbidden           | HTTPS required                     |
 | 404  | Not Found           | Endpoint not configured            |
 | 503  | Service Unavailable | One or more services unhealthy     |
-
