@@ -21,7 +21,6 @@ use mteu\Monitoring\Configuration\Provider\SchedulerProviderConfiguration;
 use mteu\Monitoring\Provider\Scheduler\SchedulerProvider;
 use mteu\Monitoring\Provider\Scheduler\SchedulerTask;
 use mteu\Monitoring\Result\MonitoringResult;
-use mteu\Monitoring\Result\Result;
 use mteu\Monitoring\Tests\Unit\Fixtures\Clock\FrozenClock;
 use mteu\Monitoring\Tests\Unit\Fixtures\Extension\InMemoryExtensionState;
 use mteu\Monitoring\Tests\Unit\Fixtures\Scheduler\InMemorySchedulerHeartbeat;
@@ -39,7 +38,7 @@ use Psr\Log\NullLogger;
  */
 #[Framework\Attributes\CoversClass(SchedulerProvider::class)]
 #[Framework\Attributes\UsesClass(SchedulerTask::class)]
-final class SchedulerMonitoringTest extends Framework\TestCase
+final class SchedulerProviderTest extends Framework\TestCase
 {
     private const int NOW = 1_700_000_000;
 
@@ -95,19 +94,6 @@ final class SchedulerMonitoringTest extends Framework\TestCase
     }
 
     #[Test]
-    public function executeProducesTwoSubResultsWhenOverdueCheckIsDisabled(): void
-    {
-        $result = $this->createProvider(
-            configuration: new SchedulerProviderConfiguration(overdueThreshold: 0),
-        )->execute();
-
-        self::assertCount(2, $result->getSubResults());
-
-        $names = array_map(static fn(Result $r): string => $r->getName(), $result->getSubResults());
-        self::assertNotContains('Overdue Tasks', $names);
-    }
-
-    #[Test]
     public function executeReportsUnhealthyWhenHeartbeatIsStale(): void
     {
         $result = $this->createProvider(lastRunEnd: self::NOW - 10_000)->execute();
@@ -115,11 +101,12 @@ final class SchedulerMonitoringTest extends Framework\TestCase
         self::assertFalse($result->isHealthy());
 
         $heartbeat = $result->getSubResults()[0];
-        self::assertSame('Scheduler', $heartbeat->getName());
+        self::assertSame('Scheduler Execution', $heartbeat->getName());
         self::assertFalse($heartbeat->isHealthy());
     }
 
     #[Test]
+    // @todo: remove date calcuation. replace with fluid viewhelper
     public function staleHeartbeatReasonStatesTheRealAgeNotASingleSecond(): void
     {
         // 10 000 s = 2 h 46 m 40 s; formatAge drops seconds when minutes > 0 → "2 hours and 46 minutes".
@@ -143,11 +130,11 @@ final class SchedulerMonitoringTest extends Framework\TestCase
     public function executeReportsUnhealthyWhenTasksFailed(): void
     {
         $result = $this->createProvider(failedCount: 3)->execute();
-        $failed = $result->getSubResults()[1];
+        $failed = $result->getSubResults()[2];
         self::assertStringContainsString('3 tasks', (string)$failed->getReason());
 
         $result = $this->createProvider(failedCount: 1)->execute();
-        $failed = $result->getSubResults()[1];
+        $failed = $result->getSubResults()[2];
         self::assertStringContainsString('1 task', (string)$failed->getReason());
 
         self::assertSame('Failed Tasks', $failed->getName());
@@ -172,7 +159,7 @@ final class SchedulerMonitoringTest extends Framework\TestCase
             taskLinkBaseUri: 'https://example.com/typo3/record/edit',
         )->execute();
 
-        $overdue = $result->getSubResults()[2];
+        $overdue = $result->getSubResults()[1];
         self::assertSame('Overdue Tasks', $overdue->getName());
 
         $reason = (string)$overdue->getReason();
@@ -189,7 +176,7 @@ final class SchedulerMonitoringTest extends Framework\TestCase
             taskLinkBaseUri: 'https://example.com/typo3/record/edit',
         )->execute();
 
-        $failed = $result->getSubResults()[1];
+        $failed = $result->getSubResults()[2];
         self::assertSame('Failed Tasks', $failed->getName());
 
         $reason = (string)$failed->getReason();

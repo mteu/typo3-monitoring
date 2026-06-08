@@ -84,11 +84,8 @@ final readonly class SchedulerProvider implements MonitoringProvider
         $result = new MonitoringResult($this->getName(), true);
 
         $result->addSubResult($this->checkHeartbeat());
+        $result->addSubResult($this->checkOverdueTasks());
         $result->addSubResult($this->checkFailedTasks());
-
-        if ($this->configuration->isOverdueCheckEnabled()) {
-            $result->addSubResult($this->checkOverdueTasks());
-        }
 
         if (!$result->isHealthy()) {
             $result->setReason('One or more scheduler health checks failed. See sub-results for details.');
@@ -100,14 +97,14 @@ final readonly class SchedulerProvider implements MonitoringProvider
     private function checkHeartbeat(): Result
     {
         if (!$this->configuration->isHeartbeatCheckEnabled()) {
-            return new MonitoringResult('Scheduler', true, 'Heartbeat check disabled.');
+            return new MonitoringResult('Scheduler Execution', true, 'Scheduler Execution check is disabled. Set threshold in Settings to active.');
         }
 
         $lastRun = $this->heartbeat->getLastRunEndTime();
 
         if ($lastRun === null) {
             return new MonitoringResult(
-                'Scheduler',
+                'Scheduler Execution',
                 false,
                 'No scheduler run has been recorded yet. Verify the cron job is set up.',
             );
@@ -117,7 +114,7 @@ final readonly class SchedulerProvider implements MonitoringProvider
 
         if ($age > $this->configuration->heartbeatThreshold) {
             return new MonitoringResult(
-                'Scheduler',
+                'Scheduler Execution',
                 false,
                 sprintf(
                     'Scheduler last ran %s ago (at %s), exceeding the threshold of %d seconds.',
@@ -161,6 +158,10 @@ final readonly class SchedulerProvider implements MonitoringProvider
 
     private function checkOverdueTasks(): Result
     {
+        if (!$this->configuration->isOverdueCheckEnabled()) {
+            return new MonitoringResult('Overdue Tasks', true, 'Overdue tasks is check disabled. Set threshold in Settings to active.');
+        }
+
         $overdueBefore = $this->clock->now() - $this->configuration->overdueThreshold;
 
         try {
