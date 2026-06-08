@@ -101,7 +101,7 @@ final class SchedulerProviderTest extends Framework\TestCase
         self::assertFalse($result->isHealthy());
 
         $heartbeat = $result->getSubResults()[0];
-        self::assertSame('Scheduler Execution', $heartbeat->getName());
+        self::assertSame('Scheduler', $heartbeat->getName());
         self::assertFalse($heartbeat->isHealthy());
     }
 

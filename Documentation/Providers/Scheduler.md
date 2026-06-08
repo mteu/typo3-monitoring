@@ -58,13 +58,20 @@ expected runtime of your longest scheduled task.
 
 ```json
 {
-  "name": "Scheduler",
-  "healthy": false,
-  "reason": "One or more scheduler health checks failed. See sub-results for details.",
-  "subResults": [
-    { "name": "Scheduler Execution", "healthy": true, "reason": "Scheduler last ran at 2026-06-08T10:00:00+00:00." },
-    { "name": "Overdue Tasks", "healthy": true, "reason": "No task is overdue." },
-    { "name": "Failed Tasks", "healthy": false, "reason": "1 task reported an execution failure: ..." }
-  ]
+  "isHealthy": false,
+  "services": {
+    ...
+    "Scheduler": {
+      "status": "unhealthy",
+      "subResults": {
+        "Scheduler Execution": "healthy",
+        "Overdue Tasks": "healthy",
+        "Failed Tasks": "unhealthy"
+      }
+    },
+    ...
 }
 ```
+
+> [!NOTE]
+> The full breakdown (reasons and deep links to the affected tasks) is available in the TYPO3 backend module.

@@ -97,14 +97,14 @@ final readonly class SchedulerProvider implements MonitoringProvider
     private function checkHeartbeat(): Result
     {
         if (!$this->configuration->isHeartbeatCheckEnabled()) {
-            return new MonitoringResult('Scheduler Execution', true, 'Scheduler Execution check is disabled. Set threshold in Settings to active.');
+            return new MonitoringResult('Scheduler', true, 'Scheduler Execution check is disabled. Set threshold in Settings to active.');
         }
 
         $lastRun = $this->heartbeat->getLastRunEndTime();
 
         if ($lastRun === null) {
             return new MonitoringResult(
-                'Scheduler Execution',
+                'Scheduler',
                 false,
                 'No scheduler run has been recorded yet. Verify the cron job is set up.',
             );
@@ -114,7 +114,7 @@ final readonly class SchedulerProvider implements MonitoringProvider
 
         if ($age > $this->configuration->heartbeatThreshold) {
             return new MonitoringResult(
-                'Scheduler Execution',
+                'Scheduler',
                 false,
                 sprintf(
                     'Scheduler last ran %s ago (at %s), exceeding the threshold of %d seconds.',
