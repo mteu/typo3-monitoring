@@ -21,6 +21,8 @@ use mteu\Monitoring\Authorization\TokenAuthorizer;
 use mteu\Monitoring\Configuration\Authorizer\AdminUserAuthorizerConfiguration;
 use mteu\Monitoring\Configuration\Authorizer\TokenAuthorizerConfiguration;
 use mteu\Monitoring\Configuration\MonitoringConfiguration;
+use mteu\Monitoring\Configuration\Reporter\EmailReporterConfiguration;
+use mteu\Monitoring\Configuration\Reporter\ReportDispatcherConfiguration;
 use PHPUnit\Framework;
 use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\Attributes\DataProvider;
@@ -146,6 +148,8 @@ final class TokenAuthorizerTest extends Framework\TestCase
                 authHeaderName: $authHeaderName,
             ),
             adminUserAuthorizerConfiguration: new AdminUserAuthorizerConfiguration(),
+            emailReporterConfiguration: new EmailReporterConfiguration(),
+            reporterDispatcherConfiguration: new ReportDispatcherConfiguration(),
             endpoint: $endpoint,
         );
 

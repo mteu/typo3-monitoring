@@ -23,3 +23,15 @@ if (!isset($GLOBALS['TYPO3_CONF_VARS']['SYS']['caching']['cacheConfigurations'][
         'groups' => ['system'],
     ];
 }
+
+// Notification dedup state. Intentionally NOT in the 'system' group so that
+// routine "flush system caches" / provider-cache-flush actions cannot make
+// the reporter forget it already alerted (and re-notify on the next run).
+if (!isset($GLOBALS['TYPO3_CONF_VARS']['SYS']['caching']['cacheConfigurations']['typo3_monitoring_notification'])) {
+    $GLOBALS['TYPO3_CONF_VARS']['SYS']['caching']['cacheConfigurations']['typo3_monitoring_notification'] = [
+        'frontend' => TYPO3\CMS\Core\Cache\Frontend\VariableFrontend::class,
+        'backend' => TYPO3\CMS\Core\Cache\Backend\Typo3DatabaseBackend::class,
+        'options' => [],
+        'groups' => [],
+    ];
+}

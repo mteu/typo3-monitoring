@@ -21,6 +21,8 @@ use mteu\Monitoring\Authorization\AdminUserAuthorizer;
 use mteu\Monitoring\Configuration\Authorizer\AdminUserAuthorizerConfiguration;
 use mteu\Monitoring\Configuration\Authorizer\TokenAuthorizerConfiguration;
 use mteu\Monitoring\Configuration\MonitoringConfiguration;
+use mteu\Monitoring\Configuration\Reporter\EmailReporterConfiguration;
+use mteu\Monitoring\Configuration\Reporter\ReportDispatcherConfiguration;
 use PHPUnit\Framework;
 use PHPUnit\Framework\Attributes\AllowMockObjectsWithoutExpectations;
 use PHPUnit\Framework\Attributes\CoversClass;
@@ -131,6 +133,8 @@ final class AdminUserAuthorizerTest extends Framework\TestCase
                 enabled: $enabled,
                 priority: -10,
             ),
+            emailReporterConfiguration: new EmailReporterConfiguration(),
+            reporterDispatcherConfiguration: new ReportDispatcherConfiguration(),
             endpoint: '/monitor/health',
         );
 
