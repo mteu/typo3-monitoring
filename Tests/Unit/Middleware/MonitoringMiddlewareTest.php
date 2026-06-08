@@ -523,6 +523,71 @@ final class MonitoringMiddlewareTest extends Framework\TestCase
 
     #[Test]
     #[AllowMockObjectsWithoutExpectations]
+    public function responseListsSubResultStatusesPerService(): void
+    {
+        $this->configuration = $this->createConfigurationFromData([
+            'api' => ['endpoint' => '/monitor/health'],
+            'authorizer' => ['mteu\\Monitoring\\Authorization\\TokenAuthorizer' => ['enabled' => '1', 'secret' => 'test-secret', 'priority' => '10', 'authHeaderName' => 'X-Auth']],
+        ]);
+
+        $provider = new class () implements MonitoringProvider {
+            public function getName(): string
+            {
+                return 'Scheduler';
+            }
+            public function getDescription(): string
+            {
+                return 'Provider with sub-results.';
+            }
+            public function isActive(): bool
+            {
+                return true;
+            }
+            public function execute(): Result
+            {
+                return new MonitoringResult('Scheduler', false, null, [
+                    new MonitoringResult('Scheduler Execution', true),
+                    new MonitoringResult('Failed Tasks', false),
+                ]);
+            }
+        };
+
+        $middleware = new MonitoringMiddleware(
+            [$provider, $this->createHealthyProvider()],
+            [$this->createAuthorizedAuthorizer()],
+            $this->configuration,
+            $this->responseFactory,
+            $this->logger,
+            $this->createExecutionHandler(),
+        );
+
+        $response = $middleware->process(new ServerRequest(new Uri('https://example.com/monitor/health'), 'GET'), $this->handler);
+
+        self::assertSame(503, $response->getStatusCode());
+
+        $decoded = json_decode((string)$response->getBody(), true, 512, JSON_THROW_ON_ERROR);
+        self::assertSame(
+            [
+                'isHealthy' => false,
+                'services' => [
+                    'Scheduler' => [
+                        'status' => 'unhealthy',
+                        'subResults' => [
+                            'Scheduler Execution' => 'healthy',
+                            'Failed Tasks' => 'unhealthy',
+                        ],
+                    ],
+                    'database' => [
+                        'status' => 'healthy',
+                    ],
+                ],
+            ],
+            $decoded,
+        );
+    }
+
+    #[Test]
+    #[AllowMockObjectsWithoutExpectations]
     public function headRequestReturnsSameStatusAndHeadersWithEmptyBody(): void
     {
         $this->configuration = $this->createConfigurationFromData([
