@@ -15,10 +15,12 @@ declare(strict_types=1);
  * The TYPO3 project - inspiring people to share!
  */
 
+// @todo: I've yet to find a more sensible way to support both Icons
+$moduleIconIdentifier = (new \TYPO3\CMS\Core\Information\Typo3Version())->getMajorVersion() < 14 ? 'legacyModuleIcon' : 'moduleIcon';
+
 return [
     'monitoring' => [
         'parent' => 'system',
-        'position' => ['before' => 'permissions_pages'],
         'access' => 'systemMaintainer',
         'workspaces' => 'live',
         'path' => '/module/system/monitoring',
@@ -26,10 +28,14 @@ return [
             'title' => 'LLL:EXT:monitoring/Resources/Private/Language/locallang.mod.xlf:module.labels.title',
             'description' => 'LLL:EXT:monitoring/Resources/Private/Language/locallang.mod.xlf:module.labels.description',
         ],
-        'iconIdentifier' => 'monitoring',
+        'iconIdentifier' => $moduleIconIdentifier,
         'routes' => [
             '_default' => [
                 'target' => \mteu\Monitoring\Backend\Controller\MonitoringController::class,
+            ],
+            'authorizers' => [
+                'path' => '/module/system/monitoring/authorizers',
+                'target' => \mteu\Monitoring\Backend\Controller\AuthorizerController::class,
             ],
         ],
     ],
