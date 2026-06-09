@@ -43,11 +43,17 @@ final readonly class BackendSchedulerTaskLinkBuilder implements SchedulerTaskLin
         private LoggerInterface $logger,
     ) {}
 
-    public function renderEditLink(int $uid, string $label): string
+    public function renderEditLink(int $uid, string $label): ?string
     {
+        $uri = $this->buildEditLink($uid);
+
+        if ($uri === null) {
+            return null;
+        }
+
         return sprintf(
             '<a href="%s">%s</a>',
-            $this->buildEditLink($uid),
+            $uri,
             $label,
         );
     }

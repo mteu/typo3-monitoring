@@ -19,6 +19,7 @@ namespace mteu\Monitoring\Tests\Functional\Handler;
 
 use mteu\Monitoring\Cache\MonitoringCacheManager;
 use mteu\Monitoring\Handler\MonitoringExecutionHandler;
+use mteu\Monitoring\Handler\ProviderExecutionOutcome;
 use mteu\Monitoring\Result\MonitoringResult;
 use mteu\Monitoring\Tests\Functional\Fixtures\CacheableProvider;
 use mteu\Monitoring\Tests\Functional\Fixtures\NonCacheableProvider;
@@ -37,6 +38,7 @@ use TYPO3\TestingFramework\Core\Functional\FunctionalTestCase;
  * @license GPL-2.0-or-later
  */
 #[CoversClass(MonitoringExecutionHandler::class)]
+#[CoversClass(ProviderExecutionOutcome::class)]
 final class MonitoringExecutionHandlerTest extends FunctionalTestCase
 {
     protected array $testExtensionsToLoad = [

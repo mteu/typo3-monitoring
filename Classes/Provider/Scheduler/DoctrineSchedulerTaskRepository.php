@@ -82,7 +82,7 @@ final readonly class DoctrineSchedulerTaskRepository implements SchedulerTaskRep
     {
         $queryBuilder = $this->createRestrictedQueryBuilder();
         $queryBuilder
-            ->select('uid', 'description', 'taskType')
+            ->select('uid', 'description', 'tasktype')
             ->andWhere(
                 $queryBuilder->expr()->neq(
                     'lastexecution_failure',
@@ -98,7 +98,7 @@ final readonly class DoctrineSchedulerTaskRepository implements SchedulerTaskRep
     public function getOverdueTaskSample(int $overdueBefore, int $limit): array
     {
         $queryBuilder = $this->createRestrictedQueryBuilder();
-        $queryBuilder->select('uid', 'description', 'taskType');
+        $queryBuilder->select('uid', 'description', 'tasktype');
         $this->applyOverdueConstraint($queryBuilder, $overdueBefore);
         $queryBuilder->setMaxResults($limit);
 
@@ -155,7 +155,7 @@ final readonly class DoctrineSchedulerTaskRepository implements SchedulerTaskRep
             }
 
             $description = is_string($row['description'] ?? null) ? $row['description'] : '';
-            $taskType = is_string($row['taskType']) ? $row['taskType'] : '';
+            $taskType = is_string($row['tasktype'] ?? null) ? $row['tasktype'] : '';
 
             $tasks[] = new SchedulerTask((int)$uid, $description !== '' ? $description : $taskType);
         }

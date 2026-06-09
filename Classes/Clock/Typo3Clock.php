@@ -25,6 +25,8 @@ use TYPO3\CMS\Core\Context\Context;
  *
  * @author Martin Adler <mteu@mailbox.org>
  * @license GPL-2.0-or-later
+ *
+ * @codeCoverageIgnore
  */
 #[AsAlias(Clock::class)]
 final readonly class Typo3Clock implements Clock

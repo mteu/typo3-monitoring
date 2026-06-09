@@ -209,6 +209,59 @@ final class SchedulerProviderTest extends Framework\TestCase
         self::assertStringContainsString('https://example.com/typo3/record/edit', $reason);
     }
 
+    #[Test]
+    public function disabledHeartbeatCheckStaysHealthyWithoutAnyRecordedRun(): void
+    {
+        $result = $this->createProvider(
+            configuration: new SchedulerProviderConfiguration(heartbeatThreshold: 0),
+            lastRunEnd: null,
+        )->execute();
+
+        $heartbeat = $result->getSubResults()[0];
+        self::assertTrue($heartbeat->isHealthy());
+        self::assertStringContainsString('disabled', (string)$heartbeat->getReason());
+    }
+
+    #[Test]
+    public function disabledOverdueCheckStaysHealthyDespiteOverdueTasks(): void
+    {
+        $result = $this->createProvider(
+            configuration: new SchedulerProviderConfiguration(overdueThreshold: 0),
+            overdueCount: 5,
+        )->execute();
+
+        $overdue = $result->getSubResults()[1];
+        self::assertTrue($overdue->isHealthy());
+        self::assertStringContainsString('disabled', (string)$overdue->getReason());
+    }
+
+    #[Test]
+    public function heartbeatAgeEqualToTheThresholdIsStillHealthy(): void
+    {
+        $configuration = new SchedulerProviderConfiguration();
+
+        $result = $this->createProvider(
+            configuration: $configuration,
+            lastRunEnd: self::NOW - $configuration->heartbeatThreshold,
+        )->execute();
+
+        self::assertTrue($result->getSubResults()[0]->isHealthy());
+    }
+
+    #[Test]
+    public function sampleFallsBackToThePlainLabelWhenNoLinkCanBeBuilt(): void
+    {
+        $result = $this->createProvider(
+            failedCount: 1,
+            failedSample: [new SchedulerTask(42, 'Import task')],
+            taskLinkBaseUri: null,
+        )->execute();
+
+        $reason = (string)$result->getSubResults()[2]->getReason();
+        self::assertStringContainsString('<li>#42 (Import task)</li>', $reason);
+        self::assertStringNotContainsString('<a ', $reason);
+    }
+
     /**
      * @param list<SchedulerTask> $overdueSample
      * @param list<SchedulerTask> $failedSample

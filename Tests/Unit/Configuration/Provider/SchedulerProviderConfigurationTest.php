@@ -22,13 +22,13 @@ use PHPUnit\Framework;
 use PHPUnit\Framework\Attributes\Test;
 
 /**
- * SchedulerMonitoringProviderConfigurationTest.
+ * SchedulerProviderConfigurationTest.
  *
  * @author Martin Adler <mteu@mailbox.org>
  * @license GPL-2.0-or-later
  */
 #[Framework\Attributes\CoversClass(Src\Configuration\Provider\SchedulerProviderConfiguration::class)]
-final class SchedulerMonitoringProviderConfigurationTest extends Framework\TestCase
+final class SchedulerProviderConfigurationTest extends Framework\TestCase
 {
     #[Test]
     public function defaultValuesAreCorrect(): void
