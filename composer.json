@@ -28,6 +28,7 @@
 	},
 	"require-dev": {
 		"composer/class-map-generator": "^1.1",
+		"eliashaeussler/phpunit-attributes": "^2.0",
 		"eliashaeussler/version-bumper": "^4.0",
 		"ergebnis/composer-normalize": "^2.47",
 		"helhum/typo3-console": "^9.0",

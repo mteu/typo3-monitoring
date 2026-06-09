@@ -17,10 +17,12 @@ declare(strict_types=1);
 
 namespace mteu\Monitoring\Tests\Functional\Provider\Scheduler;
 
+use EliasHaeussler\PHPUnitAttributes\Attribute\RequiresPackage;
 use mteu\Monitoring\Provider\Scheduler\DoctrineSchedulerTaskRepository;
 use mteu\Monitoring\Provider\Scheduler\SchedulerTask;
 use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\Attributes\Test;
+use TYPO3\CMS\Core\Information\Typo3Version;
 use TYPO3\TestingFramework\Core\Functional\FunctionalTestCase;
 
 /**
@@ -122,24 +124,47 @@ final class DoctrineSchedulerTaskRepositoryTest extends FunctionalTestCase
     }
 
     #[Test]
-    public function failedTaskSampleLabelsTasksByDescriptionWithTaskTypeFallback(): void
+    public function failedTaskSampleLabelsTasksByDescription(): void
     {
         $described = $this->createTask([
             'lastexecution_failure' => 'serialized exception',
             'description' => 'Nightly import',
         ]);
+
+        $labels = $this->getFailedTaskSampleLabels();
+
+        self::assertContains(sprintf('#%d (Nightly import)', $described), $labels);
+    }
+
+    #[Test]
+    #[RequiresPackage('typo3/cms-scheduler', '>= 14')]
+    public function failedTaskSampleFallsBackToTheTaskTypeLabel(): void
+    {
         $undescribed = $this->createTask([
             'lastexecution_failure' => 'serialized exception',
             'tasktype' => 'monitoring:selfcare',
         ]);
 
-        $labels = array_map(
-            static fn(SchedulerTask $task): string => $task->getLabel(),
-            $this->repository->getFailedTaskSample(5),
+        self::assertContains(
+            sprintf('#%d (monitoring:selfcare)', $undescribed),
+            $this->getFailedTaskSampleLabels(),
         );
+    }
 
-        self::assertContains(sprintf('#%d (Nightly import)', $described), $labels);
-        self::assertContains(sprintf('#%d (monitoring:selfcare)', $undescribed), $labels);
+    #[Test]
+    #[RequiresPackage('typo3/cms-scheduler', '< 14')]
+    public function failedTaskSampleLabelsUndescribedTasksWithAPlaceholder(): void
+    {
+        // v13 has no tasktype column to fall back to; the task class is part
+        // of the serialized task object.
+        $undescribed = $this->createTask([
+            'lastexecution_failure' => 'serialized exception',
+        ]);
+
+        self::assertContains(
+            sprintf('#%d (no description)', $undescribed),
+            $this->getFailedTaskSampleLabels(),
+        );
     }
 
     #[Test]
@@ -159,21 +184,38 @@ final class DoctrineSchedulerTaskRepositoryTest extends FunctionalTestCase
     }
 
     /**
+     * @return list<string>
+     */
+    private function getFailedTaskSampleLabels(): array
+    {
+        return array_map(
+            static fn(SchedulerTask $task): string => $task->getLabel(),
+            $this->repository->getFailedTaskSample(5),
+        );
+    }
+
+    /**
      * @param array<string, int|string|null> $overrides
      */
     private function createTask(array $overrides = []): int
     {
         $connection = $this->getConnectionPool()->getConnectionForTable('tx_scheduler_task');
 
-        $connection->insert('tx_scheduler_task', $overrides + [
-            'tasktype' => 'monitoring:dummy',
+        $defaults = [
             'description' => '',
             'nextexecution' => self::OVERDUE_BEFORE + 3_600,
             'lastexecution_failure' => '',
             'serialized_executions' => null,
             'disable' => 0,
             'deleted' => 0,
-        ]);
+        ];
+
+        // The tasktype column only exists since TYPO3 v14.
+        if ((new Typo3Version())->getMajorVersion() >= 14) {
+            $defaults['tasktype'] = 'monitoring:dummy';
+        }
+
+        $connection->insert('tx_scheduler_task', $overrides + $defaults);
 
         return (int)$connection->lastInsertId();
     }

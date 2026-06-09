@@ -21,6 +21,7 @@ use Doctrine\DBAL\ParameterType;
 use Symfony\Component\DependencyInjection\Attribute\AsAlias;
 use TYPO3\CMS\Core\Database\ConnectionPool;
 use TYPO3\CMS\Core\Database\Query\QueryBuilder;
+use TYPO3\CMS\Core\Information\Typo3Version;
 
 /**
  * Doctrine-backed scheduler task gateway.
@@ -82,7 +83,7 @@ final readonly class DoctrineSchedulerTaskRepository implements SchedulerTaskRep
     {
         $queryBuilder = $this->createRestrictedQueryBuilder();
         $queryBuilder
-            ->select('uid', 'description', 'tasktype')
+            ->select(...$this->sampleColumns())
             ->andWhere(
                 $queryBuilder->expr()->neq(
                     'lastexecution_failure',
@@ -98,7 +99,7 @@ final readonly class DoctrineSchedulerTaskRepository implements SchedulerTaskRep
     public function getOverdueTaskSample(int $overdueBefore, int $limit): array
     {
         $queryBuilder = $this->createRestrictedQueryBuilder();
-        $queryBuilder->select('uid', 'description', 'tasktype');
+        $queryBuilder->select(...$this->sampleColumns());
         $this->applyOverdueConstraint($queryBuilder, $overdueBefore);
         $queryBuilder->setMaxResults($limit);
 
@@ -131,6 +132,22 @@ final readonly class DoctrineSchedulerTaskRepository implements SchedulerTaskRep
             $queryBuilder->expr()->gt('nextexecution', $queryBuilder->createNamedParameter(0, ParameterType::INTEGER)),
             $queryBuilder->expr()->lt('nextexecution', $queryBuilder->createNamedParameter($overdueBefore, ParameterType::INTEGER)),
         );
+    }
+
+    /**
+     * The tasktype column only exists since TYPO3 v14, where scheduler tasks
+     * became real records; on v13 the task class is part of the serialized
+     * task object and no type column is available.
+     *
+     * @return list<string>
+     */
+    private function sampleColumns(): array
+    {
+        if ((new Typo3Version())->getMajorVersion() >= 14) {
+            return ['uid', 'description', 'tasktype'];
+        }
+
+        return ['uid', 'description'];
     }
 
     private function countFrom(QueryBuilder $queryBuilder): int

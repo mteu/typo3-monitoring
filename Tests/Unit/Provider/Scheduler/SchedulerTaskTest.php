@@ -33,12 +33,12 @@ final class SchedulerTaskTest extends Framework\TestCase
     #[Test]
     public function getLabelCombinesUidAndLabel(): void
     {
-        self::assertSame('#42 (Import task)', new SchedulerTask(42, 'Import task')->getLabel());
+        self::assertSame('#42 (Import task)', (new SchedulerTask(42, 'Import task'))->getLabel());
     }
 
     #[Test]
     public function getLabelFallsBackToPlaceholderForEmptyLabel(): void
     {
-        self::assertSame('#5 (no description)', new SchedulerTask(5, '')->getLabel());
+        self::assertSame('#5 (no description)', (new SchedulerTask(5, ''))->getLabel());
     }
 }

@@ -3,6 +3,7 @@ includes:
 
 parameters:
 	scanDirectories:
+		- ../../.build/vendor/eliashaeussler/phpunit-attributes/src
 		- ../../.build/vendor/phpunit/phpunit/src
 		- ../../.build/vendor/typo3/cms-backend/Classes
 		- ../../.build/vendor/typo3/testing-framework/Classes
