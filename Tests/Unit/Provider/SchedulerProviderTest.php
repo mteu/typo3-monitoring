@@ -127,6 +127,31 @@ final class SchedulerProviderTest extends Framework\TestCase
     }
 
     #[Test]
+    public function staleHeartbeatStaysHealthyWhileATaskIsRunning(): void
+    {
+        $result = $this->createProvider(
+            lastRunEnd: self::NOW - 10_000,
+            hasRunningTask: true,
+        )->execute();
+
+        $heartbeat = $result->getSubResults()[0];
+        self::assertSame('Scheduler', $heartbeat->getName());
+        self::assertTrue($heartbeat->isHealthy());
+        self::assertStringContainsString('currently running', (string)$heartbeat->getReason());
+    }
+
+    #[Test]
+    public function missingLastRunStaysHealthyWhileATaskIsRunning(): void
+    {
+        $result = $this->createProvider(
+            lastRunEnd: null,
+            hasRunningTask: true,
+        )->execute();
+
+        self::assertTrue($result->getSubResults()[0]->isHealthy());
+    }
+
+    #[Test]
     public function executeReportsUnhealthyWhenTasksFailed(): void
     {
         $result = $this->createProvider(failedCount: 3)->execute();
@@ -197,6 +222,7 @@ final class SchedulerProviderTest extends Framework\TestCase
         array $failedSample = [],
         bool $schedulerLoaded = true,
         ?string $taskLinkBaseUri = null,
+        bool $hasRunningTask = false,
     ): SchedulerProvider {
         return new SchedulerProvider(
             $configuration ?? new SchedulerProviderConfiguration(),
@@ -205,6 +231,7 @@ final class SchedulerProviderTest extends Framework\TestCase
                 overdueCount: $overdueCount,
                 failedSample: $failedSample,
                 overdueSample: $overdueSample,
+                hasRunningTask: $hasRunningTask,
             ),
             new InMemorySchedulerHeartbeat($lastRunEnd),
             new FrozenClock(self::NOW),

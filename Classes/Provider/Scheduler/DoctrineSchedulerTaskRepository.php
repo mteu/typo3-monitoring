@@ -64,6 +64,20 @@ final readonly class DoctrineSchedulerTaskRepository implements SchedulerTaskRep
         return $this->countFrom($queryBuilder);
     }
 
+    public function hasRunningTask(): bool
+    {
+        $queryBuilder = $this->createRestrictedQueryBuilder();
+        $queryBuilder->andWhere(
+            $queryBuilder->expr()->isNotNull('serialized_executions'),
+            $queryBuilder->expr()->neq(
+                'serialized_executions',
+                $queryBuilder->createNamedParameter(''),
+            ),
+        );
+
+        return $this->countFrom($queryBuilder) > 0;
+    }
+
     public function getFailedTaskSample(int $limit): array
     {
         $queryBuilder = $this->createRestrictedQueryBuilder();

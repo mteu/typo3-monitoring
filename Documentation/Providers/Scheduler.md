@@ -15,7 +15,7 @@ sub-results. The aggregate is healthy only when all enabled checks pass.
 
 | Sub-result          | Healthy when …                                                                 |
 |---------------------|--------------------------------------------------------------------------------|
-| `Scheduler Execution` | The scheduler ran within the heartbeat threshold (cron is alive).            |
+| `Scheduler Execution` | The scheduler ran within the heartbeat threshold, or a task is currently running (cron is alive). |
 | `Overdue Tasks`     | No enabled, *scheduled* task is past its next-execution time + grace period.    |
 | `Failed Tasks`      | No enabled task recorded an execution failure.                                  |
 

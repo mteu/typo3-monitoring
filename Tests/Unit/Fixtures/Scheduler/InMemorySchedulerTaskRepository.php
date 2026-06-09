@@ -37,6 +37,7 @@ final readonly class InMemorySchedulerTaskRepository implements SchedulerTaskRep
         private int $overdueCount = 0,
         private array $failedSample = [],
         private array $overdueSample = [],
+        private bool $hasRunningTask = false,
     ) {}
 
     public function countFailedTasks(): int
@@ -47,6 +48,11 @@ final readonly class InMemorySchedulerTaskRepository implements SchedulerTaskRep
     public function countOverdueTasks(int $overdueBefore): int
     {
         return $this->overdueCount;
+    }
+
+    public function hasRunningTask(): bool
+    {
+        return $this->hasRunningTask;
     }
 
     public function getFailedTaskSample(int $limit): array

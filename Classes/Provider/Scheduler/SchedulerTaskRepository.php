@@ -30,6 +30,8 @@ interface SchedulerTaskRepository
 
     public function countOverdueTasks(int $overdueBefore): int;
 
+    public function hasRunningTask(): bool;
+
     /**
      * @param positive-int $limit
      * @return list<SchedulerTask>

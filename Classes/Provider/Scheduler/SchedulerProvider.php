@@ -100,6 +100,10 @@ final readonly class SchedulerProvider implements MonitoringProvider
             return new MonitoringResult('Scheduler', true, 'Scheduler Execution check is disabled. Set threshold in Settings to active.');
         }
 
+        if ($this->taskGateway->hasRunningTask()) {
+            return new MonitoringResult('Scheduler', true, 'A scheduler task is currently running.');
+        }
+
         $lastRun = $this->heartbeat->getLastRunEndTime();
 
         if ($lastRun === null) {
