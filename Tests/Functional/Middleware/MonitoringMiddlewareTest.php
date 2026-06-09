@@ -21,6 +21,8 @@ use mteu\Monitoring\Authorization\Authorizer;
 use mteu\Monitoring\Configuration\Authorizer\AdminUserAuthorizerConfiguration;
 use mteu\Monitoring\Configuration\Authorizer\TokenAuthorizerConfiguration;
 use mteu\Monitoring\Configuration\MonitoringConfiguration;
+use mteu\Monitoring\Configuration\Reporter\EmailReporterConfiguration;
+use mteu\Monitoring\Configuration\Reporter\ReportDispatcherConfiguration;
 use mteu\Monitoring\Handler\MonitoringExecutionHandler;
 use mteu\Monitoring\Middleware\MonitoringMiddleware;
 use mteu\Monitoring\Provider\MonitoringProvider;
@@ -289,12 +291,11 @@ final class MonitoringMiddlewareTest extends FunctionalTestCase
 
     private function createConfiguration(string $endpoint, bool $enforceHttps = false): MonitoringConfiguration
     {
-        $tokenAuthorizerConfig = new TokenAuthorizerConfiguration();
-        $adminUserAuthorizerConfig = new AdminUserAuthorizerConfiguration();
-
         return new MonitoringConfiguration(
-            $tokenAuthorizerConfig,
-            $adminUserAuthorizerConfig,
+            new TokenAuthorizerConfiguration(),
+            new AdminUserAuthorizerConfiguration(),
+            new EmailReporterConfiguration(),
+            new ReportDispatcherConfiguration(),
             $endpoint,
             $enforceHttps,
         );
