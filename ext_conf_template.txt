@@ -1,56 +1,66 @@
+##########################
+### CUSTOM SUBCATEGORIES ###
+##########################
+# customsubcategory=1=Endpoint
+# customsubcategory=2=Cache
+# customsubcategory=10=Token Authorizer
+# customsubcategory=20=Admin User Authorizer
+# customsubcategory=30=Report Dispatcher
+# customsubcategory=40=Email Reporter
+
 api {
-    # cat=api/endpoint; type=string; label=Endpoint Route
+    # cat=endpoint/1/10; type=string; label=Endpoint Route
     endpoint=/monitor/health
-    # cat=api/enforceHttps; type=boolean; label=Enforce HTTPS:Reject monitoring requests that are not HTTPS. TLS is best terminated at the web server / ingress; only enable this once $GLOBALS['TYPO3_CONF_VARS']['SYS']['reverseProxyIP'] / 'reverseProxySSL' (trusted proxies) are configured correctly, otherwise legitimate requests behind a proxy will be rejected.
+    # cat=endpoint/1/20; type=boolean; label=Enforce HTTPS:Reject monitoring requests that are not HTTPS. TLS is best terminated at the web server / ingress; only enable this once $GLOBALS['TYPO3_CONF_VARS']['SYS']['reverseProxyIP'] / 'reverseProxySSL' (trusted proxies) are configured correctly, otherwise legitimate requests behind a proxy will be rejected.
     enforceHttps=0
 }
 
 cache {
-    # cat=cache/defaultLifetime; type=int+; label=Default cache lifetime (seconds):Fleet-wide default lifetime for monitoring results in seconds. Individual CacheableMonitoringProvider implementations may override this via getCacheLifetime(). Defaults to 900 (15 minutes).
+    # cat=cache/2/10; type=int+; label=Default cache lifetime (seconds):Fleet-wide default lifetime for monitoring results in seconds. Individual CacheableMonitoringProvider implementations may override this via getCacheLifetime(). Defaults to 900 (15 minutes).
     defaultLifetime=900
 }
 
 authorizer {
     mteu\Monitoring\Authorization\TokenAuthorizer {
-        # cat=TokenAuthorizer/Enabled//10; type=boolean; label=Enable TokenAuthorizer: Enables the access to health status via Token in the Request Header
+        # cat=authorizer/10/10; type=boolean; label=Enable TokenAuthorizer: Enables the access to health status via Token in the Request Header
         enabled=1
-        # cat=TokenAuthorizer/Secret//20; type=string; label=Secret:Additional secret used for AuthToken generation
+        # cat=authorizer/10/20; type=string; label=Secret:Additional secret used for AuthToken generation
         secret=
-        # cat=TokenAuthorizer/Authorization Header//30; type=string; label=Authentication header name
+        # cat=authorizer/10/30; type=string; label=Authentication header name
         authHeaderName=X-TYPO3-MONITORING-AUTH
-        # cat=TokenAuthorizer/Priority//40; type=string; label=Priority:Set the priority of this Authorizer. Higher value will be tried first.
+        # cat=authorizer/10/40; type=string; label=Priority:Set the priority of this Authorizer. Higher value will be tried first.
         priority=10
     }
     mteu\Monitoring\Authorization\AdminUserAuthorizer {
-        # cat=AdminUserAuthorizer/Enabled; type=boolean; label=Enable AdminUserAuthorizer:Enable access to health status endpoint for logged in backend admins
+        # cat=authorizer/20/10; type=boolean; label=Enable AdminUserAuthorizer:Enable access to health status endpoint for logged in backend admins
         enabled=1
-        # cat=AdminUserAuthorizer/Priority; type=integer; label=Priority:Set the priority of this Authorizer. Higher value will be tried first.
+        # cat=authorizer/20/20; type=integer; label=Priority:Set the priority of this Authorizer. Higher value will be tried first.
         priority=-10
     }
 }
 
 reportDispatcher {
-    # cat=ReportDispatcher/ReminderInterval//10; type=int+; label=Reminder interval (seconds):Minimum seconds between repeated notifications for an unchanged failure set. Default 86400 (once per day). A changed failure set always notifies immediately.
+    # cat=reporter/30/10; type=int+; label=Reminder interval (seconds):Minimum seconds between repeated notifications for an unchanged failure set. Default 86400 (once per day). A changed failure set always notifies immediately.
     reminderInterval=86400
-    # cat=ReportDispatcher/NotifyOnRecovery//20; type=boolean; label=Notify on recovery:Send a one-off notification when status returns to healthy after an outage.
+    # cat=reporter/30/20; type=boolean; label=Notify on recovery:Send a one-off notification when status returns to healthy after an outage.
     notifyOnRecovery=1
-    # cat=ReportDispatcher/FailOpen//30; type=boolean; label=Fail-open on missing state:If notification state is absent (e.g. cache flushed) while status is unhealthy, send (fail-open) rather than stay silent.
+    # cat=reporter/30/30; type=boolean; label=Fail-open on missing state:If notification state is absent (e.g. cache flushed) while status is unhealthy, send (fail-open) rather than stay silent.
     failOpenOnMissingState=1
 }
 
 reporter {
     mteu\Monitoring\Reporter\EmailReporter {
-        # cat=EmailReporter/Enabled//10; type=boolean; label=Enable EmailReporter:Send monitoring reports via TYPO3's mailer (transport configured in MAIL settings).
+        # cat=reporter/40/10; type=boolean; label=Enable EmailReporter:Send monitoring reports via TYPO3's mailer (transport configured in MAIL settings).
         enabled=0
-        # cat=EmailReporter/Priority//20; type=string; label=Priority:Higher value is reported first.
+        # cat=reporter/40/20; type=string; label=Priority:Higher value is reported first.
         priority=10
-        # cat=EmailReporter/Threshold//30; type=options[Always=always,Unhealthy only=unhealthy,On state change=state-change]; label=Threshold:When this reporter should send.
+        # cat=reporter/40/30; type=options[Always=always,Unhealthy only=unhealthy,On state change=state-change]; label=Threshold:When this reporter should send.
         threshold=state-change
-        # cat=EmailReporter/Recipients//40; type=string; label=Recipients:Comma-separated list of recipient email addresses.
+        # cat=reporter/40/40; type=string; label=Recipients:Comma-separated list of recipient email addresses.
         recipients=
-        # cat=EmailReporter/Sender//50; type=string; label=Sender address:Leave blank to use TYPO3's defaultMailFromAddress.
+        # cat=reporter/40/50; type=string; label=Sender address:Leave blank to use TYPO3's defaultMailFromAddress.
         senderAddress=
-        # cat=EmailReporter/SubjectPrefix//60; type=string; label=Subject prefix
+        # cat=reporter/40/60; type=string; label=Subject prefix
         subjectPrefix=[Monitoring]
     }
 }
