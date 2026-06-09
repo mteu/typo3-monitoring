@@ -20,6 +20,8 @@
 		"psr/log": "^3.0",
 		"symfony/console": "^7.3",
 		"symfony/dependency-injection": "^7.3",
+		"symfony/mailer": "^7.4",
+		"symfony/mime": "^7.4",
 		"typo3/cms-backend": "^13.4.23 || ^14.3.0",
 		"typo3/cms-core": "^13.4.23 || ^14.3.0",
 		"typo3fluid/fluid": "^2.15.0 || ^4.3 || ^5.3"
