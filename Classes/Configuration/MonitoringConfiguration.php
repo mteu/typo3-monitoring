@@ -19,6 +19,8 @@ namespace mteu\Monitoring\Configuration;
 
 use mteu\Monitoring\Configuration\Authorizer\AdminUserAuthorizerConfiguration;
 use mteu\Monitoring\Configuration\Authorizer\TokenAuthorizerConfiguration;
+use mteu\Monitoring\Configuration\Reporter\EmailReporterConfiguration;
+use mteu\Monitoring\Configuration\Reporter\ReportDispatcherConfiguration;
 use mteu\TypedExtConf\Attribute\ExtConfProperty;
 use mteu\TypedExtConf\Attribute\ExtensionConfig;
 
@@ -42,6 +44,8 @@ final readonly class MonitoringConfiguration
     public function __construct(
         public TokenAuthorizerConfiguration $tokenAuthorizerConfiguration,
         public AdminUserAuthorizerConfiguration $adminUserAuthorizerConfiguration,
+        public EmailReporterConfiguration $emailReporterConfiguration,
+        public ReportDispatcherConfiguration $reporterDispatcherConfiguration,
         #[ExtConfProperty(path: 'api.endpoint')]
         string $endpoint = '/monitor/health',
         #[ExtConfProperty(path: 'api.enforceHttps')]

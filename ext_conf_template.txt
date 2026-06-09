@@ -28,3 +28,29 @@ authorizer {
         priority=-10
     }
 }
+
+reportDispatcher {
+    # cat=ReportDispatcher/ReminderInterval//10; type=int+; label=Reminder interval (seconds):Minimum seconds between repeated notifications for an unchanged failure set. Default 86400 (once per day). A changed failure set always notifies immediately.
+    reminderInterval=86400
+    # cat=ReportDispatcher/NotifyOnRecovery//20; type=boolean; label=Notify on recovery:Send a one-off notification when status returns to healthy after an outage.
+    notifyOnRecovery=1
+    # cat=ReportDispatcher/FailOpen//30; type=boolean; label=Fail-open on missing state:If notification state is absent (e.g. cache flushed) while status is unhealthy, send (fail-open) rather than stay silent.
+    failOpenOnMissingState=1
+}
+
+reporter {
+    mteu\Monitoring\Reporter\EmailReporter {
+        # cat=EmailReporter/Enabled//10; type=boolean; label=Enable EmailReporter:Send monitoring reports via TYPO3's mailer (transport configured in MAIL settings).
+        enabled=0
+        # cat=EmailReporter/Priority//20; type=string; label=Priority:Higher value is reported first.
+        priority=10
+        # cat=EmailReporter/Threshold//30; type=options[Always=always,Unhealthy only=unhealthy,On state change=state-change]; label=Threshold:When this reporter should send.
+        threshold=state-change
+        # cat=EmailReporter/Recipients//40; type=string; label=Recipients:Comma-separated list of recipient email addresses.
+        recipients=
+        # cat=EmailReporter/Sender//50; type=string; label=Sender address:Leave blank to use TYPO3's defaultMailFromAddress.
+        senderAddress=
+        # cat=EmailReporter/SubjectPrefix//60; type=string; label=Subject prefix
+        subjectPrefix=[Monitoring]
+    }
+}
