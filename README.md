@@ -36,6 +36,8 @@ post-deployment checks.
   - Structured JSON responses for the overall health status
   - Command-line interface for running monitoring checks
   - Backend Module
+- Built-in providers this package ships:
+  - [Scheduler Provider](Documentation/Providers/Scheduler.md) (Monitors TYPO3 Scheduler tasks.)
 
 
 ## 🔥 Quick Start
