@@ -17,7 +17,7 @@ declare(strict_types=1);
 
 namespace mteu\Monitoring\Tests\Unit\Provider\Scheduler;
 
-use mteu\Monitoring\Provider\Scheduler\BackendSchedulerTaskLinkBuilder;
+use mteu\Monitoring\Provider\Scheduler\SchedulerTaskLinkBuilder;
 use PHPUnit\Framework;
 use PHPUnit\Framework\Attributes\Test;
 use Psr\Log\NullLogger;
@@ -32,7 +32,7 @@ use TYPO3\CMS\Core\Http\Uri;
  * @author Martin Adler <mteu@mailbox.org>
  * @license GPL-2.0-or-later
  */
-#[Framework\Attributes\CoversClass(BackendSchedulerTaskLinkBuilder::class)]
+#[Framework\Attributes\CoversClass(SchedulerTaskLinkBuilder::class)]
 final class BackendSchedulerTaskLinkBuilderTest extends Framework\TestCase
 {
     #[Test]
@@ -103,12 +103,12 @@ final class BackendSchedulerTaskLinkBuilderTest extends Framework\TestCase
     private function createLinkBuilder(
         bool $hasSchedulerRoute,
         BackendUriBuilder $uriBuilder,
-    ): BackendSchedulerTaskLinkBuilder {
+    ): SchedulerTaskLinkBuilder {
         $router = self::createStub(Router::class);
         $router->method('hasRoute')->willReturnMap([
             ['scheduler_manage', $hasSchedulerRoute],
         ]);
 
-        return new BackendSchedulerTaskLinkBuilder($router, $uriBuilder, new NullLogger());
+        return new SchedulerTaskLinkBuilder($router, $uriBuilder, new NullLogger());
     }
 }
