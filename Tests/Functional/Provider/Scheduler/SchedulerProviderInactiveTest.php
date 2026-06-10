@@ -15,24 +15,26 @@ declare(strict_types=1);
  * The TYPO3 project - inspiring people to share!
  */
 
-namespace mteu\Monitoring\Extension;
+namespace mteu\Monitoring\Tests\Functional\Provider\Scheduler;
 
-use Symfony\Component\DependencyInjection\Attribute\AsAlias;
-use TYPO3\CMS\Core\Utility\ExtensionManagementUtility;
+use mteu\Monitoring\Provider\Scheduler\SchedulerProvider;
+use PHPUnit\Framework\Attributes\CoversClass;
+use PHPUnit\Framework\Attributes\Test;
 
 /**
- * Extension state backed by ExtensionManagementUtility.
+ * SchedulerProviderInactiveTest.
  *
  * @author Martin Adler <mteu@mailbox.org>
  * @license GPL-2.0-or-later
- *
- * @codeCoverageIgnore
  */
-#[AsAlias(ExtensionState::class)]
-final readonly class Typo3ExtensionState implements ExtensionState
+#[CoversClass(SchedulerProvider::class)]
+final class SchedulerProviderInactiveTest extends SchedulerProviderFunctionalTestCase
 {
-    public function isLoaded(string $extensionKey): bool
+    // no scheduler loaded
+
+    #[Test]
+    public function isActiveReturnsFalseWhenSchedulerExtensionIsNotLoaded(): void
     {
-        return ExtensionManagementUtility::isLoaded($extensionKey);
+        self::assertFalse($this->createSchedulerProvider()->isActive());
     }
 }

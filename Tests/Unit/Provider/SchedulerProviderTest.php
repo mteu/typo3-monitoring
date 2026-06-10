@@ -22,16 +22,16 @@ use mteu\Monitoring\Provider\Scheduler\SchedulerProvider;
 use mteu\Monitoring\Provider\Scheduler\SchedulerTask;
 use mteu\Monitoring\Result\MonitoringResult;
 use mteu\Monitoring\Tests\Unit\Fixtures\Clock\FrozenClock;
-use mteu\Monitoring\Tests\Unit\Fixtures\Extension\InMemoryExtensionState;
 use mteu\Monitoring\Tests\Unit\Fixtures\Scheduler\InMemorySchedulerHeartbeat;
 use mteu\Monitoring\Tests\Unit\Fixtures\Scheduler\InMemorySchedulerTaskRepository;
 use mteu\Monitoring\Tests\Unit\Fixtures\Scheduler\InMemoryTaskLinkBuilder;
 use PHPUnit\Framework;
 use PHPUnit\Framework\Attributes\Test;
 use Psr\Log\NullLogger;
+use TYPO3\CMS\Core\Utility\GeneralUtility;
 
 /**
- * SchedulerMonitoringProviderTest.
+ * SchedulerProviderTest.
  *
  * @author Martin Adler <mteu@mailbox.org>
  * @license GPL-2.0-or-later
@@ -41,6 +41,12 @@ use Psr\Log\NullLogger;
 final class SchedulerProviderTest extends Framework\TestCase
 {
     private const int NOW = 1_700_000_000;
+
+    protected function tearDown(): void
+    {
+        GeneralUtility::purgeInstances();
+        parent::tearDown();
+    }
 
     #[Test]
     public function getName(): void
@@ -62,18 +68,6 @@ final class SchedulerProviderTest extends Framework\TestCase
         );
 
         self::assertFalse($provider->isActive());
-    }
-
-    #[Test]
-    public function isActiveReturnsFalseWhenSchedulerExtensionIsNotLoaded(): void
-    {
-        self::assertFalse($this->createProvider(schedulerLoaded: false)->isActive());
-    }
-
-    #[Test]
-    public function isActiveReturnsTrueWhenEnabledAndSchedulerExtensionIsLoaded(): void
-    {
-        self::assertTrue($this->createProvider(schedulerLoaded: true)->isActive());
     }
 
     #[Test]
@@ -273,7 +267,6 @@ final class SchedulerProviderTest extends Framework\TestCase
         int $overdueCount = 0,
         array $overdueSample = [],
         array $failedSample = [],
-        bool $schedulerLoaded = true,
         ?string $taskLinkBaseUri = null,
         bool $hasRunningTask = false,
     ): SchedulerProvider {
@@ -289,7 +282,6 @@ final class SchedulerProviderTest extends Framework\TestCase
             new InMemorySchedulerHeartbeat($lastRunEnd),
             new FrozenClock(self::NOW),
             new InMemoryTaskLinkBuilder($taskLinkBaseUri),
-            new InMemoryExtensionState(['scheduler' => $schedulerLoaded]),
             new NullLogger(),
         );
     }
