@@ -21,13 +21,13 @@ use mteu\Monitoring\Configuration\Provider\SchedulerProviderConfiguration;
 use mteu\Monitoring\Provider\Scheduler\SchedulerProvider;
 use mteu\Monitoring\Provider\Scheduler\SchedulerTask;
 use mteu\Monitoring\Result\MonitoringResult;
-use mteu\Monitoring\Tests\Unit\Fixtures\Clock\FrozenClock;
 use mteu\Monitoring\Tests\Unit\Fixtures\Scheduler\InMemorySchedulerHeartbeat;
 use mteu\Monitoring\Tests\Unit\Fixtures\Scheduler\InMemorySchedulerTaskRepository;
 use mteu\Monitoring\Tests\Unit\Fixtures\Scheduler\InMemoryTaskLinkBuilder;
 use PHPUnit\Framework;
 use PHPUnit\Framework\Attributes\Test;
 use Psr\Log\NullLogger;
+use Symfony\Component\Clock\MockClock;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
 
 /**
@@ -280,7 +280,7 @@ final class SchedulerProviderTest extends Framework\TestCase
                 hasRunningTask: $hasRunningTask,
             ),
             new InMemorySchedulerHeartbeat($lastRunEnd),
-            new FrozenClock(self::NOW),
+            new MockClock((new \DateTimeImmutable())->setTimestamp(self::NOW)),
             new InMemoryTaskLinkBuilder($taskLinkBaseUri),
             new NullLogger(),
         );

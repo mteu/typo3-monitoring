@@ -25,6 +25,7 @@ use mteu\Monitoring\Tests\Unit\Fixtures\Scheduler\InMemorySchedulerHeartbeat;
 use mteu\Monitoring\Tests\Unit\Fixtures\Scheduler\InMemorySchedulerTaskRepository;
 use mteu\Monitoring\Tests\Unit\Fixtures\Scheduler\InMemoryTaskLinkBuilder;
 use Psr\Log\NullLogger;
+use Symfony\Component\Clock\MockClock;
 
 /**
  * ProviderFunctionalTestCase.
@@ -47,7 +48,7 @@ abstract class SchedulerProviderFunctionalTestCase extends MonitoringFunctionalT
             $configuration ?? new SchedulerProviderConfiguration(),
             new InMemorySchedulerTaskRepository(),
             new InMemorySchedulerHeartbeat(self::NOW - 60),
-            new FrozenClock(self::NOW),
+            new MockClock((new \DateTimeImmutable())->setTimestamp(self::NOW)),
             new InMemoryTaskLinkBuilder(null),
             new NullLogger(),
         );
