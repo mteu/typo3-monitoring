@@ -21,10 +21,13 @@ use mteu\Monitoring\Result\Result;
 
 /**
  * ProviderExecutionOutcome.
+ *
  * Carries a provider's {@see Result} together with metadata about whether the outcome comes from cached analysis
  *
  * @author Martin Adler <mteu@mailbox.org>
  * @license GPL-2.0-or-later
+ *
+ * @codeCoverageIgnore
  */
 final readonly class ProviderExecutionOutcome
 {
