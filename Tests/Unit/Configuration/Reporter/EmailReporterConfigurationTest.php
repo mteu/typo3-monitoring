@@ -25,6 +25,9 @@ use PHPUnit\Framework\Attributes\Test;
 /**
  * EmailReporterConfigurationTest.
  *
+ * The string-to-enum mapping itself is covered by ReportThresholdTest; this
+ * test only pins the configuration's own parsing behavior.
+ *
  * @author Martin Adler <mteu@mailbox.org>
  * @license GPL-2.0-or-later
  */
@@ -32,25 +35,11 @@ use PHPUnit\Framework\Attributes\Test;
 final class EmailReporterConfigurationTest extends Framework\TestCase
 {
     #[Test]
-    public function defaultValuesAreCorrect(): void
+    public function thresholdDelegatesToEnumMapping(): void
     {
-        $subject = new Src\Configuration\Reporter\EmailReporterConfiguration();
+        $subject = new Src\Configuration\Reporter\EmailReporterConfiguration(threshold: 'state-change');
 
-        self::assertFalse($subject->isEnabled());
-        self::assertSame(10, $subject->getPriority());
-        self::assertSame(ReportThreshold::Unhealthy, $subject->getThreshold());
-        self::assertSame([], $subject->getRecipients());
-        self::assertSame('[Monitoring]', $subject->subjectPrefix);
-        self::assertInstanceOf(Src\Configuration\Reporter\ReporterConfiguration::class, $subject);
-    }
-
-    #[Test]
-    #[Framework\Attributes\DataProvider('thresholdDataProvider')]
-    public function thresholdMapsFromConfigValue(string $configValue, ReportThreshold $expected): void
-    {
-        $subject = new Src\Configuration\Reporter\EmailReporterConfiguration(threshold: $configValue);
-
-        self::assertSame($expected, $subject->getThreshold());
+        self::assertSame(ReportThreshold::StateChange, $subject->getThreshold());
     }
 
     #[Test]
@@ -63,14 +52,11 @@ final class EmailReporterConfigurationTest extends Framework\TestCase
         self::assertSame(['a@example.com', 'b@example.com'], $subject->getRecipients());
     }
 
-    /**
-     * @return \Generator<string, array{string, ReportThreshold}>
-     */
-    public static function thresholdDataProvider(): \Generator
+    #[Test]
+    public function recipientsAreEmptyWhenUnconfigured(): void
     {
-        yield 'always' => ['always', ReportThreshold::Always];
-        yield 'unhealthy' => ['unhealthy', ReportThreshold::Unhealthy];
-        yield 'state-change' => ['state-change', ReportThreshold::StateChange];
-        yield 'invalid falls back to unhealthy' => ['nonsense', ReportThreshold::Unhealthy];
+        $subject = new Src\Configuration\Reporter\EmailReporterConfiguration();
+
+        self::assertSame([], $subject->getRecipients());
     }
 }

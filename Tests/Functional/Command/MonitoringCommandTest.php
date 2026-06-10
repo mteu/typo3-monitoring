@@ -23,11 +23,11 @@ use mteu\Monitoring\Handler\MonitoringExecutionHandler;
 use mteu\Monitoring\Provider\MonitoringProvider;
 use mteu\Monitoring\Tests\Functional\Fixtures\CacheableProvider;
 use mteu\Monitoring\Tests\Functional\Fixtures\NonCacheableProvider;
+use mteu\Monitoring\Tests\Functional\MonitoringFunctionalTestCase;
 use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\Attributes\Test;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Tester\CommandTester;
-use TYPO3\TestingFramework\Core\Functional\FunctionalTestCase;
 
 /**
  * MonitoringCommandTest.
@@ -36,28 +36,8 @@ use TYPO3\TestingFramework\Core\Functional\FunctionalTestCase;
  * @license GPL-2.0-or-later
  */
 #[CoversClass(MonitoringCommand::class)]
-final class MonitoringCommandTest extends FunctionalTestCase
+final class MonitoringCommandTest extends MonitoringFunctionalTestCase
 {
-    protected array $testExtensionsToLoad = [
-        'monitoring',
-        'typed_extconf',
-    ];
-
-    protected array $configurationToUseInTestInstance = [
-        'SYS' => [
-            'caching' => [
-                'cacheConfigurations' => [
-                    'typo3_monitoring' => [
-                        'frontend' => 'TYPO3\\CMS\\Core\\Cache\\Frontend\\VariableFrontend',
-                        'backend' => 'TYPO3\\CMS\\Core\\Cache\\Backend\\Typo3DatabaseBackend',
-                        'options' => [],
-                        'groups' => ['system'],
-                    ],
-                ],
-            ],
-        ],
-    ];
-
     private MonitoringExecutionHandler $executionHandler;
     private MonitoringCacheManager $cacheManager;
 

@@ -31,13 +31,13 @@ use mteu\Monitoring\Reporter\ReportThreshold;
 use mteu\Monitoring\Tests\Functional\Fixtures\ConfigurableProvider;
 use mteu\Monitoring\Tests\Functional\Fixtures\RecordingReporter;
 use mteu\Monitoring\Tests\Functional\Fixtures\ThrowingReporter;
+use mteu\Monitoring\Tests\Functional\MonitoringFunctionalTestCase;
 use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\Attributes\Test;
 use Psr\Log\NullLogger;
 use TYPO3\CMS\Core\Cache\CacheManager;
 use TYPO3\CMS\Core\Context\Context;
 use TYPO3\CMS\Core\Context\DateTimeAspect;
-use TYPO3\TestingFramework\Core\Functional\FunctionalTestCase;
 
 /**
  * ReportDispatcherTest.
@@ -51,34 +51,8 @@ use TYPO3\TestingFramework\Core\Functional\FunctionalTestCase;
  * @license GPL-2.0-or-later
  */
 #[CoversClass(ReportDispatcher::class)]
-final class ReportDispatcherTest extends FunctionalTestCase
+final class ReportDispatcherTest extends MonitoringFunctionalTestCase
 {
-    protected array $testExtensionsToLoad = [
-        'monitoring',
-        'typed_extconf',
-    ];
-
-    protected array $configurationToUseInTestInstance = [
-        'SYS' => [
-            'caching' => [
-                'cacheConfigurations' => [
-                    'typo3_monitoring' => [
-                        'frontend' => 'TYPO3\\CMS\\Core\\Cache\\Frontend\\VariableFrontend',
-                        'backend' => 'TYPO3\\CMS\\Core\\Cache\\Backend\\Typo3DatabaseBackend',
-                        'options' => [],
-                        'groups' => ['system'],
-                    ],
-                    'typo3_monitoring_notification' => [
-                        'frontend' => 'TYPO3\\CMS\\Core\\Cache\\Frontend\\VariableFrontend',
-                        'backend' => 'TYPO3\\CMS\\Core\\Cache\\Backend\\Typo3DatabaseBackend',
-                        'options' => [],
-                        'groups' => [],
-                    ],
-                ],
-            ],
-        ],
-    ];
-
     private const int REMINDER_INTERVAL = 100;
 
     protected function setUp(): void

@@ -20,10 +20,10 @@ namespace mteu\Monitoring\Tests\Functional\Provider\Scheduler;
 use EliasHaeussler\PHPUnitAttributes\Attribute\RequiresPackage;
 use mteu\Monitoring\Provider\Scheduler\DoctrineSchedulerTaskRepository;
 use mteu\Monitoring\Provider\Scheduler\SchedulerTask;
+use mteu\Monitoring\Tests\Functional\MonitoringFunctionalTestCase;
 use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\Attributes\Test;
 use TYPO3\CMS\Core\Information\Typo3Version;
-use TYPO3\TestingFramework\Core\Functional\FunctionalTestCase;
 
 /**
  * DoctrineSchedulerTaskRepositoryTest.
@@ -36,7 +36,7 @@ use TYPO3\TestingFramework\Core\Functional\FunctionalTestCase;
  * @license GPL-2.0-or-later
  */
 #[CoversClass(DoctrineSchedulerTaskRepository::class)]
-final class DoctrineSchedulerTaskRepositoryTest extends FunctionalTestCase
+final class DoctrineSchedulerTaskRepositoryTest extends MonitoringFunctionalTestCase
 {
     /**
      * Reference timestamp used as the "overdue before" boundary in tests.
@@ -44,11 +44,6 @@ final class DoctrineSchedulerTaskRepositoryTest extends FunctionalTestCase
     private const int OVERDUE_BEFORE = 1_700_000_000;
 
     protected array $coreExtensionsToLoad = ['scheduler'];
-
-    protected array $testExtensionsToLoad = [
-        'monitoring',
-        'typed_extconf',
-    ];
 
     private DoctrineSchedulerTaskRepository $repository;
 
