@@ -27,6 +27,8 @@ use Psr\Http\Message\ServerRequestInterface;
 /**
  * AuthorizerControllerTest.
  *
+ * @todo: Tests own logic but bypass constructors. Fixing properly needs refactoring the controllers.
+ *
  * @author Martin Adler <mteu@mailbox.org>
  * @license GPL-2.0-or-later
  */

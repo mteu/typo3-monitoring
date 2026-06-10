@@ -19,9 +19,9 @@ namespace mteu\Monitoring\Tests\Functional\Cache;
 
 use mteu\Monitoring\Cache\MonitoringCacheManager;
 use mteu\Monitoring\Result\MonitoringResult;
+use mteu\Monitoring\Tests\Functional\MonitoringFunctionalTestCase;
 use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\Attributes\Test;
-use TYPO3\TestingFramework\Core\Functional\FunctionalTestCase;
 
 /**
  * MonitoringCacheManagerTest.
@@ -33,28 +33,8 @@ use TYPO3\TestingFramework\Core\Functional\FunctionalTestCase;
  * @license GPL-2.0-or-later
  */
 #[CoversClass(MonitoringCacheManager::class)]
-final class MonitoringCacheManagerTest extends FunctionalTestCase
+final class MonitoringCacheManagerTest extends MonitoringFunctionalTestCase
 {
-    protected array $testExtensionsToLoad = [
-        'monitoring',
-        'typed_extconf',
-    ];
-
-    protected array $configurationToUseInTestInstance = [
-        'SYS' => [
-            'caching' => [
-                'cacheConfigurations' => [
-                    'typo3_monitoring' => [
-                        'frontend' => 'TYPO3\\CMS\\Core\\Cache\\Frontend\\VariableFrontend',
-                        'backend' => 'TYPO3\\CMS\\Core\\Cache\\Backend\\Typo3DatabaseBackend',
-                        'options' => [],
-                        'groups' => ['system'],
-                    ],
-                ],
-            ],
-        ],
-    ];
-
     private MonitoringCacheManager $cacheManager;
 
     protected function setUp(): void

@@ -66,7 +66,7 @@ final class MyReporter implements Reporter
 
     public function report(ReportContext $context): bool
     {
-        // $context->decision, ->results, ->unhealthyProviderNames, ->isHealthy()
+        // $context->decision, ->results, ->unhealthyProviderNames, ->fingerprint
         // Return true only when delivery succeeded; false makes the
         // dispatcher retry on the next run.
         return $this->send((string)$context->decision->name);
