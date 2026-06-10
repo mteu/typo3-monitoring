@@ -35,3 +35,14 @@ if (!isset($GLOBALS['TYPO3_CONF_VARS']['SYS']['caching']['cacheConfigurations'][
         'groups' => [],
     ];
 }
+
+// Optional integration with the TYPO3 Scheduler. Guarded so the extension still
+// installs and the CLI path (monitoring:report) keeps working without the
+// typo3/cms-scheduler system extension.
+if (class_exists(\TYPO3\CMS\Scheduler\Task\AbstractTask::class)) {
+    $GLOBALS['TYPO3_CONF_VARS']['SCHEDULER']['tasks'][\mteu\Monitoring\Task\MonitoringReportTask::class] = [
+        'extension' => 'monitoring',
+        'title' => 'Monitoring: Dispatch Reporters',
+        'description' => 'Evaluates monitoring status and dispatches push notifications to active reporters.',
+    ];
+}
