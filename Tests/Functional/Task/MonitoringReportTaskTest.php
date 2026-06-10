@@ -17,10 +17,13 @@ declare(strict_types=1);
 
 namespace mteu\Monitoring\Tests\Functional\Task;
 
+use EliasHaeussler\PHPUnitAttributes\Attribute\RequiresPackage;
 use mteu\Monitoring\Task\MonitoringReportTask;
 use mteu\Monitoring\Tests\Functional\MonitoringFunctionalTestCase;
 use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\Attributes\Test;
+use TYPO3\CMS\Core\Localization\LanguageServiceFactory;
+use TYPO3\CMS\Scheduler\Service\TaskService;
 
 /**
  * MonitoringReportTaskTest.
@@ -45,18 +48,44 @@ final class MonitoringReportTaskTest extends MonitoringFunctionalTestCase
         self::assertTrue($task->execute());
     }
 
+    /**
+     * Proves the task is actually discoverable by the Scheduler's own registry
+     * (i.e. registered under the key the scheduler reads), not merely that we
+     * wrote some array key ourselves.
+     */
     #[Test]
-    public function taskIsRegisteredWithScheduler(): void
+    #[RequiresPackage('typo3/cms-scheduler', '>= 14')]
+    public function taskIsDiscoverableByTheScheduler(): void
     {
-        $vars = $GLOBALS['TYPO3_CONF_VARS'] ?? null;
-        self::assertIsArray($vars);
+        $taskService = $this->getTaskService();
+        self::assertTrue($taskService->isTaskTypeRegistered(MonitoringReportTask::class));
+    }
 
-        $scheduler = $vars['SCHEDULER'] ?? null;
-        self::assertIsArray($scheduler);
+    /**
+     * v13 counterpart: the public discovery API is {@see TaskService::getAvailableTaskTypes()}
+     * (made protected in v14, hence the reflection call to keep static analysis against v14 happy).
+     */
+    #[Test]
+    #[RequiresPackage('typo3/cms-scheduler', '< 14')]
+    public function taskIsDiscoverableByTheSchedulerOnV13(): void
+    {
+        $taskService = $this->getTaskService();
 
-        $tasks = $scheduler['tasks'] ?? null;
-        self::assertIsArray($tasks);
+        // v13's getAvailableTaskTypes() localizes task titles via $GLOBALS['LANG']
+        $GLOBALS['LANG'] = $this->get(LanguageServiceFactory::class)->create('default');
 
-        self::assertArrayHasKey(MonitoringReportTask::class, $tasks);
+        $taskTypes = (new \ReflectionMethod($taskService, 'getAvailableTaskTypes'))->invoke($taskService);
+
+        self::assertIsArray($taskTypes);
+        self::assertArrayHasKey(MonitoringReportTask::class, $taskTypes);
+    }
+
+    private function getTaskService(): TaskService
+    {
+
+        $taskService = $this->get(TaskService::class);
+        self::assertInstanceOf(TaskService::class, $taskService);
+
+        return $taskService;
     }
 }
