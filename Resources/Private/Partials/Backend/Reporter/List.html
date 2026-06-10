@@ -1,0 +1,68 @@
+<html
+    data-namespace-typo3-fluid="true"
+    xmlns:f="http://typo3.org/ns/TYPO3/CMS/Fluid/ViewHelpers"
+>
+
+<f:layout name="Module" />
+
+<h2><f:translate key="LLL:EXT:monitoring/Resources/Private/Language/locallang.be.xlf:reporters.title" /></h2>
+<p><f:translate key="LLL:EXT:monitoring/Resources/Private/Language/locallang.be.xlf:reporters.list.description" /></p>
+
+<div class="table-fit">
+    <table class="table table-striped">
+        <thead>
+            <th>Name</th>
+            <th><f:translate key="LLL:EXT:monitoring/Resources/Private/Language/locallang.be.xlf:authorizers.priority" /></th>
+            <th><f:translate key="LLL:EXT:monitoring/Resources/Private/Language/locallang.be.xlf:reporters.threshold" /></th>
+        </thead>
+        <tbody>
+            <f:for each="{reporters}" as="reporter" key="class" iteration="iterator">
+                <f:render partial="Backend/Reporter/Item" arguments="{reporter: reporter, className: class}" />
+            </f:for>
+        </tbody>
+    </table>
+</div>
+
+<div class="card-container">
+    <div class="card card-size-small">
+        <div class="card-header">
+            <h2 class="card-title"><f:translate key="LLL:EXT:monitoring/Resources/Private/Language/locallang.be.xlf:reporters.dispatcher.title" /></h2>
+            <span class="card-subtitle"><f:translate key="LLL:EXT:monitoring/Resources/Private/Language/locallang.be.xlf:reporters.dispatcher.subtitle" /></span>
+        </div>
+
+        <div class="card-content">
+            <table class="table">
+                <tbody>
+                    <tr>
+                        <td><f:translate key="LLL:EXT:monitoring/Resources/Private/Language/locallang.be.xlf:reporters.dispatcher.reminderInterval" /></td>
+                        <td>{dispatcher.reminderInterval}</td>
+                    </tr>
+                    <tr>
+                        <td><f:translate key="LLL:EXT:monitoring/Resources/Private/Language/locallang.be.xlf:reporters.dispatcher.notifyOnRecovery" /></td>
+                        <td>
+                        <span class="badge badge-{f:if(condition: dispatcher.notifyOnRecovery, then: 'success', else: 'default')}">
+                            <f:if condition="{dispatcher.notifyOnRecovery}">
+                                <f:then><f:translate key="LLL:EXT:monitoring/Resources/Private/Language/locallang.be.xlf:reporters.dispatcher.enabled" /></f:then>
+                                <f:else><f:translate key="LLL:EXT:monitoring/Resources/Private/Language/locallang.be.xlf:reporters.dispatcher.disabled" /></f:else>
+                            </f:if>
+                        </span>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>  <f:translate key="LLL:EXT:monitoring/Resources/Private/Language/locallang.be.xlf:reporters.dispatcher.failOpenOnMissingState" /></td>
+                        <td>
+                        <span class="badge badge-{f:if(condition: dispatcher.failOpenOnMissingState, then: 'success', else: 'default')}">
+                            <f:if condition="{dispatcher.failOpenOnMissingState}">
+                                <f:then><f:translate key="LLL:EXT:monitoring/Resources/Private/Language/locallang.be.xlf:reporters.dispatcher.enabled" /></f:then>
+                                <f:else><f:translate key="LLL:EXT:monitoring/Resources/Private/Language/locallang.be.xlf:reporters.dispatcher.disabled" /></f:else>
+                            </f:if>
+                        </span>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+</html>

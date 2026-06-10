@@ -1,6 +1,7 @@
 <html
     data-namespace-typo3-fluid="true"
     xmlns:core="http://typo3.org/ns/TYPO3/CMS/Core/ViewHelpers"
+    xmlns:be="http://typo3.org/ns/TYPO3/CMS/Backend/ViewHelpers"
     xmlns:f="http://typo3.org/ns/TYPO3/CMS/Fluid/ViewHelpers"
 
 >
@@ -8,9 +9,9 @@
 <f:layout name="Module" />
 
 <f:section name="Content">
-    <f:if condition="{authorizers}">
+    <f:if condition="{providers}">
         <f:then>
-            <f:render partial="Backend/Authorizer/List" arguments="{authorizers: authorizers, endpoint: endpoint, settingsUrl: settingsUrl}" />
+            <f:render partial="Backend/Provider/List" arguments="{providers: providers, providerInterface: providerInterface, flushProviderCacheUri: flushProviderCacheUri}" />
         </f:then>
         <f:else>
             <div class="alert alert-info">
@@ -22,11 +23,10 @@
                     </div>
                     <div class="alert-content">
                         <div class="alert-title">
-                            <f:translate key="LLL:EXT:monitoring/Resources/Private/Language/locallang.be.xlf:authorizers.no_authorizers_found" />
+                            <f:translate key="LLL:EXT:monitoring/Resources/Private/Language/locallang.be.xlf:providers.no_providers_found.title" />
                         </div>
                         <p class="alert-message">
-                            <f:translate key="LLL:EXT:monitoring/Resources/Private/Language/locallang.be.xlf:authorizers.no_authorizers_found.content"
-                                         arguments="{0: authorizerInterface}" />
+                            <f:translate key="LLL:EXT:monitoring/Resources/Private/Language/locallang.be.xlf:providers.no_providers_found.content" arguments="{0: providerInterface}" />
                         </p>
                     </div>
                 </div>

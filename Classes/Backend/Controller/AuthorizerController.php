@@ -25,9 +25,6 @@ use Psr\Http\Message\ServerRequestInterface;
 use Symfony\Component\DependencyInjection\Attribute\AutowireIterator;
 use TYPO3\CMS\Backend\Attribute\AsController;
 use TYPO3\CMS\Backend\Routing\UriBuilder;
-use TYPO3\CMS\Backend\Template\Components\ButtonBar;
-use TYPO3\CMS\Backend\Template\Components\Buttons\LinkButton;
-use TYPO3\CMS\Backend\Template\ModuleTemplate;
 use TYPO3\CMS\Backend\Template\ModuleTemplateFactory;
 use TYPO3\CMS\Core\Authentication\BackendUserAuthentication;
 use TYPO3\CMS\Core\Crypto\HashService;
@@ -35,7 +32,6 @@ use TYPO3\CMS\Core\Http\AllowedMethodsTrait;
 use TYPO3\CMS\Core\Http\Error\MethodNotAllowedException;
 use TYPO3\CMS\Core\Http\NormalizedParams;
 use TYPO3\CMS\Core\Imaging\IconFactory;
-use TYPO3\CMS\Core\Imaging\IconSize;
 use TYPO3\CMS\Core\Localization\LanguageService;
 use TYPO3\CMS\Core\Localization\LanguageServiceFactory;
 
@@ -46,23 +42,25 @@ use TYPO3\CMS\Core\Localization\LanguageServiceFactory;
  * @license GPL-2.0-or-later
  */
 #[AsController]
-final readonly class AuthorizerController
+final readonly class AuthorizerController extends AbstractSubModuleController
 {
     use AllowedMethodsTrait;
 
-    private const string LOCALLANG_FILE = 'LLL:EXT:monitoring/Resources/Private/Language/locallang.be.xlf';
-
     public function __construct(
+        ModuleTemplateFactory $moduleTemplateFactory,
+        LanguageServiceFactory $languageServiceFactory,
+
         /** @var Authorizer[] $authorizers */
         #[AutowireIterator(tag: 'monitoring.authorizer', defaultPriorityMethod: 'getPriority')]
         private iterable $authorizers,
-        private ModuleTemplateFactory $moduleTemplateFactory,
+
         private MonitoringConfiguration $monitoringConfiguration,
         private UriBuilder $uriBuilder,
         private HashService $hashService,
         private IconFactory $iconFactory,
-        private LanguageServiceFactory $languageServiceFactory,
-    ) {}
+    ) {
+        parent::__construct($moduleTemplateFactory, $languageServiceFactory);
+    }
 
     /**
      * @throws MethodNotAllowedException
@@ -71,12 +69,8 @@ final readonly class AuthorizerController
     {
         $this->assertAllowedHttpMethod($request, 'GET');
 
-        $template = $this->moduleTemplateFactory->create($request);
-
         /** @var NormalizedParams $params */
         $params = $request->getAttribute('normalizedParams');
-
-        $this->registerDocHeaderButtons($template);
 
         $templateVariables = [
             'authorizers' => $this->buildAuthorizerTemplateVariables(),
@@ -84,22 +78,9 @@ final readonly class AuthorizerController
             'endpoint' => $params->getRequestHost() . $this->monitoringConfiguration->endpoint,
         ];
 
-        return $template
+        return $this->createModuleTemplate($request, 'monitoring_authorizers')
             ->assignMultiple($templateVariables)
             ->renderResponse('Backend/Authorizers');
-    }
-
-    private function registerDocHeaderButtons(ModuleTemplate $template): void
-    {
-        $buttonBar = $template->getDocHeaderComponent()->getButtonBar();
-
-        $backButton = (new LinkButton())
-            ->setHref((string)$this->uriBuilder->buildUriFromRoute('monitoring'))
-            ->setTitle($this->getLanguageService()->sL(self::LOCALLANG_FILE . ':module.backToOverview'))
-            ->setShowLabelText(true)
-            ->setIcon($this->iconFactory->getIcon('actions-view-go-back', IconSize::SMALL));
-
-        $buttonBar->addButton($backButton, ButtonBar::BUTTON_POSITION_LEFT);
     }
 
     /**
@@ -175,16 +156,5 @@ final readonly class AuthorizerController
         $templateVariables[TokenAuthorizer::class] = $tokenVariables;
 
         return $templateVariables;
-    }
-
-    private function getLanguageService(): LanguageService
-    {
-        $backendUser = $GLOBALS['BE_USER'] ?? null;
-
-        if ($backendUser instanceof BackendUserAuthentication) {
-            return $this->languageServiceFactory->createFromUserPreferences($backendUser);
-        }
-
-        return $this->languageServiceFactory->createFromUserPreferences(null);
     }
 }

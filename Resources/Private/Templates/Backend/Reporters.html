@@ -7,10 +7,11 @@
 
 <f:layout name="Module" />
 
+
 <f:section name="Content">
-    <f:if condition="{authorizers}">
+    <f:if condition="{reporters}">
         <f:then>
-            <f:render partial="Backend/Authorizer/List" arguments="{authorizers: authorizers, endpoint: endpoint, settingsUrl: settingsUrl}" />
+            <f:render partial="Backend/Reporter/List" arguments="{reporters: reporters, dispatcher: dispatcher}" />
         </f:then>
         <f:else>
             <div class="alert alert-info">
@@ -22,11 +23,11 @@
                     </div>
                     <div class="alert-content">
                         <div class="alert-title">
-                            <f:translate key="LLL:EXT:monitoring/Resources/Private/Language/locallang.be.xlf:authorizers.no_authorizers_found" />
+                            <f:translate key="LLL:EXT:monitoring/Resources/Private/Language/locallang.be.xlf:reporters.no_reporters_found" />
                         </div>
                         <p class="alert-message">
-                            <f:translate key="LLL:EXT:monitoring/Resources/Private/Language/locallang.be.xlf:authorizers.no_authorizers_found.content"
-                                         arguments="{0: authorizerInterface}" />
+                            <f:translate key="LLL:EXT:monitoring/Resources/Private/Language/locallang.be.xlf:reporters.no_reporters_found.content"
+                                         arguments="{0: reporterInterface}" />
                         </p>
                     </div>
                 </div>

@@ -17,7 +17,6 @@ declare(strict_types=1);
 
 namespace mteu\Monitoring\Backend\Controller;
 
-use mteu\Monitoring\Backend\Presenter\NavigationPresenter;
 use mteu\Monitoring\Cache\MonitoringCacheManager;
 use mteu\Monitoring\Configuration\MonitoringConfiguration;
 use mteu\Monitoring\Handler\MonitoringExecutionHandler;
@@ -39,26 +38,24 @@ use TYPO3\CMS\Core\Localization\LanguageService;
 use TYPO3\CMS\Core\Localization\LanguageServiceFactory;
 
 /**
- * MonitoringController.
+ * ProviderController.
  *
  * @author Martin Adler <mteu@mailbox.org>
  * @license GPL-2.0-or-later
  */
 #[AsController]
-final readonly class MonitoringController extends AbstractSubModuleController
+final readonly class ProviderController extends AbstractSubModuleController
 {
     use AllowedMethodsTrait;
+
     private const string FLASHMESSAGE_QUEUE_IDENTIFIER = 'ext_monitoring_message_queue';
 
     public function __construct(
         ModuleTemplateFactory $moduleTemplateFactory,
         LanguageServiceFactory $languageServiceFactory,
-
         /** @var MonitoringProvider[] $monitoringProviders */
         #[AutowireIterator(tag: 'monitoring.provider')]
         private iterable $monitoringProviders,
-
-        private NavigationPresenter $navigationPresenter,
         private MonitoringExecutionHandler $executionHandler,
         private MonitoringCacheManager $cacheManager,
         private MonitoringConfiguration $monitoringConfiguration,
@@ -79,24 +76,19 @@ final readonly class MonitoringController extends AbstractSubModuleController
         /** @var NormalizedParams $params */
         $params = $request->getAttribute('normalizedParams');
 
-        $providers = $this->buildProviderTemplateVariables($request);
-
         $templateVariables = [
             'endpoint' => $params->getRequestHost() . $this->monitoringConfiguration->endpoint,
-            'providers' => $providers,
-            'providerUnhealthyCount' => count(array_filter($providers, static fn(array $p) => ($p['isActive'] ?? false) && ($p['isHealthy'] ?? true) === false)),
+            // @todo: sort inactive providers to the end?
+            'providers' => $this->buildProviderTemplateVariables($request),
             'providerInterface' => MonitoringProvider::class,
             'monitoringMessageQueueIdentifier' => self::FLASHMESSAGE_QUEUE_IDENTIFIER,
             'flushProviderCacheUri' => (string)$this->uriBuilder->buildUriFromRoute('monitoring_flush_provider_cache'),
-            'serviceCards' => $this->buildCardsTemplateVariables(),
-            'navigation' => $this->navigationPresenter->present(self::class),
         ];
 
-        return $this->createModuleTemplate($request, 'monitoring')
+        return $this->createModuleTemplate($request, 'monitoring_providers')
             ->assignMultiple($templateVariables)
-            ->renderResponse('Backend/Monitoring');
+            ->renderResponse('Backend/Providers');
     }
-
     /**
      * Build template variables for all monitoring providers
      *
@@ -120,10 +112,6 @@ final readonly class MonitoringController extends AbstractSubModuleController
         foreach ($this->monitoringProviders as $monitoringProvider) {
 
             $isActive = $monitoringProvider->isActive();
-
-            if ($isActive === false) {
-                continue;
-            }
 
             $providerTemplateVariables[$monitoringProvider::class] = [
                 'name' => $monitoringProvider->getName(),
@@ -161,57 +149,5 @@ final readonly class MonitoringController extends AbstractSubModuleController
         }
 
         return $providerTemplateVariables;
-    }
-
-    private function buildCardsTemplateVariables(): array
-    {
-        return [
-            'providers' => [
-                'iconIdentifier' => 'actions-rocket',
-                'title' => $this->getLanguageService()->sL(self::LOCALLANG_FILE . ':providers.title'),
-                'subTitle' => null,
-                'body' => $this->getLanguageService()->sL(self::LOCALLANG_FILE . ':providers.card.body'),
-                'count' => $this->countServices('providers'),
-                'url' => (string)$this->uriBuilder->buildUriFromRoute('monitoring_providers'),
-                'linkTitle' => $this->getLanguageService()->sL(self::LOCALLANG_FILE . ':providers.card.linkLabel'),
-            ],
-            'authorizers' => [
-                'iconIdentifier' => 'actions-key',
-                'title' => $this->getLanguageService()->sL(self::LOCALLANG_FILE . ':authorizers.title'),
-                'subTitle' => null,
-                'body' => $this->getLanguageService()->sL(self::LOCALLANG_FILE . ':authorizers.card.body'),
-                'count' => $this->countServices('authorizers'),
-                'url' => (string)$this->uriBuilder->buildUriFromRoute('monitoring_authorizers'),
-                'linkTitle' => $this->getLanguageService()->sL(self::LOCALLANG_FILE . ':authorizers.card.linkLabel'),
-            ],
-            'reporters' => [
-                'iconIdentifier' => 'actions-bullhorn',
-                'title' => $this->getLanguageService()->sL(self::LOCALLANG_FILE . ':reporters.title'),
-                'subTitle' => null,
-                'body' => $this->getLanguageService()->sL(self::LOCALLANG_FILE . ':reporters.card.body'),
-                'count' => $this->countServices('reporters'),
-                'url' => (string)$this->uriBuilder->buildUriFromRoute('monitoring_reporters'),
-                'linkTitle' => $this->getLanguageService()->sL(self::LOCALLANG_FILE . ':reporters.card.linkLabel'),
-            ],
-            'documentation' => [
-                'iconIdentifier' => 'actions-notebook-typoscript',
-                'title' => $this->getLanguageService()->sL(self::LOCALLANG_FILE . ':documentation.title'),
-                'subTitle' => null,
-                'body' => $this->getLanguageService()->sL(self::LOCALLANG_FILE . ':documentation.card.body'),
-                'url' => 'https://github.com/mteu/typo3-monitoring/blob/main/Documentation/README.md',
-                'isExternalLink' => true,
-                'linkIconIdentifier' => 'actions-brand-github',
-                'linkTitle' => $this->getLanguageService()->sL(self::LOCALLANG_FILE . ':documentation.card.linkLabel'),
-            ],
-        ];
-    }
-
-    private function countServices(string $service): array
-    {
-        return [
-            'active' => 0,
-            'enabled' => 0,
-            'inactive' => 0,
-        ];
     }
 }
