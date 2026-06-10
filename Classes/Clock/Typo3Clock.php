@@ -17,28 +17,31 @@ declare(strict_types=1);
 
 namespace mteu\Monitoring\Clock;
 
+use Psr\Clock\ClockInterface;
 use Symfony\Component\DependencyInjection\Attribute\AsAlias;
 use TYPO3\CMS\Core\Context\Context;
 
 /**
- * Time source backed by the TYPO3 Context date aspect.
+ * PSR-20 clock backed by the TYPO3 Context date aspect, so domain code never
+ * calls time() or new \DateTime() directly and still honours TYPO3's simulated
+ * time (workspaces/preview).
  *
  * @author Martin Adler <mteu@mailbox.org>
  * @license GPL-2.0-or-later
  *
  * @codeCoverageIgnore
  */
-#[AsAlias(Clock::class)]
-final readonly class Typo3Clock implements Clock
+#[AsAlias(ClockInterface::class)]
+final readonly class Typo3Clock implements ClockInterface
 {
     public function __construct(
         private Context $context,
     ) {}
 
-    public function now(): int
+    public function now(): \DateTimeImmutable
     {
         $timestamp = $this->context->getPropertyFromAspect('date', 'timestamp');
 
-        return is_int($timestamp) ? $timestamp : time();
+        return (new \DateTimeImmutable())->setTimestamp(is_int($timestamp) ? $timestamp : time());
     }
 }

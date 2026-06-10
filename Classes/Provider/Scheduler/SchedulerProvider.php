@@ -17,11 +17,11 @@ declare(strict_types=1);
 
 namespace mteu\Monitoring\Provider\Scheduler;
 
-use mteu\Monitoring\Clock\Clock;
 use mteu\Monitoring\Configuration\Provider\SchedulerProviderConfiguration;
 use mteu\Monitoring\Provider\MonitoringProvider;
 use mteu\Monitoring\Result\MonitoringResult;
 use mteu\Monitoring\Result\Result;
+use Psr\Clock\ClockInterface;
 use Psr\Log\LoggerInterface;
 use TYPO3\CMS\Core\Utility\ExtensionManagementUtility;
 
@@ -51,7 +51,7 @@ final readonly class SchedulerProvider implements MonitoringProvider
         private SchedulerProviderConfiguration $configuration,
         private SchedulerTaskRepository $taskGateway,
         private SchedulerHeartbeat $heartbeat,
-        private Clock $clock,
+        private ClockInterface $clock,
         private SchedulerTaskLinkBuilder $linkBuilder,
         private LoggerInterface $logger,
     ) {}
@@ -113,7 +113,7 @@ final readonly class SchedulerProvider implements MonitoringProvider
             );
         }
 
-        $age = $this->clock->now() - $lastRun;
+        $age = $this->clock->now()->getTimestamp() - $lastRun;
 
         if ($age > $this->configuration->heartbeatThreshold) {
             return new MonitoringResult(
@@ -165,7 +165,7 @@ final readonly class SchedulerProvider implements MonitoringProvider
             return new MonitoringResult('Overdue Tasks', true, 'Overdue tasks is check disabled. Set threshold in Settings to active.');
         }
 
-        $overdueBefore = $this->clock->now() - $this->configuration->overdueThreshold;
+        $overdueBefore = $this->clock->now()->getTimestamp() - $this->configuration->overdueThreshold;
 
         try {
             $count = $this->taskGateway->countOverdueTasks($overdueBefore);
