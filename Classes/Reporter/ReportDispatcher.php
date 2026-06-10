@@ -23,6 +23,7 @@ use mteu\Monitoring\Handler\MonitoringExecutionHandler;
 use mteu\Monitoring\Provider\MonitoringProvider;
 use mteu\Monitoring\Result\Result;
 use Psr\Log\LoggerInterface;
+use Symfony\Component\DependencyInjection\Attribute\Autoconfigure;
 use Symfony\Component\DependencyInjection\Attribute\AutowireIterator;
 use TYPO3\CMS\Core\Context\Context;
 
@@ -36,6 +37,7 @@ use TYPO3\CMS\Core\Context\Context;
  * @author Martin Adler <mteu@mailbox.org>
  * @license GPL-2.0-or-later
  */
+#[Autoconfigure(public: true)]
 final readonly class ReportDispatcher
 {
     public function __construct(
