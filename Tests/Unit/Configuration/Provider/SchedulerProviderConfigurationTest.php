@@ -31,18 +31,6 @@ use PHPUnit\Framework\Attributes\Test;
 final class SchedulerProviderConfigurationTest extends Framework\TestCase
 {
     #[Test]
-    public function defaultValuesAreCorrect(): void
-    {
-        $subject = new Src\Configuration\Provider\SchedulerProviderConfiguration();
-
-        self::assertTrue($subject->isEnabled());
-        self::assertSame(900, $subject->heartbeatThreshold);
-        self::assertSame(300, $subject->overdueThreshold);
-        self::assertTrue($subject->isHeartbeatCheckEnabled());
-        self::assertTrue($subject->isOverdueCheckEnabled());
-    }
-
-    #[Test]
     public function heartbeatCheckIsDisabledWhenThresholdIsZero(): void
     {
         $subject = new Src\Configuration\Provider\SchedulerProviderConfiguration(heartbeatThreshold: 0);

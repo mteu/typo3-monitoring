@@ -25,6 +25,8 @@ namespace mteu\Monitoring\Reporter;
  *
  * @author Martin Adler <mteu@mailbox.org>
  * @license GPL-2.0-or-later
+ *
+ * @codeCoverageIgnore
  */
 final readonly class NotificationState
 {

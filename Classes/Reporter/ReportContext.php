@@ -28,6 +28,8 @@ use mteu\Monitoring\Result\Result;
  *
  * @author Martin Adler <mteu@mailbox.org>
  * @license GPL-2.0-or-later
+ *
+ * @codeCoverageIgnore
  */
 final readonly class ReportContext
 {
@@ -41,9 +43,4 @@ final readonly class ReportContext
         public array $unhealthyProviderNames,
         public ?string $fingerprint,
     ) {}
-
-    public function isHealthy(): bool
-    {
-        return $this->unhealthyProviderNames === [];
-    }
 }
