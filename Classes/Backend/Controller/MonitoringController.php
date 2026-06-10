@@ -23,6 +23,8 @@ use mteu\Monitoring\Configuration\MonitoringConfiguration;
 use mteu\Monitoring\Handler\MonitoringExecutionHandler;
 use mteu\Monitoring\Provider\CacheableMonitoringProvider;
 use mteu\Monitoring\Provider\MonitoringProvider;
+use mteu\Monitoring\Status\ServiceStatusRegistry;
+use mteu\Monitoring\Status\ServiceType;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use Symfony\Component\DependencyInjection\Attribute\AutowireIterator;
@@ -57,6 +59,8 @@ final readonly class MonitoringController extends AbstractSubModuleController
         /** @var MonitoringProvider[] $monitoringProviders */
         #[AutowireIterator(tag: 'monitoring.provider')]
         private iterable $monitoringProviders,
+
+        private ServiceStatusRegistry $serviceStatusRegistry,
 
         private NavigationPresenter $navigationPresenter,
         private MonitoringExecutionHandler $executionHandler,
@@ -95,6 +99,19 @@ final readonly class MonitoringController extends AbstractSubModuleController
         return $this->createModuleTemplate($request, 'monitoring')
             ->assignMultiple($templateVariables)
             ->renderResponse('Backend/Monitoring');
+    }
+
+    private function registerDocHeaderButtons(ModuleTemplate $template): void
+    {
+        $buttonBar = $template->getDocHeaderComponent()->getButtonBar();
+
+        $authorizerButton = (new LinkButton())
+            ->setHref((string)$this->uriBuilder->buildUriFromRoute('monitoring.authorizers'))
+            ->setTitle($this->getLanguageService()->sL(self::LOCALLANG_FILE . ':authorizers.title'))
+            ->setShowLabelText(true)
+            ->setIcon($this->iconFactory->getIcon('actions-lock', IconSize::SMALL));
+
+        $buttonBar->addButton($authorizerButton, ButtonBar::BUTTON_POSITION_LEFT);
     }
 
     /**
@@ -171,27 +188,36 @@ final readonly class MonitoringController extends AbstractSubModuleController
                 'title' => $this->getLanguageService()->sL(self::LOCALLANG_FILE . ':providers.title'),
                 'subTitle' => null,
                 'body' => $this->getLanguageService()->sL(self::LOCALLANG_FILE . ':providers.card.body'),
-                'count' => $this->countServices('providers'),
+                'count' => $this->serviceStatusRegistry->count(ServiceType::Provider),
                 'url' => (string)$this->uriBuilder->buildUriFromRoute('monitoring_providers'),
-                'linkTitle' => $this->getLanguageService()->sL(self::LOCALLANG_FILE . ':providers.card.linkLabel'),
+                'linkTitle' => sprintf(
+                    $this->getLanguageService()->sL(self::LOCALLANG_FILE . ':providers.card.linkLabel'),
+                    $this->serviceStatusRegistry->count(ServiceType::Provider)['discovered'],
+                ),
             ],
             'authorizers' => [
                 'iconIdentifier' => 'actions-key',
                 'title' => $this->getLanguageService()->sL(self::LOCALLANG_FILE . ':authorizers.title'),
-                'subTitle' => null,
+                'subTitle' => $this->serviceStatusRegistry->count(ServiceType::Provider)['active'],
                 'body' => $this->getLanguageService()->sL(self::LOCALLANG_FILE . ':authorizers.card.body'),
-                'count' => $this->countServices('authorizers'),
+                'count' => $this->serviceStatusRegistry->count(ServiceType::Authorizer),
                 'url' => (string)$this->uriBuilder->buildUriFromRoute('monitoring_authorizers'),
-                'linkTitle' => $this->getLanguageService()->sL(self::LOCALLANG_FILE . ':authorizers.card.linkLabel'),
+                'linkTitle' => sprintf(
+                    $this->getLanguageService()->sL(self::LOCALLANG_FILE . ':authorizers.card.linkLabel'),
+                    $this->serviceStatusRegistry->count(ServiceType::Authorizer)['discovered'],
+                ),
             ],
             'reporters' => [
                 'iconIdentifier' => 'actions-bullhorn',
                 'title' => $this->getLanguageService()->sL(self::LOCALLANG_FILE . ':reporters.title'),
                 'subTitle' => null,
                 'body' => $this->getLanguageService()->sL(self::LOCALLANG_FILE . ':reporters.card.body'),
-                'count' => $this->countServices('reporters'),
+                'count' => $this->serviceStatusRegistry->count(ServiceType::Reporter),
                 'url' => (string)$this->uriBuilder->buildUriFromRoute('monitoring_reporters'),
-                'linkTitle' => $this->getLanguageService()->sL(self::LOCALLANG_FILE . ':reporters.card.linkLabel'),
+                'linkTitle' => sprintf(
+                    $this->getLanguageService()->sL(self::LOCALLANG_FILE . ':reporters.card.linkLabel'),
+                    $this->serviceStatusRegistry->count(ServiceType::Reporter)['discovered'],
+                ),
             ],
             'documentation' => [
                 'iconIdentifier' => 'actions-notebook-typoscript',
@@ -203,15 +229,6 @@ final readonly class MonitoringController extends AbstractSubModuleController
                 'linkIconIdentifier' => 'actions-brand-github',
                 'linkTitle' => $this->getLanguageService()->sL(self::LOCALLANG_FILE . ':documentation.card.linkLabel'),
             ],
-        ];
-    }
-
-    private function countServices(string $service): array
-    {
-        return [
-            'active' => 0,
-            'enabled' => 0,
-            'inactive' => 0,
         ];
     }
 }

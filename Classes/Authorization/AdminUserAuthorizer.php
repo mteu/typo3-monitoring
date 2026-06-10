@@ -59,7 +59,7 @@ final readonly class AdminUserAuthorizer implements Authorizer
 
     public function getDescription(): string
     {
-        return 'Allows access to enpoint for logged-in TYPO3 backend administrators.';
+        return 'Allows access to the monitoring enpoint for logged-in TYPO3 backend administrators.';
     }
 
     public static function getPriority(): int

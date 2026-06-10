@@ -7,6 +7,7 @@
 # customsubcategory=20=Admin User Authorizer
 # customsubcategory=30=Report Dispatcher
 # customsubcategory=40=Email Reporter
+# customsubcategory=50=TYPO3 Scheduler
 
 api {
     # cat=endpoint/1/10; type=string; label=Endpoint Route
@@ -36,6 +37,13 @@ authorizer {
         enabled=1
         # cat=authorizer/20/20; type=integer; label=Priority:Set the priority of this Authorizer. Higher value will be tried first.
         priority=-10
+    }
+}
+
+provider {
+    mteu\Monitoring\Provider\Scheduler\SchedulerProvider {
+        # cat=reporter/50/10; type=boolean; label=Enable SchedulerProvider:Enables monitoring of the TYPO3 Scheduler
+        enabled=1
     }
 }
 
