@@ -19,11 +19,11 @@ namespace mteu\Monitoring\Provider\Scheduler;
 
 use mteu\Monitoring\Clock\Clock;
 use mteu\Monitoring\Configuration\Provider\SchedulerProviderConfiguration;
-use mteu\Monitoring\Extension\ExtensionState;
 use mteu\Monitoring\Provider\MonitoringProvider;
 use mteu\Monitoring\Result\MonitoringResult;
 use mteu\Monitoring\Result\Result;
 use Psr\Log\LoggerInterface;
+use TYPO3\CMS\Core\Utility\ExtensionManagementUtility;
 
 /**
  * SchedulerMonitoringProvider.
@@ -53,7 +53,6 @@ final readonly class SchedulerProvider implements MonitoringProvider
         private SchedulerHeartbeat $heartbeat,
         private Clock $clock,
         private SchedulerTaskLinkBuilder $linkBuilder,
-        private ExtensionState $extensionState,
         private LoggerInterface $logger,
     ) {}
 
@@ -76,7 +75,7 @@ final readonly class SchedulerProvider implements MonitoringProvider
             return false;
         }
 
-        return $this->extensionState->isLoaded('scheduler');
+        return ExtensionManagementUtility::isLoaded('scheduler');
     }
 
     public function execute(): Result

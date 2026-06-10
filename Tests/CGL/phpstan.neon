@@ -26,6 +26,7 @@ parameters:
 				- TYPO3\TestingFramework\Core\Unit\UnitTestCase
 				- mteu\Monitoring\Tests\Functional\MonitoringFunctionalTestCase
 				- mteu\Monitoring\Tests\Unit\MonitoringTestCase
+				- mteu\Monitoring\Tests\Functional\Provider\Scheduler\SchedulerProviderFunctionalTestCase
 
 	ignoreErrors:
 		- identifier: ergebnis.noConstructorParameterWithDefaultValue
