@@ -20,14 +20,18 @@ namespace mteu\Monitoring\Tests\Unit\Provider;
 use mteu\Monitoring\Configuration\Provider\SchedulerProviderConfiguration;
 use mteu\Monitoring\Provider\Scheduler\SchedulerProvider;
 use mteu\Monitoring\Provider\Scheduler\SchedulerTask;
+use mteu\Monitoring\Provider\Scheduler\SchedulerTaskLinkBuilder;
 use mteu\Monitoring\Result\MonitoringResult;
 use mteu\Monitoring\Tests\Unit\Fixtures\Scheduler\InMemorySchedulerHeartbeat;
 use mteu\Monitoring\Tests\Unit\Fixtures\Scheduler\InMemorySchedulerTaskRepository;
-use mteu\Monitoring\Tests\Unit\Fixtures\Scheduler\InMemoryTaskLinkBuilder;
 use PHPUnit\Framework;
 use PHPUnit\Framework\Attributes\Test;
 use Psr\Log\NullLogger;
 use Symfony\Component\Clock\MockClock;
+use TYPO3\CMS\Backend\Routing\Exception\RouteNotFoundException;
+use TYPO3\CMS\Backend\Routing\Router;
+use TYPO3\CMS\Backend\Routing\UriBuilder;
+use TYPO3\CMS\Core\Http\Uri;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
 
 /**
@@ -38,6 +42,7 @@ use TYPO3\CMS\Core\Utility\GeneralUtility;
  */
 #[Framework\Attributes\CoversClass(SchedulerProvider::class)]
 #[Framework\Attributes\UsesClass(SchedulerTask::class)]
+#[Framework\Attributes\UsesClass(SchedulerTaskLinkBuilder::class)]
 final class SchedulerProviderTest extends Framework\TestCase
 {
     private const int NOW = 1_700_000_000;
@@ -281,8 +286,28 @@ final class SchedulerProviderTest extends Framework\TestCase
             ),
             new InMemorySchedulerHeartbeat($lastRunEnd),
             new MockClock((new \DateTimeImmutable())->setTimestamp(self::NOW)),
-            new InMemoryTaskLinkBuilder($taskLinkBaseUri),
+            $this->createLinkBuilder($taskLinkBaseUri),
             new NullLogger(),
         );
+    }
+
+    /**
+     * Builds the real link builder with a stubbed routing stack: when no base
+     * URI is given the UriBuilder fails to resolve a route, so no link is built.
+     */
+    private function createLinkBuilder(?string $baseUri): SchedulerTaskLinkBuilder
+    {
+        $router = self::createStub(Router::class);
+        $router->method('hasRoute')->willReturn(false);
+
+        $uriBuilder = self::createStub(UriBuilder::class);
+
+        if ($baseUri === null) {
+            $uriBuilder->method('buildUriFromRoute')->willThrowException(new RouteNotFoundException());
+        } else {
+            $uriBuilder->method('buildUriFromRoute')->willReturn(new Uri($baseUri));
+        }
+
+        return new SchedulerTaskLinkBuilder($router, $uriBuilder, new NullLogger());
     }
 }
