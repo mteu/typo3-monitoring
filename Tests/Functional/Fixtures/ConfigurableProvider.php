@@ -53,6 +53,11 @@ final class ConfigurableProvider implements MonitoringProvider
         return 'Configurable provider for reporter dispatcher tests';
     }
 
+    public function isEnabled(): bool
+    {
+        return $this->active;
+    }
+
     public function isActive(): bool
     {
         return $this->active;

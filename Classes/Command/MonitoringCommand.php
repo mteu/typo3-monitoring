@@ -94,7 +94,7 @@ final class MonitoringCommand extends Command
         $outcomes = [];
 
         foreach ($this->monitoringProviders as $provider) {
-            if ($provider->isActive()) {
+            if ($provider->isEnabled() && $provider->isActive()) {
                 $outcomes[$provider::class] = $this->executionHandler->executeProviderWithMetadata(
                     $provider,
                     $useCache,

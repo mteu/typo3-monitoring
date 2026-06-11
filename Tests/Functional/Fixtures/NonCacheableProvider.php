@@ -41,6 +41,11 @@ final class NonCacheableProvider implements MonitoringProvider
         return 'Test non-cacheable provider for functional tests';
     }
 
+    public function isEnabled(): bool
+    {
+        return true;
+    }
+
     public function isActive(): bool
     {
         return true;
