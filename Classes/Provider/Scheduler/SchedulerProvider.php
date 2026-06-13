@@ -69,12 +69,13 @@ final readonly class SchedulerProvider implements MonitoringProvider
             . 'Inactive when the scheduler extension is not installed.';
     }
 
+    public function isEnabled(): bool
+    {
+        return $this->configuration->isEnabled();
+    }
+
     public function isActive(): bool
     {
-        if (!$this->configuration->isEnabled()) {
-            return false;
-        }
-
         return ExtensionManagementUtility::isLoaded('scheduler');
     }
 

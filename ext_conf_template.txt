@@ -7,6 +7,7 @@
 # customsubcategory=20=Admin User Authorizer
 # customsubcategory=30=Report Dispatcher
 # customsubcategory=40=Email Reporter
+# customsubcategory=50=Scheduler Provider
 
 api {
     # cat=endpoint/1/10; type=string; label=Endpoint Route
@@ -39,6 +40,16 @@ authorizer {
     }
 }
 
+provider {
+    mteu\Monitoring\Provider\SchedulerMonitoringProvider {
+        # cat=provider/50/10; type=boolean; label=Enable Scheduler Provider:Monitors TYPO3 scheduler tasks. Inactive when the scheduler extension is not installed.
+        enabled=1
+        # cat=provider/50/20; type=int+; label=Heartbeat threshold (seconds):Maximum age of the last scheduler run before the heartbeat is reported unhealthy. Detects a broken cron job. Set to 0 to disable. Defaults to 900 (15 minutes).
+        heartbeatThreshold=900
+        # cat=provider/50/30; type=int+; label=Overdue threshold (seconds):Grace period after a task's scheduled next execution time before it is reported as overdue. Tasks configured for manual execution are excluded automatically. Set to 0 to disable. Defaults to 300 (5 minutes).
+        overdueThreshold=300
+    }
+}
 reportDispatcher {
     # cat=reporter/30/10; type=int+; label=Reminder interval (seconds):Minimum seconds between repeated notifications for an unchanged failure set. Default 86400 (once per day). A changed failure set always notifies immediately.
     reminderInterval=86400
