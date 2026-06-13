@@ -44,6 +44,11 @@ final class ShortCacheProvider implements CacheableMonitoringProvider
         return 'Test provider with short cache lifetime';
     }
 
+    public function isEnabled(): bool
+    {
+        return true;
+    }
+
     public function isActive(): bool
     {
         return true;

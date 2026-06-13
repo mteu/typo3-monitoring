@@ -43,18 +43,13 @@ interface MonitoringProvider
     public function getDescription(): string;
 
     /**
-     * Whether an operator has switched this provider on (configuration intent).
-     *
-     * In contrast to {@see isActive()}, this reflects intent only — not runtime
-     * readiness. A provider can be enabled in configuration yet inactive when a
-     * technical precondition is unmet (a missing dependency, an unloaded
-     * extension, …). The backend surfaces that discrepancy as a warning.
+     * Whether an operator has switched this provider on. This reflects intent only
+     * — not runtime readiness. A provider can be enabled in configuration yet
+     * inactive when a technical precondition is unmet (a missing dependency, an
+     * unloaded extension).
      */
     public function isEnabled(): bool;
 
-    /**
-     * Allows your provider to implement the MonitoringProvider interface while being ignored for the actual monitoring.
-     */
     public function isActive(): bool;
 
     public function execute(): Result;

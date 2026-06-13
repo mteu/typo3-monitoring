@@ -46,6 +46,11 @@ final class CacheableProvider implements CacheableMonitoringProvider
         return 'Test cacheable provider for functional tests';
     }
 
+    public function isEnabled(): bool
+    {
+        return true;
+    }
+
     public function isActive(): bool
     {
         return true;

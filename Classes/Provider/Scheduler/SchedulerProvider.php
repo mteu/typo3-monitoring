@@ -76,10 +76,6 @@ final readonly class SchedulerProvider implements MonitoringProvider
 
     public function isActive(): bool
     {
-        if (!$this->isEnabled()) {
-            return false;
-        }
-
         return ExtensionManagementUtility::isLoaded('scheduler');
     }
 

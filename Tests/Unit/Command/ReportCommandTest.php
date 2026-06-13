@@ -202,6 +202,11 @@ final class ReportCommandTest extends TestCase
                 return '';
             }
 
+            public function isEnabled(): bool
+            {
+                return true;
+            }
+
             public function isActive(): bool
             {
                 return true;

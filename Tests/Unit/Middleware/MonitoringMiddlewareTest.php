@@ -325,6 +325,10 @@ final class MonitoringMiddlewareTest extends Framework\TestCase
             {
                 return 'counted';
             }
+            public function isEnabled(): bool
+            {
+                return true;
+            }
             public function getDescription(): string
             {
                 return 'Counts how often execute() is called.';
@@ -372,6 +376,10 @@ final class MonitoringMiddlewareTest extends Framework\TestCase
             public function getName(): string
             {
                 return 'cacheable';
+            }
+            public function isEnabled(): bool
+            {
+                return true;
             }
             public function getDescription(): string
             {
@@ -523,6 +531,66 @@ final class MonitoringMiddlewareTest extends Framework\TestCase
 
     #[Test]
     #[AllowMockObjectsWithoutExpectations]
+    public function disabledProviderIsExcludedFromHealthOutputEvenIfActive(): void
+    {
+        $this->configuration = $this->createConfigurationFromData([
+            'api' => ['endpoint' => '/monitor/health'],
+            'authorizer' => ['mteu\\Monitoring\\Authorization\\TokenAuthorizer' => ['enabled' => '1', 'secret' => 'test-secret', 'priority' => '10', 'authHeaderName' => 'X-Auth']],
+        ]);
+
+        // Contradicts itself: disabled yet active. isEnabled() is the
+        // kill-switch, so it must never be executed or reported.
+        $disabledButActive = new class () implements MonitoringProvider {
+            public function getName(): string
+            {
+                return 'DisabledButActive';
+            }
+
+            public function isEnabled(): bool
+            {
+                return false;
+            }
+
+            public function getDescription(): string
+            {
+                return '';
+            }
+
+            public function isActive(): bool
+            {
+                return true;
+            }
+
+            public function execute(): Result
+            {
+                return new MonitoringResult('DisabledButActive', false);
+            }
+        };
+
+        $middleware = new MonitoringMiddleware(
+            [$disabledButActive, $this->createHealthyProvider()],
+            [$this->createAuthorizedAuthorizer()],
+            $this->configuration,
+            $this->responseFactory,
+            $this->logger,
+            $this->createExecutionHandler(),
+        );
+
+        $response = $middleware->process(new ServerRequest(new Uri('https://example.com/monitor/health'), 'GET'), $this->handler);
+
+        // The disabled provider never ran, so only the healthy one counts.
+        self::assertSame(200, $response->getStatusCode());
+
+        $decoded = json_decode((string)$response->getBody(), true, 512, JSON_THROW_ON_ERROR);
+        self::assertIsArray($decoded);
+        $services = $decoded['services'] ?? null;
+        self::assertIsArray($services);
+        self::assertArrayHasKey('database', $services);
+        self::assertArrayNotHasKey('DisabledButActive', $services);
+    }
+
+    #[Test]
+    #[AllowMockObjectsWithoutExpectations]
     public function responseListsSubResultStatusesPerService(): void
     {
         $this->configuration = $this->createConfigurationFromData([
@@ -534,6 +602,10 @@ final class MonitoringMiddlewareTest extends Framework\TestCase
             public function getName(): string
             {
                 return 'Scheduler';
+            }
+            public function isEnabled(): bool
+            {
+                return true;
             }
             public function getDescription(): string
             {
@@ -682,6 +754,10 @@ final class MonitoringMiddlewareTest extends Framework\TestCase
             public function getName(): string
             {
                 return 'database';
+            }
+            public function isEnabled(): bool
+            {
+                return true;
             }
 
             public function getDescription(): string
