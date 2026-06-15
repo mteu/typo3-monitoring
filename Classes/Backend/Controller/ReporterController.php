@@ -18,6 +18,7 @@ declare(strict_types=1);
 namespace mteu\Monitoring\Backend\Controller;
 
 use mteu\Monitoring\Configuration\MonitoringConfiguration;
+use mteu\Monitoring\Reporter\EmailReporter;
 use mteu\Monitoring\Reporter\Reporter;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
@@ -27,6 +28,7 @@ use TYPO3\CMS\Backend\Template\ModuleTemplateFactory;
 use TYPO3\CMS\Core\Http\AllowedMethodsTrait;
 use TYPO3\CMS\Core\Http\Error\MethodNotAllowedException;
 use TYPO3\CMS\Core\Localization\LanguageServiceFactory;
+use TYPO3\CMS\Core\Utility\MailUtility;
 
 /**
  * ReporterController.
@@ -94,8 +96,28 @@ final readonly class ReporterController extends AbstractSubModuleController
                 'priority' => $reporter::getPriority(),
                 'threshold' => $reporter->getThreshold()->value,
             ];
+
+            if ($reporter instanceof EmailReporter) {
+                $statuses[$reporter::class]['additionalInformation'] = $this->getEmailReporterAdditionalInformation();
+            }
         }
 
         return $statuses;
+    }
+
+    /**
+     * @return string[]
+     */
+    public function getEmailReporterAdditionalInformation(): array
+    {
+        return [
+            'Recipients' => $this->monitoringConfiguration->emailReporterConfiguration->getRecipients() !== []
+                ? implode(', ', $this->monitoringConfiguration->emailReporterConfiguration->getRecipients())
+                : 'No email recipients configured.',
+            'Sender address' => $this->monitoringConfiguration->emailReporterConfiguration->senderAddress !== ''
+                ? $this->monitoringConfiguration->emailReporterConfiguration->senderAddress
+                : MailUtility::getSystemFromAddress() . ' (System default)',
+            'Subject prefix' => $this->monitoringConfiguration->emailReporterConfiguration->subjectPrefix,
+        ];
     }
 }

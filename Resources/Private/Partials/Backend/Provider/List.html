@@ -12,7 +12,7 @@
             {listTitle}
         </f:then>
         <f:else>
-            <f:translate key="LLL:EXT:monitoring/Resources/Private/Language/locallang.be.xlf:providers.title" />
+            <f:translate key="LLL:EXT:monitoring/Resources/Private/Language/locallang.be.xlf:providers.list.title" />
         </f:else>
     </f:if>
     <f:comment><!--
@@ -27,6 +27,10 @@
         </button>
     --></f:comment>
 </h2>
+
+<p>
+    <f:translate key="LLL:EXT:monitoring/Resources/Private/Language/locallang.be.xlf:providers.list.description" />
+</p>
 
 <f:for each="{providers}" as="provider" key="providerClass" iteration="iterator">
     <f:render partial="Backend/Provider/Item" arguments="{_all}" />

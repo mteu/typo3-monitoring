@@ -8,7 +8,7 @@
 <f:layout name="Module" />
 <tr>
     <td>
-        {className -> monitoring:className()}
+        {reporter.name}
         <span class="badge badge-{f:if(condition: reporter.isActive, then: 'success', else: 'danger')}">
             <f:if condition="{reporter.isActive}">
                 <f:then><f:translate key="LLL:EXT:monitoring/Resources/Private/Language/locallang.be.xlf:status.active" /></f:then>
@@ -21,6 +21,13 @@
     </td>
     <td>
         <span class="badge badge-info">{reporter.threshold}</span>
+    </td>
+    <td>
+        <ul>
+            <f:for each="{reporter.additionalInformation}" as="row" key="key" iteration="iterator">
+                <li>{key}: {row}</li>
+            </f:for>
+        </ul>
     </td>
 </tr>
 </html>

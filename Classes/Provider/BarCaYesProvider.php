@@ -68,6 +68,6 @@ final readonly class BarCaYesProvider implements CacheableMonitoringProvider
 
     public function getCacheLifetime(): int
     {
-        return 86000;
+        return 900;
     }
 }
