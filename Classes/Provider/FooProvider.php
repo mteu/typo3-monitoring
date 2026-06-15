@@ -17,17 +17,8 @@ declare(strict_types=1);
 
 namespace mteu\Monitoring\Provider;
 
-use mteu\Monitoring\Configuration\Provider\SchedulerProviderConfiguration;
-use mteu\Monitoring\Provider\MonitoringProvider;
-use mteu\Monitoring\Provider\Scheduler\SchedulerHeartbeat;
-use mteu\Monitoring\Provider\Scheduler\SchedulerTask;
-use mteu\Monitoring\Provider\Scheduler\SchedulerTaskLinkBuilder;
-use mteu\Monitoring\Provider\Scheduler\SchedulerTaskRepository;
 use mteu\Monitoring\Result\MonitoringResult;
 use mteu\Monitoring\Result\Result;
-use Psr\Clock\ClockInterface;
-use Psr\Log\LoggerInterface;
-use TYPO3\CMS\Core\Utility\ExtensionManagementUtility;
 
 /**
  * SchedulerMonitoringProvider.
@@ -47,7 +38,7 @@ final readonly class FooProvider implements MonitoringProvider
 {
     public function getName(): string
     {
-        return 'Foo';
+        return 'Foo (enabled, active)';
     }
 
     public function getDescription(): string
@@ -63,5 +54,10 @@ final readonly class FooProvider implements MonitoringProvider
     public function execute(): Result
     {
         return new MonitoringResult($this->getName(), true);
+    }
+
+    public function isEnabled(): bool
+    {
+        return true;
     }
 }

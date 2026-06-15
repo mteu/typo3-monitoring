@@ -28,9 +28,7 @@
     --></f:comment>
 </h2>
 
-
-
-<f:for each="{providers}" as="provider" key="class" iteration="iterator">
+<f:for each="{providers}" as="provider" key="providerClass" iteration="iterator">
     <f:render partial="Backend/Provider/Item" arguments="{_all}" />
 </f:for>
 

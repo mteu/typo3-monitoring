@@ -17,17 +17,8 @@ declare(strict_types=1);
 
 namespace mteu\Monitoring\Provider;
 
-use mteu\Monitoring\Configuration\Provider\SchedulerProviderConfiguration;
-use mteu\Monitoring\Provider\MonitoringProvider;
-use mteu\Monitoring\Provider\Scheduler\SchedulerHeartbeat;
-use mteu\Monitoring\Provider\Scheduler\SchedulerTask;
-use mteu\Monitoring\Provider\Scheduler\SchedulerTaskLinkBuilder;
-use mteu\Monitoring\Provider\Scheduler\SchedulerTaskRepository;
 use mteu\Monitoring\Result\MonitoringResult;
 use mteu\Monitoring\Result\Result;
-use Psr\Clock\ClockInterface;
-use Psr\Log\LoggerInterface;
-use TYPO3\CMS\Core\Utility\ExtensionManagementUtility;
 
 /**
  * SchedulerMonitoringProvider.
@@ -43,16 +34,21 @@ use TYPO3\CMS\Core\Utility\ExtensionManagementUtility;
  * @author Martin Adler <mteu@mailbox.org>
  * @license GPL-2.0-or-later
  */
-final readonly class BarProvider implements CacheableMonitoringProvider
+final readonly class BarProvider implements MonitoringProvider
 {
     public function getName(): string
     {
-        return 'Foo';
+        return 'Bar (disabled, active)';
     }
 
     public function getDescription(): string
     {
         return '';
+    }
+
+    public function isEnabled(): bool
+    {
+        return false;
     }
 
     public function isActive(): bool
@@ -63,15 +59,5 @@ final readonly class BarProvider implements CacheableMonitoringProvider
     public function execute(): Result
     {
         return new MonitoringResult($this->getName(), true);
-    }
-
-    public function getCacheKey(): string
-    {
-        return 'bar_provider';
-    }
-
-    public function getCacheLifetime(): int
-    {
-        return 86000;
     }
 }

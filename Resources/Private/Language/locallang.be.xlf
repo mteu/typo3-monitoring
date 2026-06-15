@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <xliff version="1.2" xmlns="urn:oasis:names:tc:xliff:document:1.2">
-    <file source-language="en" datatype="plaintext" original="EXT:monitoring/Resources/Pvate/Language/locallang.be.xlf">
+    <file source-language="en" datatype="plaintext" original="EXT:monitoring/Resources/Private/Language/locallang.be.xlf">
         <header/>
         <body>
             <trans-unit id="auth.button.preview">
@@ -28,22 +28,8 @@
                 <source>Monitoring requests will be authorized following this Authorizer order:</source>
             </trans-unit>
             <trans-unit id="authorizers.card.body">
-				<source>Access to monitoring results is restricted and granted by Authorizers.</source>
-			</trans-unit>
-            <trans-unit id="authorizers.card.linkLabel">
-                <source>View all authorizers</source>
+                <source>Access to monitoring results is restricted and granted by Authorizers.</source>
             </trans-unit>
-            <trans-unit id="authorizers.no_authorizers_found">
-                <source>No monitoring authorizers found.</source>
-            </trans-unit>
-            <trans-unit id="authorizers.no_authorizers_found.content">
-                <source>Authorizers must either be enabled in the extension configuration or implement %s to become available.</source>
-            </trans-unit>
-            <trans-unit id="authorizers.priority">
-                <source>Priority</source>
-            </trans-unit>
-            <trans-unit id="authorizers.list.title">
-				<source>Registered Authorizers</source>
             <trans-unit id="authorizers.card.linkLabel">
                 <source>View all %d authorizers</source>
             </trans-unit>
@@ -57,8 +43,8 @@
                 <source>Priority</source>
             </trans-unit>
             <trans-unit id="authorizers.list.title">
-				<source>Registered Authorizers</source>
-			</trans-unit>
+                <source>Registered Authorizers</source>
+            </trans-unit>
             <trans-unit id="authorizers.title">
                 <source>Authorizers</source>
             </trans-unit>
@@ -126,11 +112,11 @@
                 <source>This provider is explicitly disabled at the moment.</source>
             </trans-unit>
             <trans-unit id="providers.card.body">
-				<source>Providers define and execute the actual health checks and make their results available to the endpoint and reporters.</source>
-			</trans-unit>
-			<trans-unit id="providers.card.linkLabel">
-				<source>View all providers</source>
-			</trans-unit>
+                <source>Providers define and execute the actual health checks and make their results available to the endpoint and reporters.</source>
+            </trans-unit>
+            <trans-unit id="providers.card.linkLabel">
+                <source>View all %d providers</source>
+            </trans-unit>
             <trans-unit id="providers.modal.content">
                 <source>Providers must implement %s to become available.</source>
             </trans-unit>
@@ -147,34 +133,17 @@
                 <source>Providers</source>
             </trans-unit>
             <trans-unit id="providers.list.title">
-				<source>Available Providers</source>
-			<trans-unit id="providers.card.linkLabel">
-				<source>View all %d providers</source>
-			</trans-unit>
-            <trans-unit id="providers.modal.content">
-                <source>Providers must implement %s to become available.</source>
+                <source>Available Providers</source>
             </trans-unit>
-            <trans-unit id="providers.modal.title">
-                <source>Providers</source>
-            </trans-unit>
-            <trans-unit id="providers.no_providers_found.content">
-                <source>Providers must implement %s to become available.</source>
-            </trans-unit>
-            <trans-unit id="providers.no_providers_found.title">
-                <source>No monitoring providers found.</source>
-            </trans-unit>
-            <trans-unit id="providers.title">
-                <source>Providers</source>
-            </trans-unit>
-            <trans-unit id="providers.list.title">
-				<source>Available Providers</source>
-			</trans-unit>
             <trans-unit id="reporters.list.description">
                 <source>Active reporters are notified about the monitoring status in this order:</source>
             </trans-unit>
             <trans-unit id="reporters.card.body">
-				<source>Reporters can optionally push notifications about changes in the monitoring status.</source>
-			</trans-unit>
+                <source>Reporters can optionally push notifications about changes in the monitoring status.</source>
+            </trans-unit>
+            <trans-unit id="reporters.card.linkLabel">
+                <source>View all %d reporters</source>
+            </trans-unit>
             <trans-unit id="reporters.dispatcher.disabled">
                 <source>disabled</source>
             </trans-unit>
@@ -206,82 +175,11 @@
                 <source>Threshold</source>
             </trans-unit>
             <trans-unit id="reporters.list.title">
-				<source>Registered Reporters</source>
-			</trans-unit>
+                <source>Registered Reporters</source>
+            </trans-unit>
             <trans-unit id="reporters.title">
                 <source>Reporters</source>
             </trans-unit>
-            <trans-unit id="reporters.card.linkLabel">
-				<source>View all %d reporters</source>
-			</trans-unit>
-            <trans-unit id="route.label.monitoring">
-                <source>Monitoring: Overview</source>
-            </trans-unit>
-            <trans-unit id="route.label.monitoring_authorizers">
-                <source>Monitoring: Authorizers</source>
-            </trans-unit>
-            <trans-unit id="route.label.monitoring_providers">
-                <source>Monitoring: Providers</source>
-            </trans-unit>
-            <trans-unit id="route.label.monitoring_reporters">
-                <source>Monitoring: Reporters</source>
-            </trans-unit>
-            <trans-unit id="settings.api.secret.missing">
-                <source>Please set a secret in the Extension settings to make the Token based authorization available.</source>
-            </trans-unit>
-            <trans-unit id="status.cached">
-                <source>Cached</source>
-            </trans-unit>
-            <trans-unit id="status.healthy">
-                <source>healthy</source>
-            </trans-unit>
-            <trans-unit id="status.inactive">
-                <source>inactive</source>
-            </trans-unit>
-            <trans-unit id="status.unhealthy">
-                <source>unhealthy</source>
-            </trans-unit>
-        </body>
-    </file>
-            <trans-unit id="reporters.dispatcher.disabled">
-                <source>disabled</source>
-            </trans-unit>
-            <trans-unit id="reporters.dispatcher.enabled">
-                <source>enabled</source>
-            </trans-unit>
-            <trans-unit id="reporters.dispatcher.failOpenOnMissingState">
-                <source>Notify when no previous state is stored</source>
-            </trans-unit>
-            <trans-unit id="reporters.dispatcher.notifyOnRecovery">
-                <source>Notify on recovery</source>
-            </trans-unit>
-            <trans-unit id="reporters.dispatcher.reminderInterval">
-                <source>Reminder interval (seconds)</source>
-            </trans-unit>
-            <trans-unit id="reporters.dispatcher.subtitle">
-                <source>Active settings</source>
-            </trans-unit>
-            <trans-unit id="reporters.dispatcher.title">
-                <source>Report Dispatcher</source>
-            </trans-unit>
-            <trans-unit id="reporters.no_reporters_found">
-                <source>No monitoring reporters found.</source>
-            </trans-unit>
-            <trans-unit id="reporters.no_reporters_found.content">
-                <source>Reporters must either be enabled in the extension configuration or implement %s to become available.</source>
-            </trans-unit>
-            <trans-unit id="reporters.threshold">
-                <source>Threshold</source>
-            </trans-unit>
-            <trans-unit id="reporters.list.title">
-				<source>Registered Reporters</source>
-			</trans-unit>
-            <trans-unit id="reporters.title">
-                <source>Reporters</source>
-            </trans-unit>
-            <trans-unit id="reporters.card.linkLabel">
-				<source>View all reporters</source>
-			</trans-unit>
             <trans-unit id="route.label.monitoring">
                 <source>Monitoring: Overview</source>
             </trans-unit>

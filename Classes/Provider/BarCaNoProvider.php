@@ -34,11 +34,11 @@ use mteu\Monitoring\Result\Result;
  * @author Martin Adler <mteu@mailbox.org>
  * @license GPL-2.0-or-later
  */
-final readonly class BazProvider implements MonitoringProvider
+final readonly class BarCaNoProvider implements CacheableMonitoringProvider
 {
     public function getName(): string
     {
-        return 'Baz (enabled, inactive)';
+        return 'BarCaNo (disabled, active, cached)';
     }
 
     public function getDescription(): string
@@ -48,16 +48,26 @@ final readonly class BazProvider implements MonitoringProvider
 
     public function isEnabled(): bool
     {
-        return true;
+        return false;
     }
 
     public function isActive(): bool
     {
-        return false;
+        return true;
     }
 
     public function execute(): Result
     {
-        return new MonitoringResult($this->getName(), false);
+        return new MonitoringResult($this->getName(), true);
+    }
+
+    public function getCacheKey(): string
+    {
+        return 'bar_provider';
+    }
+
+    public function getCacheLifetime(): int
+    {
+        return 86000;
     }
 }

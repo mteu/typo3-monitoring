@@ -17,27 +17,23 @@ declare(strict_types=1);
 
 namespace mteu\Monitoring\Backend\Controller;
 
-use mteu\Monitoring\Backend\Presenter\NavigationPresenter;
+use mteu\Monitoring\Authorization\Authorizer;
 use mteu\Monitoring\Cache\MonitoringCacheManager;
 use mteu\Monitoring\Configuration\MonitoringConfiguration;
 use mteu\Monitoring\Handler\MonitoringExecutionHandler;
 use mteu\Monitoring\Provider\CacheableMonitoringProvider;
 use mteu\Monitoring\Provider\MonitoringProvider;
-use mteu\Monitoring\Status\ServiceStatusRegistry;
-use mteu\Monitoring\Status\ServiceType;
+use mteu\Monitoring\Reporter\Reporter;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use Symfony\Component\DependencyInjection\Attribute\AutowireIterator;
 use TYPO3\CMS\Backend\Attribute\AsController;
 use TYPO3\CMS\Backend\Routing\UriBuilder;
 use TYPO3\CMS\Backend\Template\ModuleTemplateFactory;
-use TYPO3\CMS\Core\Authentication\BackendUserAuthentication;
 use TYPO3\CMS\Core\FormProtection\FormProtectionFactory;
 use TYPO3\CMS\Core\Http\AllowedMethodsTrait;
 use TYPO3\CMS\Core\Http\Error\MethodNotAllowedException;
 use TYPO3\CMS\Core\Http\NormalizedParams;
-use TYPO3\CMS\Core\Imaging\IconFactory;
-use TYPO3\CMS\Core\Localization\LanguageService;
 use TYPO3\CMS\Core\Localization\LanguageServiceFactory;
 
 /**
@@ -59,16 +55,17 @@ final readonly class MonitoringController extends AbstractSubModuleController
         /** @var MonitoringProvider[] $monitoringProviders */
         #[AutowireIterator(tag: 'monitoring.provider')]
         private iterable $monitoringProviders,
-
-        private ServiceStatusRegistry $serviceStatusRegistry,
-
-        private NavigationPresenter $navigationPresenter,
+        /** @var Authorizer[] $authorizers */
+        #[AutowireIterator(tag: 'monitoring.authorizer', defaultPriorityMethod: 'getPriority')]
+        private iterable $authorizers,
+        /** @var Reporter[] $reporters */
+        #[AutowireIterator(tag: 'monitoring.reporter', defaultPriorityMethod: 'getPriority')]
+        private iterable $reporters,
         private MonitoringExecutionHandler $executionHandler,
         private MonitoringCacheManager $cacheManager,
         private MonitoringConfiguration $monitoringConfiguration,
         private UriBuilder $uriBuilder,
         private FormProtectionFactory $formProtectionFactory,
-        private IconFactory $iconFactory,
     ) {
         parent::__construct($moduleTemplateFactory, $languageServiceFactory);
     }
@@ -93,25 +90,11 @@ final readonly class MonitoringController extends AbstractSubModuleController
             'monitoringMessageQueueIdentifier' => self::FLASHMESSAGE_QUEUE_IDENTIFIER,
             'flushProviderCacheUri' => (string)$this->uriBuilder->buildUriFromRoute('monitoring_flush_provider_cache'),
             'serviceCards' => $this->buildCardsTemplateVariables(),
-            'navigation' => $this->navigationPresenter->present(self::class),
         ];
 
         return $this->createModuleTemplate($request, 'monitoring')
             ->assignMultiple($templateVariables)
             ->renderResponse('Backend/Monitoring');
-    }
-
-    private function registerDocHeaderButtons(ModuleTemplate $template): void
-    {
-        $buttonBar = $template->getDocHeaderComponent()->getButtonBar();
-
-        $authorizerButton = (new LinkButton())
-            ->setHref((string)$this->uriBuilder->buildUriFromRoute('monitoring.authorizers'))
-            ->setTitle($this->getLanguageService()->sL(self::LOCALLANG_FILE . ':authorizers.title'))
-            ->setShowLabelText(true)
-            ->setIcon($this->iconFactory->getIcon('actions-lock', IconSize::SMALL));
-
-        $buttonBar->addButton($authorizerButton, ButtonBar::BUTTON_POSITION_LEFT);
     }
 
     /**
@@ -121,6 +104,7 @@ final readonly class MonitoringController extends AbstractSubModuleController
      *     name: string,
      *     isCached: bool,
      *     isActive: bool,
+     *     isEnabled: bool,
      *     isHealthy?: bool,
      *     description: string,
      *     cacheLifetime?: int,
@@ -136,26 +120,23 @@ final readonly class MonitoringController extends AbstractSubModuleController
 
         foreach ($this->monitoringProviders as $monitoringProvider) {
 
-            $isActive = $monitoringProvider->isActive();
-
-            if ($isActive === false) {
-                continue;
-            }
-
             $providerTemplateVariables[$monitoringProvider::class] = [
                 'name' => $monitoringProvider->getName(),
                 'isCached' => $monitoringProvider instanceof CacheableMonitoringProvider,
-                'isActive' => $isActive,
+                'isEnabled' => $monitoringProvider->isEnabled(),
+                'isActive' => $monitoringProvider->isActive(),
                 'description' => $monitoringProvider->getDescription(),
             ];
 
-            if ($isActive) {
-                $result = $this->executionHandler->executeProvider($monitoringProvider);
-                $providerTemplateVariables[$monitoringProvider::class]['isHealthy'] = $result->isHealthy();
+            if (!$providerTemplateVariables[$monitoringProvider::class]['isEnabled'] || !$providerTemplateVariables[$monitoringProvider::class]['isActive']) {
+                continue;
+            }
 
-                if ($result->hasSubResults()) {
-                    $providerTemplateVariables[$monitoringProvider::class]['subResults'] = $result->getSubResults();
-                }
+            $result = $this->executionHandler->executeProvider($monitoringProvider);
+            $providerTemplateVariables[$monitoringProvider::class]['isHealthy'] = $result->isHealthy();
+
+            if ($result->hasSubResults()) {
+                $providerTemplateVariables[$monitoringProvider::class]['subResults'] = $result->getSubResults();
             }
 
             if ($monitoringProvider instanceof CacheableMonitoringProvider) {
@@ -180,49 +161,54 @@ final readonly class MonitoringController extends AbstractSubModuleController
         return $providerTemplateVariables;
     }
 
+    /**
+     * @return array<string, array{
+     *     iconIdentifier: string,
+     *     title: string,
+     *     body: string,
+     *     url: string,
+     *     linkTitle: string,
+     *     linkIconIdentifier?: string,
+     *     isExternalLink?: bool,
+     * }>
+     * @throws \TYPO3\CMS\Backend\Routing\Exception\RouteNotFoundException
+     */
     private function buildCardsTemplateVariables(): array
     {
         return [
             'providers' => [
                 'iconIdentifier' => 'actions-rocket',
                 'title' => $this->getLanguageService()->sL(self::LOCALLANG_FILE . ':providers.title'),
-                'subTitle' => null,
                 'body' => $this->getLanguageService()->sL(self::LOCALLANG_FILE . ':providers.card.body'),
-                'count' => $this->serviceStatusRegistry->count(ServiceType::Provider),
                 'url' => (string)$this->uriBuilder->buildUriFromRoute('monitoring_providers'),
                 'linkTitle' => sprintf(
                     $this->getLanguageService()->sL(self::LOCALLANG_FILE . ':providers.card.linkLabel'),
-                    $this->serviceStatusRegistry->count(ServiceType::Provider)['discovered'],
+                    iterator_count($this->monitoringProviders),
                 ),
             ],
             'authorizers' => [
                 'iconIdentifier' => 'actions-key',
                 'title' => $this->getLanguageService()->sL(self::LOCALLANG_FILE . ':authorizers.title'),
-                'subTitle' => $this->serviceStatusRegistry->count(ServiceType::Provider)['active'],
                 'body' => $this->getLanguageService()->sL(self::LOCALLANG_FILE . ':authorizers.card.body'),
-                'count' => $this->serviceStatusRegistry->count(ServiceType::Authorizer),
                 'url' => (string)$this->uriBuilder->buildUriFromRoute('monitoring_authorizers'),
                 'linkTitle' => sprintf(
                     $this->getLanguageService()->sL(self::LOCALLANG_FILE . ':authorizers.card.linkLabel'),
-                    $this->serviceStatusRegistry->count(ServiceType::Authorizer)['discovered'],
+                    iterator_count($this->authorizers),
                 ),
             ],
             'reporters' => [
                 'iconIdentifier' => 'actions-bullhorn',
                 'title' => $this->getLanguageService()->sL(self::LOCALLANG_FILE . ':reporters.title'),
-                'subTitle' => null,
                 'body' => $this->getLanguageService()->sL(self::LOCALLANG_FILE . ':reporters.card.body'),
-                'count' => $this->serviceStatusRegistry->count(ServiceType::Reporter),
                 'url' => (string)$this->uriBuilder->buildUriFromRoute('monitoring_reporters'),
                 'linkTitle' => sprintf(
                     $this->getLanguageService()->sL(self::LOCALLANG_FILE . ':reporters.card.linkLabel'),
-                    $this->serviceStatusRegistry->count(ServiceType::Reporter)['discovered'],
+                    iterator_count($this->reporters),
                 ),
             ],
             'documentation' => [
                 'iconIdentifier' => 'actions-notebook-typoscript',
                 'title' => $this->getLanguageService()->sL(self::LOCALLANG_FILE . ':documentation.title'),
-                'subTitle' => null,
                 'body' => $this->getLanguageService()->sL(self::LOCALLANG_FILE . ':documentation.card.body'),
                 'url' => 'https://github.com/mteu/typo3-monitoring/blob/main/Documentation/README.md',
                 'isExternalLink' => true,

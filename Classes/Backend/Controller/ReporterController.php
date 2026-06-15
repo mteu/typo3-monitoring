@@ -23,15 +23,9 @@ use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use Symfony\Component\DependencyInjection\Attribute\AutowireIterator;
 use TYPO3\CMS\Backend\Attribute\AsController;
-use TYPO3\CMS\Backend\Routing\UriBuilder;
-use TYPO3\CMS\Backend\Template\Components\ButtonBar;
-use TYPO3\CMS\Backend\Template\ModuleTemplate;
 use TYPO3\CMS\Backend\Template\ModuleTemplateFactory;
-use TYPO3\CMS\Core\Authentication\BackendUserAuthentication;
 use TYPO3\CMS\Core\Http\AllowedMethodsTrait;
 use TYPO3\CMS\Core\Http\Error\MethodNotAllowedException;
-use TYPO3\CMS\Core\Imaging\IconFactory;
-use TYPO3\CMS\Core\Localization\LanguageService;
 use TYPO3\CMS\Core\Localization\LanguageServiceFactory;
 
 /**
@@ -57,10 +51,7 @@ final readonly class ReporterController extends AbstractSubModuleController
         /** @var Reporter[] $reporters */
         #[AutowireIterator(tag: 'monitoring.reporter', defaultPriorityMethod: 'getPriority')]
         private iterable $reporters,
-
         private MonitoringConfiguration $monitoringConfiguration,
-        private UriBuilder $uriBuilder,
-        private IconFactory $iconFactory,
     ) {
         parent::__construct($moduleTemplateFactory, $languageServiceFactory);
     }

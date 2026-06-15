@@ -7,7 +7,11 @@
 
 <f:layout name="Module" />
 
-<div class="panel {f:if(condition: provider.isActive, then: '{f:if(condition: provider.isHealthy, then: \'panel-success\', else: \'panel-danger\')}', else: 'panel-default')} ">
+<f:variable name="providerHealthState" value="{f:if(condition: provider.isHealthy, then: 'success', else: 'danger')}" />
+<f:variable name="providerActivationState" value="{f:if(condition: provider.isActive, then: providerHealthState, else: 'default')}" />
+<f:variable name="providerEnablementState" value="{f:if(condition: provider.isEnabled, then: providerActivationState, else: 'placeholder')}" />
+
+<div class="panel panel-{providerEnablementState}">
     <h3 class="panel-heading">
         <div class="panel-heading-row">
             <button class="panel-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapsible-panel-complex-{iterator.index}" aria-expanded="false" title="{class}">
@@ -17,27 +21,37 @@
                 </div>
             </button>
 
-            <f:if condition="{provider.isActive}">
+            <f:if condition="{provider.isEnabled}">
                 <f:then>
-                    <div class="panel-badge">
-                        <f:if condition="{provider.isCached}">
-                            <span class="badge badge-default" style="margin-right:0.25rem;">
-                                <f:translate key="LLL:EXT:monitoring/Resources/Private/Language/locallang.be.xlf:status.cached" />
+                    <f:if condition="{provider.isActive}">
+                        <f:then>
+                            <div class="panel-badge">
+                                <f:if condition="{provider.isCached}">
+                                    <span class="badge badge-default" style="margin-right:0.25rem;">
+                                        <f:translate key="LLL:EXT:monitoring/Resources/Private/Language/locallang.be.xlf:status.cached" />
+                                    </span>
+                                </f:if>
+                                <span class="badge badge-{providerHealthState}">
+                                    <f:if condition="{provider.isHealthy}">
+                                        <f:then><f:translate key="LLL:EXT:monitoring/Resources/Private/Language/locallang.be.xlf:status.healthy" /></f:then>
+                                        <f:else><f:translate key="LLL:EXT:monitoring/Resources/Private/Language/locallang.be.xlf:status.unhealthy" /></f:else>
+                                    </f:if>
+                                </span>
+                            </div>
+                        </f:then>
+                        <f:else>
+                            <span class="badge badge-warning">
+                                <f:translate key="LLL:EXT:monitoring/Resources/Private/Language/locallang.be.xlf:status.inactive" />
                             </span>
-                        </f:if>
-                        <span class="badge {f:if(condition: provider.isHealthy, then: 'badge-success', else: 'badge-danger')}">
-                            <f:if condition="{provider.isHealthy}">
-                                <f:then><f:translate key="LLL:EXT:monitoring/Resources/Private/Language/locallang.be.xlf:status.healthy" /></f:then>
-                                <f:else><f:translate key="LLL:EXT:monitoring/Resources/Private/Language/locallang.be.xlf:status.unhealthy" /></f:else>
-                            </f:if>
-                        </span>
-                    </div>
+                        </f:else>
+                    </f:if>
                 </f:then>
                 <f:else>
-                    <span class="badge {f:if(condition: provider.isActive, then: 'badge-success', else: 'badge-default')}">
-                        <f:translate key="LLL:EXT:monitoring/Resources/Private/Language/locallang.be.xlf:status.inactive" />
+                    <span class="badge badge-info">
+                        disabled
                     </span>
                 </f:else>
+
             </f:if>
 
         </div>
@@ -48,17 +62,25 @@
                 {provider.description}
             </p>
 
-            <f:if condition="{provider.subResults}">
-                <f:render partial="Backend/Results/List" arguments="{details: provider.subResults}" />
-            </f:if>
-
-            <f:if condition="{provider.isCached}">
-                <f:render section="CachingDetails" arguments="{provider: provider, flushProviderCacheUri: flushProviderCacheUri, class: class}" />
-            </f:if>
-
-            <f:if condition="{provider.isActive}">
-                <f:else>
+            <f:if condition="{provider.isEnabled} == false">
+                <f:then>
                     <p><core:icon identifier="content-info" size="small" /> <f:translate key="LLL:EXT:monitoring/Resources/Private/Language/locallang.be.xlf:provider.disabled.message" /></p>
+                </f:then>
+                <f:else>
+                    <f:if condition="{provider.isActive}">
+                        <f:then>
+                            <f:if condition="{provider.subResults}">
+                                <f:render partial="Backend/Results/List" arguments="{details: provider.subResults}" />
+                            </f:if>
+
+                            <f:if condition="{provider.isCached}">
+                                <f:render section="CachingDetails" arguments="{provider: provider, flushProviderCacheUri: flushProviderCacheUri, class: providerClass}" />
+                            </f:if>
+                        </f:then>
+                        <f:else>
+                            Although enabled, this provider is inActive at the moment. Please review <pre>{providerClass}</pre> to activate.
+                        </f:else>
+                    </f:if>
                 </f:else>
             </f:if>
         </div>

@@ -28,13 +28,10 @@ use Symfony\Component\DependencyInjection\Attribute\AutowireIterator;
 use TYPO3\CMS\Backend\Attribute\AsController;
 use TYPO3\CMS\Backend\Routing\UriBuilder;
 use TYPO3\CMS\Backend\Template\ModuleTemplateFactory;
-use TYPO3\CMS\Core\Authentication\BackendUserAuthentication;
 use TYPO3\CMS\Core\FormProtection\FormProtectionFactory;
 use TYPO3\CMS\Core\Http\AllowedMethodsTrait;
 use TYPO3\CMS\Core\Http\Error\MethodNotAllowedException;
 use TYPO3\CMS\Core\Http\NormalizedParams;
-use TYPO3\CMS\Core\Imaging\IconFactory;
-use TYPO3\CMS\Core\Localization\LanguageService;
 use TYPO3\CMS\Core\Localization\LanguageServiceFactory;
 
 /**
@@ -61,7 +58,6 @@ final readonly class ProviderController extends AbstractSubModuleController
         private MonitoringConfiguration $monitoringConfiguration,
         private UriBuilder $uriBuilder,
         private FormProtectionFactory $formProtectionFactory,
-        private IconFactory $iconFactory,
     ) {
         parent::__construct($moduleTemplateFactory, $languageServiceFactory);
     }
@@ -78,7 +74,6 @@ final readonly class ProviderController extends AbstractSubModuleController
 
         $templateVariables = [
             'endpoint' => $params->getRequestHost() . $this->monitoringConfiguration->endpoint,
-            // @todo: sort inactive providers to the end?
             'providers' => $this->buildProviderTemplateVariables($request),
             'providerInterface' => MonitoringProvider::class,
             'monitoringMessageQueueIdentifier' => self::FLASHMESSAGE_QUEUE_IDENTIFIER,
@@ -89,6 +84,7 @@ final readonly class ProviderController extends AbstractSubModuleController
             ->assignMultiple($templateVariables)
             ->renderResponse('Backend/Providers');
     }
+
     /**
      * Build template variables for all monitoring providers
      *
@@ -96,6 +92,7 @@ final readonly class ProviderController extends AbstractSubModuleController
      *     name: string,
      *     isCached: bool,
      *     isActive: bool,
+     *     isEnabled: bool,
      *     isHealthy?: bool,
      *     description: string,
      *     cacheLifetime?: int,
@@ -111,22 +108,23 @@ final readonly class ProviderController extends AbstractSubModuleController
 
         foreach ($this->monitoringProviders as $monitoringProvider) {
 
-            $isActive = $monitoringProvider->isActive();
-
             $providerTemplateVariables[$monitoringProvider::class] = [
                 'name' => $monitoringProvider->getName(),
                 'isCached' => $monitoringProvider instanceof CacheableMonitoringProvider,
-                'isActive' => $isActive,
+                'isEnabled' => $monitoringProvider->isEnabled(),
+                'isActive' => $monitoringProvider->isActive(),
                 'description' => $monitoringProvider->getDescription(),
             ];
 
-            if ($isActive) {
-                $result = $this->executionHandler->executeProvider($monitoringProvider);
-                $providerTemplateVariables[$monitoringProvider::class]['isHealthy'] = $result->isHealthy();
+            if (!$providerTemplateVariables[$monitoringProvider::class]['isEnabled'] || !$providerTemplateVariables[$monitoringProvider::class]['isActive']) {
+                continue;
+            }
 
-                if ($result->hasSubResults()) {
-                    $providerTemplateVariables[$monitoringProvider::class]['subResults'] = $result->getSubResults();
-                }
+            $result = $this->executionHandler->executeProvider($monitoringProvider);
+            $providerTemplateVariables[$monitoringProvider::class]['isHealthy'] = $result->isHealthy();
+
+            if ($result->hasSubResults()) {
+                $providerTemplateVariables[$monitoringProvider::class]['subResults'] = $result->getSubResults();
             }
 
             if ($monitoringProvider instanceof CacheableMonitoringProvider) {
@@ -148,6 +146,32 @@ final readonly class ProviderController extends AbstractSubModuleController
             }
         }
 
+        uasort(
+            $providerTemplateVariables,
+            fn(array $a, array $b): int => $this->getProviderSortRank($a) <=> $this->getProviderSortRank($b)
+        );
+
         return $providerTemplateVariables;
+    }
+
+    /**
+     * @param array{
+     *     isEnabled: bool,
+     *     isActive: bool,
+     *     isHealthy?: bool,
+     *     ...
+     * } $provider
+     */
+    private function getProviderSortRank(array $provider): int
+    {
+        if (!$provider['isEnabled']) {
+            return 3; // disabled
+        }
+
+        if (!$provider['isActive']) {
+            return 2; // inactive
+        }
+
+        return ($provider['isHealthy'] ?? false) ? 1 : 0; // healthy / unhealthy
     }
 }

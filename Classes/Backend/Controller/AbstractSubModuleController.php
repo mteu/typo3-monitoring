@@ -48,7 +48,7 @@ abstract readonly class AbstractSubModuleController
      * Creates a ModuleTemplate with the shared sub-module chrome applied:
      * the doc header module menu and (on TYPO3 v14+) the disabled reload button.
      */
-    protected function createModuleTemplate(ServerRequestInterface $request, string $bookmarkRoute = ''): ModuleTemplate
+    final protected function createModuleTemplate(ServerRequestInterface $request, string $bookmarkRoute = ''): ModuleTemplate
     {
         $template = $this->moduleTemplateFactory->create($request);
         $template->makeDocHeaderModuleMenu();
@@ -69,7 +69,7 @@ abstract readonly class AbstractSubModuleController
         return $template;
     }
 
-    protected function getLanguageService(): LanguageService
+    final protected function getLanguageService(): LanguageService
     {
         $backendUser = $GLOBALS['BE_USER'] ?? null;
 
