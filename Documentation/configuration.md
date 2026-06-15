@@ -10,6 +10,7 @@ return [
             'api' => [
                 'endpoint' => '/monitor/health',
                 'enforceHttps' => false,
+                'includeServicesHealth' => true,
             ],
             'authorizer' => [
                 'mteu\Monitoring\Authorization\TokenAuthorizer' => [
@@ -40,6 +41,8 @@ return [
   and `reverseProxySSL`. Make sure those are configured correctly first;
   otherwise legitimate requests behind a reverse proxy will be rejected with a
   `403 unsupported-protocol` response.
+- **`includeServicesHealth`**: By default, all services will be presented with
+  their status. When disabled, only the overall health state will be shown.
 
 ### Token Authorizer
 - **`enabled`**: Enable token authentication (default: `false`)
