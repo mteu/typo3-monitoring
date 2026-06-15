@@ -126,7 +126,7 @@ final readonly class MonitoringMiddleware implements MiddlewareInterface
                 'isHealthy' => $isHealthy,
             ];
 
-            if ($this->monitoringConfiguration->includeSubResults) {
+            if ($this->monitoringConfiguration->includeServicesHealth) {
                 $responseArray['services'] = $this->summarizeResults($results);
             }
 

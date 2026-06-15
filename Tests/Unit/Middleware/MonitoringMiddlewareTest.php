@@ -663,7 +663,7 @@ final class MonitoringMiddlewareTest extends Framework\TestCase
     public function responseOmitsServicesBlockWhenIncludeSubResultsIsDisabled(): void
     {
         $this->configuration = $this->createConfigurationFromData([
-            'api' => ['endpoint' => '/monitor/health', 'includeSubResults' => '0'],
+            'api' => ['endpoint' => '/monitor/health', 'includeServicesHealth' => '0'],
             'authorizer' => ['mteu\\Monitoring\\Authorization\\TokenAuthorizer' => ['enabled' => '1', 'secret' => 'test-secret', 'priority' => '10', 'authHeaderName' => 'X-Auth']],
         ]);
 
@@ -712,7 +712,7 @@ final class MonitoringMiddlewareTest extends Framework\TestCase
 
         $decoded = json_decode((string)$response->getBody(), true, 512, JSON_THROW_ON_ERROR);
         self::assertSame(['isHealthy' => false], $decoded);
-        self::assertArrayNotHasKey('services', $decoded, 'services must be omitted when includeSubResults is disabled');
+        self::assertArrayNotHasKey('services', $decoded, 'services must be omitted when includeServicesHealth is disabled');
     }
 
     #[Test]
@@ -720,7 +720,7 @@ final class MonitoringMiddlewareTest extends Framework\TestCase
     public function responseIncludesServicesBlockWhenIncludeSubResultsIsExplicitlyEnabled(): void
     {
         $this->configuration = $this->createConfigurationFromData([
-            'api' => ['endpoint' => '/monitor/health', 'includeSubResults' => '1'],
+            'api' => ['endpoint' => '/monitor/health', 'includeServicesHealth' => '1'],
             'authorizer' => ['mteu\\Monitoring\\Authorization\\TokenAuthorizer' => ['enabled' => '1', 'secret' => 'test-secret', 'priority' => '10', 'authHeaderName' => 'X-Auth']],
         ]);
 
