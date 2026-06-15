@@ -46,7 +46,6 @@ use TYPO3\CMS\Core\Localization\LanguageServiceFactory;
 final readonly class MonitoringController extends AbstractSubModuleController
 {
     use AllowedMethodsTrait;
-    private const string FLASHMESSAGE_QUEUE_IDENTIFIER = 'ext_monitoring_message_queue';
 
     public function __construct(
         ModuleTemplateFactory $moduleTemplateFactory,
@@ -87,7 +86,6 @@ final readonly class MonitoringController extends AbstractSubModuleController
             'providers' => $providers,
             'providerUnhealthyCount' => count(array_filter($providers, static fn(array $p) => ($p['isActive'] ?? false) && ($p['isHealthy'] ?? true) === false)),
             'providerInterface' => MonitoringProvider::class,
-            'monitoringMessageQueueIdentifier' => self::FLASHMESSAGE_QUEUE_IDENTIFIER,
             'flushProviderCacheUri' => (string)$this->uriBuilder->buildUriFromRoute('monitoring_flush_provider_cache'),
             'serviceCards' => $this->buildCardsTemplateVariables(),
         ];

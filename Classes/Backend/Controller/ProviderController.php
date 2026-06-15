@@ -45,8 +45,6 @@ final readonly class ProviderController extends AbstractSubModuleController
 {
     use AllowedMethodsTrait;
 
-    private const string FLASHMESSAGE_QUEUE_IDENTIFIER = 'ext_monitoring_message_queue';
-
     public function __construct(
         ModuleTemplateFactory $moduleTemplateFactory,
         LanguageServiceFactory $languageServiceFactory,
@@ -76,7 +74,6 @@ final readonly class ProviderController extends AbstractSubModuleController
             'endpoint' => $params->getRequestHost() . $this->monitoringConfiguration->endpoint,
             'providers' => $this->buildProviderTemplateVariables($request),
             'providerInterface' => MonitoringProvider::class,
-            'monitoringMessageQueueIdentifier' => self::FLASHMESSAGE_QUEUE_IDENTIFIER,
             'flushProviderCacheUri' => (string)$this->uriBuilder->buildUriFromRoute('monitoring_flush_provider_cache'),
         ];
 

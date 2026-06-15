@@ -38,6 +38,7 @@ use TYPO3\CMS\Core\Localization\LanguageServiceFactory;
 abstract readonly class AbstractSubModuleController
 {
     protected const string LOCALLANG_FILE = 'LLL:EXT:monitoring/Resources/Private/Language/locallang.be.xlf';
+    private const string FLASHMESSAGE_QUEUE_IDENTIFIER = 'ext_monitoring_message_queue';
 
     public function __construct(
         protected ModuleTemplateFactory $moduleTemplateFactory,
@@ -66,7 +67,9 @@ abstract readonly class AbstractSubModuleController
             );
         }
 
-        return $template;
+        return $template->assignMultiple([
+            'monitoringMessageQueueIdentifier' => self::FLASHMESSAGE_QUEUE_IDENTIFIER,
+        ]);
     }
 
     final protected function getLanguageService(): LanguageService

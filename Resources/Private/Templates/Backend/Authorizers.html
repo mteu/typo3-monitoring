@@ -8,6 +8,8 @@
 <f:layout name="Module" />
 
 <f:section name="Content">
+    <f:flashMessages queueIdentifier="{monitoringMessageQueueIdentifier}" />
+
     <f:if condition="{authorizers}">
         <f:then>
             <f:render partial="Backend/Authorizer/List" arguments="{authorizers: authorizers, endpoint: endpoint, settingsUrl: settingsUrl}" />

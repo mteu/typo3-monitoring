@@ -9,6 +9,8 @@
 
 
 <f:section name="Content">
+    <f:flashMessages queueIdentifier="{monitoringMessageQueueIdentifier}" />
+
     <f:if condition="{reporters}">
         <f:then>
             <f:render partial="Backend/Reporter/List" arguments="{reporters: reporters, dispatcher: dispatcher}" />

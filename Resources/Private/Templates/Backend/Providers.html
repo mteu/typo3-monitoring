@@ -9,6 +9,8 @@
 <f:layout name="Module" />
 
 <f:section name="Content">
+    <f:flashMessages queueIdentifier="{monitoringMessageQueueIdentifier}" />
+
     <f:if condition="{providers}">
         <f:then>
             <f:render partial="Backend/Provider/List" arguments="{providers: providers, providerInterface: providerInterface, flushProviderCacheUri: flushProviderCacheUri}" />
