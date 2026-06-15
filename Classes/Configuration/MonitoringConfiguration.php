@@ -50,6 +50,8 @@ final readonly class MonitoringConfiguration
         string $endpoint = '/monitor/health',
         #[ExtConfProperty(path: 'api.enforceHttps')]
         public bool $enforceHttps = false,
+        #[ExtConfProperty(path: 'api.includeSubResults')]
+        public bool $includeSubResults = true,
         #[ExtConfProperty(path: 'cache.defaultLifetime')]
         public int $cacheDefaultLifetime = 900,
     ) {

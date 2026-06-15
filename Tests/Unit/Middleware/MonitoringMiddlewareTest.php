@@ -660,6 +660,97 @@ final class MonitoringMiddlewareTest extends Framework\TestCase
 
     #[Test]
     #[AllowMockObjectsWithoutExpectations]
+    public function responseOmitsServicesBlockWhenIncludeSubResultsIsDisabled(): void
+    {
+        $this->configuration = $this->createConfigurationFromData([
+            'api' => ['endpoint' => '/monitor/health', 'includeSubResults' => '0'],
+            'authorizer' => ['mteu\\Monitoring\\Authorization\\TokenAuthorizer' => ['enabled' => '1', 'secret' => 'test-secret', 'priority' => '10', 'authHeaderName' => 'X-Auth']],
+        ]);
+
+        // An unhealthy provider with sub-results: even though the per-service
+        // breakdown is suppressed, the overall verdict (and the HTTP status
+        // derived from it) must still reflect the providers' health.
+        $provider = new class () implements MonitoringProvider {
+            public function getName(): string
+            {
+                return 'Scheduler';
+            }
+            public function isEnabled(): bool
+            {
+                return true;
+            }
+            public function getDescription(): string
+            {
+                return 'Provider with sub-results.';
+            }
+            public function isActive(): bool
+            {
+                return true;
+            }
+            public function execute(): Result
+            {
+                return new MonitoringResult('Scheduler', false, null, [
+                    new MonitoringResult('Scheduler Execution', true),
+                    new MonitoringResult('Failed Tasks', false),
+                ]);
+            }
+        };
+
+        $middleware = new MonitoringMiddleware(
+            [$provider, $this->createHealthyProvider()],
+            [$this->createAuthorizedAuthorizer()],
+            $this->configuration,
+            $this->responseFactory,
+            $this->logger,
+            $this->createExecutionHandler(),
+        );
+
+        $response = $middleware->process(new ServerRequest(new Uri('https://example.com/monitor/health'), 'GET'), $this->handler);
+
+        // Health still computed from the providers, only the breakdown is gone.
+        self::assertSame(503, $response->getStatusCode());
+
+        $decoded = json_decode((string)$response->getBody(), true, 512, JSON_THROW_ON_ERROR);
+        self::assertSame(['isHealthy' => false], $decoded);
+        self::assertArrayNotHasKey('services', $decoded, 'services must be omitted when includeSubResults is disabled');
+    }
+
+    #[Test]
+    #[AllowMockObjectsWithoutExpectations]
+    public function responseIncludesServicesBlockWhenIncludeSubResultsIsExplicitlyEnabled(): void
+    {
+        $this->configuration = $this->createConfigurationFromData([
+            'api' => ['endpoint' => '/monitor/health', 'includeSubResults' => '1'],
+            'authorizer' => ['mteu\\Monitoring\\Authorization\\TokenAuthorizer' => ['enabled' => '1', 'secret' => 'test-secret', 'priority' => '10', 'authHeaderName' => 'X-Auth']],
+        ]);
+
+        $middleware = new MonitoringMiddleware(
+            [$this->createHealthyProvider()],
+            [$this->createAuthorizedAuthorizer()],
+            $this->configuration,
+            $this->responseFactory,
+            $this->logger,
+            $this->createExecutionHandler(),
+        );
+
+        $response = $middleware->process(new ServerRequest(new Uri('https://example.com/monitor/health'), 'GET'), $this->handler);
+
+        self::assertSame(200, $response->getStatusCode());
+
+        $decoded = json_decode((string)$response->getBody(), true, 512, JSON_THROW_ON_ERROR);
+        self::assertSame(
+            [
+                'isHealthy' => true,
+                'services' => [
+                    'database' => ['status' => 'healthy'],
+                ],
+            ],
+            $decoded,
+        );
+    }
+
+    #[Test]
+    #[AllowMockObjectsWithoutExpectations]
     public function headRequestReturnsSameStatusAndHeadersWithEmptyBody(): void
     {
         $this->configuration = $this->createConfigurationFromData([

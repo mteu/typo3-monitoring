@@ -122,11 +122,16 @@ final readonly class MonitoringMiddleware implements MiddlewareInterface
             $results = $this->collectResults();
             $isHealthy = $this->isOverallHealthy($results);
 
+            $responseArray = [
+                'isHealthy' => $isHealthy,
+            ];
+
+            if ($this->monitoringConfiguration->includeSubResults) {
+                $responseArray['services'] = $this->summarizeResults($results);
+            }
+
             return $this->jsonResponse(
-                [
-                    'isHealthy' => $isHealthy,
-                    'services' => $this->summarizeResults($results),
-                ],
+                $responseArray,
                 $isHealthy ? 200 : 503,
                 $writeBody,
             );
@@ -238,7 +243,10 @@ final readonly class MonitoringMiddleware implements MiddlewareInterface
     }
 
     /**
-     * @param array{code: int, error: string}|array{isHealthy: bool, services: array<non-empty-string, array{status: 'healthy'|'unhealthy', subResults?: array<string, 'healthy'|'unhealthy'>}>} $data
+     * @param array{code: int, error: string}|array{
+     *     isHealthy: bool,
+     *     services?: array<non-empty-string, array{status: 'healthy'|'unhealthy', subResults?: array<string, 'healthy'|'unhealthy'>}>
+     * } $data
      * @throws \JsonException
      */
     private function jsonResponse(array $data, int $statusCode = 200, bool $writeBody = true): ResponseInterface
