@@ -27,11 +27,6 @@ use TYPO3\CMS\Core\Localization\LanguageServiceFactory;
 /**
  * AbstractSubModuleController.
  *
- * Shared scaffolding for the monitoring sub-modules. Renders a template within
- * the standard module chrome, exposes the doc header module menu so users can
- * switch between the overview and the sub-modules, and disables the automatic
- * reload button (a TYPO3 v14+ feature) for consistency with the main module.
- *
  * @author Martin Adler <mteu@mailbox.org>
  * @license GPL-2.0-or-later
  */
@@ -45,10 +40,6 @@ abstract readonly class AbstractSubModuleController
         protected LanguageServiceFactory $languageServiceFactory,
     ) {}
 
-    /**
-     * Creates a ModuleTemplate with the shared sub-module chrome applied:
-     * the doc header module menu and (on TYPO3 v14+) the disabled reload button.
-     */
     final protected function createModuleTemplate(ServerRequestInterface $request, string $bookmarkRoute = ''): ModuleTemplate
     {
         $template = $this->moduleTemplateFactory->create($request);

@@ -64,6 +64,7 @@ return [
             'api' => [
                 'endpoint' => '/monitor/health',
                 'enforceHttps' => false,
+                'includeServicesHealth' => true,
             ],
             'authorizer' => [
                 'mteu\Monitoring\Authorization\TokenAuthorizer' => [
