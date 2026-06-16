@@ -15,27 +15,32 @@ declare(strict_types=1);
  * The TYPO3 project - inspiring people to share!
  */
 
-namespace mteu\Monitoring\Configuration\Provider;
+namespace mteu\Monitoring\Provider\Scheduler;
 
-use mteu\TypedExtConf\Attribute\ExtConfProperty;
-use mteu\TypedExtConf\Attribute\ExtensionConfig;
+use Symfony\Component\DependencyInjection\Attribute\AsAlias;
+use TYPO3\CMS\Core\Registry;
 
 /**
- * MiddlewareStatusProviderConfiguration.
+ * Heartbeat source backed by the TYPO3 system registry.
  *
  * @author Martin Adler <mteu@mailbox.org>
  * @license GPL-2.0-or-later
  */
-#[ExtensionConfig(extensionKey: 'monitoring')]
-final readonly class MiddlewareStatusProviderConfiguration implements ProviderConfiguration
+#[AsAlias(SchedulerHeartbeat::class)]
+final readonly class RegistrySchedulerHeartbeat implements SchedulerHeartbeat
 {
     public function __construct(
-        #[ExtConfProperty(path: 'provider.mteu\\Monitoring\\Provider\\MiddlewareStatusProvider.enabled')]
-        private bool $enabled = true,
+        private Registry $registry,
     ) {}
 
-    public function isEnabled(): bool
+    public function getLastRunEndTime(): ?int
     {
-        return $this->enabled;
+        $lastRun = $this->registry->get('tx_scheduler', 'lastRun');
+
+        if (!is_array($lastRun) || !is_numeric($lastRun['end'] ?? null)) {
+            return null;
+        }
+
+        return (int)$lastRun['end'];
     }
 }

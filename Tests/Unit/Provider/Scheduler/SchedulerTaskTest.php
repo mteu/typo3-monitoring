@@ -15,27 +15,30 @@ declare(strict_types=1);
  * The TYPO3 project - inspiring people to share!
  */
 
-namespace mteu\Monitoring\Tests\Unit\Configuration\Authorizer;
+namespace mteu\Monitoring\Tests\Unit\Provider\Scheduler;
 
-use mteu\Monitoring as Src;
+use mteu\Monitoring\Provider\Scheduler\SchedulerTask;
 use PHPUnit\Framework;
 use PHPUnit\Framework\Attributes\Test;
 
 /**
- * AdminUserAuthorizerConfigurationTest.
+ * SchedulerTaskTest.
  *
  * @author Martin Adler <mteu@mailbox.org>
  * @license GPL-2.0-or-later
  */
-#[Framework\Attributes\CoversClass(Src\Configuration\Authorizer\AdminUserAuthorizerConfiguration::class)]
-final class AdminUserAuthorizerConfigurationTest extends Framework\TestCase
+#[Framework\Attributes\CoversClass(SchedulerTask::class)]
+final class SchedulerTaskTest extends Framework\TestCase
 {
     #[Test]
-    public function defaultValuesAreCorrect(): void
+    public function getLabelCombinesUidAndLabel(): void
     {
-        $subject = new Src\Configuration\Authorizer\AdminUserAuthorizerConfiguration();
+        self::assertSame('#42 (Import task)', (new SchedulerTask(42, 'Import task'))->getLabel());
+    }
 
-        self::assertFalse($subject->isEnabled());
-        self::assertSame(-10, $subject->getPriority());
+    #[Test]
+    public function getLabelFallsBackToPlaceholderForEmptyLabel(): void
+    {
+        self::assertSame('#5 (no description)', (new SchedulerTask(5, ''))->getLabel());
     }
 }

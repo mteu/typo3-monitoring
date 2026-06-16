@@ -31,6 +31,7 @@ interface Authorizer
 {
     public function isActive(): bool;
     public function isAuthorized(ServerRequestInterface $request): bool;
+    public function getDescription(): string;
 
     /**
      * Static ::getPriority() used in the DI autowiring for sorting.

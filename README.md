@@ -20,9 +20,6 @@ This packages provides the TYPO3 CMS Extension `EXT:monitoring` which extends th
 gives an insight into the health state of custom TYPO3 components through an API endpoint and a CLI command, e.g. for
 post-deployment checks.
 
-> [!WARNING]
-> This package is in testing. Be cautious when using `EXT:monitoring` in production.
-
 ## 🦊 TYPO3 Support
 
 |           | TYPO3 v12 | TYPO3 v13 | TYPO3 v14 |
@@ -39,6 +36,8 @@ post-deployment checks.
   - Structured JSON responses for the overall health status
   - Command-line interface for running monitoring checks
   - Backend Module
+- Built-in providers this package ships:
+  - [Scheduler Provider](Documentation/Providers/Scheduler.md) (Monitors TYPO3 Scheduler tasks.)
 
 
 ## 🔥 Quick Start
@@ -65,6 +64,7 @@ return [
             'api' => [
                 'endpoint' => '/monitor/health',
                 'enforceHttps' => false,
+                'includeServicesHealth' => true,
             ],
             'authorizer' => [
                 'mteu\Monitoring\Authorization\TokenAuthorizer' => [

@@ -24,6 +24,8 @@ use mteu\TypedExtConf\Attribute\ExtConfProperty;
  *
  * @author Martin Adler <mteu@mailbox.org>
  * @license GPL-2.0-or-later
+ *
+ * @codeCoverageIgnore
  */
 final readonly class TokenAuthorizerConfiguration implements AuthorizerConfiguration
 {
@@ -40,10 +42,6 @@ final readonly class TokenAuthorizerConfiguration implements AuthorizerConfigura
 
     public function isEnabled(): bool
     {
-        if ($this->secret === '') {
-            return false;
-        }
-
         return $this->enabled;
     }
 

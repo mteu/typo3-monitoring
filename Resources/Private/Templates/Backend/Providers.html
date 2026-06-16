@@ -1,0 +1,40 @@
+<html
+    data-namespace-typo3-fluid="true"
+    xmlns:core="http://typo3.org/ns/TYPO3/CMS/Core/ViewHelpers"
+    xmlns:be="http://typo3.org/ns/TYPO3/CMS/Backend/ViewHelpers"
+    xmlns:f="http://typo3.org/ns/TYPO3/CMS/Fluid/ViewHelpers"
+
+>
+
+<f:layout name="Module" />
+
+<f:section name="Content">
+    <f:flashMessages queueIdentifier="{monitoringMessageQueueIdentifier}" />
+
+    <f:if condition="{providers}">
+        <f:then>
+            <f:render partial="Backend/Provider/List" arguments="{providers: providers, providerInterface: providerInterface, flushProviderCacheUri: flushProviderCacheUri}" />
+        </f:then>
+        <f:else>
+            <div class="alert alert-info">
+                <div class="alert-inner">
+                    <div class="alert-icon">
+                        <span class="icon-emphasized">
+                            <core:icon identifier="actions-info" />
+                        </span>
+                    </div>
+                    <div class="alert-content">
+                        <div class="alert-title">
+                            <f:translate key="LLL:EXT:monitoring/Resources/Private/Language/locallang.be.xlf:providers.no_providers_found.title" />
+                        </div>
+                        <p class="alert-message">
+                            <f:translate key="LLL:EXT:monitoring/Resources/Private/Language/locallang.be.xlf:providers.no_providers_found.content" arguments="{0: providerInterface}" />
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </f:else>
+    </f:if>
+</f:section>
+
+</html>

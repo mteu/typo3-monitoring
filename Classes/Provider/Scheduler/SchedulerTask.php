@@ -15,15 +15,29 @@ declare(strict_types=1);
  * The TYPO3 project - inspiring people to share!
  */
 
-namespace mteu\Monitoring\Tests\Functional\Fixtures;
+namespace mteu\Monitoring\Provider\Scheduler;
 
 /**
- * TimeProvider interface for testable time-dependent logic.
+ * A scheduler task identified for a health report.
  *
  * @author Martin Adler <mteu@mailbox.org>
  * @license GPL-2.0-or-later
  */
-interface TimeProvider
+final readonly class SchedulerTask
 {
-    public function now(): \DateTimeImmutable;
+    public function __construct(
+        public int $uid,
+        public string $label,
+    ) {}
+
+    public function getLabel(): string
+    {
+        $description = $this->label !== '' ? $this->label : 'no description';
+
+        return sprintf(
+            '#%d (%s)',
+            $this->uid,
+            $description,
+        );
+    }
 }

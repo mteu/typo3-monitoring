@@ -40,6 +40,11 @@ final readonly class TokenAuthorizer implements Authorizer
         $this->tokenAuthorizerConfiguration = $this->configuration->tokenAuthorizerConfiguration;
     }
 
+    public function getDescription(): string
+    {
+        return 'Allows access to the monitoring endpoint with a custom authentication header.';
+    }
+
     public function isActive(): bool
     {
         return

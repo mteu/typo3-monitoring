@@ -21,20 +21,25 @@ use mteu\Monitoring\Cache\MonitoringCacheManager;
 use mteu\Monitoring\Configuration\Authorizer\AdminUserAuthorizerConfiguration;
 use mteu\Monitoring\Configuration\Authorizer\TokenAuthorizerConfiguration;
 use mteu\Monitoring\Configuration\MonitoringConfiguration;
-use mteu\Monitoring\Configuration\Provider\MiddlewareStatusProviderConfiguration;
+use mteu\Monitoring\Configuration\Reporter\EmailReporterConfiguration;
+use mteu\Monitoring\Configuration\Reporter\ReportDispatcherConfiguration;
 use mteu\Monitoring\Result\CachedMonitoringResult;
 use mteu\Monitoring\Result\MonitoringResult;
-use PHPUnit\Framework\Attributes\AllowMockObjectsWithoutExpectations;
 use PHPUnit\Framework\Attributes\CoversClass;
+use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\TestCase;
 use TYPO3\CMS\Core\Cache\CacheManager;
 use TYPO3\CMS\Core\Cache\Exception\NoSuchCacheException;
+use TYPO3\CMS\Core\Cache\Frontend\FrontendInterface;
 
 /**
  * MonitoringCacheManagerTest.
  *
- * Focuses on testing MonitoringCacheManager's own logic, not TYPO3 cache behavior.
+ * Focuses on testing MonitoringCacheManager's own logic, not TYPO3 cache
+ * behavior: graceful degradation when the cache backend is missing, the
+ * expired-entry eviction branch, and the configured lifetime fallback. The
+ * real store/retrieve round trip lives in the functional test.
  *
  * @author Martin Adler <mteu@mailbox.org>
  * @license GPL-2.0-or-later
@@ -42,97 +47,94 @@ use TYPO3\CMS\Core\Cache\Exception\NoSuchCacheException;
 #[CoversClass(MonitoringCacheManager::class)]
 final class MonitoringCacheManagerTest extends TestCase
 {
-    private MonitoringCacheManager $monitoringCacheManager;
-
-    protected function setUp(): void
-    {
-        $cacheManager = $this->createMock(CacheManager::class);
-        $this->monitoringCacheManager = new MonitoringCacheManager($cacheManager);
-    }
-
+    /**
+     * @param callable(MonitoringCacheManager): mixed $operation
+     */
     #[Test]
-    #[AllowMockObjectsWithoutExpectations]
-    public function returnsNullWhenCacheBackendUnavailable(): void
-    {
-        $cacheManager = $this->createMock(CacheManager::class);
+    #[DataProvider('degradingOperationsDataProvider')]
+    public function operationsDegradeGracefullyWhenCacheBackendIsUnavailable(
+        callable $operation,
+        mixed $expected,
+    ): void {
+        $cacheManager = self::createStub(CacheManager::class);
         $cacheManager->method('getCache')
             ->willThrowException(new NoSuchCacheException('Cache not found', 1234567890));
 
         $monitoringCacheManager = new MonitoringCacheManager($cacheManager);
-        $result = $monitoringCacheManager->getCachedResult('test-key');
 
-        self::assertNull($result, 'Should handle missing cache gracefully');
+        self::assertSame($expected, $operation($monitoringCacheManager));
+    }
+
+    /**
+     * @return \Generator<string, array{callable(MonitoringCacheManager): mixed, mixed}>
+     */
+    public static function degradingOperationsDataProvider(): \Generator
+    {
+        yield 'getCachedResult returns null' => [
+            static fn(MonitoringCacheManager $manager): mixed => $manager->getCachedResult('key'),
+            null,
+        ];
+        yield 'getCacheExpirationTime returns null' => [
+            static fn(MonitoringCacheManager $manager): mixed => $manager->getCacheExpirationTime('key'),
+            null,
+        ];
+        yield 'flushByTags returns false' => [
+            static fn(MonitoringCacheManager $manager): mixed => $manager->flushByTags(['tag1']),
+            false,
+        ];
+        yield 'flushProviderCache returns false' => [
+            static fn(MonitoringCacheManager $manager): mixed => $manager->flushProviderCache('App\\Provider\\TestProvider'),
+            false,
+        ];
+        yield 'flushByCacheKey returns false' => [
+            static fn(MonitoringCacheManager $manager): mixed => $manager->flushByCacheKey('key'),
+            false,
+        ];
+        yield 'flushAll returns false' => [
+            static fn(MonitoringCacheManager $manager): mixed => $manager->flushAll(),
+            false,
+        ];
     }
 
     #[Test]
-    #[AllowMockObjectsWithoutExpectations]
-    public function detectsAndHandlesExpiredCacheEntries(): void
+    public function setCachedResultDegradesGracefullyWhenCacheBackendIsUnavailable(): void
     {
-        $monitoringResult = new MonitoringResult('test', true);
-        $expiredCachedResult = new CachedMonitoringResult(
-            $monitoringResult,
-            new \DateTimeImmutable('-20 minutes'),
-            900
-        );
-
-        self::assertTrue($expiredCachedResult->isExpired(), 'CachedMonitoringResult should detect expiration');
-
-        $validCachedResult = new CachedMonitoringResult(
-            $monitoringResult,
-            new \DateTimeImmutable('-5 minutes'),
-            900
-        );
-
-        self::assertFalse($validCachedResult->isExpired(), 'CachedMonitoringResult should detect valid cache');
-    }
-
-    #[Test]
-    #[AllowMockObjectsWithoutExpectations]
-    public function calculatesExpirationTimeUsingCachedAtAndLifetime(): void
-    {
-        $cachedAt = new \DateTimeImmutable('-5 minutes');
-        $lifetime = 900;
-        $expectedExpiration = $cachedAt->add(new \DateInterval('PT' . $lifetime . 'S'));
-
-        $monitoringResult = new MonitoringResult('test', true);
-        $cachedResult = new CachedMonitoringResult($monitoringResult, $cachedAt, $lifetime);
-
-        $actualExpiration = $cachedResult->getExpiresAt();
-
-        self::assertEquals($expectedExpiration->getTimestamp(), $actualExpiration->getTimestamp(), 'Expiration time should be calculated correctly');
-        self::assertSame($lifetime, $cachedResult->getLifetime(), 'Lifetime should be preserved');
-        self::assertSame($monitoringResult, $cachedResult->getResult(), 'Original result should be preserved');
-    }
-
-    #[Test]
-    #[AllowMockObjectsWithoutExpectations]
-    public function returnsFalseWhenCacheBackendUnavailableForStorage(): void
-    {
-        $cacheManager = $this->createMock(CacheManager::class);
+        $cacheManager = self::createStub(CacheManager::class);
         $cacheManager->method('getCache')
-            ->willThrowException(new NoSuchCacheException('Cache not found', 1754417132));
+            ->willThrowException(new NoSuchCacheException('Cache not found', 1234567891));
 
         $monitoringCacheManager = new MonitoringCacheManager($cacheManager);
-        $result = $monitoringCacheManager->setCachedResult('test-key', new MonitoringResult('test', true));
 
-        self::assertFalse($result, 'Should handle missing cache gracefully');
+        self::assertFalse($monitoringCacheManager->setCachedResult('key', new MonitoringResult('test', true)));
     }
 
     #[Test]
-    #[AllowMockObjectsWithoutExpectations]
-    public function getCacheLifetimeReturnsDefaultValue(): void
+    public function getCachedResultEvictsExpiredEntryAndReturnsNull(): void
     {
-        $result = $this->monitoringCacheManager->getCacheLifetime();
+        $expired = new CachedMonitoringResult(
+            new MonitoringResult('test', true),
+            new \DateTimeImmutable('-20 minutes'),
+            900,
+        );
 
-        self::assertSame(900, $result, 'Should return 15 minutes (900 seconds) as default');
+        $frontend = $this->createMock(FrontendInterface::class);
+        $frontend->method('has')->willReturn(true);
+        $frontend->method('get')->willReturn($expired);
+        $frontend->expects(self::once())->method('remove')->with('test-key');
+
+        $cacheManager = self::createStub(CacheManager::class);
+        $cacheManager->method('getCache')->willReturn($frontend);
+
+        $monitoringCacheManager = new MonitoringCacheManager($cacheManager);
+
+        self::assertNull($monitoringCacheManager->getCachedResult('test-key'));
     }
 
     #[Test]
     public function getCacheLifetimeHonorsConfiguredDefault(): void
     {
-        $cacheManager = $this->createMock(CacheManager::class);
         $monitoringCacheManager = new MonitoringCacheManager(
-            $cacheManager,
+            self::createStub(CacheManager::class),
             $this->createConfiguration(cacheDefaultLifetime: 60),
         );
 
@@ -142,81 +144,15 @@ final class MonitoringCacheManagerTest extends TestCase
     #[Test]
     public function getCacheLifetimeFallsBackToBuiltInDefaultWhenConfigurationOmitted(): void
     {
-        $cacheManager = $this->createMock(CacheManager::class);
-        $monitoringCacheManager = new MonitoringCacheManager($cacheManager);
+        $monitoringCacheManager = new MonitoringCacheManager(self::createStub(CacheManager::class));
 
         self::assertSame(900, $monitoringCacheManager->getCacheLifetime());
     }
 
-    private function createConfiguration(int $cacheDefaultLifetime): MonitoringConfiguration
-    {
-        return new MonitoringConfiguration(
-            new TokenAuthorizerConfiguration(true, 10, 'secret', 'X-TYPO3-MONITORING-AUTH'),
-            new AdminUserAuthorizerConfiguration(),
-            new MiddlewareStatusProviderConfiguration(),
-            cacheDefaultLifetime: $cacheDefaultLifetime,
-        );
-    }
-
     #[Test]
-    #[AllowMockObjectsWithoutExpectations]
-    public function returnsFalseWhenCacheBackendUnavailableForTagFlush(): void
-    {
-        $cacheManager = $this->createMock(CacheManager::class);
-        $cacheManager->method('getCache')
-            ->willThrowException(new NoSuchCacheException('Cache not found', 1754417126));
-
-        $monitoringCacheManager = new MonitoringCacheManager($cacheManager);
-        $result = $monitoringCacheManager->flushByTags(['tag1']);
-
-        self::assertFalse($result, 'Should handle missing cache gracefully');
-    }
-
-    #[Test]
-    #[AllowMockObjectsWithoutExpectations]
-    public function flushProviderCacheConvertsClassNameToTag(): void
-    {
-        $providerClass = 'App\\Provider\\TestProvider';
-        $expectedTag = 'App_Provider_TestProvider';
-
-        $actualTag = str_replace('\\', '_', $providerClass);
-
-        self::assertSame($expectedTag, $actualTag, 'Class name should be converted to valid cache tag');
-    }
-
-    #[Test]
-    #[AllowMockObjectsWithoutExpectations]
-    public function returnsFalseWhenCacheBackendUnavailableForKeyFlush(): void
-    {
-        $cacheManager = $this->createMock(CacheManager::class);
-        $cacheManager->method('getCache')
-            ->willThrowException(new NoSuchCacheException('Cache not found', 1754417122));
-
-        $monitoringCacheManager = new MonitoringCacheManager($cacheManager);
-        $result = $monitoringCacheManager->flushByCacheKey('test-key');
-
-        self::assertFalse($result, 'Should handle missing cache gracefully');
-    }
-
-    #[Test]
-    #[AllowMockObjectsWithoutExpectations]
-    public function returnsFalseWhenCacheBackendUnavailableForFlushAll(): void
-    {
-        $cacheManager = $this->createMock(CacheManager::class);
-        $cacheManager->method('getCache')
-            ->willThrowException(new NoSuchCacheException('Cache not found', 1754417116));
-
-        $monitoringCacheManager = new MonitoringCacheManager($cacheManager);
-        $result = $monitoringCacheManager->flushAll();
-
-        self::assertFalse($result, 'Should handle missing cache gracefully');
-    }
-
-    #[Test]
-    #[AllowMockObjectsWithoutExpectations]
     public function getCacheThrowsExceptionWhenCacheBackendMissing(): void
     {
-        $cacheManager = $this->createMock(CacheManager::class);
+        $cacheManager = self::createStub(CacheManager::class);
         $cacheManager->method('getCache')
             ->willThrowException(new NoSuchCacheException('Cache not found', 1754417109));
 
@@ -224,5 +160,16 @@ final class MonitoringCacheManagerTest extends TestCase
 
         $this->expectException(NoSuchCacheException::class);
         $monitoringCacheManager->getCache();
+    }
+
+    private function createConfiguration(int $cacheDefaultLifetime): MonitoringConfiguration
+    {
+        return new MonitoringConfiguration(
+            new TokenAuthorizerConfiguration(true, 10, 'secret', 'X-TYPO3-MONITORING-AUTH'),
+            new AdminUserAuthorizerConfiguration(),
+            new EmailReporterConfiguration(),
+            new ReportDispatcherConfiguration(),
+            cacheDefaultLifetime: $cacheDefaultLifetime,
+        );
     }
 }

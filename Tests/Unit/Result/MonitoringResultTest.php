@@ -180,6 +180,29 @@ final class MonitoringResultTest extends MonitoringTestCase
     }
 
     /**
+     * A parent constructed healthy but carrying an unhealthy sub-result (the shape every
+     * sub-result-driven provider produces, e.g. SchedulerProvider) must serialize as
+     * unhealthy. Regression guard: toArray()/jsonSerialize() previously emitted the raw
+     * constructor flag instead of the aggregated isHealthy(), reporting healthy=true while
+     * a sub-check was failing.
+     */
+    #[Test]
+    public function serializationReflectsAggregatedSubResultHealth(): void
+    {
+        $result = new MonitoringResult('Scheduler', true);
+        $result->addSubResult(new MonitoringResult('Heartbeat', true));
+        $result->addSubResult(new MonitoringResult('Overdue Tasks', false, 'A task is overdue.'));
+
+        self::assertFalse($result->isHealthy());
+        self::assertFalse($result->toArray()['isHealthy']);
+        self::assertFalse($result->jsonSerialize()['isHealthy']);
+
+        $decoded = json_decode((string)json_encode($result), true);
+        self::assertIsArray($decoded);
+        self::assertFalse($decoded['isHealthy']);
+    }
+
+    /**
      * @param list<array{name: string, health: bool, reason?: string|null}> $subResultsData
      */
     #[Test]

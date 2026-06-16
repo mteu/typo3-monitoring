@@ -18,8 +18,16 @@ declare(strict_types=1);
 use TYPO3\CMS\Core\Imaging\IconProvider\SvgIconProvider;
 
 return [
-    'monitoring' => [
+    'module-monitoring-legacy' => [
         'provider' => SvgIconProvider::class,
         'source' => 'EXT:monitoring/Resources/Public/Icons/Extension.svg',
+    ],
+    'module-monitoring' => [
+        'provider' => SvgIconProvider::class,
+        'source' => 'EXT:monitoring/Resources/Public/Icons/module.svg',
+    ],
+    'monitoring-plain' => [
+        'provider' => SvgIconProvider::class,
+        'source' => 'EXT:monitoring/Resources/Public/Icons/monitoring-plain.svg',
     ],
 ];
