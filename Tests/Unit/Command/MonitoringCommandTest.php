@@ -94,12 +94,59 @@ final class MonitoringCommandTest extends Framework\TestCase
     }
 
     #[Test]
+    public function skipsDisabledProvidersEvenWhenTheyClaimToBeActive(): void
+    {
+        $active = $this->createProvider('EnabledActiveProvider', isActive: true, isHealthy: true);
+
+        // Contradicts itself: disabled by the operator, yet isActive() === true.
+        // isEnabled() is the kill-switch, so it must not be executed.
+        $disabledButActive = new class () implements MonitoringProvider {
+            public function getName(): string
+            {
+                return 'DisabledButActiveProvider';
+            }
+
+            public function isEnabled(): bool
+            {
+                return false;
+            }
+
+            public function getDescription(): string
+            {
+                return '';
+            }
+
+            public function isActive(): bool
+            {
+                return true;
+            }
+
+            public function execute(): MonitoringResult
+            {
+                return new MonitoringResult('DisabledButActiveProvider', false);
+            }
+        };
+
+        $tester = new CommandTester(new MonitoringCommand([$active, $disabledButActive], $this->createExecutionHandler()));
+        $exitCode = $tester->execute([]);
+
+        $display = $tester->getDisplay();
+        self::assertSame(Command::SUCCESS, $exitCode);
+        self::assertStringContainsString('EnabledActiveProvider', $display);
+        self::assertStringNotContainsString('DisabledButActiveProvider', $display);
+    }
+
+    #[Test]
     public function rendersAllActiveProvidersWithStatusMarkers(): void
     {
         $healthy = new class () implements MonitoringProvider {
             public function getName(): string
             {
                 return 'AlphaProvider';
+            }
+            public function isEnabled(): bool
+            {
+                return true;
             }
             public function getDescription(): string
             {
@@ -119,6 +166,10 @@ final class MonitoringCommandTest extends Framework\TestCase
             public function getName(): string
             {
                 return 'BetaProvider';
+            }
+            public function isEnabled(): bool
+            {
+                return true;
             }
             public function getDescription(): string
             {
@@ -196,6 +247,11 @@ final class MonitoringCommandTest extends Framework\TestCase
             public function getDescription(): string
             {
                 return '';
+            }
+
+            public function isEnabled(): bool
+            {
+                return $this->active;
             }
 
             public function isActive(): bool

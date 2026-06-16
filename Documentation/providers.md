@@ -27,10 +27,24 @@ final class MyServiceProvider implements MonitoringProvider
         return 'Monitors my custom service';
     }
 
+    public function isEnabled(): bool
+    {
+        // Operator intent. Return true to be on by default, or back this with
+        // your own configuration so it can be toggled. A hardcoded `return true` is fine;
+        // otherwise back it with whatever fits your deployment — extension configuration,
+        // an environment variable, a YAML/PHP settings file, a database flag, daytime.
+        //
+        // Note: A provider whose `isEnabled()` returns `false` is never executed —
+        // not on the health endpoint, the CLI, nor the reporter — regardless of what `isActive()` returns.
+        return $this->configuration->isEnabled();
+    }
+
     public function isActive(): bool
     {
-        return true; // or conditional logic
-    }
+        // Enforce technical preconditions as needed or delegate to `isEnabled()` by returning true.
+        return
+            \TYPO3\CMS\Core\Utility\ExtensionManagementUtility::isLoaded('required_ext') &&
+            (Environment::getContext())->isProduction();
 
     public function execute(): Result
     {
@@ -104,6 +118,9 @@ use Symfony\Component\DependencyInjection\Attribute\AutoconfigureTag;
 use TYPO3\CMS\Core\Database\ConnectionPool;
 use TYPO3\CMS\Core\Configuration\ExtensionConfiguration;
 
+/**
+ * Silly example since a missing DB connection would fail in bootstrapping already.
+ */
 #[AutoconfigureTag('monitoring.provider')]
 final class DatabaseConnectionProvider implements MonitoringProvider
 {
@@ -122,9 +139,14 @@ final class DatabaseConnectionProvider implements MonitoringProvider
         return 'Monitors database connectivity';
     }
 
+    public function isEnabled(): bool
+    {
+        return $extensionConfiguration->isEnabled();
+    }
+
     public function isActive(): bool
     {
-        return true;
+        return $this->isEnabled();
     }
 
     public function execute(): Result
@@ -177,9 +199,14 @@ final class MultiComponentProvider implements MonitoringProvider
         return 'Monitors multiple sub-components';
     }
 
-    public function isActive(): bool
+    public function isEnabled(): bool
     {
         return true;
+    }
+
+    public function isActive(): bool
+    {
+        return $this->isEnabled();
     }
 
     public function execute(): Result
@@ -220,23 +247,6 @@ final class MultiComponentProvider implements MonitoringProvider
     }
 }
 ```
-
-### Conditional Activation
-
-```php
-public function isActive(): bool
-{
-    // Only active if extension loaded
-    return ExtensionManagementUtility::isLoaded('my_extension');
-
-    // Or environment-specific
-    return GeneralUtility::getApplicationContext()->isProduction();
-}
-```
-
-## Built-in Providers
-
-- **MiddlewareStatusProvider**: Meta-monitoring of the monitoring system itself
 
 ## Best Practices
 

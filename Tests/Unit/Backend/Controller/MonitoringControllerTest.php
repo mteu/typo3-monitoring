@@ -47,6 +47,7 @@ final class MonitoringControllerTest extends Framework\TestCase
         $inactiveProvider = $this->createMock(MonitoringProvider::class);
         $inactiveProvider->method('getName')->willReturn('Inactive');
         $inactiveProvider->method('getDescription')->willReturn('disabled provider');
+        $inactiveProvider->method('isEnabled')->willReturn(false);
         $inactiveProvider->method('isActive')->willReturn(false);
 
         $inactiveProvider->expects(self::never())->method('execute');
@@ -69,6 +70,7 @@ final class MonitoringControllerTest extends Framework\TestCase
         $activeProvider = $this->createMock(MonitoringProvider::class);
         $activeProvider->method('getName')->willReturn('Active');
         $activeProvider->method('getDescription')->willReturn('enabled provider');
+        $activeProvider->method('isEnabled')->willReturn(true);
         $activeProvider->method('isActive')->willReturn(true);
         $activeProvider
             ->expects(self::once())

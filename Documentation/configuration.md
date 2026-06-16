@@ -10,6 +10,7 @@ return [
             'api' => [
                 'endpoint' => '/monitor/health',
                 'enforceHttps' => false,
+                'includeServicesHealth' => true,
             ],
             'authorizer' => [
                 'mteu\Monitoring\Authorization\TokenAuthorizer' => [
@@ -21,12 +22,6 @@ return [
                 'mteu\Monitoring\Authorization\AdminUserAuthorizer' => [
                     'enabled' => true,
                     'priority' => -10,
-                ],
-            ],
-            'provider' => [
-                # built-in provider. not actually listed in the backend module.
-                'mteu\Monitoring\Provider\MiddlewareStatusProvider' => [
-                    'enabled' => true,
                 ],
             ],
         ],
@@ -46,6 +41,8 @@ return [
   and `reverseProxySSL`. Make sure those are configured correctly first;
   otherwise legitimate requests behind a reverse proxy will be rejected with a
   `403 unsupported-protocol` response.
+- **`includeServicesHealth`**: By default, all services will be presented with
+  their status. When disabled, only the overall health state will be shown.
 
 ### Token Authorizer
 - **`enabled`**: Enable token authentication (default: `false`)
@@ -58,7 +55,14 @@ return [
 - **`priority`**: Authorization priority (default: `-10`)
 
 ### Providers
-- **`enabled`**: Enable/disable specific providers
+- **`enabled`**: Enable/disable specific providers.
+
+  A provider's on/off state is exposed through its `isEnabled()` method, which
+  acts as an authoritative kill-switch (a disabled provider is never executed).
+  How that value is sourced is up to each provider; the recommended approach is a
+  typed extension-configuration object, as the shipped `SchedulerProvider` does.
+  See [migration.md](migration_v1.md) and
+  [providers.md](providers.md#enablement-and-activation) for details.
 
 ## Configuration Access
 

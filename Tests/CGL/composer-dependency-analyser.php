@@ -17,6 +17,7 @@ declare(strict_types=1);
 
 use Composer\Autoload;
 use ShipMonk\ComposerDependencyAnalyser;
+use ShipMonk\ComposerDependencyAnalyser\Config\ErrorType;
 
 $rootPath = dirname(__DIR__, 2);
 
@@ -29,6 +30,13 @@ $configuration
     ->addPathsToExclude([
         $rootPath . '/Tests/CGL',
     ])
+    // typo3/cms-scheduler is an intentional *optional* integration: it's a
+    // composer "suggest" (require-dev for CI), and MonitoringReportTask is
+    // guarded by class_exists() in ext_localconf.php.
+    ->ignoreErrorsOnPackage(
+        'typo3/cms-scheduler',
+        [ErrorType::DEV_DEPENDENCY_IN_PROD],
+    )
 ;
 
 return $configuration;

@@ -116,7 +116,7 @@ final class MonitoringResult implements Result
     {
         $array = [
             'name' => $this->name,
-            'isHealthy' => $this->isHealthy,
+            'isHealthy' => $this->isHealthy(),
             'description' => $this->reason,
         ];
 

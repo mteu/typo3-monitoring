@@ -3,8 +3,10 @@ includes:
 
 parameters:
 	scanDirectories:
+		- ../../.build/vendor/eliashaeussler/phpunit-attributes/src
 		- ../../.build/vendor/phpunit/phpunit/src
 		- ../../.build/vendor/typo3/cms-backend/Classes
+		- ../../.build/vendor/typo3/cms-scheduler/Classes
 		- ../../.build/vendor/typo3/testing-framework/Classes
 		- ../../.build/vendor/mteu/typo3-typed-extconf/Classes
 	paths:
@@ -20,10 +22,14 @@ parameters:
 			classesAllowedToBeExtended:
 				- Exception
 				- Symfony\Component\Console\Command\Command
+				- TYPO3\CMS\Scheduler\Task\AbstractTask
 				- TYPO3Fluid\Fluid\Core\ViewHelper\AbstractViewHelper
 				- TYPO3\TestingFramework\Core\Functional\FunctionalTestCase
 				- TYPO3\TestingFramework\Core\Unit\UnitTestCase
+				- mteu\Monitoring\Backend\Controller\AbstractSubModuleController
+				- mteu\Monitoring\Tests\Functional\MonitoringFunctionalTestCase
 				- mteu\Monitoring\Tests\Unit\MonitoringTestCase
+				- mteu\Monitoring\Tests\Functional\Provider\Scheduler\SchedulerProviderFunctionalTestCase
 
 	ignoreErrors:
 		- identifier: ergebnis.noConstructorParameterWithDefaultValue

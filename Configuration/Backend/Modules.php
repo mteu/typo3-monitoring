@@ -26,10 +26,57 @@ return [
             'title' => 'LLL:EXT:monitoring/Resources/Private/Language/locallang.mod.xlf:module.labels.title',
             'description' => 'LLL:EXT:monitoring/Resources/Private/Language/locallang.mod.xlf:module.labels.description',
         ],
-        'iconIdentifier' => 'monitoring',
+        'showSubmoduleOverview' => true,
+        // @todo: I've yet to find a more sensible way to support both Icons
+        'iconIdentifier' => (new \TYPO3\CMS\Core\Information\Typo3Version())->getMajorVersion() < 14 ? 'module-monitoring-legacy' : 'module-monitoring',
         'routes' => [
             '_default' => [
                 'target' => \mteu\Monitoring\Backend\Controller\MonitoringController::class,
+            ],
+        ],
+    ],
+    'monitoring_providers' => [
+        'parent' => 'monitoring',
+        'access' => 'systemMaintainer',
+        'workspaces' => 'live',
+        'path' => '/module/system/monitoring/providers',
+        'labels' => [
+            'title' => 'LLL:EXT:monitoring/Resources/Private/Language/locallang.mod.xlf:module.providers.labels.title',
+            'description' => 'LLL:EXT:monitoring/Resources/Private/Language/locallang.mod.xlf:module.providers.labels.description',
+        ],
+        'routes' => [
+            '_default' => [
+                'target' => \mteu\Monitoring\Backend\Controller\ProviderController::class,
+            ],
+        ],
+    ],
+    'monitoring_authorizers' => [
+        'parent' => 'monitoring',
+        'access' => 'systemMaintainer',
+        'workspaces' => 'live',
+        'path' => '/module/system/monitoring/authorizers',
+        'labels' => [
+            'title' => 'LLL:EXT:monitoring/Resources/Private/Language/locallang.mod.xlf:module.authorizers.labels.title',
+            'description' => 'LLL:EXT:monitoring/Resources/Private/Language/locallang.mod.xlf:module.authorizers.labels.description',
+        ],
+        'routes' => [
+            '_default' => [
+                'target' => \mteu\Monitoring\Backend\Controller\AuthorizerController::class,
+            ],
+        ],
+    ],
+    'monitoring_reporters' => [
+        'parent' => 'monitoring',
+        'access' => 'systemMaintainer',
+        'workspaces' => 'live',
+        'path' => '/module/system/monitoring/reporters',
+        'labels' => [
+            'title' => 'LLL:EXT:monitoring/Resources/Private/Language/locallang.mod.xlf:module.reporters.labels.title',
+            'description' => 'LLL:EXT:monitoring/Resources/Private/Language/locallang.mod.xlf:module.reporters.labels.description',
+        ],
+        'routes' => [
+            '_default' => [
+                'target' => \mteu\Monitoring\Backend\Controller\ReporterController::class,
             ],
         ],
     ],

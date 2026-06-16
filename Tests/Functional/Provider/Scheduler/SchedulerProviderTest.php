@@ -15,26 +15,26 @@ declare(strict_types=1);
  * The TYPO3 project - inspiring people to share!
  */
 
-namespace mteu\Monitoring\Tests\Unit\Configuration\Provider;
+namespace mteu\Monitoring\Tests\Functional\Provider\Scheduler;
 
-use mteu\Monitoring as Src;
-use PHPUnit\Framework;
+use mteu\Monitoring\Provider\Scheduler\SchedulerProvider;
+use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\Attributes\Test;
 
 /**
- * MiddlewareStatusProviderConfigurationTest.
+ * SchedulerProviderTest.
  *
  * @author Martin Adler <mteu@mailbox.org>
  * @license GPL-2.0-or-later
  */
-#[Framework\Attributes\CoversClass(Src\Configuration\Provider\MiddlewareStatusProviderConfiguration::class)]
-final class MiddlewareStatusProviderConfigurationTest extends Framework\TestCase
+#[CoversClass(SchedulerProvider::class)]
+final class SchedulerProviderTest extends SchedulerProviderFunctionalTestCase
 {
-    #[Test]
-    public function defaultValuesAreCorrect(): void
-    {
-        $subject = new Src\Configuration\Provider\MiddlewareStatusProviderConfiguration();
+    protected array $coreExtensionsToLoad = ['scheduler'];
 
-        self::assertTrue($subject->isEnabled());
+    #[Test]
+    public function isActiveReturnsTrueWhenEnabledAndSchedulerExtensionIsLoaded(): void
+    {
+        self::assertTrue($this->createSchedulerProvider()->isActive());
     }
 }

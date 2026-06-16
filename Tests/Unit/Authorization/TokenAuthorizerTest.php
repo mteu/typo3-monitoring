@@ -21,10 +21,10 @@ use mteu\Monitoring\Authorization\TokenAuthorizer;
 use mteu\Monitoring\Configuration\Authorizer\AdminUserAuthorizerConfiguration;
 use mteu\Monitoring\Configuration\Authorizer\TokenAuthorizerConfiguration;
 use mteu\Monitoring\Configuration\MonitoringConfiguration;
-use mteu\Monitoring\Configuration\Provider\MiddlewareStatusProviderConfiguration;
+use mteu\Monitoring\Configuration\Reporter\EmailReporterConfiguration;
+use mteu\Monitoring\Configuration\Reporter\ReportDispatcherConfiguration;
 use PHPUnit\Framework;
 use PHPUnit\Framework\Attributes\CoversClass;
-use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\Attributes\Test;
 use Psr\Http\Message\ServerRequestInterface;
 use TYPO3\CMS\Core\Crypto\HashService;
@@ -55,27 +55,13 @@ final class TokenAuthorizerTest extends Framework\TestCase
         $this->hashService = new HashService();
     }
 
-    /**
-     * @return \Generator<string, array{bool, string, bool}>
-     */
-    public static function isActiveTruthTable(): \Generator
-    {
-        yield 'enabled + secret -> active'         => [true, self::DEFAULT_SECRET, true];
-        yield 'enabled + empty secret -> inactive' => [true, '', false];
-        yield 'disabled + secret -> inactive'      => [false, self::DEFAULT_SECRET, false];
-        yield 'disabled + empty secret -> inactive' => [false, '', false];
-    }
-
     #[Test]
-    #[DataProvider('isActiveTruthTable')]
-    public function isActiveRequiresBothEnabledFlagAndNonEmptySecret(
-        bool $enabled,
-        string $secret,
-        bool $expected,
-    ): void {
-        $authorizer = $this->createAuthorizer($enabled, $secret);
-
-        self::assertSame($expected, $authorizer->isActive());
+    public function isActiveDelegatesToConfiguration(): void
+    {
+        // The enabled/secret truth table is owned and tested by
+        // TokenAuthorizerConfigurationTest; here only the delegation matters.
+        self::assertTrue($this->createAuthorizer(enabled: true)->isActive());
+        self::assertFalse($this->createAuthorizer(enabled: false)->isActive());
     }
 
     #[Test]
@@ -147,7 +133,8 @@ final class TokenAuthorizerTest extends Framework\TestCase
                 authHeaderName: $authHeaderName,
             ),
             adminUserAuthorizerConfiguration: new AdminUserAuthorizerConfiguration(),
-            providerConfiguration: new MiddlewareStatusProviderConfiguration(),
+            emailReporterConfiguration: new EmailReporterConfiguration(),
+            reporterDispatcherConfiguration: new ReportDispatcherConfiguration(),
             endpoint: $endpoint,
         );
 

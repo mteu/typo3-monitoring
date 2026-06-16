@@ -19,16 +19,17 @@ namespace mteu\Monitoring\Tests\Functional\Handler;
 
 use mteu\Monitoring\Cache\MonitoringCacheManager;
 use mteu\Monitoring\Handler\MonitoringExecutionHandler;
+use mteu\Monitoring\Handler\ProviderExecutionOutcome;
 use mteu\Monitoring\Result\MonitoringResult;
 use mteu\Monitoring\Tests\Functional\Fixtures\CacheableProvider;
 use mteu\Monitoring\Tests\Functional\Fixtures\NonCacheableProvider;
 use mteu\Monitoring\Tests\Functional\Fixtures\ShortCacheProvider;
+use mteu\Monitoring\Tests\Functional\MonitoringFunctionalTestCase;
 use PHPUnit\Framework\Attributes\AllowMockObjectsWithoutExpectations;
 use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\Attributes\Test;
 use TYPO3\CMS\Core\Cache\CacheManager;
 use TYPO3\CMS\Core\Cache\Exception\NoSuchCacheException;
-use TYPO3\TestingFramework\Core\Functional\FunctionalTestCase;
 
 /**
  * MonitoringExecutionHandlerTest.
@@ -37,28 +38,9 @@ use TYPO3\TestingFramework\Core\Functional\FunctionalTestCase;
  * @license GPL-2.0-or-later
  */
 #[CoversClass(MonitoringExecutionHandler::class)]
-final class MonitoringExecutionHandlerTest extends FunctionalTestCase
+#[CoversClass(ProviderExecutionOutcome::class)]
+final class MonitoringExecutionHandlerTest extends MonitoringFunctionalTestCase
 {
-    protected array $testExtensionsToLoad = [
-        'monitoring',
-        'typed_extconf',
-    ];
-
-    protected array $configurationToUseInTestInstance = [
-        'SYS' => [
-            'caching' => [
-                'cacheConfigurations' => [
-                    'typo3_monitoring' => [
-                        'frontend' => 'TYPO3\\CMS\\Core\\Cache\\Frontend\\VariableFrontend',
-                        'backend' => 'TYPO3\\CMS\\Core\\Cache\\Backend\\Typo3DatabaseBackend',
-                        'options' => [],
-                        'groups' => ['system'],
-                    ],
-                ],
-            ],
-        ],
-    ];
-
     private MonitoringExecutionHandler $executionHandler;
     private MonitoringCacheManager $cacheManager;
     private CacheableProvider $provider;

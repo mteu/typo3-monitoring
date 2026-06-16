@@ -78,7 +78,7 @@ final readonly class FlushProviderCacheController
 
         $languageService = $this->getLanguageService();
         $messageQueue = $this->flashMessageService->getMessageQueueByIdentifier(self::FLASHMESSAGE_QUEUE_IDENTIFIER);
-        $redirectUri = $this->uriBuilder->buildUriFromRoute('monitoring');
+        $redirectUri = $this->uriBuilder->buildUriFromRoute('monitoring_providers');
 
         $formProtection = $this->formProtectionFactory->createFromRequest($request);
 

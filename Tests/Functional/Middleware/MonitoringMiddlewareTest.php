@@ -21,336 +21,102 @@ use mteu\Monitoring\Authorization\Authorizer;
 use mteu\Monitoring\Configuration\Authorizer\AdminUserAuthorizerConfiguration;
 use mteu\Monitoring\Configuration\Authorizer\TokenAuthorizerConfiguration;
 use mteu\Monitoring\Configuration\MonitoringConfiguration;
-use mteu\Monitoring\Configuration\Provider\MiddlewareStatusProviderConfiguration;
+use mteu\Monitoring\Configuration\Reporter\EmailReporterConfiguration;
+use mteu\Monitoring\Configuration\Reporter\ReportDispatcherConfiguration;
 use mteu\Monitoring\Handler\MonitoringExecutionHandler;
 use mteu\Monitoring\Middleware\MonitoringMiddleware;
-use mteu\Monitoring\Provider\MonitoringProvider;
-use mteu\Monitoring\Result\MonitoringResult;
-use mteu\Monitoring\Result\Result;
+use mteu\Monitoring\Tests\Functional\Fixtures\ConfigurableProvider;
+use mteu\Monitoring\Tests\Functional\MonitoringFunctionalTestCase;
 use PHPUnit\Framework\Attributes\AllowMockObjectsWithoutExpectations;
 use PHPUnit\Framework\Attributes\Test;
-use PHPUnit\Framework\MockObject\MockObject;
-use Psr\Http\Message\ResponseFactoryInterface;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use Psr\Http\Server\RequestHandlerInterface;
-use Psr\Log\LoggerInterface;
-use TYPO3\CMS\Core\Http\NormalizedParams;
+use Psr\Log\NullLogger;
 use TYPO3\CMS\Core\Http\ResponseFactory;
 use TYPO3\CMS\Core\Http\ServerRequest;
 use TYPO3\CMS\Core\Http\Uri;
-use TYPO3\TestingFramework\Core\Functional\FunctionalTestCase;
 
 /**
  * MonitoringMiddlewareTest.
  *
+ * End-to-end smoke tests through the real DI-wired execution handler and the
+ * real PSR-17 response factory, asserting the actual JSON payload the
+ * endpoint serves. All routing, method, authorization and HTTPS edge cases
+ * are covered by the unit test suite.
+ *
  * @author Martin Adler <mteu@mailbox.org>
  * @license GPL-2.0-or-later
  */
-final class MonitoringMiddlewareTest extends FunctionalTestCase
+final class MonitoringMiddlewareTest extends MonitoringFunctionalTestCase
 {
-    private ResponseFactoryInterface $responseFactory;
-    private LoggerInterface&MockObject $logger;
-    private RequestHandlerInterface&MockObject $handler;
-
-    protected array $testExtensionsToLoad = [
-        'monitoring',
-        'typed_extconf',
-    ];
-
-    protected function setUp(): void
+    #[Test]
+    #[AllowMockObjectsWithoutExpectations]
+    public function servesHealthyJsonStatusForMatchingEndpoint(): void
     {
-        parent::setUp();
+        $handler = $this->createMock(RequestHandlerInterface::class);
+        $handler->expects(self::never())->method('handle');
 
-        $this->responseFactory = new ResponseFactory();
-        $this->logger = $this->createMock(LoggerInterface::class);
-        $this->handler = $this->createMock(RequestHandlerInterface::class);
+        $response = $this->process(
+            new ConfigurableProvider('test-provider', healthy: true),
+            $handler,
+        );
+
+        self::assertSame(200, $response->getStatusCode());
+        self::assertSame(
+            [
+                'isHealthy' => true,
+                'services' => ['test-provider' => ['status' => 'healthy']],
+            ],
+            json_decode((string)$response->getBody(), true),
+        );
     }
 
     #[Test]
     #[AllowMockObjectsWithoutExpectations]
-    public function returnsHealthStatusResponseForMatchingEndpoint(): void
+    public function servesUnhealthyJsonStatusWith503WhenAProviderFails(): void
     {
-        $configuration = $this->createConfiguration('/health');
-        $provider = $this->createHealthyProvider();
-        $authorizer = $this->createAuthorizedAuthorizer();
+        $handler = $this->createMock(RequestHandlerInterface::class);
+        $handler->expects(self::never())->method('handle');
 
+        $response = $this->process(
+            new ConfigurableProvider('test-provider', healthy: false),
+            $handler,
+        );
+
+        self::assertSame(503, $response->getStatusCode());
+        self::assertSame(
+            [
+                'isHealthy' => false,
+                'services' => ['test-provider' => ['status' => 'unhealthy']],
+            ],
+            json_decode((string)$response->getBody(), true),
+        );
+    }
+
+    private function process(
+        ConfigurableProvider $provider,
+        RequestHandlerInterface $handler,
+    ): ResponseInterface {
         $middleware = new MonitoringMiddleware(
             [$provider],
-            [$authorizer],
-            $configuration,
-            $this->responseFactory,
-            $this->logger,
+            [$this->createAuthorizedAuthorizer()],
+            new MonitoringConfiguration(
+                new TokenAuthorizerConfiguration(),
+                new AdminUserAuthorizerConfiguration(),
+                new EmailReporterConfiguration(),
+                new ReportDispatcherConfiguration(),
+                '/health',
+            ),
+            new ResponseFactory(),
+            new NullLogger(),
             $this->get(MonitoringExecutionHandler::class),
         );
 
-        $request = $this->createHttpsRequest('/health');
-
-        $this->handler->expects(self::never())->method('handle');
-
-        $result = $middleware->process($request, $this->handler);
-
-        self::assertInstanceOf(ResponseInterface::class, $result);
-        self::assertSame(200, $result->getStatusCode());
-    }
-
-    #[Test]
-    #[AllowMockObjectsWithoutExpectations]
-    public function returns401ResponseWhenAuthorizationFails(): void
-    {
-        $configuration = $this->createConfiguration('/health');
-        $provider = $this->createHealthyProvider();
-        $authorizer = $this->createUnauthorizedAuthorizer();
-
-        $middleware = new MonitoringMiddleware(
-            [$provider],
-            [$authorizer],
-            $configuration,
-            $this->responseFactory,
-            $this->logger,
-            $this->get(MonitoringExecutionHandler::class),
+        return $middleware->process(
+            new ServerRequest(new Uri('https://example.com/health'), 'GET'),
+            $handler,
         );
-
-        $request = $this->createHttpsRequest('/health');
-
-        $this->handler->expects(self::never())->method('handle');
-
-        $result = $middleware->process($request, $this->handler);
-
-        self::assertInstanceOf(ResponseInterface::class, $result);
-        self::assertSame(401, $result->getStatusCode());
-    }
-
-    #[Test]
-    #[AllowMockObjectsWithoutExpectations]
-    public function returns403ResponseForNonHttpsRequestsWhenEnforced(): void
-    {
-        $configuration = $this->createConfiguration('/health', enforceHttps: true);
-        $provider = $this->createHealthyProvider();
-        $authorizer = $this->createAuthorizedAuthorizer();
-
-        $middleware = new MonitoringMiddleware(
-            [$provider],
-            [$authorizer],
-            $configuration,
-            $this->responseFactory,
-            $this->logger,
-            $this->get(MonitoringExecutionHandler::class),
-        );
-
-        $request = $this->createHttpRequest('/health');
-
-        $this->handler->expects(self::never())->method('handle');
-
-        $result = $middleware->process($request, $this->handler);
-
-        self::assertInstanceOf(ResponseInterface::class, $result);
-        self::assertSame(403, $result->getStatusCode());
-    }
-
-    #[Test]
-    #[AllowMockObjectsWithoutExpectations]
-    public function allowsPlainHttpRequestWhenEnforceHttpsIsDisabled(): void
-    {
-        $configuration = $this->createConfiguration('/health');
-        $provider = $this->createHealthyProvider();
-        $authorizer = $this->createAuthorizedAuthorizer();
-
-        $middleware = new MonitoringMiddleware(
-            [$provider],
-            [$authorizer],
-            $configuration,
-            $this->responseFactory,
-            $this->logger,
-            $this->get(MonitoringExecutionHandler::class),
-        );
-
-        $request = $this->createHttpRequest('/health');
-
-        $this->handler->expects(self::never())->method('handle');
-
-        $result = $middleware->process($request, $this->handler);
-
-        self::assertSame(200, $result->getStatusCode());
-    }
-
-    #[Test]
-    #[AllowMockObjectsWithoutExpectations]
-    public function acceptsHttpRequestWhenNormalizedParamsReportsHttps(): void
-    {
-        $configuration = $this->createConfiguration('/health', enforceHttps: true);
-        $provider = $this->createHealthyProvider();
-        $authorizer = $this->createAuthorizedAuthorizer();
-
-        $middleware = new MonitoringMiddleware(
-            [$provider],
-            [$authorizer],
-            $configuration,
-            $this->responseFactory,
-            $this->logger,
-            $this->get(MonitoringExecutionHandler::class),
-        );
-
-        $request = $this->createHttpRequest('/health')
-            ->withAttribute('normalizedParams', $this->createNormalizedParams(true));
-
-        $this->handler->expects(self::never())->method('handle');
-
-        $result = $middleware->process($request, $this->handler);
-
-        self::assertSame(200, $result->getStatusCode());
-    }
-
-    #[Test]
-    #[AllowMockObjectsWithoutExpectations]
-    public function passesRequestToNextHandlerWhenEndpointMismatches(): void
-    {
-        $configuration = $this->createConfiguration('/health');
-        $provider = $this->createHealthyProvider();
-        $authorizer = $this->createAuthorizedAuthorizer();
-
-        $middleware = new MonitoringMiddleware(
-            [$provider],
-            [$authorizer],
-            $configuration,
-            $this->responseFactory,
-            $this->logger,
-            $this->get(MonitoringExecutionHandler::class),
-        );
-
-        $request = $this->createHttpsRequest('/different-path');
-        $expectedResponse = $this->createMock(ResponseInterface::class);
-
-        $this->handler->expects(self::once())
-            ->method('handle')
-            ->with($request)
-            ->willReturn($expectedResponse);
-
-        $result = $middleware->process($request, $this->handler);
-
-        self::assertSame($expectedResponse, $result);
-    }
-
-    #[Test]
-    #[AllowMockObjectsWithoutExpectations]
-    public function passesRequestToNextHandlerWhenEndpointEmpty(): void
-    {
-        $configuration = $this->createConfiguration('');
-        $provider = $this->createHealthyProvider();
-        $authorizer = $this->createAuthorizedAuthorizer();
-
-        $middleware = new MonitoringMiddleware(
-            [$provider],
-            [$authorizer],
-            $configuration,
-            $this->responseFactory,
-            $this->logger,
-            $this->get(MonitoringExecutionHandler::class),
-        );
-
-        $request = $this->createHttpsRequest('/health');
-        $expectedResponse = $this->createMock(ResponseInterface::class);
-
-        $this->handler->expects(self::once())
-            ->method('handle')
-            ->with($request)
-            ->willReturn($expectedResponse);
-
-        $result = $middleware->process($request, $this->handler);
-
-        self::assertSame($expectedResponse, $result);
-    }
-
-    #[Test]
-    #[AllowMockObjectsWithoutExpectations]
-    public function returns503ResponseWhenServiceReportsUnhealthyStatus(): void
-    {
-        $configuration = $this->createConfiguration('/health');
-        $provider = $this->createUnhealthyProvider();
-        $authorizer = $this->createAuthorizedAuthorizer();
-
-        $middleware = new MonitoringMiddleware(
-            [$provider],
-            [$authorizer],
-            $configuration,
-            $this->responseFactory,
-            $this->logger,
-            $this->get(MonitoringExecutionHandler::class),
-        );
-
-        $request = $this->createHttpsRequest('/health');
-
-        $this->handler->expects(self::never())->method('handle');
-
-        $result = $middleware->process($request, $this->handler);
-
-        self::assertInstanceOf(ResponseInterface::class, $result);
-        self::assertSame(503, $result->getStatusCode());
-    }
-
-    private function createConfiguration(string $endpoint, bool $enforceHttps = false): MonitoringConfiguration
-    {
-        $tokenAuthorizerConfig = new TokenAuthorizerConfiguration();
-        $adminUserAuthorizerConfig = new AdminUserAuthorizerConfiguration();
-        $providerConfig = new MiddlewareStatusProviderConfiguration();
-
-        return new MonitoringConfiguration(
-            $tokenAuthorizerConfig,
-            $adminUserAuthorizerConfig,
-            $providerConfig,
-            $endpoint,
-            $enforceHttps,
-        );
-    }
-
-    private function createHealthyProvider(): MonitoringProvider
-    {
-        return new class () implements MonitoringProvider {
-            public function getName(): string
-            {
-                return 'test-provider';
-            }
-
-            public function getDescription(): string
-            {
-                return 'Test provider for functional tests';
-            }
-
-            public function isActive(): bool
-            {
-                return true;
-            }
-
-            public function execute(): Result
-            {
-                return new MonitoringResult('test-provider', true);
-            }
-        };
-    }
-
-    private function createUnhealthyProvider(): MonitoringProvider
-    {
-        return new class () implements MonitoringProvider {
-            public function getName(): string
-            {
-                return 'unhealthy-test-provider';
-            }
-
-            public function getDescription(): string
-            {
-                return 'Unhealthy test provider for functional tests';
-            }
-
-            public function isActive(): bool
-            {
-                return true;
-            }
-
-            public function execute(): Result
-            {
-                return new MonitoringResult('unhealthy-test-provider', false);
-            }
-        };
     }
 
     private function createAuthorizedAuthorizer(): Authorizer
@@ -366,24 +132,9 @@ final class MonitoringMiddlewareTest extends FunctionalTestCase
                 return true;
             }
 
-            public static function getPriority(): int
+            public function getDescription(): string
             {
-                return 10;
-            }
-        };
-    }
-
-    private function createUnauthorizedAuthorizer(): Authorizer
-    {
-        return new class () implements Authorizer {
-            public function isActive(): bool
-            {
-                return true;
-            }
-
-            public function isAuthorized(ServerRequestInterface $request): bool
-            {
-                return false;
+                return 'Authorized stub';
             }
 
             public static function getPriority(): int
@@ -392,25 +143,4 @@ final class MonitoringMiddlewareTest extends FunctionalTestCase
             }
         };
     }
-
-    private function createHttpsRequest(string $path): ServerRequestInterface
-    {
-        $uri = new Uri('https://example.com' . $path);
-        return new ServerRequest($uri, 'GET');
-    }
-
-    private function createHttpRequest(string $path): ServerRequestInterface
-    {
-        $uri = new Uri('http://example.com' . $path);
-        return new ServerRequest($uri, 'GET');
-    }
-
-    private function createNormalizedParams(bool $isHttps): NormalizedParams
-    {
-        $normalizedParams = $this->createMock(NormalizedParams::class);
-        $normalizedParams->method('isHttps')->willReturn($isHttps);
-
-        return $normalizedParams;
-    }
-
 }
