@@ -19,7 +19,6 @@ namespace mteu\Monitoring\Tests\Functional\Provider\Scheduler;
 
 use mteu\Monitoring\Configuration\Provider\SchedulerProviderConfiguration;
 use mteu\Monitoring\Provider\Scheduler\SchedulerProvider;
-use mteu\Monitoring\Provider\Scheduler\SchedulerTaskLinkBuilder;
 use mteu\Monitoring\Tests\Functional\MonitoringFunctionalTestCase;
 use mteu\Monitoring\Tests\Unit\Fixtures\Scheduler\InMemorySchedulerHeartbeat;
 use mteu\Monitoring\Tests\Unit\Fixtures\Scheduler\InMemorySchedulerTaskRepository;
@@ -27,7 +26,7 @@ use Psr\Log\NullLogger;
 use Symfony\Component\Clock\MockClock;
 use TYPO3\CMS\Backend\Routing\Exception\RouteNotFoundException;
 use TYPO3\CMS\Backend\Routing\Router;
-use TYPO3\CMS\Backend\Routing\UriBuilder;
+use TYPO3\CMS\Backend\Routing\UriBuilder as BackendUriBuilder;
 use TYPO3\CMS\Core\Http\Uri;
 
 /**
@@ -52,21 +51,19 @@ abstract class SchedulerProviderFunctionalTestCase extends MonitoringFunctionalT
             new InMemorySchedulerTaskRepository(),
             new InMemorySchedulerHeartbeat(self::NOW - 60),
             new MockClock((new \DateTimeImmutable())->setTimestamp(self::NOW)),
-            $this->createLinkBuilder(null),
             new NullLogger(),
+            self::createStub(Router::class),
+            $this->createUriBuilder(null),
         );
     }
 
     /**
-     * Builds the real link builder with a stubbed routing stack: when no base
-     * URI is given the UriBuilder fails to resolve a route, so no link is built.
+     * Builds a stubbed UriBuilder: when no base URI is given it fails to
+     * resolve a route, so no link is built.
      */
-    private function createLinkBuilder(?string $baseUri): SchedulerTaskLinkBuilder
+    private function createUriBuilder(?string $baseUri): BackendUriBuilder
     {
-        $router = self::createStub(Router::class);
-        $router->method('hasRoute')->willReturn(false);
-
-        $uriBuilder = self::createStub(UriBuilder::class);
+        $uriBuilder = self::createStub(BackendUriBuilder::class);
 
         if ($baseUri === null) {
             $uriBuilder->method('buildUriFromRoute')->willThrowException(new RouteNotFoundException());
@@ -74,6 +71,6 @@ abstract class SchedulerProviderFunctionalTestCase extends MonitoringFunctionalT
             $uriBuilder->method('buildUriFromRoute')->willReturn(new Uri($baseUri));
         }
 
-        return new SchedulerTaskLinkBuilder($router, $uriBuilder, new NullLogger());
+        return $uriBuilder;
     }
 }

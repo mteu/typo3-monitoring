@@ -23,6 +23,9 @@ use mteu\Monitoring\Result\MonitoringResult;
 use mteu\Monitoring\Result\Result;
 use Psr\Clock\ClockInterface;
 use Psr\Log\LoggerInterface;
+use TYPO3\CMS\Backend\Routing\Exception\RouteNotFoundException;
+use TYPO3\CMS\Backend\Routing\Router;
+use TYPO3\CMS\Backend\Routing\UriBuilder as BackendUriBuilder;
 use TYPO3\CMS\Core\Utility\ExtensionManagementUtility;
 
 /**
@@ -47,13 +50,16 @@ final readonly class SchedulerProvider implements MonitoringProvider
      */
     private const int SAMPLE_SIZE = 5;
 
+    private const string SCHEDULER_TABLENAME = 'tx_scheduler_task';
+
     public function __construct(
         private SchedulerProviderConfiguration $configuration,
         private SchedulerTaskRepository $taskGateway,
         private SchedulerHeartbeat $heartbeat,
         private ClockInterface $clock,
-        private SchedulerTaskLinkBuilder $linkBuilder,
         private LoggerInterface $logger,
+        private Router $router,
+        private BackendUriBuilder $backendUriBuilder,
     ) {}
 
     public function getName(): string
@@ -232,7 +238,7 @@ final readonly class SchedulerProvider implements MonitoringProvider
         $labels = [];
 
         foreach ($tasks as $task) {
-            $labels[] = $this->linkBuilder->renderEditLink(
+            $labels[] = $this->renderEditLink(
                 $task->uid,
                 $task->getLabel()
             ) ?? $task->getLabel();
@@ -289,5 +295,45 @@ final readonly class SchedulerProvider implements MonitoringProvider
             $minutes > 0 => $minutes . ' ' . ($minutes === 1 ? 'minute' : 'minutes'),
             default => $seconds . ' ' . ($seconds === 1 ? 'second' : 'seconds'),
         };
+    }
+
+    public function renderEditLink(int $uid, string $label): ?string
+    {
+        $uri = $this->buildEditLink($uid);
+
+        if ($uri === null) {
+            return null;
+        }
+
+        return sprintf(
+            '<a href="%s">%s</a>',
+            $uri,
+            $label,
+        );
+    }
+
+    public function buildEditLink(int $uid): ?string
+    {
+        try {
+            if (!$this->router->hasRoute('scheduler_manage')) {
+                // v14+: scheduler tasks are real DB records edited via record_edit.
+                return (string)$this->backendUriBuilder->buildUriFromRoute('record_edit', [
+                    'edit' => [self::SCHEDULER_TABLENAME => [$uid => 'edit']],
+                ]);
+            }
+
+            // v13: dedicated scheduler module route.
+            return (string)$this->backendUriBuilder->buildUriFromRoute('scheduler_manage', [
+                'action' => 'edit',
+                'uid' => $uid,
+            ]);
+        } catch (RouteNotFoundException $exception) {
+            $this->logger->warning('Could not build scheduler task edit link.', [
+                'uid' => $uid,
+                'exception' => $exception->getMessage(),
+            ]);
+
+            return null;
+        }
     }
 }
