@@ -90,7 +90,7 @@ final readonly class MonitoringController extends AbstractSubModuleController
             'serviceCards' => $this->buildCardsTemplateVariables(),
         ];
 
-        return $this->createModuleTemplate($request, 'monitoring')
+        return $this->createModuleTemplate($request, 'monitoring_overview')
             ->assignMultiple($templateVariables)
             ->renderResponse('Backend/Monitoring');
     }
