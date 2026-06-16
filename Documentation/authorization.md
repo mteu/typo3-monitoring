@@ -60,10 +60,22 @@ use Symfony\Component\DependencyInjection\Attribute\AutoconfigureTag;
 #[AutoconfigureTag('monitoring.authorizer')]
 final class CustomAuthorizer implements Authorizer
 {
+    public function isActive(): bool
+    {
+        // Whether this authorizer participates in the chain at all.
+        return true;
+    }
+
     public function isAuthorized(ServerRequestInterface $request): bool
     {
         // Your authorization logic
         return $request->getHeaderLine('X-Custom-Auth') === 'valid-token';
+    }
+
+    public function getDescription(): string
+    {
+        // Shown in the backend module.
+        return 'Custom header authorizer';
     }
 
     public static function getPriority(): int

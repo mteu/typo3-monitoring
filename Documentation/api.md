@@ -85,6 +85,17 @@ sub-results additionally list the status of each sub-result under `subResults`.
 > web server / ingress. See [Configuration](configuration.md) for details and
 > the trusted-proxy caveats.
 
+**405 Method Not Allowed (non-GET/HEAD request)**
+```json
+{
+    "code": 405,
+    "error": "method-not-allowed"
+}
+```
+
+> The response carries an `Allow: GET, HEAD` header. `HEAD` requests are
+> answered with the same status code as `GET` but without a response body.
+
 ## Status Codes
 
 | Code | Meaning             | Description                        |
@@ -93,4 +104,5 @@ sub-results additionally list the status of each sub-result under `subResults`.
 | 401  | Unauthorized        | Authentication failed              |
 | 403  | Forbidden           | HTTPS required                     |
 | 404  | Not Found           | Endpoint not configured            |
+| 405  | Method Not Allowed  | Only `GET` and `HEAD` are accepted |
 | 503  | Service Unavailable | One or more services unhealthy     |

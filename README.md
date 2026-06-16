@@ -32,10 +32,13 @@ post-deployment checks.
 - [Extensible monitoring system](Documentation/Architecture.md) with automatic service discovery (using DI) for custom
   authorization and monitoring checks.
 - Supports caching for expensive monitoring operations
-- Delivers health reports in three ways:
+- Delivers health reports in several ways:
   - Structured JSON responses for the overall health status
   - Command-line interface for running monitoring checks
   - Backend Module
+  - [Push reporters](Documentation/reporters.md) that actively notify external
+    channels (e.g. the built-in [EmailReporter](Documentation/Reporter/EmailReporter.md))
+    via the `monitoring:report` command
 - Built-in providers this package ships:
   - [Scheduler Provider](Documentation/Providers/Scheduler.md) (Monitors TYPO3 Scheduler tasks.)
 
@@ -96,20 +99,31 @@ The monitoring endpoint returns JSON with the following structure:
 {
   "isHealthy": true,
   "services": {
-    "service_one": "healthy",
-    "service_two": "healthy",
-    "service_three": "healthy"
+    "service_one": {
+      "status": "healthy"
+    },
+    "service_two": {
+      "status": "healthy",
+      "subResults": {
+        "SubCheck A": "healthy",
+        "SubCheck B": "healthy"
+      }
+    }
   }
 }
 ```
 
 - `isHealthy`: Overall health status (boolean)
-- `services`: Object with individual service statuses ("healthy" or "unhealthy")
+- `services`: Object keyed by service name. Each entry holds a `status`
+  (`"healthy"` or `"unhealthy"`) and, for providers that report sub-checks, a
+  `subResults` map. See the [API Reference](Documentation/api.md) for details.
 
 HTTP status codes:
 - `200` All services healthy
 - `401` Unauthorized access
 - `403` Unsupported protocol (only when `api.enforceHttps` is enabled)
+- `404` Endpoint not configured
+- `405` Method not allowed (only `GET` and `HEAD` are accepted)
 - `503` One or more services unhealthy
 
 ### Authentication
@@ -161,6 +175,7 @@ use mteu\Monitoring\Provider\MonitoringProvider;
 use mteu\Monitoring\Result\MonitoringResult;
 use Symfony\Component\DependencyInjection\Attribute\AutoconfigureTag;
 
+#[AutoconfigureTag('monitoring.provider')]
 final class MyMonitoringProvider implements MonitoringProvider
 {
     public function getName(): string
@@ -173,10 +188,16 @@ final class MyMonitoringProvider implements MonitoringProvider
         return 'Monitors my custom service';
     }
 
+    public function isEnabled(): bool
+    {
+        // Operator intent (kill-switch). A disabled provider is never executed.
+        return true;
+    }
+
     public function isActive(): bool
     {
-        // conditional logic or just true
-        return true;
+        // Technical readiness; delegate to isEnabled() or AND-in preconditions.
+        return $this->isEnabled();
     }
 
     public function execute(): MonitoringResult
@@ -201,13 +222,25 @@ use mteu\Monitoring\Authorization\Authorizer;
 use Psr\Http\Message\ServerRequestInterface;
 use Symfony\Component\DependencyInjection\Attribute\AutoconfigureTag;
 
-#[AutoconfigureTag(tag: 'monitoring.authorizer')]
+#[AutoconfigureTag('monitoring.authorizer')]
 final class MyAuthorizer implements Authorizer
 {
+    public function isActive(): bool
+    {
+        // Whether this authorizer should be considered at all.
+        return true;
+    }
+
     public function isAuthorized(ServerRequestInterface $request): bool
     {
         // Your authorization logic here
         return true;
+    }
+
+    public function getDescription(): string
+    {
+        // Shown in the backend module.
+        return 'My custom authorizer';
     }
 
     public static function getPriority(): int

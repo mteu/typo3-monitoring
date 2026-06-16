@@ -27,7 +27,7 @@ flow and thresholds.
 |-----------------|----------------|------------------------------------------------------------------|
 | `enabled`       | `false`        | Master switch.                                                   |
 | `priority`      | `10`           | Higher is reported first.                                        |
-| `threshold`     | `unhealthy`    | `always`, `unhealthy`, or `state-change`.                        |
+| `threshold`     | `state-change` | `always`, `unhealthy`, or `state-change`.                        |
 | `recipients`    | `''`           | Comma-separated addresses. **Required** — empty means inactive.  |
 | `senderAddress` | `''`           | Blank falls back to TYPO3's `defaultMailFromAddress`.            |
 | `subjectPrefix` | `[Monitoring]` | Prepended to every subject; blank for none.                      |

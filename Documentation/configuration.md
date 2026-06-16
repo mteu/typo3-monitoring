@@ -44,6 +44,12 @@ return [
 - **`includeServicesHealth`**: By default, all services will be presented with
   their status. When disabled, only the overall health state will be shown.
 
+### Cache
+- **`defaultLifetime`**: Fleet-wide default lifetime (seconds) for cached
+  monitoring results (default: `900`, i.e. 15 minutes). Individual
+  `CacheableMonitoringProvider` implementations may override this via
+  `getCacheLifetime()`. See [providers.md](providers.md#caching).
+
 ### Token Authorizer
 - **`enabled`**: Enable token authentication (default: `false`)
 - **`secret`**: HMAC secret key (default: `''`)
