@@ -18,28 +18,60 @@
         <f:translate key="LLL:EXT:monitoring/Resources/Private/Language/locallang.be.xlf:module.description" />
     </p>
 
-    <f:comment><!--
-        <f:if condition="{providerUnhealthyCount} == 0">
-            <f:then>
-                <f:be.infobox
-                    title="All systems operational"
-                    iconName="actions-check"
-                    state="{f:constant(name: 'TYPO3\CMS\Core\Type\ContextualFeedbackSeverity::OK')}"
-                >
-                    All providers report a healthy state.
-                </f:be.infobox>
-            </f:then>
-            <f:else>
-                <f:be.infobox
-                    title="Unhealthy providers detected"
-                    iconName="actions-exclamation-triangle-alt"
-                    state="{f:constant(name: 'TYPO3\CMS\Core\Type\ContextualFeedbackSeverity::ERROR')}"
-                >
-                    {providerUnhealthyCount} provider(s) reported an unhealthy state.
-                </f:be.infobox>
-            </f:else>
-        </f:if>
-    --></f:comment>
+
+    <f:if condition="{providerUnhealthyCount} == 0">
+        <f:then>
+
+        </f:then>
+        <f:else>
+
+            <f:comment><!-- All OK --></f:comment>
+            <f:be.infobox
+                title="{f:translate(key: 'LLL:EXT:monitoring/Resources/Private/Language/locallang.be.xlf:monitoring.overview.overallStatus.healthy.title')}"
+                iconName="actions-check"
+                state="{f:constant(name: 'TYPO3\CMS\Core\Type\ContextualFeedbackSeverity::OK')}"
+            >
+                <f:translate key="LLL:EXT:monitoring/Resources/Private/Language/locallang.be.xlf:monitoring.overview.overallStatus.healthy.subtitle" />
+            </f:be.infobox>
+
+            <f:comment><!-- Not OK --></f:comment>
+            <f:be.infobox
+                title="{f:translate(key: 'LLL:EXT:monitoring/Resources/Private/Language/locallang.be.xlf:monitoring.overview.overallStatus.unhealthy.title')}"
+                iconName="actions-exclamation"
+                state="{f:constant(name: 'TYPO3\CMS\Core\Type\ContextualFeedbackSeverity::ERROR')}"
+            >
+                <f:if condition="{providerUnhealthyCount}">
+                    <f:then>
+                        <f:translate key="LLL:EXT:monitoring/Resources/Private/Language/locallang.be.xlf:monitoring.overview.overallStatus.unhealthy.subtitle.plural" arguments="{0: providerUnhealthyCount}"/>
+                    </f:then>
+                    <f:else>
+                        <f:translate key="LLL:EXT:monitoring/Resources/Private/Language/locallang.be.xlf:monitoring.overview.overallStatus.unhealthy.subtitle.singular"/>
+                    </f:else>
+                </f:if>
+
+                <a href="{service.url}" style="text-decoration: underline">{serviceCards.providers.linkTitle}</a>
+            </f:be.infobox>
+
+            <f:comment><!-- Something's off --></f:comment>
+            <f:be.infobox
+                title="{f:translate(key: 'LLL:EXT:monitoring/Resources/Private/Language/locallang.be.xlf:monitoring.overview.overallStatus.warning.subtitle')}"
+                iconName="actions-info"
+                state="{f:constant(name: 'TYPO3\CMS\Core\Type\ContextualFeedbackSeverity::WARNING')}"
+            >
+                <f:translate key="LLL:EXT:monitoring/Resources/Private/Language/locallang.be.xlf:monitoring.overview.overallStatus.warning.subtitle" />
+            </f:be.infobox>
+
+            <f:comment><!--  No active providers <f:if condition="{serviceCards.providers.count} === 0"> --></f:comment>
+            <f:be.infobox
+                title="{f:translate(key: 'LLL:EXT:monitoring/Resources/Private/Language/locallang.be.xlf:providers.card.linkLabel.zero')}"
+                iconName="actions-info"
+                state="{f:constant(name: 'TYPO3\CMS\Core\Type\ContextualFeedbackSeverity::INFO')}"
+            >
+                <f:translate key="LLL:EXT:monitoring/Resources/Private/Language/locallang.be.xlf:monitoring.overview.overallStatus.warning.subtitle" />
+            </f:be.infobox>
+
+        </f:else>
+    </f:if>
 
     <f:render section="Cards" arguments="{cards: serviceCards}" />
 
