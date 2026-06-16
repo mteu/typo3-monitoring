@@ -36,7 +36,7 @@ final readonly class EmailReporterConfiguration implements ReporterConfiguration
         #[ExtConfProperty(path: 'reporter.mteu\\Monitoring\\Reporter\\EmailReporter.priority')]
         public int $priority = 10,
         #[ExtConfProperty(path: 'reporter.mteu\\Monitoring\\Reporter\\EmailReporter.threshold')]
-        public string $threshold = 'unhealthy',
+        public string $threshold = 'state-change',
         #[ExtConfProperty(path: 'reporter.mteu\\Monitoring\\Reporter\\EmailReporter.recipients')]
         public string $recipients = '',
         #[ExtConfProperty(path: 'reporter.mteu\\Monitoring\\Reporter\\EmailReporter.senderAddress')]
