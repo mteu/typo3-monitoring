@@ -9,6 +9,12 @@
 			<trans-unit id="module.labels.description">
 				<source>Displays an overview and status of the active monitoring.</source>
 			</trans-unit>
+			<trans-unit id="module.overview.labels.title">
+				<source>Overview</source>
+			</trans-unit>
+			<trans-unit id="module.overview.labels.description">
+				<source>Displays an overview and status of the active monitoring.</source>
+			</trans-unit>
 			<trans-unit id="module.providers.labels.title">
 				<source>Providers</source>
 			</trans-unit>
