@@ -48,7 +48,7 @@ final readonly class BarProvider implements MonitoringProvider
 
     public function isEnabled(): bool
     {
-        return false;
+        return true;
     }
 
     public function isActive(): bool

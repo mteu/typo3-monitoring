@@ -126,7 +126,7 @@ final readonly class MonitoringController extends AbstractSubModuleController
                 'description' => $monitoringProvider->getDescription(),
             ];
 
-            if (!$providerTemplateVariables[$monitoringProvider::class]['isEnabled'] || !$providerTemplateVariables[$monitoringProvider::class]['isActive']) {
+            if (!$monitoringProvider->isActive() || ! $monitoringProvider->isEnabled()) {
                 continue;
             }
 

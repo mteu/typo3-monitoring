@@ -27,6 +27,30 @@
                 <source>Copied to clipboard</source>
                 <target>In die Zwischenablage kopiert</target>
             </trans-unit>
+             <trans-unit id="monitoring.overview.overallStatus.healthy.title">
+				<source>Congratulations</source>
+				<target>Glückwunsch</target>
+			</trans-unit>
+			<trans-unit id="monitoring.overview.overallStatus.healthy.subtitle">
+				<source>All active providers report a healthy state.</source>
+				<target>Alle aktiven Provider melden einen gesunden Zustand.</target>
+			</trans-unit>
+			<trans-unit id="monitoring.overview.overallStatus.unhealthy.title">
+				<source>Unhealthy</source>
+				<target>Checks mit Fehlern</target>
+			</trans-unit>
+			<trans-unit id="monitoring.overview.overallStatus.unhealthy.link">
+				<source>View providers</source>
+				<target>Zur Provider-Übersicht</target>
+			</trans-unit>
+			<trans-unit id="monitoring.overview.overallStatus.unhealthy.subtitle.plural">
+				<source>%d monitoring checks reported an unhealthy state.</source>
+				<target>%d Health-Checks zeigen einen ungesunden Zustand an.</target>
+			</trans-unit>
+			<trans-unit id="monitoring.overview.overallStatus.unhealthy.subtitle.singular">
+				<source>The monitoring check detected an unhealthy state.</source>
+				<target>Der Health-Check zeigt einen ungesunden Zustand an.</target>
+			</trans-unit>
             <trans-unit id="authorizer.adminUser.description">
                 <source>Allows access to the monitoring endpoint for logged-in TYPO3 backend administrators.</source>
                 <target>Erlaubt angemeldeten TYPO3-Backend-Administratoren den Zugriff auf den Monitoring-Endpoint.</target>
