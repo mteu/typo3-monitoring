@@ -28,7 +28,14 @@ Checking Monitoring status
  ✅ Scheduler
  ✅ Solr Cores (cached)
  🚨 FancyExternalApiService
+Monitoring status: FAILED
 ```
+
+#### Options
+
+| Option       | Description                                                              |
+|--------------|--------------------------------------------------------------------------|
+| `--no-cache` | Bypass the monitoring cache and force a fresh execution of every provider. |
 
 #### Return Codes
 
@@ -47,6 +54,35 @@ The command outputs:
 - **Provider Names**: Display name of each provider
 - **Cache Indicators**: `(cached)` for providers with cached results
 - **Color Coding**: Green for healthy, red for unhealthy providers
+
+### monitoring:report
+
+Evaluates the current monitoring status and dispatches push notifications to
+active [reporters](reporters.md) (e.g. the [EmailReporter](Reporter/EmailReporter.md)).
+Meant to be run on a schedule (cron or a scheduler task); it is a thin wrapper
+around the `ReportDispatcher` and applies the dedup/reminder logic described in
+the [Reporter guide](reporters.md).
+
+**Command**: `monitoring:report`
+**Alias**: None
+**Description**: Evaluates monitoring status and dispatches push notifications to
+active reporters
+
+#### Basic Usage
+
+```bash
+./vendor/bin/typo3 monitoring:report
+
+# Example output (one of):
+No notification dispatched.
+Dispatched: unhealthy status.
+Dispatched: reminder for ongoing unhealthy status.
+Dispatched: recovery notice.
+```
+
+The command always exits with `0` (`Command::SUCCESS`); whether a notification
+was actually sent depends on the dispatch decision and each reporter's
+threshold.
 
 ## Usage Examples
 
