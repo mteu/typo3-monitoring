@@ -19,25 +19,28 @@
     </p>
 
 
+    <f:comment><!--
+        @todo: migrate f:be.infobox "state" int to enum once v13 is dropped
+    --></f:comment>
     <f:if condition="{serviceCards.providers.count} > 0">
         <f:then>
             <f:if condition="{providerUnhealthyCount} == 0">
                 <f:then>
-                    <f:comment><!-- All OK --></f:comment>
+                    <f:comment><!-- {f:constant(name: 'TYPO3\CMS\Core\Type\ContextualFeedbackSeverity::OK')} --></f:comment>
                     <f:be.infobox
                         title="{f:translate(key: 'LLL:EXT:monitoring/Resources/Private/Language/locallang.be.xlf:monitoring.overview.overallStatus.healthy.title')}"
                         iconName="actions-check"
-                        state="{f:constant(name: 'TYPO3\CMS\Core\Type\ContextualFeedbackSeverity::OK')}"
+                        state="0"
                     >
                         <f:translate key="LLL:EXT:monitoring/Resources/Private/Language/locallang.be.xlf:monitoring.overview.overallStatus.healthy.subtitle" />
                     </f:be.infobox>
                 </f:then>
                 <f:else>
-                    <f:comment><!-- Not OK --></f:comment>
+                    <f:comment><!-- {f:constant(name: 'TYPO3\CMS\Core\Type\ContextualFeedbackSeverity::ERROR')} --></f:comment>
                     <f:be.infobox
                         title="{f:translate(key: 'LLL:EXT:monitoring/Resources/Private/Language/locallang.be.xlf:monitoring.overview.overallStatus.unhealthy.title')}"
                         iconName="actions-exclamation"
-                        state="{f:constant(name: 'TYPO3\CMS\Core\Type\ContextualFeedbackSeverity::ERROR')}"
+                        state="2"
                     >
                         <f:if condition="{providerUnhealthyCount} > 1">
                             <f:then>
@@ -54,11 +57,11 @@
             </f:if>
         </f:then>
         <f:else>
-            <f:comment><!--  No active providers <f:if condition="{serviceCards.providers.count} === 0"> --></f:comment>
+            <f:comment><!--  {f:constant(name: 'TYPO3\CMS\Core\Type\ContextualFeedbackSeverity::INFO')} --></f:comment>
             <f:be.infobox
                 title="{f:translate(key: 'LLL:EXT:monitoring/Resources/Private/Language/locallang.be.xlf:providers.card.linkLabel.zero')}"
                 iconName="actions-info"
-                state="{f:constant(name: 'TYPO3\CMS\Core\Type\ContextualFeedbackSeverity::INFO')}"
+                state="-1"
             >
                 <f:translate key="LLL:EXT:monitoring/Resources/Private/Language/locallang.be.xlf:monitoring.overview.overallStatus.warning.subtitle" />
             </f:be.infobox>
