@@ -65,7 +65,7 @@ final class EmailReporterTest extends TestCase
 
         self::assertTrue($reporter->isActive());
         self::assertSame('Email Reporter', $reporter->getName());
-        self::assertSame(ReportThreshold::Unhealthy, $reporter->getThreshold());
+        self::assertSame(ReportThreshold::StateChange, $reporter->getThreshold());
     }
 
     #[Test]
