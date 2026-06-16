@@ -126,7 +126,7 @@ final readonly class MonitoringController extends AbstractSubModuleController
                 'description' => $monitoringProvider->getDescription(),
             ];
 
-            if (!$providerTemplateVariables[$monitoringProvider::class]['isEnabled'] || !$providerTemplateVariables[$monitoringProvider::class]['isActive']) {
+            if (!$monitoringProvider->isActive() || ! $monitoringProvider->isEnabled()) {
                 continue;
             }
 
@@ -175,6 +175,7 @@ final readonly class MonitoringController extends AbstractSubModuleController
     {
         return [
             'providers' => [
+                'count' => $this->countActiveMonitoringProviders($this->monitoringProviders),
                 'iconIdentifier' => 'actions-rocket',
                 'title' => $this->getLanguageService()->sL(self::LOCALLANG_FILE . ':providers.title'),
                 'body' => $this->getLanguageService()->sL(self::LOCALLANG_FILE . ':providers.card.body'),
@@ -208,10 +209,21 @@ final readonly class MonitoringController extends AbstractSubModuleController
     }
 
     /**
-     * Picks a count-aware label so the service cards stay grammatical: a
-     * dedicated ".zero" variant for empty sets and ".singular"/".plural" forms
-     * resolved against the given key prefix.
+     * @param iterable<MonitoringProvider> $providers
      */
+    private function countActiveMonitoringProviders(iterable $providers): int
+    {
+        $count = 0;
+
+        foreach (iterator_to_array($providers, true) as $provider) {
+            if ($provider->isActive() && $provider->isEnabled()) {
+                $count++;
+            }
+        }
+
+        return $count;
+    }
+
     private function buildCardLinkLabel(string $keyPrefix, int $count): string
     {
         $languageService = $this->getLanguageService();

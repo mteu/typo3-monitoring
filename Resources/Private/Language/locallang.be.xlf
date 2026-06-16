@@ -21,6 +21,24 @@
             <trans-unit id="auth.token.copy.success">
                 <source>Copied to clipboard</source>
             </trans-unit>
+            <trans-unit id="monitoring.overview.overallStatus.healthy.title">
+            	<source>Congratulations</source>
+            </trans-unit>
+            <trans-unit id="monitoring.overview.overallStatus.healthy.subtitle">
+				<source>All active providers report a healthy state.</source>
+			</trans-unit>
+            <trans-unit id="monitoring.overview.overallStatus.unhealthy.title">
+				<source>Unhealthy</source>
+			</trans-unit>
+			<trans-unit id="monitoring.overview.overallStatus.unhealthy.link">
+				<source>View providers</source>
+			</trans-unit>
+			<trans-unit id="monitoring.overview.overallStatus.unhealthy.subtitle.plural">
+				<source>%d monitoring checks indicate an unhealthy state.</source>
+			</trans-unit>
+			<trans-unit id="monitoring.overview.overallStatus.unhealthy.subtitle.singular">
+				<source>The monitoring check indicates an unhealthy state.</source>
+			</trans-unit>
             <trans-unit id="authorizer.adminUser.description">
                 <source>Allows access to the monitoring endpoint for logged-in TYPO3 backend administrators.</source>
             </trans-unit>
