@@ -43,7 +43,7 @@ authorizer {
 }
 
 provider {
-    mteu\Monitoring\Provider\SchedulerMonitoringProvider {
+    mteu\Monitoring\Provider\SchedulerProvider {
         # cat=provider/50/10; type=boolean; label=Enable Scheduler Provider:Monitors TYPO3 scheduler tasks. Inactive when the scheduler extension is not installed.
         enabled=1
         # cat=provider/50/20; type=int+; label=Heartbeat threshold (seconds):Maximum age of the last scheduler run before the heartbeat is reported unhealthy. Detects a broken cron job. Set to 0 to disable. Defaults to 900 (15 minutes).

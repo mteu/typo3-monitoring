@@ -53,11 +53,11 @@ final readonly class BazProvider implements MonitoringProvider
 
     public function isActive(): bool
     {
-        return false;
+        return true;
     }
 
     public function execute(): Result
     {
-        return new MonitoringResult($this->getName(), false);
+        return new MonitoringResult($this->getName(), true);
     }
 }
