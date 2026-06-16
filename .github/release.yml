@@ -8,6 +8,7 @@ changelog:
       - needs-tests
       - question
       - wontfix
+      - skip-release-notes
   categories:
     - title: ⚡ Breaking
       labels:
