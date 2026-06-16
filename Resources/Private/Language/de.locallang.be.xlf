@@ -172,7 +172,7 @@
                 <target>Das Monitoringergebnis ist mit einer Lebenszeit von %s Minuten gecacht.</target>
             </trans-unit>
             <trans-unit id="provider.disabled.message">
-                <source>This provider is explicitly disabled at the moment.</source>
+                <source>This provider is disabled at the moment.</source>
                 <target>Dieser Provider ist derzeit deaktiviert.</target>
             </trans-unit>
             <trans-unit id="provider.inactive.message">
