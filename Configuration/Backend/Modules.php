@@ -26,9 +26,19 @@ return [
             'title' => 'LLL:EXT:monitoring/Resources/Private/Language/locallang.mod.xlf:module.labels.title',
             'description' => 'LLL:EXT:monitoring/Resources/Private/Language/locallang.mod.xlf:module.labels.description',
         ],
-        'showSubmoduleOverview' => true,
         // @todo: I've yet to find a more sensible way to support both Icons
         'iconIdentifier' => (new \TYPO3\CMS\Core\Information\Typo3Version())->getMajorVersion() < 14 ? 'module-monitoring-legacy' : 'module-monitoring',
+    ],
+    // @todo: remove once v13 support is dropped and use 'showSubmoduleOverview' => true on main container
+    'monitoring_overview' => [
+        'parent' => 'monitoring',
+        'access' => 'systemMaintainer',
+        'workspaces' => 'live',
+        'path' => '/module/system/monitoring/overview',
+        'labels' => [
+            'title' => 'LLL:EXT:monitoring/Resources/Private/Language/locallang.mod.xlf:module.overview.labels.title',
+            'description' => 'LLL:EXT:monitoring/Resources/Private/Language/locallang.mod.xlf:module.overview.labels.description',
+        ],
         'routes' => [
             '_default' => [
                 'target' => \mteu\Monitoring\Backend\Controller\MonitoringController::class,

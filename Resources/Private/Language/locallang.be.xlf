@@ -234,6 +234,9 @@
             <trans-unit id="route.label.monitoring">
                 <source>Monitoring: Overview</source>
             </trans-unit>
+            <trans-unit id="route.label.monitoring_overview">
+                <source>Monitoring: Overview</source>
+            </trans-unit>
             <trans-unit id="route.label.monitoring_authorizers">
                 <source>Monitoring: Authorizers</source>
             </trans-unit>
