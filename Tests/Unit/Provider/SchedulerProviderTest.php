@@ -20,7 +20,6 @@ namespace mteu\Monitoring\Tests\Unit\Provider;
 use mteu\Monitoring\Configuration\Provider\SchedulerProviderConfiguration;
 use mteu\Monitoring\Provider\Scheduler\SchedulerProvider;
 use mteu\Monitoring\Provider\Scheduler\SchedulerTask;
-use mteu\Monitoring\Provider\Scheduler\SchedulerTaskLinkBuilder;
 use mteu\Monitoring\Result\MonitoringResult;
 use mteu\Monitoring\Tests\Unit\Fixtures\Scheduler\InMemorySchedulerHeartbeat;
 use mteu\Monitoring\Tests\Unit\Fixtures\Scheduler\InMemorySchedulerTaskRepository;
@@ -30,9 +29,8 @@ use Psr\Log\NullLogger;
 use Symfony\Component\Clock\MockClock;
 use TYPO3\CMS\Backend\Routing\Exception\RouteNotFoundException;
 use TYPO3\CMS\Backend\Routing\Router;
-use TYPO3\CMS\Backend\Routing\UriBuilder;
+use TYPO3\CMS\Backend\Routing\UriBuilder as BackendUriBuilder;
 use TYPO3\CMS\Core\Http\Uri;
-use TYPO3\CMS\Core\Utility\GeneralUtility;
 
 /**
  * SchedulerProviderTest.
@@ -42,16 +40,9 @@ use TYPO3\CMS\Core\Utility\GeneralUtility;
  */
 #[Framework\Attributes\CoversClass(SchedulerProvider::class)]
 #[Framework\Attributes\UsesClass(SchedulerTask::class)]
-#[Framework\Attributes\UsesClass(SchedulerTaskLinkBuilder::class)]
 final class SchedulerProviderTest extends Framework\TestCase
 {
     private const int NOW = 1_700_000_000;
-
-    protected function tearDown(): void
-    {
-        GeneralUtility::purgeInstances();
-        parent::tearDown();
-    }
 
     #[Test]
     public function getName(): void
@@ -66,13 +57,19 @@ final class SchedulerProviderTest extends Framework\TestCase
     }
 
     #[Test]
-    public function isActiveReturnsFalseWhenDisabledInConfiguration(): void
+    public function isEnabledReturnsTrueByDefault(): void
+    {
+        self::assertTrue($this->createProvider()->isEnabled());
+    }
+
+    #[Test]
+    public function isEnabledReturnsFalseWhenDisabledInConfiguration(): void
     {
         $provider = $this->createProvider(
             configuration: new SchedulerProviderConfiguration(enabled: false),
         );
 
-        self::assertFalse($provider->isActive());
+        self::assertFalse($provider->isEnabled());
     }
 
     #[Test]
@@ -261,6 +258,71 @@ final class SchedulerProviderTest extends Framework\TestCase
         self::assertStringNotContainsString('<a ', $reason);
     }
 
+    #[Test]
+    public function usesSchedulerModuleRouteWhenItExists(): void
+    {
+        $uriBuilder = self::createMock(BackendUriBuilder::class);
+        $uriBuilder
+            ->expects(self::once())
+            ->method('buildUriFromRoute')
+            ->with('scheduler_manage', ['action' => 'edit', 'uid' => 42])
+            ->willReturn(new Uri('/typo3/module/scheduler?action=edit&uid=42'))
+        ;
+
+        $link = $this->createProviderWithRouting(hasSchedulerRoute: true, uriBuilder: $uriBuilder)->buildEditLink(42);
+
+        self::assertSame('/typo3/module/scheduler?action=edit&uid=42', $link);
+    }
+
+    #[Test]
+    public function usesRecordEditRouteWhenSchedulerModuleRouteIsMissing(): void
+    {
+        $uriBuilder = self::createMock(BackendUriBuilder::class);
+        $uriBuilder
+            ->expects(self::once())
+            ->method('buildUriFromRoute')
+            ->with('record_edit', ['edit' => ['tx_scheduler_task' => [42 => 'edit']]])
+            ->willReturn(new Uri('/typo3/record/edit?token=abc'))
+        ;
+
+        $link = $this->createProviderWithRouting(hasSchedulerRoute: false, uriBuilder: $uriBuilder)->buildEditLink(42);
+
+        self::assertSame('/typo3/record/edit?token=abc', $link);
+    }
+
+    #[Test]
+    public function buildEditLinkReturnsNullWhenNoRouteCanBeResolved(): void
+    {
+        $uriBuilder = self::createStub(BackendUriBuilder::class);
+        $uriBuilder->method('buildUriFromRoute')->willThrowException(new RouteNotFoundException());
+
+        self::assertNull($this->createProviderWithRouting(hasSchedulerRoute: false, uriBuilder: $uriBuilder)->buildEditLink(42));
+    }
+
+    #[Test]
+    public function renderEditLinkWrapsTheUriInAnAnchorTag(): void
+    {
+        $uriBuilder = self::createStub(BackendUriBuilder::class);
+        $uriBuilder->method('buildUriFromRoute')->willReturn(new Uri('/typo3/record/edit?uid=42'));
+
+        $rendered = $this->createProviderWithRouting(hasSchedulerRoute: false, uriBuilder: $uriBuilder)
+            ->renderEditLink(42, '#42 (Import task)');
+
+        self::assertSame('<a href="/typo3/record/edit?uid=42">#42 (Import task)</a>', $rendered);
+    }
+
+    #[Test]
+    public function renderEditLinkReturnsNullInsteadOfAnAnchorWithEmptyHref(): void
+    {
+        $uriBuilder = self::createStub(BackendUriBuilder::class);
+        $uriBuilder->method('buildUriFromRoute')->willThrowException(new RouteNotFoundException());
+
+        $rendered = $this->createProviderWithRouting(hasSchedulerRoute: false, uriBuilder: $uriBuilder)
+            ->renderEditLink(42, '#42 (Import task)');
+
+        self::assertNull($rendered);
+    }
+
     /**
      * @param list<SchedulerTask> $overdueSample
      * @param list<SchedulerTask> $failedSample
@@ -286,21 +348,39 @@ final class SchedulerProviderTest extends Framework\TestCase
             ),
             new InMemorySchedulerHeartbeat($lastRunEnd),
             new MockClock((new \DateTimeImmutable())->setTimestamp(self::NOW)),
-            $this->createLinkBuilder($taskLinkBaseUri),
             new NullLogger(),
+            self::createStub(Router::class),
+            $this->createUriBuilder($taskLinkBaseUri),
         );
     }
 
-    /**
-     * Builds the real link builder with a stubbed routing stack: when no base
-     * URI is given the UriBuilder fails to resolve a route, so no link is built.
-     */
-    private function createLinkBuilder(?string $baseUri): SchedulerTaskLinkBuilder
-    {
+    private function createProviderWithRouting(
+        bool $hasSchedulerRoute,
+        BackendUriBuilder $uriBuilder,
+    ): SchedulerProvider {
         $router = self::createStub(Router::class);
-        $router->method('hasRoute')->willReturn(false);
+        $router->method('hasRoute')->willReturn($hasSchedulerRoute);
 
-        $uriBuilder = self::createStub(UriBuilder::class);
+        return new SchedulerProvider(
+            new SchedulerProviderConfiguration(),
+            new InMemorySchedulerTaskRepository(
+                failedCount: 0,
+                overdueCount: 0,
+                failedSample: [],
+                overdueSample: [],
+                hasRunningTask: false,
+            ),
+            new InMemorySchedulerHeartbeat(self::NOW - 60),
+            new MockClock((new \DateTimeImmutable())->setTimestamp(self::NOW)),
+            new NullLogger(),
+            $router,
+            $uriBuilder,
+        );
+    }
+
+    private function createUriBuilder(?string $baseUri): BackendUriBuilder
+    {
+        $uriBuilder = self::createStub(BackendUriBuilder::class);
 
         if ($baseUri === null) {
             $uriBuilder->method('buildUriFromRoute')->willThrowException(new RouteNotFoundException());
@@ -308,6 +388,6 @@ final class SchedulerProviderTest extends Framework\TestCase
             $uriBuilder->method('buildUriFromRoute')->willReturn(new Uri($baseUri));
         }
 
-        return new SchedulerTaskLinkBuilder($router, $uriBuilder, new NullLogger());
+        return $uriBuilder;
     }
 }
