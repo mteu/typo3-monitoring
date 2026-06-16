@@ -130,7 +130,7 @@
                 <source>The monitoring result is cached with an active cache lifetime of %s minutes.</source>
             </trans-unit>
             <trans-unit id="provider.disabled.message">
-                <source>This provider is explicitly disabled at the moment.</source>
+                <source>This provider is disabled at the moment.</source>
             </trans-unit>
             <trans-unit id="provider.inactive.message">
                 <source>Although enabled, this provider is inactive at the moment. Please review %s to activate.</source>
