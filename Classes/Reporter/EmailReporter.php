@@ -86,7 +86,7 @@ final readonly class EmailReporter implements Reporter
 
     public function getName(): string
     {
-        return 'EmailReporter';
+        return 'Email Reporter';
     }
 
     public static function getPriority(): int

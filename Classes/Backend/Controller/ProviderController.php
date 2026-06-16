@@ -17,13 +17,11 @@ declare(strict_types=1);
 
 namespace mteu\Monitoring\Backend\Controller;
 
-use mteu\Monitoring\Authorization\Authorizer;
 use mteu\Monitoring\Cache\MonitoringCacheManager;
 use mteu\Monitoring\Configuration\MonitoringConfiguration;
 use mteu\Monitoring\Handler\MonitoringExecutionHandler;
 use mteu\Monitoring\Provider\CacheableMonitoringProvider;
 use mteu\Monitoring\Provider\MonitoringProvider;
-use mteu\Monitoring\Reporter\Reporter;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use Symfony\Component\DependencyInjection\Attribute\AutowireIterator;
@@ -37,29 +35,22 @@ use TYPO3\CMS\Core\Http\NormalizedParams;
 use TYPO3\CMS\Core\Localization\LanguageServiceFactory;
 
 /**
- * MonitoringController.
+ * ProviderController.
  *
  * @author Martin Adler <mteu@mailbox.org>
  * @license GPL-2.0-or-later
  */
 #[AsController]
-final readonly class MonitoringController extends AbstractSubModuleController
+final readonly class ProviderController extends AbstractSubModuleController
 {
     use AllowedMethodsTrait;
 
     public function __construct(
         ModuleTemplateFactory $moduleTemplateFactory,
         LanguageServiceFactory $languageServiceFactory,
-
         /** @var MonitoringProvider[] $monitoringProviders */
         #[AutowireIterator(tag: 'monitoring.provider')]
         private iterable $monitoringProviders,
-        /** @var Authorizer[] $authorizers */
-        #[AutowireIterator(tag: 'monitoring.authorizer', defaultPriorityMethod: 'getPriority')]
-        private iterable $authorizers,
-        /** @var Reporter[] $reporters */
-        #[AutowireIterator(tag: 'monitoring.reporter', defaultPriorityMethod: 'getPriority')]
-        private iterable $reporters,
         private MonitoringExecutionHandler $executionHandler,
         private MonitoringCacheManager $cacheManager,
         private MonitoringConfiguration $monitoringConfiguration,
@@ -79,20 +70,16 @@ final readonly class MonitoringController extends AbstractSubModuleController
         /** @var NormalizedParams $params */
         $params = $request->getAttribute('normalizedParams');
 
-        $providers = $this->buildProviderTemplateVariables($request);
-
         $templateVariables = [
             'endpoint' => $params->getRequestHost() . $this->monitoringConfiguration->endpoint,
-            'providers' => $providers,
-            'providerUnhealthyCount' => count(array_filter($providers, static fn(array $p) => ($p['isActive'] ?? false) && ($p['isHealthy'] ?? true) === false)),
+            'providers' => $this->buildProviderTemplateVariables($request),
             'providerInterface' => MonitoringProvider::class,
             'flushProviderCacheUri' => (string)$this->uriBuilder->buildUriFromRoute('monitoring_flush_provider_cache'),
-            'serviceCards' => $this->buildCardsTemplateVariables(),
         ];
 
-        return $this->createModuleTemplate($request, 'monitoring')
+        return $this->createModuleTemplate($request, 'monitoring_providers')
             ->assignMultiple($templateVariables)
-            ->renderResponse('Backend/Monitoring');
+            ->renderResponse('Backend/Providers');
     }
 
     /**
@@ -156,72 +143,31 @@ final readonly class MonitoringController extends AbstractSubModuleController
             }
         }
 
+        uasort(
+            $providerTemplateVariables,
+            fn(array $a, array $b): int => $this->getProviderSortRank($a) <=> $this->getProviderSortRank($b)
+        );
+
         return $providerTemplateVariables;
     }
 
     /**
-     * @return array<string, array{
-     *     iconIdentifier: string,
-     *     title: string,
-     *     body: string,
-     *     url: string,
-     *     linkTitle: string,
-     *     linkIconIdentifier?: string,
-     *     isExternalLink?: bool,
-     * }>
-     * @throws \TYPO3\CMS\Backend\Routing\Exception\RouteNotFoundException
+     * @param array{
+     *     isEnabled: bool,
+     *     isActive: bool,
+     *     isHealthy?: bool,
+     * } $provider
      */
-    private function buildCardsTemplateVariables(): array
+    private function getProviderSortRank(array $provider): int
     {
-        return [
-            'providers' => [
-                'iconIdentifier' => 'actions-rocket',
-                'title' => $this->getLanguageService()->sL(self::LOCALLANG_FILE . ':providers.title'),
-                'body' => $this->getLanguageService()->sL(self::LOCALLANG_FILE . ':providers.card.body'),
-                'url' => (string)$this->uriBuilder->buildUriFromRoute('monitoring_providers'),
-                'linkTitle' => $this->buildCardLinkLabel('providers.card.linkLabel', iterator_count($this->monitoringProviders)),
-            ],
-            'authorizers' => [
-                'iconIdentifier' => 'actions-key',
-                'title' => $this->getLanguageService()->sL(self::LOCALLANG_FILE . ':authorizers.title'),
-                'body' => $this->getLanguageService()->sL(self::LOCALLANG_FILE . ':authorizers.card.body'),
-                'url' => (string)$this->uriBuilder->buildUriFromRoute('monitoring_authorizers'),
-                'linkTitle' => $this->buildCardLinkLabel('authorizers.card.linkLabel', iterator_count($this->authorizers)),
-            ],
-            'reporters' => [
-                'iconIdentifier' => 'actions-bullhorn',
-                'title' => $this->getLanguageService()->sL(self::LOCALLANG_FILE . ':reporters.title'),
-                'body' => $this->getLanguageService()->sL(self::LOCALLANG_FILE . ':reporters.card.body'),
-                'url' => (string)$this->uriBuilder->buildUriFromRoute('monitoring_reporters'),
-                'linkTitle' => $this->buildCardLinkLabel('reporters.card.linkLabel', iterator_count($this->reporters)),
-            ],
-            'documentation' => [
-                'iconIdentifier' => 'actions-notebook-typoscript',
-                'title' => $this->getLanguageService()->sL(self::LOCALLANG_FILE . ':documentation.title'),
-                'body' => $this->getLanguageService()->sL(self::LOCALLANG_FILE . ':documentation.card.body'),
-                'url' => 'https://github.com/mteu/typo3-monitoring/blob/main/Documentation/README.md',
-                'isExternalLink' => true,
-                'linkIconIdentifier' => 'actions-brand-github',
-                'linkTitle' => $this->getLanguageService()->sL(self::LOCALLANG_FILE . ':documentation.card.linkLabel'),
-            ],
-        ];
-    }
-
-    /**
-     * Picks a count-aware label so the service cards stay grammatical: a
-     * dedicated ".zero" variant for empty sets and ".singular"/".plural" forms
-     * resolved against the given key prefix.
-     */
-    private function buildCardLinkLabel(string $keyPrefix, int $count): string
-    {
-        $languageService = $this->getLanguageService();
-
-        if ($count === 0) {
-            return $languageService->sL(self::LOCALLANG_FILE . ':' . $keyPrefix . '.zero');
+        if (!$provider['isEnabled']) {
+            return 3;
         }
 
-        $key = $keyPrefix . ($count === 1 ? '.singular' : '.plural');
+        if (!$provider['isActive']) {
+            return 2;
+        }
 
-        return sprintf($languageService->sL(self::LOCALLANG_FILE . ':' . $key), $count);
+        return ($provider['isHealthy'] ?? false) ? 1 : 0;
     }
 }

@@ -9,6 +9,24 @@
 			<trans-unit id="module.labels.description">
 				<source>Displays an overview and status of the active monitoring.</source>
 			</trans-unit>
+			<trans-unit id="module.providers.labels.title">
+				<source>Providers</source>
+			</trans-unit>
+			<trans-unit id="module.providers.labels.description">
+				<source>Overview of the registered monitoring providers.</source>
+			</trans-unit>
+			<trans-unit id="module.authorizers.labels.title">
+				<source>Authorizers</source>
+			</trans-unit>
+			<trans-unit id="module.authorizers.labels.description">
+				<source>Overview of the registered monitoring authorizers.</source>
+			</trans-unit>
+			<trans-unit id="module.reporters.labels.title">
+				<source>Reporters</source>
+			</trans-unit>
+			<trans-unit id="module.reporters.labels.description">
+				<source>Overview of the registered monitoring reporters.</source>
+			</trans-unit>
 		</body>
 	</file>
 </xliff>
