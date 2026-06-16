@@ -18,30 +18,62 @@
         <f:translate key="LLL:EXT:monitoring/Resources/Private/Language/locallang.be.xlf:module.description" />
     </p>
 
-    <f:if condition="{providers}">
-        <f:then>
-            <f:render partial="Backend/Provider/List" arguments="{providers: providers, providerInterface: providerInterface, flushProviderCacheUri: flushProviderCacheUri}" />
-        </f:then>
-        <f:else>
-            <div class="alert alert-info">
-                <div class="alert-inner">
-                    <div class="alert-icon">
-                        <span class="icon-emphasized">
-                            <core:icon identifier="actions-info" />
-                        </span>
+    <f:comment><!--
+        <f:if condition="{providerUnhealthyCount} == 0">
+            <f:then>
+                <f:be.infobox
+                    title="All systems operational"
+                    iconName="actions-check"
+                    state="{f:constant(name: 'TYPO3\CMS\Core\Type\ContextualFeedbackSeverity::OK')}"
+                >
+                    All providers report a healthy state.
+                </f:be.infobox>
+            </f:then>
+            <f:else>
+                <f:be.infobox
+                    title="Unhealthy providers detected"
+                    iconName="actions-exclamation-triangle-alt"
+                    state="{f:constant(name: 'TYPO3\CMS\Core\Type\ContextualFeedbackSeverity::ERROR')}"
+                >
+                    {providerUnhealthyCount} provider(s) reported an unhealthy state.
+                </f:be.infobox>
+            </f:else>
+        </f:if>
+    --></f:comment>
+
+    <f:render section="Cards" arguments="{cards: serviceCards}" />
+
+</f:section>
+
+<f:section name="Cards">
+    <h2><f:translate key="LLL:EXT:monitoring/Resources/Private/Language/locallang.be.xlf:services.title" /></h2>
+    <div class="card-container">
+        <f:for each="{cards}" as="service" key="serviceKey">
+            <div class="card card-size-small">
+                <div class="card-header">
+                    <div class="card-icon">
+                        <core:icon identifier="{service.iconIdentifier}" size="small" />
                     </div>
-                    <div class="alert-content">
-                        <div class="alert-title">
-                            <f:translate key="LLL:EXT:monitoring/Resources/Private/Language/locallang.be.xlf:providers.no_providers_found.title" />
-                        </div>
-                        <p class="alert-message">
-                            <f:translate key="LLL:EXT:monitoring/Resources/Private/Language/locallang.be.xlf:providers.no_providers_found.content" arguments="{0: providerInterface}" />
-                        </p>
+                    <div class="card-header-body">
+                        <h2 class="card-title">{service.title}</h2>
                     </div>
                 </div>
+                <div class="card-body">
+                    <p class="card-text">
+                        {service.body}
+                    </p>
+                </div>
+                <div class="card-footer">
+                    <a href="{service.url}" class="btn {f:if(condition: '{serviceKey} == documentation', then: 'btn-secondary', else: 'btn-primary')}" {f:if(condition: '{service.isExternalLink}', then: 'target="_blank"')}>
+                        {service.linkTitle}
+                        <f:if condition="{service.isExternalLink}">
+                            <core:icon identifier="{service.linkIconIdentifier}" />
+                        </f:if>
+                    </a>
+                </div>
             </div>
-        </f:else>
-    </f:if>
+        </f:for>
+    </div>
 </f:section>
 
 </html>

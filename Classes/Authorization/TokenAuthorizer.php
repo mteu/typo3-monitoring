@@ -42,7 +42,7 @@ final readonly class TokenAuthorizer implements Authorizer
 
     public function getDescription(): string
     {
-        return 'Allows access to endpoint with a custom authentication header.';
+        return 'Allows access to the monitoring endpoint with a custom authentication header.';
     }
 
     public function isActive(): bool

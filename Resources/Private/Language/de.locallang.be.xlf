@@ -1,160 +1,348 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <xliff version="1.2" xmlns="urn:oasis:names:tc:xliff:document:1.2">
-	<file source-language="en" target-language="de" datatype="plaintext" original="EXT:monitoring/Resources/Private/Language/locallang.xlf">
-		<header/>
-		<body>
-			<trans-unit id="module.title">
-				<source>Monitoring</source>
-				<target>Monitoring</target>
-			</trans-unit>
-			<trans-unit id="module.description">
-				<source>This extension seeks to give an insight into the health state of various components in this TYPO3 instance.</source>
-				<target>Diese Extension bietet einen Einblick in den Gesundheitsstatus verschiedener Komponenten innerhalb dieser TYPO3-Instanz.</target>
-			</trans-unit>
-			<trans-unit id="module.backToOverview">
-				<source>Overview</source>
-				<target>Übersicht</target>
-			</trans-unit>
-			<trans-unit id="providers.title">
-				<source>Available Providers</source>
-				<target>Verfügbare Provider</target>
-			</trans-unit>
-			<trans-unit id="providers.modal.title">
-				<source>Providers</source>
-				<target>Provider</target>
-			</trans-unit>
-			<trans-unit id="providers.modal.content">
-				<source>Providers must implement %s to become available.</source>
-				<target>Provider müssen %s implementieren, um verfügbar zu werden.</target>
-			</trans-unit>
-			<trans-unit id="cache.flush.button">
-				<source>Flush Caches</source>
-				<target>Caches leeren</target>
-			</trans-unit>
-			<trans-unit id="authorizers.title">
-				<source>Registered Authorizers</source>
-				<target>Registrierte Authorizers</target>
-			</trans-unit>
-			<trans-unit id="authorizers.description">
-				<source>Monitoring requests will be authorized following this Authorizer order:</source>
-				<target>Monitoring-Requests werden in folgender Reihenfolge der Authorizer autorisiert:</target>
-			</trans-unit>
-			<trans-unit id="settings.api.secret.missing">
-				<source>Please set a secret in the Extension settings to make the Token based authorization available.</source>
-				<target>Bitte ein Monitoring-Secret in den Extension-Settings hinterlegen, um eine Autorisierung mittels Token zu ermöglichen.</target>
-			</trans-unit>
-			<trans-unit id="authorizers.priority">
-				<source>Priority</source>
-				<target>Priorität</target>
-			</trans-unit>
-			<trans-unit id="auth.token.button.example">
-				<source>View example request.</source>
-				<target>Beispielrequest anzeigen.</target>
-			</trans-unit>
-			<trans-unit id="auth.token.copy.button">
-				<source>Copy Auth Header</source>
-			</trans-unit>
-			<trans-unit id="auth.token.copy.success">
-				<source>Copied to clipboard</source>
-			</trans-unit>
-			<trans-unit id="auth.token.copy.error">
-				<source>Could not copy — see browser console.</source>
-			</trans-unit>
-			<trans-unit id="auth.endpoint.copy.button">
-				<source>Copy Endpoint</source>
-			</trans-unit>
-			<trans-unit id="auth.button.preview">
-				<source>Preview monitoring response.</source>
-				<target>Vorschau der Monitoring Response.</target>
-			</trans-unit>
-			<trans-unit id="auth.token.modal.title">
-				<source>Authorization Token</source>
-				<target>Autorisierungstoken</target>
-			</trans-unit>
-			<trans-unit id="status.cached">
-				<source>Cached</source>
-				<target>Gecacht</target>
-			</trans-unit>
-			<trans-unit id="status.healthy">
-				<source>healthy</source>
-				<target>OK</target>
-			</trans-unit>
-			<trans-unit id="status.unhealthy">
-				<source>unhealthy</source>
-				<target>Fehler</target>
-			</trans-unit>
-			<trans-unit id="status.inactive">
-				<source>inactive</source>
-				<target>inaktiv</target>
-			</trans-unit>
-			<trans-unit id="status.active">
-				<source>active</source>
-				<target>aktiviert</target>
-			</trans-unit>
-			<trans-unit id="provider.cache.lifetime">
-				<source>The monitoring result is cached with an active cache lifetime of %s minutes.</source>
-				<target>Das Monitoringergebnis ist mit einer Lebenszeit von %s Minuten gecacht.</target>
-			</trans-unit>
-			<trans-unit id="provider.cache.expires_at">
-				<source>Expires at %s</source>
-				<target>Läuft ab am %s</target>
-			</trans-unit>
-			<trans-unit id="datetime.format">
-				<source>Y-m-d H:i:s</source>
-				<target>d.m.Y H:i:s</target>
-			</trans-unit>
-			<trans-unit id="provider.disabled.message">
-				<source>This provider is explicitly disabled at the moment.</source>
-				<target>Dieser Provider ist derzeit deaktiviert.</target>
-			</trans-unit>
-			<trans-unit id="providers.no_providers_found.title">
-				<source>No monitoring providers found.</source>
-				<target>Keine Monitoring-Provider gefunden.</target>
-			</trans-unit>
-			<trans-unit id="providers.no_providers_found.content">
-				<source>Providers must implement %s to become available.</source>
-				<target>Provider müssen %s implementieren, um verfügbar zu werden.</target>
-			</trans-unit>
-			<trans-unit id="authorizers.no_authorizers_found">
-				<source>No monitoring authorizers found.</source>
-				<target>Keine Monitoring-Authorizer gefunden.</target>
-			</trans-unit>
-			<trans-unit id="authorizers.no_authorizers_found.content">
-				<source>Authorizers must either be enabled in the extension configuration or implement %s to become available.</source>
-				<target>Authorizer müssen entweder über die Extension Settings aktiviert werden oder %s implementieren, um verfügbar zu werden.</target>
-			</trans-unit>
-			<trans-unit id="detail.header.component">
-				<source>Component</source>
-				<target>Komponente</target>
-			</trans-unit>
-			<trans-unit id="detail.header.status">
-				<source>Status</source>
-				<target>Status</target>
-			</trans-unit>
-			<trans-unit id="detail.header.reason">
-				<source>Reason</source>
-				<target>Grund</target>
-			</trans-unit>
-			<trans-unit id="provider.cache.flush.button">
-				<source>Flush Cache</source>
-				<target>Cache leeren</target>
-			</trans-unit>
-			<trans-unit id="provider.cache.flush.success.title">
-				<source>Cache Flushed</source>
-				<target>Cache geleert</target>
-			</trans-unit>
-			<trans-unit id="provider.cache.flush.success.message">
-				<source>Cache for provider "%s" has been flushed successfully.</source>
-				<target>Cache für Provider "%s" wurde erfolgreich geleert.</target>
-			</trans-unit>
-			<trans-unit id="provider.cache.flush.error.title">
-				<source>Cache Flush Failed</source>
-				<target>Cache-Leerung fehlgeschlagen</target>
-			</trans-unit>
-			<trans-unit id="provider.cache.flush.error.message">
-				<source>Failed to flush cache for provider "%s".</source>
-				<target>Fehler beim Leeren des Caches für Provider "%s".</target>
-			</trans-unit>
-		</body>
-	</file>
+    <file source-language="en" target-language="de" datatype="plaintext" original="EXT:monitoring/Resources/Private/Language/locallang.be.xlf">
+        <header/>
+        <body>
+            <trans-unit id="auth.button.preview">
+                <source>Preview monitoring response.</source>
+                <target>Vorschau der Monitoring Response.</target>
+            </trans-unit>
+            <trans-unit id="auth.endpoint.copy.button">
+                <source>Copy Endpoint</source>
+                <target>Endpoint kopieren</target>
+            </trans-unit>
+            <trans-unit id="auth.token.button.example">
+                <source>View example request.</source>
+                <target>Beispielrequest anzeigen.</target>
+            </trans-unit>
+            <trans-unit id="auth.token.copy.button">
+                <source>Copy Auth Header</source>
+                <target>Auth-Header kopieren</target>
+            </trans-unit>
+            <trans-unit id="auth.token.copy.error">
+                <source>Could not copy — see browser console.</source>
+                <target>Kopieren fehlgeschlagen — siehe Browser-Konsole.</target>
+            </trans-unit>
+            <trans-unit id="auth.token.copy.success">
+                <source>Copied to clipboard</source>
+                <target>In die Zwischenablage kopiert</target>
+            </trans-unit>
+            <trans-unit id="authorizer.adminUser.description">
+                <source>Allows access to the monitoring endpoint for logged-in TYPO3 backend administrators.</source>
+                <target>Erlaubt angemeldeten TYPO3-Backend-Administratoren den Zugriff auf den Monitoring-Endpoint.</target>
+            </trans-unit>
+            <trans-unit id="authorizer.token.description">
+                <source>Allows access to the monitoring endpoint with a custom authentication header.</source>
+                <target>Erlaubt den Zugriff auf den Monitoring-Endpoint über einen eigenen Authentifizierungs-Header.</target>
+            </trans-unit>
+            <trans-unit id="authorizers.card.body">
+                <source>Access to monitoring results is restricted and granted by Authorizers.</source>
+                <target>Der Zugriff auf Monitoring-Ergebnisse ist eingeschränkt und wird durch Authorizer gewährt.</target>
+            </trans-unit>
+            <trans-unit id="authorizers.card.linkLabel.plural">
+                <source>View all %d authorizers</source>
+                <target>Alle %d Authorizer anzeigen</target>
+            </trans-unit>
+            <trans-unit id="authorizers.card.linkLabel.singular">
+                <source>View %d authorizer</source>
+                <target>%d Authorizer anzeigen</target>
+            </trans-unit>
+            <trans-unit id="authorizers.card.linkLabel.zero">
+                <source>No authorizers configured</source>
+                <target>Keine Authorizer konfiguriert</target>
+            </trans-unit>
+            <trans-unit id="authorizers.list.description">
+                <source>Monitoring requests will be authorized following this Authorizer order:</source>
+                <target>Monitoring-Requests werden in folgender Reihenfolge der Authorizer autorisiert:</target>
+            </trans-unit>
+            <trans-unit id="authorizers.list.title">
+                <source>Registered Authorizers</source>
+                <target>Registrierte Authorizer</target>
+            </trans-unit>
+            <trans-unit id="authorizers.no_authorizers_found">
+                <source>No monitoring authorizers found.</source>
+                <target>Keine Monitoring-Authorizer gefunden.</target>
+            </trans-unit>
+            <trans-unit id="authorizers.no_authorizers_found.content">
+                <source>Authorizers must either be enabled in the extension configuration or implement %s to become available.</source>
+                <target>Authorizer müssen entweder über die Extension-Einstellungen aktiviert werden oder %s implementieren, um verfügbar zu werden.</target>
+            </trans-unit>
+            <trans-unit id="authorizers.priority">
+                <source>Priority</source>
+                <target>Priorität</target>
+            </trans-unit>
+            <trans-unit id="authorizers.title">
+                <source>Authorizers</source>
+                <target>Authorizer</target>
+            </trans-unit>
+            <trans-unit id="datetime.format">
+                <source>Y-m-d H:i:s</source>
+                <target>d.m.Y H:i:s</target>
+            </trans-unit>
+            <trans-unit id="detail.header.component">
+                <source>Component</source>
+                <target>Komponente</target>
+            </trans-unit>
+            <trans-unit id="detail.header.reason">
+                <source>Reason</source>
+                <target>Grund</target>
+            </trans-unit>
+            <trans-unit id="detail.header.status">
+                <source>Status</source>
+                <target>Status</target>
+            </trans-unit>
+            <trans-unit id="documentation.card.body">
+                <source>Extending with custom monitoring checks, authorizers, or reporters is easier than you think.</source>
+                <target>Die Erweiterung um eigene Monitoring-Checks, Authorizer oder Reporter ist einfacher als gedacht.</target>
+            </trans-unit>
+            <trans-unit id="documentation.card.linkLabel">
+                <source>Read on GitHub</source>
+                <target>Auf GitHub lesen</target>
+            </trans-unit>
+            <trans-unit id="documentation.title">
+                <source>Documentation</source>
+                <target>Dokumentation</target>
+            </trans-unit>
+            <trans-unit id="module.description">
+                <source>This extension seeks to give an insight into the health state of various components in this TYPO3 instance.</source>
+                <target>Diese Extension bietet einen Einblick in den Gesundheitsstatus verschiedener Komponenten innerhalb dieser TYPO3-Instanz.</target>
+            </trans-unit>
+            <trans-unit id="module.title">
+                <source>Monitoring</source>
+                <target>Monitoring</target>
+            </trans-unit>
+            <trans-unit id="provider.cache.expires_at">
+                <source>Expires at %s</source>
+                <target>Läuft ab am %s</target>
+            </trans-unit>
+            <trans-unit id="provider.cache.flush.button">
+                <source>Flush Cache</source>
+                <target>Cache leeren</target>
+            </trans-unit>
+            <trans-unit id="provider.cache.flush.csrf.message">
+                <source>The cache flush request could not be verified. Please retry from the monitoring module.</source>
+                <target>Die Anfrage zum Leeren des Caches konnte nicht verifiziert werden. Bitte über das Monitoring-Modul erneut versuchen.</target>
+            </trans-unit>
+            <trans-unit id="provider.cache.flush.csrf.title">
+                <source>Cache Flush Rejected</source>
+                <target>Cache-Leerung abgelehnt</target>
+            </trans-unit>
+            <trans-unit id="provider.cache.flush.error.message">
+                <source>Failed to flush cache for provider "%s".</source>
+                <target>Fehler beim Leeren des Caches für Provider "%s".</target>
+            </trans-unit>
+            <trans-unit id="provider.cache.flush.error.title">
+                <source>Cache Flush Failed</source>
+                <target>Cache-Leerung fehlgeschlagen</target>
+            </trans-unit>
+            <trans-unit id="provider.cache.flush.success.message">
+                <source>Cache for provider "%s" has been flushed successfully.</source>
+                <target>Cache für Provider "%s" wurde erfolgreich geleert.</target>
+            </trans-unit>
+            <trans-unit id="provider.cache.flush.success.title">
+                <source>Cache Flushed</source>
+                <target>Cache geleert</target>
+            </trans-unit>
+            <trans-unit id="provider.cache.lifetime">
+                <source>The monitoring result is cached with an active cache lifetime of %s minutes.</source>
+                <target>Das Monitoringergebnis ist mit einer Lebenszeit von %s Minuten gecacht.</target>
+            </trans-unit>
+            <trans-unit id="provider.disabled.message">
+                <source>This provider is explicitly disabled at the moment.</source>
+                <target>Dieser Provider ist derzeit deaktiviert.</target>
+            </trans-unit>
+            <trans-unit id="provider.inactive.message">
+                <source>Although enabled, this provider is inactive at the moment. Please review %s to activate.</source>
+                <target>Obwohl aktiviert, ist dieser Provider derzeit inaktiv. Bitte %s prüfen, um ihn zu aktivieren.</target>
+            </trans-unit>
+            <trans-unit id="provider.scheduler.description">
+                <source>Monitors the TYPO3 scheduler: whether cron still triggers it (heartbeat), whether any enabled task recorded an execution failure, and whether any scheduled task is overdue (manually-triggered tasks are excluded). Inactive when the scheduler extension is not installed.</source>
+                <target>Überwacht den TYPO3-Scheduler: ob Cron ihn noch auslöst (Heartbeat), ob eine aktivierte Aufgabe einen Ausführungsfehler verzeichnet hat und ob eine geplante Aufgabe überfällig ist (manuell ausgelöste Aufgaben werden ausgenommen). Inaktiv, wenn die Scheduler-Extension nicht installiert ist.</target>
+            </trans-unit>
+            <trans-unit id="providers.card.body">
+                <source>Providers define and execute the actual health checks and make their results available to the endpoint and reporters.</source>
+                <target>Provider definieren und führen die eigentlichen Health-Checks aus und stellen ihre Ergebnisse dem Endpoint und den Reportern zur Verfügung.</target>
+            </trans-unit>
+            <trans-unit id="providers.card.linkLabel.plural">
+                <source>View all %d providers</source>
+                <target>Alle %d Provider anzeigen</target>
+            </trans-unit>
+            <trans-unit id="providers.card.linkLabel.singular">
+                <source>View %d provider</source>
+                <target>%d Provider anzeigen</target>
+            </trans-unit>
+            <trans-unit id="providers.card.linkLabel.zero">
+                <source>No providers registered</source>
+                <target>Keine Provider registriert</target>
+            </trans-unit>
+            <trans-unit id="providers.list.description">
+                <source>Providers define and execute the actual health checks and make their results available to the endpoint and reporters. This list shows all registered providers with their status.</source>
+                <target>Provider definieren und führen die eigentlichen Health-Checks aus und stellen ihre Ergebnisse dem Endpoint und den Reportern zur Verfügung. Diese Liste zeigt alle registrierten Provider mit ihrem Status.</target>
+            </trans-unit>
+            <trans-unit id="providers.list.title">
+                <source>Available Providers</source>
+                <target>Verfügbare Provider</target>
+            </trans-unit>
+            <trans-unit id="providers.no_providers_found.content">
+                <source>Providers must implement %s to become available.</source>
+                <target>Provider müssen %s implementieren, um verfügbar zu werden.</target>
+            </trans-unit>
+            <trans-unit id="providers.no_providers_found.title">
+                <source>No monitoring providers found.</source>
+                <target>Keine Monitoring-Provider gefunden.</target>
+            </trans-unit>
+            <trans-unit id="providers.title">
+                <source>Providers</source>
+                <target>Provider</target>
+            </trans-unit>
+            <trans-unit id="reporters.card.body">
+                <source>Reporters can optionally push notifications about changes in the monitoring status.</source>
+                <target>Reporter können optional Benachrichtigungen über Änderungen des Monitoring-Status versenden.</target>
+            </trans-unit>
+            <trans-unit id="reporters.card.linkLabel.plural">
+                <source>View all %d reporters</source>
+                <target>Alle %d Reporter anzeigen</target>
+            </trans-unit>
+            <trans-unit id="reporters.card.linkLabel.singular">
+                <source>View %d reporter</source>
+                <target>%d Reporter anzeigen</target>
+            </trans-unit>
+            <trans-unit id="reporters.card.linkLabel.zero">
+                <source>No reporters registered</source>
+                <target>Keine Reporter registriert</target>
+            </trans-unit>
+            <trans-unit id="reporters.dispatcher.disabled">
+                <source>disabled</source>
+                <target>deaktiviert</target>
+            </trans-unit>
+            <trans-unit id="reporters.dispatcher.enabled">
+                <source>enabled</source>
+                <target>aktiviert</target>
+            </trans-unit>
+            <trans-unit id="reporters.dispatcher.failOpenOnMissingState">
+                <source>Notify when no previous state is stored</source>
+                <target>Benachrichtigen, wenn kein vorheriger Status gespeichert ist</target>
+            </trans-unit>
+            <trans-unit id="reporters.dispatcher.notifyOnRecovery">
+                <source>Notify on recovery</source>
+                <target>Bei Wiederherstellung benachrichtigen</target>
+            </trans-unit>
+            <trans-unit id="reporters.dispatcher.reminderInterval">
+                <source>Reminder interval (seconds)</source>
+                <target>Erinnerungsintervall (Sekunden)</target>
+            </trans-unit>
+            <trans-unit id="reporters.dispatcher.subtitle">
+                <source>Active settings</source>
+                <target>Aktive Einstellungen</target>
+            </trans-unit>
+            <trans-unit id="reporters.dispatcher.title">
+                <source>Report Dispatcher</source>
+                <target>Report-Dispatcher</target>
+            </trans-unit>
+            <trans-unit id="reporters.email.noRecipients">
+                <source>No email recipients configured.</source>
+                <target>Keine E-Mail-Empfänger konfiguriert.</target>
+            </trans-unit>
+            <trans-unit id="reporters.email.recipients">
+                <source>Recipients</source>
+                <target>Empfänger</target>
+            </trans-unit>
+            <trans-unit id="reporters.email.sender">
+                <source>Sender</source>
+                <target>Absender</target>
+            </trans-unit>
+            <trans-unit id="reporters.email.subjectPrefix">
+                <source>Subject prefix</source>
+                <target>Betreff-Präfix</target>
+            </trans-unit>
+            <trans-unit id="reporters.email.systemDefault">
+                <source>System default</source>
+                <target>Systemstandard</target>
+            </trans-unit>
+            <trans-unit id="reporters.list.description">
+                <source>Active reporters are notified about the monitoring status in this order:</source>
+                <target>Aktive Reporter werden in dieser Reihenfolge über den Monitoring-Status benachrichtigt:</target>
+            </trans-unit>
+            <trans-unit id="reporters.list.title">
+                <source>Registered Reporters</source>
+                <target>Registrierte Reporter</target>
+            </trans-unit>
+            <trans-unit id="reporters.no_reporters_found">
+                <source>No monitoring reporters found.</source>
+                <target>Keine Monitoring-Reporter gefunden.</target>
+            </trans-unit>
+            <trans-unit id="reporters.no_reporters_found.content">
+                <source>Reporters must either be enabled in the extension configuration or implement %s to become available.</source>
+                <target>Reporter müssen entweder über die Extension-Einstellungen aktiviert werden oder %s implementieren, um verfügbar zu werden.</target>
+            </trans-unit>
+            <trans-unit id="reporters.threshold">
+                <source>Threshold</source>
+                <target>Schwellenwert</target>
+            </trans-unit>
+            <trans-unit id="reporters.title">
+                <source>Reporters</source>
+                <target>Reporter</target>
+            </trans-unit>
+            <trans-unit id="route.label.monitoring">
+                <source>Monitoring: Overview</source>
+                <target>Monitoring: Übersicht</target>
+            </trans-unit>
+            <trans-unit id="route.label.monitoring_authorizers">
+                <source>Monitoring: Authorizers</source>
+                <target>Monitoring: Authorizer</target>
+            </trans-unit>
+            <trans-unit id="route.label.monitoring_providers">
+                <source>Monitoring: Providers</source>
+                <target>Monitoring: Provider</target>
+            </trans-unit>
+            <trans-unit id="route.label.monitoring_reporters">
+                <source>Monitoring: Reporters</source>
+                <target>Monitoring: Reporter</target>
+            </trans-unit>
+            <trans-unit id="services.title">
+                <source>Services</source>
+                <target>Dienste</target>
+            </trans-unit>
+            <trans-unit id="settings.api.secret.missing">
+                <source>Please set a secret in the Extension settings to make the Token based authorization available.</source>
+                <target>Bitte ein Monitoring-Secret in den Extension-Settings hinterlegen, um eine Autorisierung mittels Token zu ermöglichen.</target>
+            </trans-unit>
+            <trans-unit id="status.active">
+                <source>active</source>
+                <target>aktiv</target>
+            </trans-unit>
+            <trans-unit id="status.cached">
+                <source>Cached</source>
+                <target>Gecacht</target>
+            </trans-unit>
+            <trans-unit id="status.disabled">
+                <source>disabled</source>
+                <target>deaktiviert</target>
+            </trans-unit>
+            <trans-unit id="status.healthy">
+                <source>healthy</source>
+                <target>OK</target>
+            </trans-unit>
+            <trans-unit id="status.inactive">
+                <source>inactive</source>
+                <target>inaktiv</target>
+            </trans-unit>
+            <trans-unit id="status.unhealthy">
+                <source>unhealthy</source>
+                <target>Fehler</target>
+            </trans-unit>
+            <trans-unit id="table.header.additionalInformation">
+                <source>Additional information</source>
+                <target>Zusätzliche Informationen</target>
+            </trans-unit>
+            <trans-unit id="table.header.description">
+                <source>Description</source>
+                <target>Beschreibung</target>
+            </trans-unit>
+            <trans-unit id="table.header.name">
+                <source>Name</source>
+                <target>Name</target>
+            </trans-unit>
+        </body>
+    </file>
 </xliff>

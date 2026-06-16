@@ -1,0 +1,33 @@
+<html
+    data-namespace-typo3-fluid="true"
+    xmlns:f="http://typo3.org/ns/TYPO3/CMS/Fluid/ViewHelpers"
+    xmlns:monitoring="http://typo3.org/ns/mteu/Monitoring/ViewHelper/Backend"
+
+>
+
+<f:layout name="Module" />
+<tr>
+    <td>
+        {reporter.name}
+        <span class="badge badge-{f:if(condition: reporter.isActive, then: 'success', else: 'danger')}">
+            <f:if condition="{reporter.isActive}">
+                <f:then><f:translate key="LLL:EXT:monitoring/Resources/Private/Language/locallang.be.xlf:status.active" /></f:then>
+                <f:else><f:translate key="LLL:EXT:monitoring/Resources/Private/Language/locallang.be.xlf:status.inactive" /></f:else>
+            </f:if>
+        </span>
+    </td>
+    <td>
+        {reporter.priority}
+    </td>
+    <td>
+        <span class="badge badge-info">{reporter.threshold}</span>
+    </td>
+    <td>
+        <ul>
+            <f:for each="{reporter.additionalInformation}" as="row" key="key" iteration="iterator">
+                <li>{key}: {row}</li>
+            </f:for>
+        </ul>
+    </td>
+</tr>
+</html>
