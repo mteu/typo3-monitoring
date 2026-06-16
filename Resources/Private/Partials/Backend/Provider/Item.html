@@ -48,7 +48,7 @@
                 </f:then>
                 <f:else>
                     <span class="badge badge-info">
-                        disabled
+                        <f:translate key="LLL:EXT:monitoring/Resources/Private/Language/locallang.be.xlf:status.disabled" />
                     </span>
                 </f:else>
 
@@ -78,7 +78,9 @@
                             </f:if>
                         </f:then>
                         <f:else>
-                            Although enabled, this provider is inActive at the moment. Please review <pre>{providerClass}</pre> to activate.
+                            <f:format.raw>
+                                <f:translate key="LLL:EXT:monitoring/Resources/Private/Language/locallang.be.xlf:provider.inactive.message" arguments="{0: '<pre>{providerClass}</pre>'}" />
+                            </f:format.raw>
                         </f:else>
                     </f:if>
                 </f:else>

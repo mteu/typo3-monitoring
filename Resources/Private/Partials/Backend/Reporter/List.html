@@ -5,16 +5,16 @@
 
 <f:layout name="Module" />
 
-<h2><f:translate key="LLL:EXT:monitoring/Resources/Private/Language/locallang.be.xlf:reporters.title" /></h2>
+<h2><f:translate key="LLL:EXT:monitoring/Resources/Private/Language/locallang.be.xlf:reporters.list.title" /></h2>
 <p><f:translate key="LLL:EXT:monitoring/Resources/Private/Language/locallang.be.xlf:reporters.list.description" /></p>
 
 <div class="table-fit">
     <table class="table table-striped">
         <thead>
-            <th>Name</th>
+            <th><f:translate key="LLL:EXT:monitoring/Resources/Private/Language/locallang.be.xlf:table.header.name" /></th>
             <th><f:translate key="LLL:EXT:monitoring/Resources/Private/Language/locallang.be.xlf:authorizers.priority" /></th>
             <th><f:translate key="LLL:EXT:monitoring/Resources/Private/Language/locallang.be.xlf:reporters.threshold" /></th>
-            <th>Additional information</th>
+            <th><f:translate key="LLL:EXT:monitoring/Resources/Private/Language/locallang.be.xlf:table.header.additionalInformation" /></th>
         </thead>
         <tbody>
             <f:for each="{reporters}" as="reporter" key="class" iteration="iterator">

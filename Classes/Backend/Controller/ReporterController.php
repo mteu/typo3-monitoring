@@ -18,6 +18,7 @@ declare(strict_types=1);
 namespace mteu\Monitoring\Backend\Controller;
 
 use mteu\Monitoring\Configuration\MonitoringConfiguration;
+use mteu\Monitoring\Configuration\Reporter\EmailReporterConfiguration;
 use mteu\Monitoring\Reporter\EmailReporter;
 use mteu\Monitoring\Reporter\Reporter;
 use Psr\Http\Message\ResponseInterface;
@@ -110,14 +111,25 @@ final readonly class ReporterController extends AbstractSubModuleController
      */
     public function getEmailReporterAdditionalInformation(): array
     {
+        $languageService = $this->getLanguageService();
+        $emailConfiguration = $this->monitoringConfiguration->emailReporterConfiguration;
+
         return [
-            'Recipients' => $this->monitoringConfiguration->emailReporterConfiguration->getRecipients() !== []
-                ? implode(', ', $this->monitoringConfiguration->emailReporterConfiguration->getRecipients())
-                : 'No email recipients configured.',
-            'Sender address' => $this->monitoringConfiguration->emailReporterConfiguration->senderAddress !== ''
-                ? $this->monitoringConfiguration->emailReporterConfiguration->senderAddress
-                : MailUtility::getSystemFromAddress() . ' (System default)',
-            'Subject prefix' => $this->monitoringConfiguration->emailReporterConfiguration->subjectPrefix,
+            $languageService->sL(self::LOCALLANG_FILE . ':reporters.email.recipients') => $emailConfiguration->getRecipients() !== []
+                ? implode(', ', $emailConfiguration->getRecipients())
+                : $languageService->sL(self::LOCALLANG_FILE . ':reporters.email.noRecipients'),
+            $languageService->sL(self::LOCALLANG_FILE . ':reporters.email.sender') => $this->displaySenderInformation($emailConfiguration),
+            $languageService->sL(self::LOCALLANG_FILE . ':reporters.email.subjectPrefix') => $emailConfiguration->subjectPrefix,
         ];
+    }
+
+    private function displaySenderInformation(EmailReporterConfiguration $config): string
+    {
+        return sprintf(
+            '%s <%s>%s',
+            MailUtility::getSystemFromName(),
+            $config->senderAddress !== '' ? $config->senderAddress : MailUtility::getSystemFromAddress(),
+            $config->senderAddress === '' ? ' (' . $this->getLanguageService()->sL(self::LOCALLANG_FILE . ':reporters.email.systemDefault') . ')' : '',
+        );
     }
 }

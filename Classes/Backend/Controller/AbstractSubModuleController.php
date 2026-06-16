@@ -21,6 +21,7 @@ use Psr\Http\Message\ServerRequestInterface;
 use TYPO3\CMS\Backend\Template\ModuleTemplate;
 use TYPO3\CMS\Backend\Template\ModuleTemplateFactory;
 use TYPO3\CMS\Core\Authentication\BackendUserAuthentication;
+use TYPO3\CMS\Core\Information\Typo3Version;
 use TYPO3\CMS\Core\Localization\LanguageService;
 use TYPO3\CMS\Core\Localization\LanguageServiceFactory;
 
@@ -51,7 +52,7 @@ abstract readonly class AbstractSubModuleController
         //    $docHeaderComponent->disableAutomaticReloadButton();
         //}
 
-        if ($bookmarkRoute !== '') {
+        if ($bookmarkRoute !== '' && (new Typo3Version())->getMajorVersion() >= 14) {
             $docHeaderComponent->setShortcutContext(
                 $bookmarkRoute,
                 $this->getLanguageService()->sL(self::LOCALLANG_FILE . ':route.label.' . $bookmarkRoute),

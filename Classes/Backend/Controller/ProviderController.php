@@ -156,19 +156,18 @@ final readonly class ProviderController extends AbstractSubModuleController
      *     isEnabled: bool,
      *     isActive: bool,
      *     isHealthy?: bool,
-     *     ...
      * } $provider
      */
     private function getProviderSortRank(array $provider): int
     {
         if (!$provider['isEnabled']) {
-            return 3; // disabled
+            return 3;
         }
 
         if (!$provider['isActive']) {
-            return 2; // inactive
+            return 2;
         }
 
-        return ($provider['isHealthy'] ?? false) ? 1 : 0; // healthy / unhealthy
+        return ($provider['isHealthy'] ?? false) ? 1 : 0;
     }
 }

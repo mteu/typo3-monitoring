@@ -179,30 +179,21 @@ final readonly class MonitoringController extends AbstractSubModuleController
                 'title' => $this->getLanguageService()->sL(self::LOCALLANG_FILE . ':providers.title'),
                 'body' => $this->getLanguageService()->sL(self::LOCALLANG_FILE . ':providers.card.body'),
                 'url' => (string)$this->uriBuilder->buildUriFromRoute('monitoring_providers'),
-                'linkTitle' => sprintf(
-                    $this->getLanguageService()->sL(self::LOCALLANG_FILE . ':providers.card.linkLabel'),
-                    iterator_count($this->monitoringProviders),
-                ),
+                'linkTitle' => $this->buildCardLinkLabel('providers.card.linkLabel', iterator_count($this->monitoringProviders)),
             ],
             'authorizers' => [
                 'iconIdentifier' => 'actions-key',
                 'title' => $this->getLanguageService()->sL(self::LOCALLANG_FILE . ':authorizers.title'),
                 'body' => $this->getLanguageService()->sL(self::LOCALLANG_FILE . ':authorizers.card.body'),
                 'url' => (string)$this->uriBuilder->buildUriFromRoute('monitoring_authorizers'),
-                'linkTitle' => sprintf(
-                    $this->getLanguageService()->sL(self::LOCALLANG_FILE . ':authorizers.card.linkLabel'),
-                    iterator_count($this->authorizers),
-                ),
+                'linkTitle' => $this->buildCardLinkLabel('authorizers.card.linkLabel', iterator_count($this->authorizers)),
             ],
             'reporters' => [
                 'iconIdentifier' => 'actions-bullhorn',
                 'title' => $this->getLanguageService()->sL(self::LOCALLANG_FILE . ':reporters.title'),
                 'body' => $this->getLanguageService()->sL(self::LOCALLANG_FILE . ':reporters.card.body'),
                 'url' => (string)$this->uriBuilder->buildUriFromRoute('monitoring_reporters'),
-                'linkTitle' => sprintf(
-                    $this->getLanguageService()->sL(self::LOCALLANG_FILE . ':reporters.card.linkLabel'),
-                    iterator_count($this->reporters),
-                ),
+                'linkTitle' => $this->buildCardLinkLabel('reporters.card.linkLabel', iterator_count($this->reporters)),
             ],
             'documentation' => [
                 'iconIdentifier' => 'actions-notebook-typoscript',
@@ -214,5 +205,23 @@ final readonly class MonitoringController extends AbstractSubModuleController
                 'linkTitle' => $this->getLanguageService()->sL(self::LOCALLANG_FILE . ':documentation.card.linkLabel'),
             ],
         ];
+    }
+
+    /**
+     * Picks a count-aware label so the service cards stay grammatical: a
+     * dedicated ".zero" variant for empty sets and ".singular"/".plural" forms
+     * resolved against the given key prefix.
+     */
+    private function buildCardLinkLabel(string $keyPrefix, int $count): string
+    {
+        $languageService = $this->getLanguageService();
+
+        if ($count === 0) {
+            return $languageService->sL(self::LOCALLANG_FILE . ':' . $keyPrefix . '.zero');
+        }
+
+        $key = $keyPrefix . ($count === 1 ? '.singular' : '.plural');
+
+        return sprintf($languageService->sL(self::LOCALLANG_FILE . ':' . $key), $count);
     }
 }
