@@ -23,6 +23,7 @@ use mteu\Monitoring\Reporter\NotificationDecision;
 use mteu\Monitoring\Reporter\ReportContext;
 use mteu\Monitoring\Reporter\ReportThreshold;
 use mteu\Monitoring\Result\MonitoringResult;
+use mteu\Monitoring\Tests\Unit\Fixtures\Language\XliffLanguageServiceFactoryTrait;
 use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\TestCase;
@@ -42,6 +43,8 @@ use TYPO3\CMS\Core\Mail\MailerInterface;
 #[CoversClass(EmailReporter::class)]
 final class EmailReporterTest extends TestCase
 {
+    use XliffLanguageServiceFactoryTrait;
+
     #[Test]
     public function isInactiveWhenDisabled(): void
     {
@@ -290,6 +293,7 @@ final class EmailReporterTest extends TestCase
             new EmailReporterConfiguration(enabled: true, recipients: 'ops@example.com'),
             $mailer,
             $logger,
+            $this->createEnglishLanguageServiceFactory(),
         );
 
         self::assertFalse($reporter->report($this->unhealthyContext()));
@@ -328,6 +332,7 @@ final class EmailReporterTest extends TestCase
             ),
             $mailer,
             self::createStub(LoggerInterface::class),
+            $this->createEnglishLanguageServiceFactory(),
         );
     }
 }

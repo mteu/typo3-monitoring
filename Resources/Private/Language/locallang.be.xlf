@@ -279,6 +279,75 @@
             <trans-unit id="table.header.name">
                 <source>Name</source>
             </trans-unit>
+            <trans-unit id="provider.scheduler.heartbeat.disabled">
+                <source>Scheduler Execution check is disabled. Set threshold in Settings to active.</source>
+            </trans-unit>
+            <trans-unit id="provider.scheduler.heartbeat.running">
+                <source>A scheduler task is currently running.</source>
+            </trans-unit>
+            <trans-unit id="provider.scheduler.heartbeat.noRun">
+                <source>No scheduler run has been recorded yet. Verify the cron job is set up.</source>
+            </trans-unit>
+            <trans-unit id="provider.scheduler.heartbeat.stale">
+                <source>Scheduler last ran %s ago (at %s), exceeding the threshold of %d seconds.</source>
+            </trans-unit>
+            <trans-unit id="provider.scheduler.heartbeat.ok">
+                <source>Scheduler last ran at %s.</source>
+            </trans-unit>
+            <trans-unit id="provider.scheduler.failed.none">
+                <source>No task reported an execution failure.</source>
+            </trans-unit>
+            <trans-unit id="provider.scheduler.failed.singular">
+                <source>%d task reported an execution failure%s</source>
+            </trans-unit>
+            <trans-unit id="provider.scheduler.failed.plural">
+                <source>%d tasks reported an execution failure%s</source>
+            </trans-unit>
+            <trans-unit id="provider.scheduler.overdue.disabled">
+                <source>The overdue tasks check is disabled. Set threshold in Settings to activate.</source>
+            </trans-unit>
+            <trans-unit id="provider.scheduler.overdue.none">
+                <source>No task is overdue.</source>
+            </trans-unit>
+            <trans-unit id="provider.scheduler.overdue.singular">
+                <source>%d task is overdue by more than %d seconds%s</source>
+            </trans-unit>
+            <trans-unit id="provider.scheduler.overdue.plural">
+                <source>%d tasks are overdue by more than %d seconds%s</source>
+            </trans-unit>
+            <trans-unit id="provider.scheduler.queryFailure">
+                <source>Could not query scheduler tasks: %s</source>
+            </trans-unit>
+            <trans-unit id="provider.scheduler.unhealthy">
+                <source>One or more scheduler health checks failed. See sub-results for details.</source>
+            </trans-unit>
+            <trans-unit id="reporter.email.subject.recovered">
+                <source>All monitored services recovered</source>
+            </trans-unit>
+            <trans-unit id="reporter.email.subject.reminder">
+                <source>Still unhealthy: %s</source>
+            </trans-unit>
+            <trans-unit id="reporter.email.subject.unhealthy">
+                <source>Unhealthy: %s</source>
+            </trans-unit>
+            <trans-unit id="reporter.email.body.recovered">
+                <source>All monitored services are healthy again.</source>
+            </trans-unit>
+            <trans-unit id="reporter.email.body.reminder">
+                <source>The following services are still reporting an unhealthy state:</source>
+            </trans-unit>
+            <trans-unit id="reporter.email.body.unhealthy">
+                <source>The following services are reporting an unhealthy state:</source>
+            </trans-unit>
+            <trans-unit id="reporter.email.body.line">
+                <source>[%s] %s%s</source>
+            </trans-unit>
+            <trans-unit id="reporter.email.status.ok">
+                <source>OK</source>
+            </trans-unit>
+            <trans-unit id="reporter.email.status.failed">
+                <source>FAILED</source>
+            </trans-unit>
         </body>
     </file>
 </xliff>
