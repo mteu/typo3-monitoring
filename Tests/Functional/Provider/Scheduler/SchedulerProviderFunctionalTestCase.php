@@ -28,6 +28,7 @@ use TYPO3\CMS\Backend\Routing\Exception\RouteNotFoundException;
 use TYPO3\CMS\Backend\Routing\Router;
 use TYPO3\CMS\Backend\Routing\UriBuilder as BackendUriBuilder;
 use TYPO3\CMS\Core\Http\Uri;
+use TYPO3\CMS\Core\Localization\LanguageServiceFactory;
 
 /**
  * ProviderFunctionalTestCase.
@@ -54,6 +55,7 @@ abstract class SchedulerProviderFunctionalTestCase extends MonitoringFunctionalT
             new NullLogger(),
             self::createStub(Router::class),
             $this->createUriBuilder(null),
+            $this->get(LanguageServiceFactory::class),
         );
     }
 
