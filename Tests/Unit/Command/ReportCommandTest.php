@@ -27,7 +27,10 @@ use mteu\Monitoring\Configuration\Reporter\EmailReporterConfiguration;
 use mteu\Monitoring\Configuration\Reporter\ReportDispatcherConfiguration;
 use mteu\Monitoring\Handler\MonitoringExecutionHandler;
 use mteu\Monitoring\Provider\MonitoringProvider;
+use mteu\Monitoring\Reporter\ReportContext;
 use mteu\Monitoring\Reporter\ReportDispatcher;
+use mteu\Monitoring\Reporter\Reporter;
+use mteu\Monitoring\Reporter\ReportThreshold;
 use mteu\Monitoring\Result\MonitoringResult;
 use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\Attributes\Test;
@@ -68,7 +71,7 @@ final class ReportCommandTest extends TestCase
     #[Test]
     public function commandIsRegisteredWithExpectedNameAndDescription(): void
     {
-        $command = $this->createCommand([], 1_000);
+        $command = $this->createCommand([], 1_000, []);
 
         self::assertSame('monitoring:report', $command->getName());
         self::assertSame(
@@ -80,7 +83,9 @@ final class ReportCommandTest extends TestCase
     #[Test]
     public function reportsNoNotificationWhenEverythingIsHealthy(): void
     {
-        $tester = new CommandTester($this->createCommand([$this->provider('alpha', healthy: true)], 1_000));
+        $tester = new CommandTester(
+            $this->createCommand([$this->provider('alpha', healthy: true)], 1_000, [$this->reporter()]),
+        );
 
         $exitCode = $tester->execute([]);
 
@@ -91,12 +96,29 @@ final class ReportCommandTest extends TestCase
     #[Test]
     public function reportsUnhealthyStatusOnFirstFailure(): void
     {
-        $tester = new CommandTester($this->createCommand([$this->provider('alpha', healthy: false)], 1_000));
+        $tester = new CommandTester(
+            $this->createCommand([$this->provider('alpha', healthy: false)], 1_000, [$this->reporter()]),
+        );
 
         $exitCode = $tester->execute([]);
 
         self::assertSame(Command::SUCCESS, $exitCode);
         self::assertStringContainsString('Dispatched: unhealthy status.', $tester->getDisplay());
+    }
+
+    #[Test]
+    public function reportsFailureWhenDispatchDecidedButNoReporterDelivers(): void
+    {
+        $tester = new CommandTester(
+            $this->createCommand([$this->provider('alpha', healthy: false)], 1_000, [$this->reporter(active: false)]),
+        );
+
+        $exitCode = $tester->execute([]);
+
+        self::assertSame(Command::FAILURE, $exitCode);
+        self::assertStringContainsString('No report dispatched', $tester->getDisplay());
+        self::assertStringContainsString('no active reporter', $tester->getDisplay());
+        self::assertStringNotContainsString('Dispatched: unhealthy status.', $tester->getDisplay());
     }
 
     #[Test]
@@ -128,20 +150,21 @@ final class ReportCommandTest extends TestCase
      */
     private function createTester(array $providers, int $timestamp): CommandTester
     {
-        return new CommandTester($this->createCommand($providers, $timestamp));
+        return new CommandTester($this->createCommand($providers, $timestamp, [$this->reporter()]));
     }
 
     /**
      * @param list<MonitoringProvider> $providers
+     * @param list<Reporter> $reporters
      */
-    private function createCommand(array $providers, int $timestamp): ReportCommand
+    private function createCommand(array $providers, int $timestamp, array $reporters): ReportCommand
     {
         $context = new Context();
         $context->setAspect('date', new DateTimeAspect((new \DateTimeImmutable())->setTimestamp($timestamp)));
 
         $dispatcher = new ReportDispatcher(
             $providers,
-            [], // reporters are irrelevant to the command's decision-to-output mapping
+            $reporters,
             new MonitoringExecutionHandler(new MonitoringCacheManager(new CacheManager())),
             new NotificationStateCacheManager($this->inMemoryCacheManager()),
             new MonitoringConfiguration(
@@ -180,6 +203,41 @@ final class ReportCommandTest extends TestCase
         $cacheManager->method('getCache')->willReturn($frontend);
 
         return $cacheManager;
+    }
+
+    // A reporter that accepts every decision and, when active, delivers successfully.
+    private function reporter(bool $active = true): Reporter
+    {
+        return new readonly class ($active) implements Reporter {
+            public function __construct(
+                private bool $active,
+            ) {}
+
+            public function isActive(): bool
+            {
+                return $this->active;
+            }
+
+            public function getThreshold(): ReportThreshold
+            {
+                return ReportThreshold::Always;
+            }
+
+            public function report(ReportContext $context): bool
+            {
+                return true;
+            }
+
+            public function getName(): string
+            {
+                return 'Fake Reporter';
+            }
+
+            public static function getPriority(): int
+            {
+                return 0;
+            }
+        };
     }
 
     private function provider(string $name, bool $healthy): MonitoringProvider
