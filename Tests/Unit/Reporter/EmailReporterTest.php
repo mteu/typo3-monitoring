@@ -295,6 +295,96 @@ final class EmailReporterTest extends TestCase
         self::assertFalse($reporter->report($this->unhealthyContext()));
     }
 
+    #[Test]
+    public function reportSkipsInvalidRecipientsAndSendsToValidOnes(): void
+    {
+        $logger = $this->createMock(LoggerInterface::class);
+        $logger
+            ->expects(self::once())
+            ->method('warning')
+            ->with(
+                'EmailReporter skipping invalid recipient address',
+                self::callback(static fn(array $context): bool => $context['recipient'] === 'broken@@example'),
+            );
+
+        $message = null;
+        $mailer = self::createStub(MailerInterface::class);
+        $mailer
+            ->method('send')
+            ->willReturnCallback(static function (RawMessage $sent) use (&$message): void {
+                $message = $sent;
+            });
+
+        $reporter = new EmailReporter(
+            new EmailReporterConfiguration(
+                enabled: true,
+                recipients: 'ops@example.com, broken@@example',
+            ),
+            $mailer,
+            $logger,
+        );
+
+        self::assertTrue($reporter->report($this->unhealthyContext()));
+        self::assertInstanceOf(Email::class, $message);
+        self::assertSame(
+            ['ops@example.com'],
+            array_map(static fn(Address $address) => $address->getAddress(), $message->getTo()),
+        );
+    }
+
+    #[Test]
+    public function reportReturnsFalseWhenAllRecipientsAreInvalid(): void
+    {
+        $mailer = $this->createMock(MailerInterface::class);
+        $mailer->expects(self::never())->method('send');
+
+        $reporter = new EmailReporter(
+            new EmailReporterConfiguration(
+                enabled: true,
+                recipients: 'broken@@example, also-broken',
+            ),
+            $mailer,
+            self::createStub(LoggerInterface::class),
+        );
+
+        self::assertFalse($reporter->report($this->unhealthyContext()));
+    }
+
+    #[Test]
+    public function reportIgnoresInvalidSenderAddressAndStillSends(): void
+    {
+        $logger = $this->createMock(LoggerInterface::class);
+        $logger
+            ->expects(self::once())
+            ->method('warning')
+            ->with(
+                'EmailReporter ignoring invalid sender address',
+                self::callback(static fn(array $context): bool => $context['sender'] === 'broken@@example'),
+            );
+
+        $message = null;
+        $mailer = self::createStub(MailerInterface::class);
+        $mailer
+            ->method('send')
+            ->willReturnCallback(static function (RawMessage $sent) use (&$message): void {
+                $message = $sent;
+            });
+
+        $reporter = new EmailReporter(
+            new EmailReporterConfiguration(
+                enabled: true,
+                recipients: 'ops@example.com',
+                senderAddress: 'broken@@example',
+            ),
+            $mailer,
+            $logger,
+        );
+
+        self::assertTrue($reporter->report($this->unhealthyContext()));
+        self::assertInstanceOf(Email::class, $message);
+        self::assertSame([], $message->getFrom());
+    }
+
     private function unhealthyContext(): ReportContext
     {
         return new ReportContext(
