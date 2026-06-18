@@ -21,6 +21,7 @@ use mteu\Monitoring\Configuration\Provider\SchedulerProviderConfiguration;
 use mteu\Monitoring\Provider\Scheduler\SchedulerProvider;
 use mteu\Monitoring\Provider\Scheduler\SchedulerTask;
 use mteu\Monitoring\Result\MonitoringResult;
+use mteu\Monitoring\Tests\Unit\Fixtures\Language\XliffLanguageServiceFactoryTrait;
 use mteu\Monitoring\Tests\Unit\Fixtures\Scheduler\InMemorySchedulerHeartbeat;
 use mteu\Monitoring\Tests\Unit\Fixtures\Scheduler\InMemorySchedulerTaskRepository;
 use PHPUnit\Framework;
@@ -42,6 +43,8 @@ use TYPO3\CMS\Core\Http\Uri;
 #[Framework\Attributes\UsesClass(SchedulerTask::class)]
 final class SchedulerProviderTest extends Framework\TestCase
 {
+    use XliffLanguageServiceFactoryTrait;
+
     private const int NOW = 1_700_000_000;
 
     #[Test]
@@ -351,6 +354,7 @@ final class SchedulerProviderTest extends Framework\TestCase
             new NullLogger(),
             self::createStub(Router::class),
             $this->createUriBuilder($taskLinkBaseUri),
+            $this->createEnglishLanguageServiceFactory(),
         );
     }
 
@@ -375,6 +379,7 @@ final class SchedulerProviderTest extends Framework\TestCase
             new NullLogger(),
             $router,
             $uriBuilder,
+            $this->createEnglishLanguageServiceFactory(),
         );
     }
 
