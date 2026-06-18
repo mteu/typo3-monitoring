@@ -21,6 +21,7 @@ use mteu\Monitoring\Configuration\Reporter\EmailReporterConfiguration;
 use Psr\Log\LoggerInterface;
 use Symfony\Component\Mailer\Exception\TransportExceptionInterface;
 use Symfony\Component\Mime\Address;
+use Symfony\Component\Mime\Exception\RfcComplianceException;
 use TYPO3\CMS\Core\Localization\LanguageService;
 use TYPO3\CMS\Core\Localization\LanguageServiceFactory;
 use TYPO3\CMS\Core\Mail\MailerInterface;
@@ -60,13 +61,14 @@ final readonly class EmailReporter implements Reporter
 
     public function report(ReportContext $context): bool
     {
-        $recipients = $this->configuration->getRecipients();
+        $recipients = $this->parseRecipients($this->configuration->getRecipients());
 
         if ($recipients === []) {
             return false;
         }
 
         $languageService = $this->getLanguageService();
+        $sender = $this->parseSender($this->configuration->senderAddress);
 
         try {
             $message = new MailMessage();
@@ -75,8 +77,8 @@ final readonly class EmailReporter implements Reporter
                 ->subject($this->buildSubject($context, $languageService))
                 ->text($this->buildBody($context, $languageService));
 
-            if ($this->configuration->senderAddress !== '') {
-                $message->from(new Address($this->configuration->senderAddress));
+            if ($sender !== null) {
+                $message->from($sender);
             }
 
             $this->mailer->send($message);
@@ -88,6 +90,56 @@ final readonly class EmailReporter implements Reporter
             ]);
 
             return false;
+        }
+    }
+
+    /**
+     * Turns configured recipient strings into validated Address objects, letting
+     * Symfony's Address perform the RFC compliance check. Malformed entries are
+     * logged and dropped so a single configuration typo cannot abort the dispatch
+     * run with an uncaught RfcComplianceException.
+     *
+     * @param list<non-empty-string> $recipients
+     * @return list<Address>
+     */
+    private function parseRecipients(array $recipients): array
+    {
+        $addresses = [];
+
+        foreach ($recipients as $recipient) {
+            try {
+                $addresses[] = new Address($recipient);
+            } catch (RfcComplianceException $e) {
+                $this->logger->warning('EmailReporter skipping invalid recipient address', [
+                    'recipient' => $recipient,
+                    'exception' => $e->getMessage(),
+                ]);
+            }
+        }
+
+        return $addresses;
+    }
+
+    /**
+     * Returns a validated sender Address, or null when none is configured or the
+     * configured value is malformed (in which case the mailer falls back to the
+     * default sender instead of throwing).
+     */
+    private function parseSender(string $senderAddress): ?Address
+    {
+        if ($senderAddress === '') {
+            return null;
+        }
+
+        try {
+            return new Address($senderAddress);
+        } catch (RfcComplianceException $e) {
+            $this->logger->warning('EmailReporter ignoring invalid sender address', [
+                'sender' => $senderAddress,
+                'exception' => $e->getMessage(),
+            ]);
+
+            return null;
         }
     }
 

@@ -68,7 +68,7 @@ trait XliffLanguageServiceFactoryTrait
         $xml = simplexml_load_file($path);
 
         if ($xml === false) {
-            throw new \RuntimeException(sprintf('Unable to read language file "%s".', $path), 1750000000);
+            throw new \RuntimeException(sprintf('Unable to read language file "%s".', $path), 1781782780);
         }
 
         $sources = [];
