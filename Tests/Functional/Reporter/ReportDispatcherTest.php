@@ -24,6 +24,7 @@ use mteu\Monitoring\Configuration\MonitoringConfiguration;
 use mteu\Monitoring\Configuration\Reporter\EmailReporterConfiguration;
 use mteu\Monitoring\Configuration\Reporter\ReportDispatcherConfiguration;
 use mteu\Monitoring\Handler\MonitoringExecutionHandler;
+use mteu\Monitoring\Reporter\DispatchResult;
 use mteu\Monitoring\Reporter\NotificationDecision;
 use mteu\Monitoring\Reporter\ReportDispatcher;
 use mteu\Monitoring\Reporter\Reporter;
@@ -172,11 +173,26 @@ final class ReportDispatcherTest extends MonitoringFunctionalTestCase
         $inactive = new RecordingReporter(ReportThreshold::Always, active: false);
         $provider = new ConfigurableProvider('alpha', healthy: false);
 
-        self::assertSame(
-            NotificationDecision::Unhealthy,
-            $this->dispatch([$provider], [$inactive], 1_000),
-        );
+        $result = $this->dispatchResult([$provider], [$inactive], 1_000);
+
+        self::assertSame(NotificationDecision::Unhealthy, $result->decision);
+        // The decision was to dispatch, but no active reporter delivered it.
+        self::assertFalse($result->delivered);
+        self::assertTrue($result->isUndelivered());
         self::assertSame(0, $inactive->receivedCount());
+    }
+
+    #[Test]
+    public function deliveredFlagIsSetWhenAnActiveReporterDelivers(): void
+    {
+        $reporter = new RecordingReporter(ReportThreshold::Always);
+        $provider = new ConfigurableProvider('alpha', healthy: false);
+
+        $result = $this->dispatchResult([$provider], [$reporter], 1_000);
+
+        self::assertSame(NotificationDecision::Unhealthy, $result->decision);
+        self::assertTrue($result->delivered);
+        self::assertFalse($result->isUndelivered());
     }
 
     #[Test]
@@ -236,6 +252,29 @@ final class ReportDispatcherTest extends MonitoringFunctionalTestCase
         bool $notifyOnRecovery = true,
         bool $failOpenOnMissingState = true,
     ): NotificationDecision {
+        return $this->dispatchResult(
+            $providers,
+            $reporters,
+            $timestamp,
+            $notifyOnRecovery,
+            $failOpenOnMissingState,
+        )->decision;
+    }
+
+    /**
+     * Like {@see self::dispatch()} but exposes the full {@see DispatchResult}
+     * so tests can assert on the delivered flag, not just the decision.
+     *
+     * @param list<ConfigurableProvider> $providers
+     * @param list<Reporter> $reporters
+     */
+    private function dispatchResult(
+        array $providers,
+        array $reporters,
+        int $timestamp,
+        bool $notifyOnRecovery = true,
+        bool $failOpenOnMissingState = true,
+    ): DispatchResult {
         $context = new Context();
         $context->setAspect('date', new DateTimeAspect((new \DateTimeImmutable())->setTimestamp($timestamp)));
 

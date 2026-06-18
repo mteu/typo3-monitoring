@@ -86,7 +86,7 @@ jobs:
       # Upload artifact
       - name: Fix coverage path
         working-directory: .build/coverage
-        run: sed -i 's#/home/runner/work/typo3-typed-extconf/typo3-typed-extconf#${{ github.workspace }}#g' clover.xml
+        run: sed -i "s#${{ github.workspace }}#${{ github.workspace }}#g" clover.xml
       - name: Upload coverage artifact
         uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7
         with:

@@ -367,6 +367,98 @@
                 <source>Name</source>
                 <target>Name</target>
             </trans-unit>
+            <trans-unit id="provider.scheduler.heartbeat.disabled">
+                <source>Scheduler Execution check is disabled. Set threshold in Settings to active.</source>
+                <target>Die Prüfung der Scheduler-Ausführung ist deaktiviert. Setzen Sie einen Schwellenwert in den Einstellungen, um sie zu aktivieren.</target>
+            </trans-unit>
+            <trans-unit id="provider.scheduler.heartbeat.running">
+                <source>A scheduler task is currently running.</source>
+                <target>Aktuell wird eine Scheduler-Aufgabe ausgeführt.</target>
+            </trans-unit>
+            <trans-unit id="provider.scheduler.heartbeat.noRun">
+                <source>No scheduler run has been recorded yet. Verify the cron job is set up.</source>
+                <target>Es wurde noch kein Scheduler-Lauf aufgezeichnet. Prüfen Sie, ob der Cronjob eingerichtet ist.</target>
+            </trans-unit>
+            <trans-unit id="provider.scheduler.heartbeat.stale">
+                <source>Scheduler last ran %s ago (at %s), exceeding the threshold of %d seconds.</source>
+                <target>Der Scheduler lief zuletzt vor %s (am %s) und überschreitet damit den Schwellenwert von %d Sekunden.</target>
+            </trans-unit>
+            <trans-unit id="provider.scheduler.heartbeat.ok">
+                <source>Scheduler last ran at %s.</source>
+                <target>Der Scheduler lief zuletzt am %s.</target>
+            </trans-unit>
+            <trans-unit id="provider.scheduler.failed.none">
+                <source>No task reported an execution failure.</source>
+                <target>Keine Aufgabe hat einen Ausführungsfehler gemeldet.</target>
+            </trans-unit>
+            <trans-unit id="provider.scheduler.failed.singular">
+                <source>%d task reported an execution failure%s</source>
+                <target>%d Aufgabe hat einen Ausführungsfehler gemeldet%s</target>
+            </trans-unit>
+            <trans-unit id="provider.scheduler.failed.plural">
+                <source>%d tasks reported an execution failure%s</source>
+                <target>%d Aufgaben haben einen Ausführungsfehler gemeldet%s</target>
+            </trans-unit>
+            <trans-unit id="provider.scheduler.overdue.disabled">
+                <source>The overdue tasks check is disabled. Set threshold in Settings to activate.</source>
+                <target>Die Prüfung überfälliger Aufgaben ist deaktiviert. Setzen Sie einen Schwellenwert in den Einstellungen, um sie zu aktivieren.</target>
+            </trans-unit>
+            <trans-unit id="provider.scheduler.overdue.none">
+                <source>No task is overdue.</source>
+                <target>Keine Aufgabe ist überfällig.</target>
+            </trans-unit>
+            <trans-unit id="provider.scheduler.overdue.singular">
+                <source>%d task is overdue by more than %d seconds%s</source>
+                <target>%d Aufgabe ist seit mehr als %d Sekunden überfällig%s</target>
+            </trans-unit>
+            <trans-unit id="provider.scheduler.overdue.plural">
+                <source>%d tasks are overdue by more than %d seconds%s</source>
+                <target>%d Aufgaben sind seit mehr als %d Sekunden überfällig%s</target>
+            </trans-unit>
+            <trans-unit id="provider.scheduler.queryFailure">
+                <source>Could not query scheduler tasks: %s</source>
+                <target>Scheduler-Aufgaben konnten nicht abgefragt werden: %s</target>
+            </trans-unit>
+            <trans-unit id="provider.scheduler.unhealthy">
+                <source>One or more scheduler health checks failed. See sub-results for details.</source>
+                <target>Eine oder mehrere Scheduler-Prüfungen sind fehlgeschlagen. Details siehe Teilergebnisse.</target>
+            </trans-unit>
+            <trans-unit id="reporter.email.subject.recovered">
+                <source>All monitored services recovered</source>
+                <target>Alle überwachten Dienste wiederhergestellt</target>
+            </trans-unit>
+            <trans-unit id="reporter.email.subject.reminder">
+                <source>Still unhealthy: %s</source>
+                <target>Weiterhin fehlerhaft: %s</target>
+            </trans-unit>
+            <trans-unit id="reporter.email.subject.unhealthy">
+                <source>Unhealthy: %s</source>
+                <target>Fehlerhaft: %s</target>
+            </trans-unit>
+            <trans-unit id="reporter.email.body.recovered">
+                <source>All monitored services are healthy again.</source>
+                <target>Alle überwachten Dienste sind wieder fehlerfrei.</target>
+            </trans-unit>
+            <trans-unit id="reporter.email.body.reminder">
+                <source>The following services are still reporting an unhealthy state:</source>
+                <target>Die folgenden Dienste melden weiterhin einen fehlerhaften Zustand:</target>
+            </trans-unit>
+            <trans-unit id="reporter.email.body.unhealthy">
+                <source>The following services are reporting an unhealthy state:</source>
+                <target>Die folgenden Dienste melden einen fehlerhaften Zustand:</target>
+            </trans-unit>
+            <trans-unit id="reporter.email.body.line">
+                <source>[%s] %s%s</source>
+                <target>[%s] %s%s</target>
+            </trans-unit>
+            <trans-unit id="reporter.email.status.ok">
+                <source>OK</source>
+                <target>OK</target>
+            </trans-unit>
+            <trans-unit id="reporter.email.status.failed">
+                <source>FAILED</source>
+                <target>FEHLGESCHLAGEN</target>
+            </trans-unit>
         </body>
     </file>
 </xliff>
