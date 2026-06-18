@@ -52,9 +52,22 @@ final class ReportCommand extends Command
     #[\Override]
     protected function execute(InputInterface $input, OutputInterface $output): int
     {
-        $decision = $this->dispatcher->dispatch();
+        $result = $this->dispatcher->dispatch();
 
-        $output->writeln(match ($decision) {
+        // A notification was due but no active reporter delivered it (e.g. the
+        // EmailReporter has no recipient configured).
+        if ($result->isUndelivered()) {
+            $output->writeln(sprintf(
+                '<error>No report dispatched: a %s notification was due but no active reporter '
+                . 'delivered it. Enable and configure at least one reporter '
+                . '(e.g. set an email recipient for the EmailReporter).</error>',
+                strtolower($result->decision->name),
+            ));
+
+            return Command::FAILURE;
+        }
+
+        $output->writeln(match ($result->decision) {
             NotificationDecision::None => 'No notification dispatched.',
             NotificationDecision::Unhealthy => 'Dispatched: unhealthy status.',
             NotificationDecision::Reminder => 'Dispatched: reminder for ongoing unhealthy status.',
