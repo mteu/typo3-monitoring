@@ -21,6 +21,8 @@ use mteu\Monitoring\Configuration\Reporter\EmailReporterConfiguration;
 use Psr\Log\LoggerInterface;
 use Symfony\Component\Mailer\Exception\TransportExceptionInterface;
 use Symfony\Component\Mime\Address;
+use TYPO3\CMS\Core\Localization\LanguageService;
+use TYPO3\CMS\Core\Localization\LanguageServiceFactory;
 use TYPO3\CMS\Core\Mail\MailerInterface;
 use TYPO3\CMS\Core\Mail\MailMessage;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
@@ -37,10 +39,13 @@ use TYPO3\CMS\Core\Utility\GeneralUtility;
  */
 final readonly class EmailReporter implements Reporter
 {
+    private const string LOCALLANG_FILE = 'LLL:EXT:monitoring/Resources/Private/Language/locallang.be.xlf';
+
     public function __construct(
         private EmailReporterConfiguration $configuration,
         private MailerInterface $mailer,
         private LoggerInterface $logger,
+        private LanguageServiceFactory $languageServiceFactory,
     ) {}
 
     public function isActive(): bool
@@ -61,12 +66,14 @@ final readonly class EmailReporter implements Reporter
             return false;
         }
 
+        $languageService = $this->getLanguageService();
+
         try {
             $message = new MailMessage();
             $message
                 ->to(...$recipients)
-                ->subject($this->buildSubject($context))
-                ->text($this->buildBody($context));
+                ->subject($this->buildSubject($context, $languageService))
+                ->text($this->buildBody($context, $languageService));
 
             if ($this->configuration->senderAddress !== '') {
                 $message->from(new Address($this->configuration->senderAddress));
@@ -97,19 +104,21 @@ final readonly class EmailReporter implements Reporter
         return $config->getPriority();
     }
 
-    private function buildSubject(ReportContext $context): string
+    private function buildSubject(ReportContext $context, LanguageService $languageService): string
     {
         $prefix = $this->configuration->subjectPrefix;
         $prefix = $prefix === '' ? '' : $prefix . ' ';
 
         $summary = match ($context->decision) {
-            NotificationDecision::Recovered => 'All monitored services recovered',
-            NotificationDecision::Reminder => sprintf(
-                'Still unhealthy: %s',
+            NotificationDecision::Recovered => $this->translate($languageService, 'reporter.email.subject.recovered'),
+            NotificationDecision::Reminder => $this->translate(
+                $languageService,
+                'reporter.email.subject.reminder',
                 implode(', ', $context->unhealthyProviderNames),
             ),
-            NotificationDecision::Unhealthy, NotificationDecision::None => sprintf(
-                'Unhealthy: %s',
+            NotificationDecision::Unhealthy, NotificationDecision::None => $this->translate(
+                $languageService,
+                'reporter.email.subject.unhealthy',
                 implode(', ', $context->unhealthyProviderNames),
             ),
         };
@@ -117,22 +126,25 @@ final readonly class EmailReporter implements Reporter
         return $prefix . $summary;
     }
 
-    private function buildBody(ReportContext $context): string
+    private function buildBody(ReportContext $context, LanguageService $languageService): string
     {
         $lines = [];
 
         $lines[] = match ($context->decision) {
-            NotificationDecision::Recovered => 'All monitored services are healthy again.',
-            NotificationDecision::Reminder => 'The following services are still reporting an unhealthy state:',
-            NotificationDecision::Unhealthy, NotificationDecision::None => 'The following services are reporting an unhealthy state:',
+            NotificationDecision::Recovered => $this->translate($languageService, 'reporter.email.body.recovered'),
+            NotificationDecision::Reminder => $this->translate($languageService, 'reporter.email.body.reminder'),
+            NotificationDecision::Unhealthy, NotificationDecision::None => $this->translate($languageService, 'reporter.email.body.unhealthy'),
         };
         $lines[] = '';
 
         foreach ($context->results as $result) {
-            $status = $result->isHealthy() ? 'OK' : 'FAILED';
+            $status = $result->isHealthy()
+                ? $this->translate($languageService, 'reporter.email.status.ok')
+                : $this->translate($languageService, 'reporter.email.status.failed');
             $reason = $result->getReason();
-            $lines[] = sprintf(
-                '[%s] %s%s',
+            $lines[] = $this->translate(
+                $languageService,
+                'reporter.email.body.line',
                 $status,
                 $result->getName(),
                 $reason !== null && $reason !== '' ? ' — ' . $reason : '',
@@ -140,5 +152,17 @@ final readonly class EmailReporter implements Reporter
         }
 
         return implode("\n", $lines) . "\n";
+    }
+
+    private function translate(LanguageService $languageService, string $key, int|float|string ...$args): string
+    {
+        $label = $languageService->sL(self::LOCALLANG_FILE . ':' . $key);
+
+        return $args === [] ? $label : sprintf($label, ...$args);
+    }
+
+    private function getLanguageService(): LanguageService
+    {
+        return $this->languageServiceFactory->create('default');
     }
 }
