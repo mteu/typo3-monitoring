@@ -80,9 +80,27 @@ Dispatched: reminder for ongoing unhealthy status.
 Dispatched: recovery notice.
 ```
 
-The command always exits with `0` (`Command::SUCCESS`); whether a notification
-was actually sent depends on the dispatch decision and each reporter's
-threshold.
+#### Return Codes
+
+| Exit Code | Constant           | Meaning                                                             |
+|-----------|--------------------|--------------------------------------------------------------------|
+| 0         | `Command::SUCCESS` | The dispatch decision was handled (nothing due, or delivered)      |
+| 1         | `Command::FAILURE` | A notification was due but no active reporter delivered it         |
+
+A notification can be *due* (the status is unhealthy, a reminder is overdue, or
+a recovery happened) yet remain *undelivered* when no reporter is active — for
+example when the `EmailReporter` has no recipient configured. In that case the
+misconfiguration is reported and the command exits non-zero, e.g.:
+
+```bash
+No report dispatched: An unhealthy notification was due but no active reporter
+delivered it. Enable and configure at least one reporter (e.g. set an email
+recipient for the EmailReporter).
+```
+
+> [!NOTE]
+> The backend Scheduler task (`MonitoringReportTask`) triggers the same dispatch but always reports success to the
+> scheduler. The non-zero exit code is specific to the interactive CLI command.
 
 ## Usage Examples
 

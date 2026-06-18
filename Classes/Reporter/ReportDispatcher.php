@@ -55,7 +55,7 @@ final readonly class ReportDispatcher
         private LoggerInterface $logger,
     ) {}
 
-    public function dispatch(): NotificationDecision
+    public function dispatch(): DispatchResult
     {
         $results = $this->collectResults();
 
@@ -92,7 +92,7 @@ final readonly class ReportDispatcher
 
         $this->persist($healthyNow, $fingerprint, $decision, $anySent, $state, $now);
 
-        return $decision;
+        return new DispatchResult($decision, $anySent);
     }
 
     private function decide(
