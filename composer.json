@@ -28,6 +28,7 @@
 		"typo3fluid/fluid": "^2.15.0 || ^4.3 || ^5.3"
 	},
 	"require-dev": {
+		"ext-simplexml": "*",
 		"composer/class-map-generator": "^1.1",
 		"eliashaeussler/phpunit-attributes": "^2.0",
 		"eliashaeussler/version-bumper": "^4.0",
