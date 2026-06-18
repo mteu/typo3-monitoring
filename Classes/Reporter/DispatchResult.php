@@ -1,0 +1,48 @@
+<?php
+
+declare(strict_types=1);
+
+/*
+ * This file is part of the TYPO3 CMS extension "monitoring".
+ *
+ * It is free software; you can redistribute it and/or modify it under
+ * the terms of the GNU General Public License, either version 2
+ * of the License, or any later version.
+ *
+ * For the full copyright and license information, please read the
+ * LICENSE.txt file that was distributed with this source code.
+ *
+ * The TYPO3 project - inspiring people to share!
+ */
+
+namespace mteu\Monitoring\Reporter;
+
+/**
+ * DispatchResult.
+ *
+ * Outcome of a single {@see ReportDispatcher::dispatch()} run: the dedup state
+ * machine's {@see NotificationDecision} plus whether at least one active
+ * reporter actually delivered the report. The two can diverge — a notification
+ * may be due (`$decision->shouldDispatch()` is true) while no reporter delivers
+ * it because none are active (e.g. the EmailReporter has no recipient
+ * configured). Callers use {@see self::isUndelivered()} to surface that
+ * misconfiguration instead of silently claiming the report was dispatched.
+ *
+ * @author Martin Adler <mteu@mailbox.org>
+ * @license GPL-2.0-or-later
+ */
+final readonly class DispatchResult
+{
+    public function __construct(
+        public NotificationDecision $decision,
+        public bool $delivered,
+    ) {}
+
+    /**
+     * True when a notification was due but no active reporter delivered it.
+     */
+    public function isUndelivered(): bool
+    {
+        return $this->decision->shouldDispatch() && !$this->delivered;
+    }
+}
