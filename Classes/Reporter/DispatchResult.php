@@ -20,14 +20,6 @@ namespace mteu\Monitoring\Reporter;
 /**
  * DispatchResult.
  *
- * Outcome of a single {@see ReportDispatcher::dispatch()} run: the dedup state
- * machine's {@see NotificationDecision} plus whether at least one active
- * reporter actually delivered the report. The two can diverge — a notification
- * may be due (`$decision->shouldDispatch()` is true) while no reporter delivers
- * it because none are active (e.g. the EmailReporter has no recipient
- * configured). Callers use {@see self::isUndelivered()} to surface that
- * misconfiguration instead of silently claiming the report was dispatched.
- *
  * @author Martin Adler <mteu@mailbox.org>
  * @license GPL-2.0-or-later
  */
