@@ -26,6 +26,9 @@ use Psr\Log\LoggerInterface;
 use TYPO3\CMS\Backend\Routing\Exception\RouteNotFoundException;
 use TYPO3\CMS\Backend\Routing\Router;
 use TYPO3\CMS\Backend\Routing\UriBuilder as BackendUriBuilder;
+use TYPO3\CMS\Core\Authentication\BackendUserAuthentication;
+use TYPO3\CMS\Core\Localization\LanguageService;
+use TYPO3\CMS\Core\Localization\LanguageServiceFactory;
 use TYPO3\CMS\Core\Utility\ExtensionManagementUtility;
 
 /**
@@ -52,6 +55,8 @@ final readonly class SchedulerProvider implements MonitoringProvider
 
     private const string SCHEDULER_TABLENAME = 'tx_scheduler_task';
 
+    private const string LOCALLANG_FILE = 'LLL:EXT:monitoring/Resources/Private/Language/locallang.be.xlf';
+
     public function __construct(
         private SchedulerProviderConfiguration $configuration,
         private SchedulerTaskRepository $taskGateway,
@@ -60,6 +65,7 @@ final readonly class SchedulerProvider implements MonitoringProvider
         private LoggerInterface $logger,
         private Router $router,
         private BackendUriBuilder $backendUriBuilder,
+        private LanguageServiceFactory $languageServiceFactory,
     ) {}
 
     public function getName(): string
@@ -94,7 +100,7 @@ final readonly class SchedulerProvider implements MonitoringProvider
         $result->addSubResult($this->checkFailedTasks());
 
         if (!$result->isHealthy()) {
-            $result->setReason('One or more scheduler health checks failed. See sub-results for details.');
+            $result->setReason($this->translate('provider.scheduler.unhealthy'));
         }
 
         return $result;
@@ -103,11 +109,11 @@ final readonly class SchedulerProvider implements MonitoringProvider
     private function checkHeartbeat(): Result
     {
         if (!$this->configuration->isHeartbeatCheckEnabled()) {
-            return new MonitoringResult('Scheduler', true, 'Scheduler Execution check is disabled. Set threshold in Settings to active.');
+            return new MonitoringResult('Scheduler', true, $this->translate('provider.scheduler.heartbeat.disabled'));
         }
 
         if ($this->taskGateway->hasRunningTask()) {
-            return new MonitoringResult('Scheduler', true, 'A scheduler task is currently running.');
+            return new MonitoringResult('Scheduler', true, $this->translate('provider.scheduler.heartbeat.running'));
         }
 
         $lastRun = $this->heartbeat->getLastRunEndTime();
@@ -116,7 +122,7 @@ final readonly class SchedulerProvider implements MonitoringProvider
             return new MonitoringResult(
                 'Scheduler',
                 false,
-                'No scheduler run has been recorded yet. Verify the cron job is set up.',
+                $this->translate('provider.scheduler.heartbeat.noRun'),
             );
         }
 
@@ -126,8 +132,8 @@ final readonly class SchedulerProvider implements MonitoringProvider
             return new MonitoringResult(
                 'Scheduler',
                 false,
-                sprintf(
-                    'Scheduler last ran %s ago (at %s), exceeding the threshold of %d seconds.',
+                $this->translate(
+                    'provider.scheduler.heartbeat.stale',
                     $this->formatAge($age),
                     date(\DateTimeInterface::ATOM, $lastRun),
                     $this->configuration->heartbeatThreshold,
@@ -138,7 +144,7 @@ final readonly class SchedulerProvider implements MonitoringProvider
         return new MonitoringResult(
             'Scheduler',
             true,
-            sprintf('Scheduler last ran at %s.', date(\DateTimeInterface::ATOM, $lastRun)),
+            $this->translate('provider.scheduler.heartbeat.ok', date(\DateTimeInterface::ATOM, $lastRun)),
         );
     }
 
@@ -151,16 +157,15 @@ final readonly class SchedulerProvider implements MonitoringProvider
         }
 
         if ($count === 0) {
-            return new MonitoringResult('Failed Tasks', true, 'No task reported an execution failure.');
+            return new MonitoringResult('Failed Tasks', true, $this->translate('provider.scheduler.failed.none'));
         }
 
         return new MonitoringResult(
             'Failed Tasks',
             false,
-            sprintf(
-                '%d task%s reported an execution failure%s',
+            $this->translate(
+                $count > 1 ? 'provider.scheduler.failed.plural' : 'provider.scheduler.failed.singular',
                 $count,
-                $count > 1 ? 's' : '',
                 $this->renderSampleList($this->safeFailedSample()),
             ),
         );
@@ -169,7 +174,7 @@ final readonly class SchedulerProvider implements MonitoringProvider
     private function checkOverdueTasks(): Result
     {
         if (!$this->configuration->isOverdueCheckEnabled()) {
-            return new MonitoringResult('Overdue Tasks', true, 'Overdue tasks is check disabled. Set threshold in Settings to active.');
+            return new MonitoringResult('Overdue Tasks', true, $this->translate('provider.scheduler.overdue.disabled'));
         }
 
         $overdueBefore = $this->clock->now()->getTimestamp() - $this->configuration->overdueThreshold;
@@ -181,16 +186,15 @@ final readonly class SchedulerProvider implements MonitoringProvider
         }
 
         if ($count === 0) {
-            return new MonitoringResult('Overdue Tasks', true, 'No task is overdue.');
+            return new MonitoringResult('Overdue Tasks', true, $this->translate('provider.scheduler.overdue.none'));
         }
 
         return new MonitoringResult(
             'Overdue Tasks',
             false,
-            sprintf(
-                '%d task%s are overdue by more than %d seconds%s',
+            $this->translate(
+                $count > 1 ? 'provider.scheduler.overdue.plural' : 'provider.scheduler.overdue.singular',
                 $count,
-                $count > 1 ? 's' : '',
                 $this->configuration->overdueThreshold,
                 $this->renderSampleList($this->safeOverdueSample($overdueBefore)),
             ),
@@ -274,10 +278,37 @@ final readonly class SchedulerProvider implements MonitoringProvider
         return new MonitoringResult(
             $name,
             false,
-            'Could not query scheduler tasks: ' . $exception->getMessage(),
+            $this->translate('provider.scheduler.queryFailure', $exception->getMessage()),
         );
     }
 
+    /**
+     * Resolves an operator-facing reason from the backend language file,
+     * filling sprintf placeholders with the given arguments.
+     */
+    private function translate(string $key, int|float|string ...$args): string
+    {
+        $label = $this->getLanguageService()->sL(self::LOCALLANG_FILE . ':' . $key);
+
+        return $args === [] ? $label : sprintf($label, ...$args);
+    }
+
+    private function getLanguageService(): LanguageService
+    {
+        $backendUser = $GLOBALS['BE_USER'] ?? null;
+
+        if ($backendUser instanceof BackendUserAuthentication) {
+            return $this->languageServiceFactory->createFromUserPreferences($backendUser);
+        }
+
+        return $this->languageServiceFactory->createFromUserPreferences(null);
+    }
+
+    /**
+     * Relative-age wording is still assembled in English here; it is slated to
+     * move to a Fluid view helper (see the test's @todo), at which point it
+     * will localize alongside the rest of the module chrome.
+     */
     private function formatAge(int $seconds): string
     {
         $minutes = (int)($seconds / 60);
