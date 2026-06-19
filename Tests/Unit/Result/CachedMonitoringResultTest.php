@@ -20,6 +20,7 @@ namespace mteu\Monitoring\Tests\Unit\Result;
 use mteu\Monitoring\Result\CachedMonitoringResult;
 use mteu\Monitoring\Result\MonitoringResult;
 use mteu\Monitoring\Result\Result;
+use mteu\Monitoring\Result\Status;
 use mteu\Monitoring\Tests\Unit\MonitoringTestCase;
 use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\Attributes\DataProvider;
@@ -48,7 +49,7 @@ final class CachedMonitoringResultTest extends MonitoringTestCase
     #[Test]
     public function constructorInitializesPropertiesCorrectly(): void
     {
-        $result = new MonitoringResult('service', true, 'All good');
+        $result = new MonitoringResult('service', Status::Healthy, 'All good');
         $cachedAt = new \DateTimeImmutable('2023-01-01 12:00:00');
         $lifetime = 600;
 
@@ -65,7 +66,7 @@ final class CachedMonitoringResultTest extends MonitoringTestCase
         int $lifetime,
         \DateTimeImmutable $expectedExpiration
     ): void {
-        $result = new MonitoringResult('test', true);
+        $result = new MonitoringResult('test', Status::Healthy);
         $cached = new CachedMonitoringResult($result, $cachedAt, $lifetime);
 
         $actualExpiration = $cached->getExpiresAt();
@@ -80,7 +81,7 @@ final class CachedMonitoringResultTest extends MonitoringTestCase
         int $lifetime,
         bool $expectedExpired
     ): void {
-        $result = new MonitoringResult('test', true);
+        $result = new MonitoringResult('test', Status::Healthy);
         $cached = new CachedMonitoringResult($result, $cachedAt, $lifetime);
 
         self::assertSame($expectedExpired, $cached->isExpired());
@@ -97,7 +98,7 @@ final class CachedMonitoringResultTest extends MonitoringTestCase
         ?string $reason,
         array $subResults
     ): void {
-        $result = new MonitoringResult($name, $isHealthy, $reason);
+        $result = new MonitoringResult($name, $isHealthy ? Status::Healthy : Status::Unhealthy, $reason);
         foreach ($subResults as $subResult) {
             $result->addSubResult($subResult);
         }
@@ -123,7 +124,7 @@ final class CachedMonitoringResultTest extends MonitoringTestCase
         ?string $reason,
         array $subResults
     ): void {
-        $result = new MonitoringResult($name, $isHealthy, $reason);
+        $result = new MonitoringResult($name, $isHealthy ? Status::Healthy : Status::Unhealthy, $reason);
         foreach ($subResults as $subResult) {
             $result->addSubResult($subResult);
         }
@@ -133,7 +134,7 @@ final class CachedMonitoringResultTest extends MonitoringTestCase
         /**
          * @var array{
          *      name: string,
-         *      isHealthy: bool,
+         *      status: string,
          *      description: string|null,
          *      subResults?: array<int, mixed>
          *  } $array
@@ -143,7 +144,7 @@ final class CachedMonitoringResultTest extends MonitoringTestCase
 
         self::assertSame($array, $json, 'Both methods should return identical results');
         self::assertArrayHasKey('name', $array);
-        self::assertArrayHasKey('isHealthy', $array);
+        self::assertArrayHasKey('status', $array);
         self::assertArrayHasKey('description', $array);
         self::assertSame($name, $array['name']);
         self::assertSame($reason, $array['description']);
@@ -157,7 +158,7 @@ final class CachedMonitoringResultTest extends MonitoringTestCase
     #[Test]
     public function normalizesCachedTimeToServerTimezone(): void
     {
-        $result = new MonitoringResult('test', true);
+        $result = new MonitoringResult('test', Status::Healthy);
 
         $utcTime = new \DateTimeImmutable('2023-01-01 12:00:00', new \DateTimeZone('UTC'));
         $cached = new CachedMonitoringResult($result, $utcTime, 3600);
@@ -268,7 +269,7 @@ final class CachedMonitoringResultTest extends MonitoringTestCase
             'complex-check',
             true,
             'Main service healthy',
-            [new MonitoringResult('sub-check', true, 'Sub-service OK')],
+            [new MonitoringResult('sub-check', Status::Healthy, 'Sub-service OK')],
         ];
 
         yield 'result with multiple sub-results' => [
@@ -276,9 +277,9 @@ final class CachedMonitoringResultTest extends MonitoringTestCase
             false,
             'Some services failing',
             [
-                new MonitoringResult('db-check', true, 'Database OK'),
-                new MonitoringResult('cache-check', false, 'Cache unavailable'),
-                new MonitoringResult('api-check', true, 'API responding'),
+                new MonitoringResult('db-check', Status::Healthy, 'Database OK'),
+                new MonitoringResult('cache-check', Status::Unhealthy, 'Cache unavailable'),
+                new MonitoringResult('api-check', Status::Healthy, 'API responding'),
             ],
         ];
     }
@@ -300,8 +301,8 @@ final class CachedMonitoringResultTest extends MonitoringTestCase
             false,
             'Parent service degraded',
             [
-                new MonitoringResult('child-1', true, 'Child 1 OK'),
-                new MonitoringResult('child-2', false, 'Child 2 failed'),
+                new MonitoringResult('child-1', Status::Healthy, 'Child 1 OK'),
+                new MonitoringResult('child-2', Status::Unhealthy, 'Child 2 failed'),
             ],
         ];
 

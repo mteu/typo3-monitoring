@@ -58,15 +58,15 @@ expected runtime of your longest scheduled task.
 
 ```json
 {
-  "isHealthy": false,
+  "status": "unhealthy",
   "services": {
     ...
     "Scheduler": {
       "status": "unhealthy",
       "subResults": {
-        "Scheduler Execution": "healthy",
-        "Overdue Tasks": "healthy",
-        "Failed Tasks": "unhealthy"
+        "Scheduler Execution": { "status": "healthy" },
+        "Overdue Tasks": { "status": "healthy" },
+        "Failed Tasks": { "status": "unhealthy" }
       }
     },
     ...

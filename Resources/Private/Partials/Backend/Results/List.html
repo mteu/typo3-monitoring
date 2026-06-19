@@ -1,6 +1,7 @@
 <html
     data-namespace-typo3-fluid="true"
     xmlns:f="http://typo3.org/ns/TYPO3/CMS/Fluid/ViewHelpers"
+    xmlns:monitoring="http://typo3.org/ns/mteu/Monitoring/ViewHelper/Backend"
 >
 
     <f:layout name="Module" />
@@ -18,11 +19,8 @@
                 <tr>
                     <td>{detail.name}</td>
                     <td>
-                        <span class="badge badge-{f:if(condition: detail.isHealthy, then: 'success', else: 'danger')}">
-                            <f:if condition="{detail.isHealthy}">
-                                <f:then><f:translate key="LLL:EXT:monitoring/Resources/Private/Language/locallang.be.xlf:status.healthy" /></f:then>
-                                <f:else><f:translate key="LLL:EXT:monitoring/Resources/Private/Language/locallang.be.xlf:status.unhealthy" /></f:else>
-                            </f:if>
+                        <span class="badge badge-{detail.statusValue -> monitoring:statusContext()}">
+                            <f:translate key="LLL:EXT:monitoring/Resources/Private/Language/locallang.be.xlf:status.{detail.statusValue}" />
                         </span>
                     </td>
                     <td>

@@ -12,6 +12,7 @@ namespace My\Extension\Provider;
 
 use mteu\Monitoring\Provider\MonitoringProvider;
 use mteu\Monitoring\Result\MonitoringResult;
+use mteu\Monitoring\Result\Status;
 use Symfony\Component\DependencyInjection\Attribute\AutoconfigureTag;
 
 #[AutoconfigureTag('monitoring.provider')]
@@ -49,20 +50,29 @@ final class MyServiceProvider implements MonitoringProvider
     public function execute(): Result
     {
         try {
-            $isHealthy = $this->checkService();
-            return new MonitoringResult($this->getName(), $isHealthy);
+            return new MonitoringResult($this->getName(), Status::Healthy);
         } catch (\Exception $e) {
-            return new MonitoringResult($this->getName(), false, $e->getMessage());
+            return new MonitoringResult($this->getName(), Status::Unhealthy, $e->getMessage());
         }
-    }
-
-    private function checkService(): bool
-    {
-        // Your monitoring logic
-        return true;
     }
 }
 ```
+
+### Reporting a status
+
+`MonitoringResult` takes a `mteu\Monitoring\Result\Status` — one of
+`Status::Healthy`, `Status::Unhealthy`, or `Status::Degraded`:
+
+```php
+use mteu\Monitoring\Result\Status;
+
+return new MonitoringResult($this->getName(), Status::Degraded, 'Cache hit rate is low');
+```
+
+A `degraded` result keeps the endpoint at HTTP 200 (it is not an outage) but is
+surfaced distinctly in the JSON response and the backend module. When a result
+has sub-results, its overall status is aggregated automatically as the worst of
+its own status and all sub-statuses.
 
 ## Advanced Features
 
@@ -113,6 +123,7 @@ namespace My\Extension\Provider;
 
 use mteu\Monitoring\Provider\MonitoringProvider;
 use mteu\Monitoring\Result\MonitoringResult;
+use mteu\Monitoring\Result\Status;
 use mteu\Monitoring\Result\Result;
 use Symfony\Component\DependencyInjection\Attribute\AutoconfigureTag;
 use TYPO3\CMS\Core\Database\ConnectionPool;
@@ -158,12 +169,12 @@ final class DatabaseConnectionProvider implements MonitoringProvider
 
             return new MonitoringResult(
                 name: $this->getName(),
-                isHealthy: true,
+                status: Status::Healthy,
             );
         } catch (\Exception $e) {
             return new MonitoringResult(
                 name: $this->getName(),
-                isHealthy: false,
+                status: Status::Unhealthy,
                 reason: 'Database connection failed: ' . $e->getMessage()
             );
         }
@@ -183,6 +194,7 @@ namespace My\Extension\Provider;
 
 use mteu\Monitoring\Provider\MonitoringProvider;
 use mteu\Monitoring\Result\MonitoringResult;
+use mteu\Monitoring\Result\Status;
 use mteu\Monitoring\Result\Result;
 use Symfony\Component\DependencyInjection\Attribute\AutoconfigureTag;
 
@@ -219,17 +231,11 @@ final class MultiComponentProvider implements MonitoringProvider
         // Check component B
         $subResults[] = $this->checkComponentB();
 
-        // Overall health is true if all sub-components are healthy
-        $isHealthy = array_reduce(
-            $subResults,
-            fn(bool $carry, Result $result): bool => $carry &&
-                $result->isHealthy(),
-            true
-        );
-
+        // The parent status is aggregated from the sub-results automatically
+        // (the worst sub-status wins), so the parent can simply start healthy.
         return new MonitoringResult(
             name: $this->getName(),
-            isHealthy: $isHealthy,
+            status: Status::Healthy,
             subResults: $subResults
         );
     }
@@ -237,13 +243,13 @@ final class MultiComponentProvider implements MonitoringProvider
     private function checkComponentA(): MonitoringResult
     {
         // Check component A logic
-        return new MonitoringResult('ComponentA', true);
+        return new MonitoringResult('ComponentA', Status::Healthy);
     }
 
     private function checkComponentB(): MonitoringResult
     {
         // Check component B logic
-        return new MonitoringResult('ComponentB', true);
+        return new MonitoringResult('ComponentB', Status::Healthy);
     }
 }
 ```
