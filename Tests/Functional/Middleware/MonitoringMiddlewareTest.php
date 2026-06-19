@@ -65,7 +65,7 @@ final class MonitoringMiddlewareTest extends MonitoringFunctionalTestCase
         self::assertSame(200, $response->getStatusCode());
         self::assertSame(
             [
-                'isHealthy' => true,
+                'status' => 'healthy',
                 'services' => ['test-provider' => ['status' => 'healthy']],
             ],
             json_decode((string)$response->getBody(), true),
@@ -87,7 +87,7 @@ final class MonitoringMiddlewareTest extends MonitoringFunctionalTestCase
         self::assertSame(503, $response->getStatusCode());
         self::assertSame(
             [
-                'isHealthy' => false,
+                'status' => 'unhealthy',
                 'services' => ['test-provider' => ['status' => 'unhealthy']],
             ],
             json_decode((string)$response->getBody(), true),

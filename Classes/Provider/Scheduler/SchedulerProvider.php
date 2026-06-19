@@ -21,6 +21,7 @@ use mteu\Monitoring\Configuration\Provider\SchedulerProviderConfiguration;
 use mteu\Monitoring\Provider\MonitoringProvider;
 use mteu\Monitoring\Result\MonitoringResult;
 use mteu\Monitoring\Result\Result;
+use mteu\Monitoring\Result\Status;
 use Psr\Clock\ClockInterface;
 use Psr\Log\LoggerInterface;
 use TYPO3\CMS\Backend\Routing\Exception\RouteNotFoundException;
@@ -93,7 +94,7 @@ final readonly class SchedulerProvider implements MonitoringProvider
 
     public function execute(): Result
     {
-        $result = new MonitoringResult($this->getName(), true);
+        $result = new MonitoringResult($this->getName(), Status::Healthy);
 
         $result->addSubResult($this->checkHeartbeat());
         $result->addSubResult($this->checkOverdueTasks());
@@ -109,11 +110,11 @@ final readonly class SchedulerProvider implements MonitoringProvider
     private function checkHeartbeat(): Result
     {
         if (!$this->configuration->isHeartbeatCheckEnabled()) {
-            return new MonitoringResult('Scheduler', true, $this->translate('provider.scheduler.heartbeat.disabled'));
+            return new MonitoringResult('Scheduler', Status::Healthy, $this->translate('provider.scheduler.heartbeat.disabled'));
         }
 
         if ($this->taskGateway->hasRunningTask()) {
-            return new MonitoringResult('Scheduler', true, $this->translate('provider.scheduler.heartbeat.running'));
+            return new MonitoringResult('Scheduler', Status::Healthy, $this->translate('provider.scheduler.heartbeat.running'));
         }
 
         $lastRun = $this->heartbeat->getLastRunEndTime();
@@ -121,7 +122,7 @@ final readonly class SchedulerProvider implements MonitoringProvider
         if ($lastRun === null) {
             return new MonitoringResult(
                 'Scheduler',
-                false,
+                Status::Unhealthy,
                 $this->translate('provider.scheduler.heartbeat.noRun'),
             );
         }
@@ -131,7 +132,7 @@ final readonly class SchedulerProvider implements MonitoringProvider
         if ($age > $this->configuration->heartbeatThreshold) {
             return new MonitoringResult(
                 'Scheduler',
-                false,
+                Status::Unhealthy,
                 $this->translate(
                     'provider.scheduler.heartbeat.stale',
                     $this->formatAge($age),
@@ -143,7 +144,7 @@ final readonly class SchedulerProvider implements MonitoringProvider
 
         return new MonitoringResult(
             'Scheduler',
-            true,
+            Status::Healthy,
             $this->translate('provider.scheduler.heartbeat.ok', date(\DateTimeInterface::ATOM, $lastRun)),
         );
     }
@@ -157,12 +158,12 @@ final readonly class SchedulerProvider implements MonitoringProvider
         }
 
         if ($count === 0) {
-            return new MonitoringResult('Failed Tasks', true, $this->translate('provider.scheduler.failed.none'));
+            return new MonitoringResult('Failed Tasks', Status::Healthy, $this->translate('provider.scheduler.failed.none'));
         }
 
         return new MonitoringResult(
             'Failed Tasks',
-            false,
+            Status::Unhealthy,
             $this->translate(
                 $count > 1 ? 'provider.scheduler.failed.plural' : 'provider.scheduler.failed.singular',
                 $count,
@@ -174,7 +175,7 @@ final readonly class SchedulerProvider implements MonitoringProvider
     private function checkOverdueTasks(): Result
     {
         if (!$this->configuration->isOverdueCheckEnabled()) {
-            return new MonitoringResult('Overdue Tasks', true, $this->translate('provider.scheduler.overdue.disabled'));
+            return new MonitoringResult('Overdue Tasks', Status::Healthy, $this->translate('provider.scheduler.overdue.disabled'));
         }
 
         $overdueBefore = $this->clock->now()->getTimestamp() - $this->configuration->overdueThreshold;
@@ -186,12 +187,12 @@ final readonly class SchedulerProvider implements MonitoringProvider
         }
 
         if ($count === 0) {
-            return new MonitoringResult('Overdue Tasks', true, $this->translate('provider.scheduler.overdue.none'));
+            return new MonitoringResult('Overdue Tasks', Status::Healthy, $this->translate('provider.scheduler.overdue.none'));
         }
 
         return new MonitoringResult(
             'Overdue Tasks',
-            false,
+            Status::Unhealthy,
             $this->translate(
                 $count > 1 ? 'provider.scheduler.overdue.plural' : 'provider.scheduler.overdue.singular',
                 $count,
@@ -277,7 +278,7 @@ final readonly class SchedulerProvider implements MonitoringProvider
 
         return new MonitoringResult(
             $name,
-            false,
+            Status::Unhealthy,
             $this->translate('provider.scheduler.queryFailure', $exception->getMessage()),
         );
     }

@@ -21,6 +21,7 @@ use mteu\Monitoring\Cache\MonitoringCacheManager;
 use mteu\Monitoring\Handler\MonitoringExecutionHandler;
 use mteu\Monitoring\Handler\ProviderExecutionOutcome;
 use mteu\Monitoring\Result\MonitoringResult;
+use mteu\Monitoring\Result\Status;
 use mteu\Monitoring\Tests\Functional\Fixtures\CacheableProvider;
 use mteu\Monitoring\Tests\Functional\Fixtures\NonCacheableProvider;
 use mteu\Monitoring\Tests\Functional\Fixtures\ShortCacheProvider;
@@ -237,7 +238,7 @@ final class MonitoringExecutionHandlerTest extends MonitoringFunctionalTestCase
         $result = $monitoringCacheManager->getCachedResult('test-key');
         self::assertNull($result, 'Should return null when cache backend is missing');
 
-        $success = $monitoringCacheManager->setCachedResult('test-key', new MonitoringResult('test', true));
+        $success = $monitoringCacheManager->setCachedResult('test-key', new MonitoringResult('test', Status::Healthy));
         self::assertFalse($success, 'Should return false when cache backend is missing');
     }
 }

@@ -23,6 +23,7 @@ use mteu\Monitoring\Reporter\NotificationDecision;
 use mteu\Monitoring\Reporter\ReportContext;
 use mteu\Monitoring\Reporter\ReportThreshold;
 use mteu\Monitoring\Result\MonitoringResult;
+use mteu\Monitoring\Result\Status;
 use mteu\Monitoring\Tests\Unit\Fixtures\Language\XliffLanguageServiceFactoryTrait;
 use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\Attributes\Test;
@@ -92,7 +93,7 @@ final class EmailReporterTest extends TestCase
 
         $context = new ReportContext(
             NotificationDecision::Unhealthy,
-            ['db' => new MonitoringResult('db', false)],
+            ['db' => new MonitoringResult('db', Status::Unhealthy)],
             ['db'],
             'fp',
         );
@@ -151,8 +152,8 @@ final class EmailReporterTest extends TestCase
         $context = new ReportContext(
             NotificationDecision::Unhealthy,
             [
-                'db' => new MonitoringResult('db', false),
-                'scheduler' => new MonitoringResult('scheduler', false),
+                'db' => new MonitoringResult('db', Status::Unhealthy),
+                'scheduler' => new MonitoringResult('scheduler', Status::Unhealthy),
             ],
             ['db', 'scheduler'],
             'fp',
@@ -191,7 +192,7 @@ final class EmailReporterTest extends TestCase
 
         $context = new ReportContext(
             NotificationDecision::Reminder,
-            ['db' => new MonitoringResult('db', false, 'Connection refused')],
+            ['db' => new MonitoringResult('db', Status::Unhealthy, 'Connection refused')],
             ['db'],
             'fp',
         );
@@ -220,8 +221,8 @@ final class EmailReporterTest extends TestCase
         $context = new ReportContext(
             NotificationDecision::Recovered,
             [
-                'db' => new MonitoringResult('db', true),
-                'scheduler' => new MonitoringResult('scheduler', true),
+                'db' => new MonitoringResult('db', Status::Healthy),
+                'scheduler' => new MonitoringResult('scheduler', Status::Healthy),
             ],
             [],
             null,
@@ -252,8 +253,8 @@ final class EmailReporterTest extends TestCase
         $context = new ReportContext(
             NotificationDecision::Unhealthy,
             [
-                'db' => new MonitoringResult('db', false),
-                'cache' => new MonitoringResult('cache', false, 'Backend gone'),
+                'db' => new MonitoringResult('db', Status::Unhealthy),
+                'cache' => new MonitoringResult('cache', Status::Unhealthy, 'Backend gone'),
             ],
             ['cache', 'db'],
             'fp',
@@ -396,7 +397,7 @@ final class EmailReporterTest extends TestCase
     {
         return new ReportContext(
             NotificationDecision::Unhealthy,
-            ['db' => new MonitoringResult('db', false)],
+            ['db' => new MonitoringResult('db', Status::Unhealthy)],
             ['db'],
             'fp',
         );

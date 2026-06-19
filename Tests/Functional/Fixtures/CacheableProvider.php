@@ -20,6 +20,7 @@ namespace mteu\Monitoring\Tests\Functional\Fixtures;
 use mteu\Monitoring\Provider\CacheableMonitoringProvider;
 use mteu\Monitoring\Result\MonitoringResult;
 use mteu\Monitoring\Result\Result;
+use mteu\Monitoring\Result\Status;
 
 /**
  * CacheableProvider.
@@ -59,7 +60,7 @@ final class CacheableProvider implements CacheableMonitoringProvider
     public function execute(): Result
     {
         $this->executionCount++;
-        return new MonitoringResult($this->identifier, true);
+        return new MonitoringResult($this->identifier, Status::Healthy);
     }
 
     public function getCacheKey(): string

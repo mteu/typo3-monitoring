@@ -25,6 +25,7 @@ use mteu\Monitoring\Configuration\Reporter\EmailReporterConfiguration;
 use mteu\Monitoring\Configuration\Reporter\ReportDispatcherConfiguration;
 use mteu\Monitoring\Result\CachedMonitoringResult;
 use mteu\Monitoring\Result\MonitoringResult;
+use mteu\Monitoring\Result\Status;
 use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\Attributes\Test;
@@ -105,14 +106,14 @@ final class MonitoringCacheManagerTest extends TestCase
 
         $monitoringCacheManager = new MonitoringCacheManager($cacheManager);
 
-        self::assertFalse($monitoringCacheManager->setCachedResult('key', new MonitoringResult('test', true)));
+        self::assertFalse($monitoringCacheManager->setCachedResult('key', new MonitoringResult('test', Status::Healthy)));
     }
 
     #[Test]
     public function getCachedResultEvictsExpiredEntryAndReturnsNull(): void
     {
         $expired = new CachedMonitoringResult(
-            new MonitoringResult('test', true),
+            new MonitoringResult('test', Status::Healthy),
             new \DateTimeImmutable('-20 minutes'),
             900,
         );

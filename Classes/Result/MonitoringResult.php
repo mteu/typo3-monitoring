@@ -32,7 +32,7 @@ final class MonitoringResult implements Result
      */
     public function __construct(
         private readonly string $name,
-        private bool $isHealthy,
+        private Status $status,
         private ?string $reason = null,
         private array $subResults = [],
     ) {}
@@ -42,19 +42,27 @@ final class MonitoringResult implements Result
         return $this->name;
     }
 
+    /**
+     * The effective status: the worst of this result's own status and every
+     * sub-result's status.
+     */
+    public function getStatus(): Status
+    {
+        if ($this->subResults === []) {
+            return $this->status;
+        }
+
+        $statuses = [$this->status];
+        foreach ($this->subResults as $subResult) {
+            $statuses[] = $subResult->getStatus();
+        }
+
+        return Status::worst(...$statuses);
+    }
+
     public function isHealthy(): bool
     {
-        if ($this->isHealthy ===  false || $this->hasSubResults() === false) {
-            return $this->isHealthy;
-        }
-
-        foreach ($this->subResults as $subResult) {
-            if ($subResult->isHealthy() === false) {
-                return false;
-            }
-        }
-
-        return true;
+        return $this->getStatus() !== Status::Unhealthy;
     }
 
     /**
@@ -65,9 +73,17 @@ final class MonitoringResult implements Result
         return $this->isHealthy();
     }
 
-    public function setHealthy(bool $isHealthy): Result
+    /**
+     * Fluid-friendly accessor returning the backing string of {@see getStatus()}.
+     */
+    public function getStatusValue(): string
     {
-        $this->isHealthy = $isHealthy;
+        return $this->getStatus()->value;
+    }
+
+    public function setStatus(Status $status): Result
+    {
+        $this->status = $status;
 
         return $this;
     }
@@ -107,16 +123,16 @@ final class MonitoringResult implements Result
     /**
      * @return array{
      *     name: string,
-     *     isHealthy: bool,
+     *     status: string,
      *     description: string|null,
-     *     subResults?: array<int, array{name: string, isHealthy: bool, description: string|null}>
+     *     subResults?: array<int, array{name: string, status: string, description: string|null}>
      * }
      */
     public function toArray(): array
     {
         $array = [
             'name' => $this->name,
-            'isHealthy' => $this->isHealthy(),
+            'status' => $this->getStatus()->value,
             'description' => $this->reason,
         ];
 
@@ -133,9 +149,9 @@ final class MonitoringResult implements Result
     /**
      * @return array{
      *     name: string,
-     *     isHealthy: bool,
+     *     status: string,
      *     description: string|null,
-     *     subResults?: array<int, array{name: string, isHealthy: bool, description: string|null}>}
+     *     subResults?: array<int, array{name: string, status: string, description: string|null}>}
      */
     public function jsonSerialize(): array
     {

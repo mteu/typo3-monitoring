@@ -104,6 +104,7 @@ final readonly class MonitoringController extends AbstractSubModuleController
      *     isActive: bool,
      *     isEnabled: bool,
      *     isHealthy?: bool,
+     *     status?: string,
      *     description: string,
      *     cacheLifetime?: int,
      *     subResults?: array<\mteu\Monitoring\Result\Result>,
@@ -132,6 +133,7 @@ final readonly class MonitoringController extends AbstractSubModuleController
 
             $result = $this->executionHandler->executeProvider($monitoringProvider);
             $providerTemplateVariables[$monitoringProvider::class]['isHealthy'] = $result->isHealthy();
+            $providerTemplateVariables[$monitoringProvider::class]['status'] = $result->getStatus()->value;
 
             if ($result->hasSubResults()) {
                 $providerTemplateVariables[$monitoringProvider::class]['subResults'] = $result->getSubResults();

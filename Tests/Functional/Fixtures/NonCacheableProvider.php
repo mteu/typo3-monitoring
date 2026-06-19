@@ -20,6 +20,7 @@ namespace mteu\Monitoring\Tests\Functional\Fixtures;
 use mteu\Monitoring\Provider\MonitoringProvider;
 use mteu\Monitoring\Result\MonitoringResult;
 use mteu\Monitoring\Result\Result;
+use mteu\Monitoring\Result\Status;
 
 /**
  * NonCacheableProvider.
@@ -54,7 +55,7 @@ final class NonCacheableProvider implements MonitoringProvider
     public function execute(): Result
     {
         $this->executionCount++;
-        return new MonitoringResult('test-non-cacheable-provider', true);
+        return new MonitoringResult('test-non-cacheable-provider', Status::Healthy);
     }
 
     public function getExecutionCount(): int

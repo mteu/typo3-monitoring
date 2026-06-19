@@ -21,13 +21,26 @@ Access while logged in as TYPO3 backend administrator.
 
 ## Responses
 
-Each service maps to an object with its overall `status`. Providers that report
-sub-results additionally list the status of each sub-result under `subResults`.
+The top level reports the overall `status`. Each service maps to an object with
+its own `status`, and providers that report sub-results list each sub-result as
+a nested object under `subResults` — the structure is uniform at every level.
+
+`status` is one of `healthy`, `degraded`, or `unhealthy`:
+
+| `status`    | HTTP | Meaning                                              |
+|-------------|------|------------------------------------------------------|
+| `healthy`   | 200  | Everything is operating normally.                    |
+| `degraded`  | 200  | Operational, but something warrants attention.       |
+| `unhealthy` | 503  | At least one service is failing.                     |
+
+The overall `status` is the worst status across all reported services; a single
+`unhealthy` service makes the whole response `unhealthy` (HTTP 503), while a
+`degraded` service keeps the endpoint at HTTP 200.
 
 ### Success (200 OK)
 ```json
 {
-    "isHealthy": true,
+    "status": "healthy",
     "services": {
         "SuccessfulService": {
             "status": "healthy"
@@ -35,8 +48,27 @@ sub-results additionally list the status of each sub-result under `subResults`.
         "AnotherService": {
             "status": "healthy",
             "subResults": {
-                "SubCheck A": "healthy",
-                "SubCheck B": "healthy"
+                "SubCheck A": { "status": "healthy" },
+                "SubCheck B": { "status": "healthy" }
+            }
+        }
+    }
+}
+```
+
+### Degraded (200 OK)
+```json
+{
+    "status": "degraded",
+    "services": {
+        "SuccessfulService": {
+            "status": "healthy"
+        },
+        "AttentionService": {
+            "status": "degraded",
+            "subResults": {
+                "SubCheck A": { "status": "healthy" },
+                "SubCheck B": { "status": "degraded" }
             }
         }
     }
@@ -46,7 +78,7 @@ sub-results additionally list the status of each sub-result under `subResults`.
 ### Unhealthy (503 Service Unavailable)
 ```json
 {
-    "isHealthy": false,
+    "status": "unhealthy",
     "services": {
         "SuccessfulService": {
             "status": "healthy"
@@ -54,12 +86,19 @@ sub-results additionally list the status of each sub-result under `subResults`.
         "FailingService": {
             "status": "unhealthy",
             "subResults": {
-                "SubCheck A": "healthy",
-                "SubCheck B": "unhealthy"
+                "SubCheck A": { "status": "healthy" },
+                "SubCheck B": { "status": "unhealthy" }
             }
         }
     }
 }
+```
+
+When `api.includeServicesHealth` is disabled, only the overall status is
+returned:
+
+```json
+{ "status": "healthy" }
 ```
 
 ### Error Responses
@@ -100,7 +139,7 @@ sub-results additionally list the status of each sub-result under `subResults`.
 
 | Code | Meaning             | Description                        |
 |------|---------------------|------------------------------------|
-| 200  | OK                  | All services healthy               |
+| 200  | OK                  | All services healthy or degraded   |
 | 401  | Unauthorized        | Authentication failed              |
 | 403  | Forbidden           | HTTPS required                     |
 | 404  | Not Found           | Endpoint not configured            |

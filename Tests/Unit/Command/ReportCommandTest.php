@@ -32,6 +32,7 @@ use mteu\Monitoring\Reporter\ReportDispatcher;
 use mteu\Monitoring\Reporter\Reporter;
 use mteu\Monitoring\Reporter\ReportThreshold;
 use mteu\Monitoring\Result\MonitoringResult;
+use mteu\Monitoring\Result\Status;
 use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\TestCase;
@@ -272,7 +273,7 @@ final class ReportCommandTest extends TestCase
 
             public function execute(): MonitoringResult
             {
-                return new MonitoringResult($this->name, $this->healthy);
+                return new MonitoringResult($this->name, $this->healthy ? Status::Healthy : Status::Unhealthy);
             }
         };
     }
