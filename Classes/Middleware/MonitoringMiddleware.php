@@ -30,6 +30,7 @@ use Psr\Http\Server\MiddlewareInterface;
 use Psr\Http\Server\RequestHandlerInterface;
 use Psr\Log\LoggerInterface;
 use Symfony\Component\DependencyInjection\Attribute\AutowireIterator;
+use Symfony\Component\HttpFoundation\Response;
 use TYPO3\CMS\Core\Http\NormalizedParams;
 
 /**
@@ -75,10 +76,10 @@ final readonly class MonitoringMiddleware implements MiddlewareInterface
             try {
                 return $this->jsonResponse(
                     [
-                        'code' => 405,
+                        'code' => Response::HTTP_METHOD_NOT_ALLOWED,
                         'error' => 'method-not-allowed',
                     ],
-                    405,
+                    Response::HTTP_METHOD_NOT_ALLOWED,
                     $writeBody,
                 )->withHeader('Allow', implode(', ', self::ALLOWED_METHODS));
             } catch (\JsonException $e) {
@@ -91,10 +92,10 @@ final readonly class MonitoringMiddleware implements MiddlewareInterface
             try {
                 return $this->jsonResponse(
                     [
-                        'code' => 403,
+                        'code' => Response::HTTP_FORBIDDEN,
                         'error' => 'unsupported-protocol',
                     ],
-                    403,
+                    Response::HTTP_FORBIDDEN,
                     $writeBody,
                 );
             } catch (\JsonException $e) {
@@ -107,10 +108,10 @@ final readonly class MonitoringMiddleware implements MiddlewareInterface
             try {
                 return $this->jsonResponse(
                     [
-                        'code' => 401,
+                        'code' => Response::HTTP_UNAUTHORIZED,
                         'error' => 'unauthorized',
                     ],
-                    401,
+                    Response::HTTP_UNAUTHORIZED,
                     $writeBody,
                 );
             } catch (\JsonException $e) {
@@ -133,7 +134,7 @@ final readonly class MonitoringMiddleware implements MiddlewareInterface
 
             return $this->jsonResponse(
                 $responseArray,
-                $overallStatus === Status::Unhealthy ? 503 : 200,
+                $overallStatus === Status::Unhealthy ? Response::HTTP_SERVICE_UNAVAILABLE : Response::HTTP_OK,
                 $writeBody,
             );
         } catch (\JsonException $e) {
@@ -247,7 +248,7 @@ final readonly class MonitoringMiddleware implements MiddlewareInterface
      * } $data
      * @throws \JsonException
      */
-    private function jsonResponse(array $data, int $statusCode = 200, bool $writeBody = true): ResponseInterface
+    private function jsonResponse(array $data, int $statusCode = Response::HTTP_OK, bool $writeBody = true): ResponseInterface
     {
         $response = $this->responseFactory
             ->createResponse()
