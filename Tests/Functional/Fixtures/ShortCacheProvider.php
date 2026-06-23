@@ -20,6 +20,7 @@ namespace mteu\Monitoring\Tests\Functional\Fixtures;
 use mteu\Monitoring\Provider\CacheableMonitoringProvider;
 use mteu\Monitoring\Result\MonitoringResult;
 use mteu\Monitoring\Result\Result;
+use mteu\Monitoring\Result\Status;
 
 /**
  * ShortCacheProvider.
@@ -57,7 +58,7 @@ final class ShortCacheProvider implements CacheableMonitoringProvider
     public function execute(): Result
     {
         $this->executionCount++;
-        return new MonitoringResult('test-short-cache-provider', true);
+        return new MonitoringResult('test-short-cache-provider', Status::Healthy);
     }
 
     public function getCacheKey(): string

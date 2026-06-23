@@ -261,6 +261,9 @@
             <trans-unit id="status.disabled">
                 <source>disabled</source>
             </trans-unit>
+            <trans-unit id="status.degraded">
+                <source>degraded</source>
+            </trans-unit>
             <trans-unit id="status.healthy">
                 <source>healthy</source>
             </trans-unit>

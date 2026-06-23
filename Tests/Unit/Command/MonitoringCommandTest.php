@@ -22,6 +22,7 @@ use mteu\Monitoring\Command\MonitoringCommand;
 use mteu\Monitoring\Handler\MonitoringExecutionHandler;
 use mteu\Monitoring\Provider\MonitoringProvider;
 use mteu\Monitoring\Result\MonitoringResult;
+use mteu\Monitoring\Result\Status;
 use PHPUnit\Framework;
 use PHPUnit\Framework\Attributes\Test;
 use Symfony\Component\Console\Command\Command;
@@ -123,7 +124,7 @@ final class MonitoringCommandTest extends Framework\TestCase
 
             public function execute(): MonitoringResult
             {
-                return new MonitoringResult('DisabledButActiveProvider', false);
+                return new MonitoringResult('DisabledButActiveProvider', Status::Unhealthy);
             }
         };
 
@@ -158,7 +159,7 @@ final class MonitoringCommandTest extends Framework\TestCase
             }
             public function execute(): MonitoringResult
             {
-                return new MonitoringResult('AlphaProvider', true);
+                return new MonitoringResult('AlphaProvider', Status::Healthy);
             }
         };
 
@@ -181,7 +182,7 @@ final class MonitoringCommandTest extends Framework\TestCase
             }
             public function execute(): MonitoringResult
             {
-                return new MonitoringResult('BetaProvider', false);
+                return new MonitoringResult('BetaProvider', Status::Unhealthy);
             }
         };
 
@@ -261,7 +262,7 @@ final class MonitoringCommandTest extends Framework\TestCase
 
             public function execute(): MonitoringResult
             {
-                return new MonitoringResult($this->name, $this->healthy);
+                return new MonitoringResult($this->name, $this->healthy ? Status::Healthy : Status::Unhealthy);
             }
         };
     }

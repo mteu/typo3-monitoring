@@ -19,6 +19,7 @@ namespace mteu\Monitoring\Tests\Unit\Result;
 
 use mteu\Monitoring\Result\MonitoringResult;
 use mteu\Monitoring\Result\Result;
+use mteu\Monitoring\Result\Status;
 use mteu\Monitoring\Tests\Unit\MonitoringTestCase;
 use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\Attributes\DataProvider;
@@ -54,7 +55,7 @@ final class MonitoringResultTest extends MonitoringTestCase
         ?string $reason,
         array $subResults
     ): void {
-        $result = new MonitoringResult($name, $isHealthy, $reason, $subResults);
+        $result = new MonitoringResult($name, $isHealthy ? Status::Healthy : Status::Unhealthy, $reason, $subResults);
 
         self::assertSame($name, $result->getName());
         self::assertSame($reason, $result->getReason());
@@ -78,23 +79,24 @@ final class MonitoringResultTest extends MonitoringTestCase
     }
 
     #[Test]
-    public function setHealthyModifiesHealthStatusAndReturnsSelf(): void
+    public function setStatusModifiesStatusAndReturnsSelf(): void
     {
-        $result = new MonitoringResult('test', true);
+        $result = new MonitoringResult('test', Status::Healthy);
         self::assertTrue($result->isHealthy());
 
-        $returned = $result->setHealthy(false);
+        $returned = $result->setStatus(Status::Unhealthy);
         self::assertFalse($result->isHealthy());
         self::assertSame($result, $returned, 'Should return self for fluent interface');
 
-        $result->setHealthy(true);
-        self::assertTrue($result->isHealthy());
+        $result->setStatus(Status::Degraded);
+        self::assertSame(Status::Degraded, $result->getStatus());
+        self::assertTrue($result->isHealthy(), 'degraded is not an outage');
     }
 
     #[Test]
     public function setReasonModifiesReasonAndReturnsSelf(): void
     {
-        $result = new MonitoringResult('test', true, 'Initial reason');
+        $result = new MonitoringResult('test', Status::Healthy, 'Initial reason');
         self::assertSame('Initial reason', $result->getReason());
 
         $returned = $result->setReason('Updated reason');
@@ -110,7 +112,7 @@ final class MonitoringResultTest extends MonitoringTestCase
     #[DataProvider('subResultsProvider')]
     public function managesSubResultCollectionWithProperOrdering(array $initialSubResults, array $additionalResults): void
     {
-        $result = new MonitoringResult('parent', true, null, $initialSubResults);
+        $result = new MonitoringResult('parent', Status::Healthy, null, $initialSubResults);
 
         self::assertCount(count($initialSubResults), $result->getSubResults());
         self::assertSame(count($initialSubResults) > 0, $result->hasSubResults());
@@ -155,7 +157,7 @@ final class MonitoringResultTest extends MonitoringTestCase
         ?string $reason,
         array $subResults
     ): void {
-        $result = new MonitoringResult($name, $isHealthy, $reason);
+        $result = new MonitoringResult($name, $isHealthy ? Status::Healthy : Status::Unhealthy, $reason);
         foreach ($subResults as $subResult) {
             $result->addSubResult($subResult);
         }
@@ -171,7 +173,7 @@ final class MonitoringResultTest extends MonitoringTestCase
             foreach (($array['subResults'] ?? []) as $subArray) {
                 self::assertIsArray($subArray);
                 self::assertArrayHasKey('name', $subArray);
-                self::assertArrayHasKey('isHealthy', $subArray);
+                self::assertArrayHasKey('status', $subArray);
                 self::assertArrayHasKey('description', $subArray);
             }
         } else {
@@ -183,23 +185,23 @@ final class MonitoringResultTest extends MonitoringTestCase
      * A parent constructed healthy but carrying an unhealthy sub-result (the shape every
      * sub-result-driven provider produces, e.g. SchedulerProvider) must serialize as
      * unhealthy. Regression guard: toArray()/jsonSerialize() previously emitted the raw
-     * constructor flag instead of the aggregated isHealthy(), reporting healthy=true while
+     * constructor flag instead of the aggregated status, reporting healthy while
      * a sub-check was failing.
      */
     #[Test]
     public function serializationReflectsAggregatedSubResultHealth(): void
     {
-        $result = new MonitoringResult('Scheduler', true);
-        $result->addSubResult(new MonitoringResult('Heartbeat', true));
-        $result->addSubResult(new MonitoringResult('Overdue Tasks', false, 'A task is overdue.'));
+        $result = new MonitoringResult('Scheduler', Status::Healthy);
+        $result->addSubResult(new MonitoringResult('Heartbeat', Status::Healthy));
+        $result->addSubResult(new MonitoringResult('Overdue Tasks', Status::Unhealthy, 'A task is overdue.'));
 
         self::assertFalse($result->isHealthy());
-        self::assertFalse($result->toArray()['isHealthy']);
-        self::assertFalse($result->jsonSerialize()['isHealthy']);
+        self::assertSame('unhealthy', $result->toArray()['status']);
+        self::assertSame('unhealthy', $result->jsonSerialize()['status']);
 
         $decoded = json_decode((string)json_encode($result), true);
         self::assertIsArray($decoded);
-        self::assertFalse($decoded['isHealthy']);
+        self::assertSame('unhealthy', $decoded['status']);
     }
 
     /**
@@ -212,7 +214,7 @@ final class MonitoringResultTest extends MonitoringTestCase
         array $subResultsData,
         bool $expectedFinalHealth
     ): void {
-        $result = new MonitoringResult('main', $mainHealth);
+        $result = new MonitoringResult('main', $mainHealth ? Status::Healthy : Status::Unhealthy);
 
         /**
          * @var array{
@@ -222,7 +224,7 @@ final class MonitoringResultTest extends MonitoringTestCase
          * } $subData
          */
         foreach ($subResultsData as $subData) {
-            $subResult = new MonitoringResult($subData['name'], $subData['health'], $subData['reason'] ?? null);
+            $subResult = new MonitoringResult($subData['name'], $subData['health'] ? Status::Healthy : Status::Unhealthy, $subData['reason'] ?? null);
             $result->addSubResult($subResult);
         }
 
@@ -253,8 +255,8 @@ final class MonitoringResultTest extends MonitoringTestCase
             true,
             'All systems operational',
             [
-                new MonitoringResult('sub-1', true),
-                new MonitoringResult('sub-2', false),
+                new MonitoringResult('sub-1', Status::Healthy),
+                new MonitoringResult('sub-2', Status::Unhealthy),
             ],
         ];
     }
@@ -267,23 +269,23 @@ final class MonitoringResultTest extends MonitoringTestCase
         yield 'no initial, add some' => [
             [],
             [
-                new MonitoringResult('added-1', true),
-                new MonitoringResult('added-2', false),
+                new MonitoringResult('added-1', Status::Healthy),
+                new MonitoringResult('added-2', Status::Unhealthy),
             ],
         ];
 
         yield 'some initial, add more' => [
-            [new MonitoringResult('initial', true)],
+            [new MonitoringResult('initial', Status::Healthy)],
             [
-                new MonitoringResult('added-1', false),
-                new MonitoringResult('added-2', true),
+                new MonitoringResult('added-1', Status::Unhealthy),
+                new MonitoringResult('added-2', Status::Healthy),
             ],
         ];
 
         yield 'initial only, add none' => [
             [
-                new MonitoringResult('initial-1', true),
-                new MonitoringResult('initial-2', false),
+                new MonitoringResult('initial-1', Status::Healthy),
+                new MonitoringResult('initial-2', Status::Unhealthy),
             ],
             [],
         ];
@@ -320,9 +322,9 @@ final class MonitoringResultTest extends MonitoringTestCase
             false,
             'Some services down',
             [
-                new MonitoringResult('service-1', true, 'Service 1 OK'),
-                new MonitoringResult('service-2', false, 'Service 2 failed'),
-                new MonitoringResult('service-3', true, null),
+                new MonitoringResult('service-1', Status::Healthy, 'Service 1 OK'),
+                new MonitoringResult('service-2', Status::Unhealthy, 'Service 2 failed'),
+                new MonitoringResult('service-3', Status::Healthy, null),
             ],
         ];
     }

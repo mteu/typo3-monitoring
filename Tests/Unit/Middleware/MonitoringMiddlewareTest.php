@@ -27,6 +27,7 @@ use mteu\Monitoring\Provider\MonitoringProvider;
 use mteu\Monitoring\Result\CachedMonitoringResult;
 use mteu\Monitoring\Result\MonitoringResult;
 use mteu\Monitoring\Result\Result;
+use mteu\Monitoring\Result\Status;
 use mteu\TypedExtConf\Mapper\TreeMapperFactory;
 use mteu\TypedExtConf\Provider\TypedExtensionConfigurationProvider;
 use PHPUnit\Framework;
@@ -340,7 +341,7 @@ final class MonitoringMiddlewareTest extends Framework\TestCase
             public function execute(): Result
             {
                 $this->executionCount++;
-                return new MonitoringResult('counted', true);
+                return new MonitoringResult('counted', Status::Healthy);
             }
             public function getExecutionCount(): int
             {
@@ -392,7 +393,7 @@ final class MonitoringMiddlewareTest extends Framework\TestCase
             public function execute(): Result
             {
                 $this->executionCount++;
-                return new MonitoringResult('cacheable', true);
+                return new MonitoringResult('cacheable', Status::Healthy);
             }
             public function getCacheKey(): string
             {
@@ -409,7 +410,7 @@ final class MonitoringMiddlewareTest extends Framework\TestCase
         };
 
         $cachedResult = new CachedMonitoringResult(
-            new MonitoringResult('cacheable', true),
+            new MonitoringResult('cacheable', Status::Healthy),
             new \DateTimeImmutable('now'),
             60,
         );
@@ -563,7 +564,7 @@ final class MonitoringMiddlewareTest extends Framework\TestCase
 
             public function execute(): Result
             {
-                return new MonitoringResult('DisabledButActive', false);
+                return new MonitoringResult('DisabledButActive', Status::Unhealthy);
             }
         };
 
@@ -617,9 +618,9 @@ final class MonitoringMiddlewareTest extends Framework\TestCase
             }
             public function execute(): Result
             {
-                return new MonitoringResult('Scheduler', false, null, [
-                    new MonitoringResult('Scheduler Execution', true),
-                    new MonitoringResult('Failed Tasks', false),
+                return new MonitoringResult('Scheduler', Status::Unhealthy, null, [
+                    new MonitoringResult('Scheduler Execution', Status::Healthy),
+                    new MonitoringResult('Failed Tasks', Status::Unhealthy),
                 ]);
             }
         };
@@ -640,13 +641,13 @@ final class MonitoringMiddlewareTest extends Framework\TestCase
         $decoded = json_decode((string)$response->getBody(), true, 512, JSON_THROW_ON_ERROR);
         self::assertSame(
             [
-                'isHealthy' => false,
+                'status' => 'unhealthy',
                 'services' => [
                     'Scheduler' => [
                         'status' => 'unhealthy',
                         'subResults' => [
-                            'Scheduler Execution' => 'healthy',
-                            'Failed Tasks' => 'unhealthy',
+                            'Scheduler Execution' => ['status' => 'healthy'],
+                            'Failed Tasks' => ['status' => 'unhealthy'],
                         ],
                     ],
                     'database' => [
@@ -689,9 +690,9 @@ final class MonitoringMiddlewareTest extends Framework\TestCase
             }
             public function execute(): Result
             {
-                return new MonitoringResult('Scheduler', false, null, [
-                    new MonitoringResult('Scheduler Execution', true),
-                    new MonitoringResult('Failed Tasks', false),
+                return new MonitoringResult('Scheduler', Status::Unhealthy, null, [
+                    new MonitoringResult('Scheduler Execution', Status::Healthy),
+                    new MonitoringResult('Failed Tasks', Status::Unhealthy),
                 ]);
             }
         };
@@ -711,7 +712,7 @@ final class MonitoringMiddlewareTest extends Framework\TestCase
         self::assertSame(503, $response->getStatusCode());
 
         $decoded = json_decode((string)$response->getBody(), true, 512, JSON_THROW_ON_ERROR);
-        self::assertSame(['isHealthy' => false], $decoded);
+        self::assertSame(['status' => 'unhealthy'], $decoded);
         self::assertArrayNotHasKey('services', $decoded, 'services must be omitted when includeServicesHealth is disabled');
     }
 
@@ -740,7 +741,7 @@ final class MonitoringMiddlewareTest extends Framework\TestCase
         $decoded = json_decode((string)$response->getBody(), true, 512, JSON_THROW_ON_ERROR);
         self::assertSame(
             [
-                'isHealthy' => true,
+                'status' => 'healthy',
                 'services' => [
                     'database' => ['status' => 'healthy'],
                 ],
@@ -863,7 +864,7 @@ final class MonitoringMiddlewareTest extends Framework\TestCase
 
             public function execute(): Result
             {
-                return new MonitoringResult('database', true);
+                return new MonitoringResult('database', Status::Healthy);
             }
         };
     }

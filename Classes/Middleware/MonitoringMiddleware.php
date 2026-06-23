@@ -22,6 +22,7 @@ use mteu\Monitoring\Configuration\MonitoringConfiguration;
 use mteu\Monitoring\Handler\MonitoringExecutionHandler;
 use mteu\Monitoring\Provider\MonitoringProvider;
 use mteu\Monitoring\Result\Result;
+use mteu\Monitoring\Result\Status;
 use Psr\Http\Message\ResponseFactoryInterface;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
@@ -29,6 +30,7 @@ use Psr\Http\Server\MiddlewareInterface;
 use Psr\Http\Server\RequestHandlerInterface;
 use Psr\Log\LoggerInterface;
 use Symfony\Component\DependencyInjection\Attribute\AutowireIterator;
+use Symfony\Component\HttpFoundation\Response;
 use TYPO3\CMS\Core\Http\NormalizedParams;
 
 /**
@@ -74,10 +76,10 @@ final readonly class MonitoringMiddleware implements MiddlewareInterface
             try {
                 return $this->jsonResponse(
                     [
-                        'code' => 405,
+                        'code' => Response::HTTP_METHOD_NOT_ALLOWED,
                         'error' => 'method-not-allowed',
                     ],
-                    405,
+                    Response::HTTP_METHOD_NOT_ALLOWED,
                     $writeBody,
                 )->withHeader('Allow', implode(', ', self::ALLOWED_METHODS));
             } catch (\JsonException $e) {
@@ -90,10 +92,10 @@ final readonly class MonitoringMiddleware implements MiddlewareInterface
             try {
                 return $this->jsonResponse(
                     [
-                        'code' => 403,
+                        'code' => Response::HTTP_FORBIDDEN,
                         'error' => 'unsupported-protocol',
                     ],
-                    403,
+                    Response::HTTP_FORBIDDEN,
                     $writeBody,
                 );
             } catch (\JsonException $e) {
@@ -106,10 +108,10 @@ final readonly class MonitoringMiddleware implements MiddlewareInterface
             try {
                 return $this->jsonResponse(
                     [
-                        'code' => 401,
+                        'code' => Response::HTTP_UNAUTHORIZED,
                         'error' => 'unauthorized',
                     ],
-                    401,
+                    Response::HTTP_UNAUTHORIZED,
                     $writeBody,
                 );
             } catch (\JsonException $e) {
@@ -120,10 +122,10 @@ final readonly class MonitoringMiddleware implements MiddlewareInterface
 
         try {
             $results = $this->collectResults();
-            $isHealthy = $this->isOverallHealthy($results);
+            $overallStatus = $this->overallStatus($results);
 
             $responseArray = [
-                'isHealthy' => $isHealthy,
+                'status' => $overallStatus->value,
             ];
 
             if ($this->monitoringConfiguration->includeServicesHealth) {
@@ -132,7 +134,7 @@ final readonly class MonitoringMiddleware implements MiddlewareInterface
 
             return $this->jsonResponse(
                 $responseArray,
-                $isHealthy ? 200 : 503,
+                $overallStatus === Status::Unhealthy ? Response::HTTP_SERVICE_UNAVAILABLE : Response::HTTP_OK,
                 $writeBody,
             );
         } catch (\JsonException $e) {
@@ -194,62 +196,59 @@ final readonly class MonitoringMiddleware implements MiddlewareInterface
     /**
      * @param array<non-empty-string, Result> $results
      */
-    private function isOverallHealthy(array $results): bool
+    private function overallStatus(array $results): Status
     {
-        foreach ($results as $result) {
-            if (!$result->isHealthy()) {
-                return false;
-            }
-        }
-
-        return true;
+        return Status::worst(
+            ...array_map(static fn(Result $result): Status => $result->getStatus(), array_values($results)),
+        );
     }
 
     /**
-     * Reduces each provider result to its status, optionally listing the status
-     * of every sub-result. Reasons and deeper detail stay in the backend module.
+     * Reduces each provider result to its status, recursively listing the
+     * status of every sub-result. Reasons and deeper detail stay in the
+     * backend module.
      *
      * @param array<non-empty-string, Result> $results
-     * @return array<non-empty-string, array{status: 'healthy'|'unhealthy', subResults?: array<string, 'healthy'|'unhealthy'>}>
+     * @return array<non-empty-string, array{status: string, subResults?: array<string, mixed>}>
      */
     private function summarizeResults(array $results): array
     {
         $summary = [];
 
         foreach ($results as $name => $result) {
-            $entry = ['status' => $this->statusLabel($result->isHealthy())];
-
-            $subResults = $result->getSubResults();
-            if ($subResults !== []) {
-                $subStatus = [];
-                foreach ($subResults as $subResult) {
-                    $subStatus[$subResult->getName()] = $this->statusLabel($subResult->isHealthy());
-                }
-                $entry['subResults'] = $subStatus;
-            }
-
-            $summary[$name] = $entry;
+            $summary[$name] = $this->summarizeResult($result);
         }
 
         return $summary;
     }
 
     /**
-     * @return 'healthy'|'unhealthy'
+     * @return array{status: string, subResults?: array<string, mixed>}
      */
-    private function statusLabel(bool $isHealthy): string
+    private function summarizeResult(Result $result): array
     {
-        return $isHealthy ? 'healthy' : 'unhealthy';
+        $entry = ['status' => $result->getStatus()->value];
+
+        $subResults = $result->getSubResults();
+        if ($subResults !== []) {
+            $subStatus = [];
+            foreach ($subResults as $subResult) {
+                $subStatus[$subResult->getName()] = $this->summarizeResult($subResult);
+            }
+            $entry['subResults'] = $subStatus;
+        }
+
+        return $entry;
     }
 
     /**
      * @param array{code: int, error: string}|array{
-     *     isHealthy: bool,
-     *     services?: array<non-empty-string, array{status: 'healthy'|'unhealthy', subResults?: array<string, 'healthy'|'unhealthy'>}>
+     *     status: string,
+     *     services?: array<non-empty-string, array{status: string, subResults?: array<string, mixed>}>
      * } $data
      * @throws \JsonException
      */
-    private function jsonResponse(array $data, int $statusCode = 200, bool $writeBody = true): ResponseInterface
+    private function jsonResponse(array $data, int $statusCode = Response::HTTP_OK, bool $writeBody = true): ResponseInterface
     {
         $response = $this->responseFactory
             ->createResponse()

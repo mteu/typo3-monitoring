@@ -97,7 +97,7 @@ The monitoring endpoint returns JSON with the following structure:
 
 ```json
 {
-  "isHealthy": true,
+  "status": "healthy",
   "services": {
     "service_one": {
       "status": "healthy"
@@ -105,21 +105,20 @@ The monitoring endpoint returns JSON with the following structure:
     "service_two": {
       "status": "healthy",
       "subResults": {
-        "SubCheck A": "healthy",
-        "SubCheck B": "healthy"
+        "SubCheck A": { "status": "healthy" },
+        "SubCheck B": { "status": "healthy" }
       }
     }
   }
 }
 ```
 
-- `isHealthy`: Overall health status (boolean)
-- `services`: Object keyed by service name. Each entry holds a `status`
-  (`"healthy"` or `"unhealthy"`) and, for providers that report sub-checks, a
-  `subResults` map. See the [API Reference](Documentation/api.md) for details.
+- `status`: Overall health status — `"healthy"`, `"degraded"`, or `"unhealthy"` (the worst status across all services).
+- `services`: Object keyed by service name. Each entry holds a `status` and, for providers that report sub-checks, a
+  `subResults` map of nested status objects. See the [API Reference](Documentation/api.md) for details.
 
 HTTP status codes:
-- `200` All services healthy
+- `200` All services healthy or degraded
 - `401` Unauthorized access
 - `403` Unsupported protocol (only when `api.enforceHttps` is enabled)
 - `404` Endpoint not configured
