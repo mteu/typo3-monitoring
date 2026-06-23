@@ -22,6 +22,7 @@ use mteu\Monitoring\Cache\MonitoringCacheManager;
 use mteu\Monitoring\Handler\MonitoringExecutionHandler;
 use mteu\Monitoring\Provider\MonitoringProvider;
 use mteu\Monitoring\Result\MonitoringResult;
+use mteu\Monitoring\Result\Status;
 use PHPUnit\Framework;
 use PHPUnit\Framework\Attributes\AllowMockObjectsWithoutExpectations;
 use PHPUnit\Framework\Attributes\CoversClass;
@@ -75,7 +76,7 @@ final class MonitoringControllerTest extends Framework\TestCase
         $activeProvider
             ->expects(self::once())
             ->method('execute')
-            ->willReturn(new MonitoringResult('Active', true));
+            ->willReturn(new MonitoringResult('Active', Status::Healthy));
 
         $variables = $this->buildProviderTemplateVariables([$activeProvider]);
 

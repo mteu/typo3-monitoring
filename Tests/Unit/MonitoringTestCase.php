@@ -19,6 +19,7 @@ namespace mteu\Monitoring\Tests\Unit;
 
 use mteu\Monitoring\Result\MonitoringResult;
 use mteu\Monitoring\Result\Result;
+use mteu\Monitoring\Result\Status;
 use PHPUnit\Framework\TestCase;
 
 /**
@@ -41,7 +42,7 @@ abstract class MonitoringTestCase extends TestCase
      */
     final protected function createHealthyResult(string $name = 'test-service', ?string $reason = null): MonitoringResult
     {
-        return new MonitoringResult($name, true, $reason);
+        return new MonitoringResult($name, Status::Healthy, $reason);
     }
 
     /**
@@ -53,7 +54,7 @@ abstract class MonitoringTestCase extends TestCase
      */
     final protected function createUnhealthyResult(string $name = 'test-service', ?string $reason = null): MonitoringResult
     {
-        return new MonitoringResult($name, false, $reason);
+        return new MonitoringResult($name, Status::Unhealthy, $reason);
     }
 
     /**
@@ -69,10 +70,10 @@ abstract class MonitoringTestCase extends TestCase
         string $parentName = 'parent-service',
         bool $parentHealthy = true
     ): MonitoringResult {
-        $result = new MonitoringResult($parentName, $parentHealthy);
+        $result = new MonitoringResult($parentName, $parentHealthy ? Status::Healthy : Status::Unhealthy);
 
         foreach ($subHealthStatuses as $i => $healthy) {
-            $subResult = new MonitoringResult("sub-service-{$i}", $healthy);
+            $subResult = new MonitoringResult("sub-service-{$i}", $healthy ? Status::Healthy : Status::Unhealthy);
             $result->addSubResult($subResult);
         }
 
@@ -90,7 +91,7 @@ abstract class MonitoringTestCase extends TestCase
     {
         $results = [];
         foreach ($healthStatuses as $i => $healthy) {
-            $results[] = new MonitoringResult("{$namePrefix}-{$i}", $healthy);
+            $results[] = new MonitoringResult("{$namePrefix}-{$i}", $healthy ? Status::Healthy : Status::Unhealthy);
         }
         return $results;
     }
@@ -129,7 +130,7 @@ abstract class MonitoringTestCase extends TestCase
 
         self::assertSame($array, $json, 'toArray() and jsonSerialize() should return identical results');
         self::assertArrayHasKey('name', $array);
-        self::assertArrayHasKey('isHealthy', $array);
+        self::assertArrayHasKey('status', $array);
         self::assertArrayHasKey('description', $array);
     }
 

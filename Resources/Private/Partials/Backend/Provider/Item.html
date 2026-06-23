@@ -2,11 +2,12 @@
     data-namespace-typo3-fluid="true"
     xmlns:core="http://typo3.org/ns/TYPO3/CMS/Core/ViewHelpers"
     xmlns:f="http://typo3.org/ns/TYPO3/CMS/Fluid/ViewHelpers"
+    xmlns:monitoring="http://typo3.org/ns/mteu/Monitoring/ViewHelper/Backend"
 >
 
 <f:layout name="Module" />
 
-<f:variable name="providerHealthState" value="{f:if(condition: provider.isHealthy, then: 'success', else: 'danger')}" />
+<f:variable name="providerHealthState" value="{provider.status -> monitoring:statusContext()}" />
 <f:variable name="providerActivationState" value="{f:if(condition: provider.isActive, then: providerHealthState, else: 'default')}" />
 <f:variable name="providerEnablementState" value="{f:if(condition: provider.isEnabled, then: providerActivationState, else: 'placeholder')}" />
 <f:variable name="panelExpandable" value="{f:if(condition: '{provider.description} || {provider.subResults}', then: true, else: false)}" />
@@ -43,10 +44,7 @@
                                     </span>
                                 </f:if>
                                 <span class="badge badge-{providerHealthState}">
-                                    <f:if condition="{provider.isHealthy}">
-                                        <f:then><f:translate key="LLL:EXT:monitoring/Resources/Private/Language/locallang.be.xlf:status.healthy" /></f:then>
-                                        <f:else><f:translate key="LLL:EXT:monitoring/Resources/Private/Language/locallang.be.xlf:status.unhealthy" /></f:else>
-                                    </f:if>
+                                    <f:translate key="LLL:EXT:monitoring/Resources/Private/Language/locallang.be.xlf:status.{provider.status}" />
                                 </span>
                             </div>
                         </f:then>

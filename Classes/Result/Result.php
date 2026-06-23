@@ -27,6 +27,15 @@ interface Result extends \JsonSerializable
 {
     public function getName(): string;
 
+    /**
+     * The reported health state, aggregated over any sub-results.
+     */
+    public function getStatus(): Status;
+
+    /**
+     * `true` for {@see Status::Healthy} and {@see Status::Degraded},
+     * `false` only for {@see Status::Unhealthy}.
+     */
     public function isHealthy(): bool;
 
     public function getReason(): ?string;
@@ -43,7 +52,7 @@ interface Result extends \JsonSerializable
     /**
      * @return array{
      *     name: string,
-     *     isHealthy: bool,
+     *     status: string,
      *     description: string|null,
      *     subResults?: array<int, mixed>
      * }
@@ -53,7 +62,7 @@ interface Result extends \JsonSerializable
     /**
      * @return array{
      *     name: string,
-     *     isHealthy: bool,
+     *     status: string,
      *     description: string|null,
      *     subResults?: array<int, mixed>
      * }

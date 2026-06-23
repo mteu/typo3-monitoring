@@ -65,9 +65,22 @@ final readonly class CachedMonitoringResult implements Result
         return $this->result->getName();
     }
 
+    public function getStatus(): Status
+    {
+        return $this->result->getStatus();
+    }
+
     public function isHealthy(): bool
     {
         return $this->result->isHealthy();
+    }
+
+    /**
+     * Fluid-friendly accessor returning the backing string of {@see getStatus()}.
+     */
+    public function getStatusValue(): string
+    {
+        return $this->result->getStatus()->value;
     }
 
     public function getReason(): ?string
@@ -91,7 +104,7 @@ final readonly class CachedMonitoringResult implements Result
     /**
      * @return array{
      *     name: string,
-     *     isHealthy: bool,
+     *     status: string,
      *     description: string|null,
      *     subResults?: array<int, mixed>
      * }
@@ -104,7 +117,7 @@ final readonly class CachedMonitoringResult implements Result
     /**
      * @return array{
      *     name: string,
-     *     isHealthy: bool,
+     *     status: string,
      *     description: string|null,
      *     subResults?: array<int, mixed>
      * }

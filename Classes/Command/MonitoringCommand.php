@@ -20,6 +20,7 @@ namespace mteu\Monitoring\Command;
 use mteu\Monitoring\Handler\MonitoringExecutionHandler;
 use mteu\Monitoring\Handler\ProviderExecutionOutcome;
 use mteu\Monitoring\Provider\MonitoringProvider;
+use mteu\Monitoring\Result\Status;
 use Symfony\Component\Console\Attribute\AsCommand;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputInterface;
@@ -72,18 +73,47 @@ final class MonitoringCommand extends Command
         $output->writeln('Checking Monitoring status');
         foreach ($outcomes as $outcome) {
             $result = $outcome->result;
+            $status = $result->getStatus();
             $output->writeln(sprintf(
                 '%s %s%s',
-                $result->isHealthy() ? ' ✅' : '🚨',
-                $result->isHealthy() ? '<info>' . $result->getName() . '</info>' : '<error>' . $result->getName() . '</error>',
+                $this->glyph($status),
+                $this->decorateName($status, $result->getName()),
                 $outcome->fromCache ? ' (cached)' : '',
             ));
         }
 
-        $isHealthy = $this->areAllOutcomesHealthy($outcomes);
-        $output->writeln('Monitoring status: ' . ($isHealthy ? 'OK' : 'FAILED'));
+        $overallStatus = $this->overallStatus($outcomes);
+        $output->writeln('Monitoring status: ' . $this->overallLabel($overallStatus));
 
-        return $isHealthy ? Command::SUCCESS : Command::FAILURE;
+        // Degraded is operational: only a genuine outage fails the command.
+        return $overallStatus === Status::Unhealthy ? Command::FAILURE : Command::SUCCESS;
+    }
+
+    private function glyph(Status $status): string
+    {
+        return match ($status) {
+            Status::Healthy => ' ✅ ',
+            Status::Degraded => ' ⚠️ ',
+            Status::Unhealthy => '🚨 ',
+        };
+    }
+
+    private function decorateName(Status $status, string $name): string
+    {
+        return match ($status) {
+            Status::Healthy => '<info>' . $name . '</info>',
+            Status::Degraded => '<comment>' . $name . '</comment>',
+            Status::Unhealthy => '<error>' . $name . '</error>',
+        };
+    }
+
+    private function overallLabel(Status $status): string
+    {
+        return match ($status) {
+            Status::Healthy => 'OK',
+            Status::Degraded => 'DEGRADED',
+            Status::Unhealthy => 'FAILED',
+        };
     }
 
     /**
@@ -108,14 +138,13 @@ final class MonitoringCommand extends Command
     /**
     * @param array<class-string<MonitoringProvider>, ProviderExecutionOutcome> $outcomes
     */
-    private function areAllOutcomesHealthy(array $outcomes): bool
+    private function overallStatus(array $outcomes): Status
     {
-        foreach ($outcomes as $outcome) {
-            if (!$outcome->result->isHealthy()) {
-                return false;
-            }
-        }
-
-        return true;
+        return Status::worst(
+            ...array_map(
+                static fn(ProviderExecutionOutcome $outcome): Status => $outcome->result->getStatus(),
+                array_values($outcomes),
+            ),
+        );
     }
 }

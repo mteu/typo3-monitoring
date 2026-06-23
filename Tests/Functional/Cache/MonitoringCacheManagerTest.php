@@ -19,6 +19,7 @@ namespace mteu\Monitoring\Tests\Functional\Cache;
 
 use mteu\Monitoring\Cache\MonitoringCacheManager;
 use mteu\Monitoring\Result\MonitoringResult;
+use mteu\Monitoring\Result\Status;
 use mteu\Monitoring\Tests\Functional\MonitoringFunctionalTestCase;
 use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\Attributes\Test;
@@ -47,7 +48,7 @@ final class MonitoringCacheManagerTest extends MonitoringFunctionalTestCase
     #[Test]
     public function cacheManagerHandlesStoreAndRetrieveOperations(): void
     {
-        $result = new MonitoringResult('test-service', true, 'Service is healthy');
+        $result = new MonitoringResult('test-service', Status::Healthy, 'Service is healthy');
         $cacheKey = 'test-cache-key';
 
         $stored = $this->cacheManager->setCachedResult($cacheKey, $result);
@@ -73,7 +74,7 @@ final class MonitoringCacheManagerTest extends MonitoringFunctionalTestCase
         $defaultLifetime = $this->cacheManager->getCacheLifetime();
         self::assertSame(900, $defaultLifetime, 'Default lifetime should be 15 minutes (900 seconds)');
 
-        $result = new MonitoringResult('test-service', true);
+        $result = new MonitoringResult('test-service', Status::Healthy);
         $stored = $this->cacheManager->setCachedResult('default-test', $result, [], 0);
         self::assertTrue($stored, 'Should store with default lifetime when 0 provided');
     }
@@ -81,7 +82,7 @@ final class MonitoringCacheManagerTest extends MonitoringFunctionalTestCase
     #[Test]
     public function tracksExpirationTimeAccuratelyForCustomLifetime(): void
     {
-        $result = new MonitoringResult('test-service', true);
+        $result = new MonitoringResult('test-service', Status::Healthy);
         $stored = $this->cacheManager->setCachedResult('expiration-test', $result, [], 3600);
         self::assertTrue($stored, 'Should store with custom lifetime');
 
@@ -96,7 +97,7 @@ final class MonitoringCacheManagerTest extends MonitoringFunctionalTestCase
     #[Test]
     public function flushProviderCacheInvalidatesCorrectEntries(): void
     {
-        $result = new MonitoringResult('provider-test', true);
+        $result = new MonitoringResult('provider-test', Status::Healthy);
         $providerClass = 'mteu\\Monitoring\\Provider\\TestProvider';
 
         $flushed = $this->cacheManager->flushProviderCache($providerClass);

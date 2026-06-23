@@ -20,6 +20,7 @@ namespace mteu\Monitoring\Tests\Functional\Fixtures;
 use mteu\Monitoring\Provider\MonitoringProvider;
 use mteu\Monitoring\Result\MonitoringResult;
 use mteu\Monitoring\Result\Result;
+use mteu\Monitoring\Result\Status;
 
 /**
  * ConfigurableProvider.
@@ -65,6 +66,6 @@ final class ConfigurableProvider implements MonitoringProvider
 
     public function execute(): Result
     {
-        return new MonitoringResult($this->identifier, $this->healthy);
+        return new MonitoringResult($this->identifier, $this->healthy ? Status::Healthy : Status::Unhealthy);
     }
 }

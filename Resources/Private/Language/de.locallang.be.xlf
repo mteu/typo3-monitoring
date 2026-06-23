@@ -343,6 +343,10 @@
                 <source>disabled</source>
                 <target>deaktiviert</target>
             </trans-unit>
+            <trans-unit id="status.degraded">
+                <source>degraded</source>
+                <target>beeinträchtigt</target>
+            </trans-unit>
             <trans-unit id="status.healthy">
                 <source>healthy</source>
                 <target>OK</target>
