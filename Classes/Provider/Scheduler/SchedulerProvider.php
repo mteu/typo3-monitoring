@@ -28,6 +28,7 @@ use TYPO3\CMS\Backend\Routing\Exception\RouteNotFoundException;
 use TYPO3\CMS\Backend\Routing\Router;
 use TYPO3\CMS\Backend\Routing\UriBuilder as BackendUriBuilder;
 use TYPO3\CMS\Core\Authentication\BackendUserAuthentication;
+use TYPO3\CMS\Core\Localization\DateFormatter;
 use TYPO3\CMS\Core\Localization\LanguageService;
 use TYPO3\CMS\Core\Localization\LanguageServiceFactory;
 use TYPO3\CMS\Core\Utility\ExtensionManagementUtility;
@@ -305,28 +306,17 @@ final readonly class SchedulerProvider implements MonitoringProvider
         return $this->languageServiceFactory->createFromUserPreferences(null);
     }
 
-    /**
-     * Relative-age wording is still assembled in English here; it is slated to
-     * move to a Fluid view helper (see the test's @todo), at which point it
-     * will localize alongside the rest of the module chrome.
-     */
     private function formatAge(int $seconds): string
     {
-        $minutes = (int)($seconds / 60);
-        $hours = (int)($minutes / 60);
-        $days = (int)($hours / 24);
+        $now = $this->clock->now();
+        $past = $now->sub(new \DateInterval('PT' . max(0, $seconds) . 'S'));
 
-        $remMinutes = $minutes % 60;
-        $remHours = $hours % 24;
-
-        return match (true) {
-            $days > 0 => $days . ' ' . ($days === 1 ? 'day' : 'days')
-                . ($remHours > 0 ? ' and ' . $remHours . ' ' . ($remHours === 1 ? 'hour' : 'hours') : ''),
-            $hours > 0 => $hours . ' ' . ($hours === 1 ? 'hour' : 'hours')
-                . ($remMinutes > 0 ? ' and ' . $remMinutes . ' ' . ($remMinutes === 1 ? 'minute' : 'minutes') : ''),
-            $minutes > 0 => $minutes . ' ' . ($minutes === 1 ? 'minute' : 'minutes'),
-            default => $seconds . ' ' . ($seconds === 1 ? 'second' : 'seconds'),
-        };
+        return DateFormatter::formatDateInterval(
+            $past->diff($now),
+            $this->getLanguageService()->sL(
+                'LLL:EXT:core/Resources/Private/Language/locallang_core.xlf:labels.minutesHoursDaysYears',
+            ),
+        );
     }
 
     public function renderEditLink(int $uid, string $label): ?string
