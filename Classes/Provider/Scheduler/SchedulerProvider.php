@@ -283,10 +283,6 @@ final readonly class SchedulerProvider implements MonitoringProvider
         );
     }
 
-    /**
-     * Resolves an operator-facing reason from the backend language file,
-     * filling sprintf placeholders with the given arguments.
-     */
     private function translate(string $key, int|float|string ...$args): string
     {
         $label = $this->getLanguageService()->sL(self::LOCALLANG_FILE . ':' . $key);
@@ -305,28 +301,33 @@ final readonly class SchedulerProvider implements MonitoringProvider
         return $this->languageServiceFactory->createFromUserPreferences(null);
     }
 
-    /**
-     * Relative-age wording is still assembled in English here; it is slated to
-     * move to a Fluid view helper (see the test's @todo), at which point it
-     * will localize alongside the rest of the module chrome.
-     */
     private function formatAge(int $seconds): string
     {
-        $minutes = (int)($seconds / 60);
-        $hours = (int)($minutes / 60);
-        $days = (int)($hours / 24);
+        $minutes = intdiv($seconds, 60);
+        $hours = intdiv($minutes, 60);
+        $days = intdiv($hours, 24);
 
         $remMinutes = $minutes % 60;
         $remHours = $hours % 24;
 
-        return match (true) {
-            $days > 0 => $days . ' ' . ($days === 1 ? 'day' : 'days')
-                . ($remHours > 0 ? ' and ' . $remHours . ' ' . ($remHours === 1 ? 'hour' : 'hours') : ''),
-            $hours > 0 => $hours . ' ' . ($hours === 1 ? 'hour' : 'hours')
-                . ($remMinutes > 0 ? ' and ' . $remMinutes . ' ' . ($remMinutes === 1 ? 'minute' : 'minutes') : ''),
-            $minutes > 0 => $minutes . ' ' . ($minutes === 1 ? 'minute' : 'minutes'),
-            default => $seconds . ' ' . ($seconds === 1 ? 'second' : 'seconds'),
+        $parts = match (true) {
+            $days > 0 => $remHours > 0 ? [[$days, 'day'], [$remHours, 'hour']] : [[$days, 'day']],
+            $hours > 0 => $remMinutes > 0 ? [[$hours, 'hour'], [$remMinutes, 'minute']] : [[$hours, 'hour']],
+            $minutes > 0 => [[$minutes, 'minute']],
+            default => [[$seconds, 'second']],
         };
+
+        $rendered = array_map(
+            fn(array $part): string => $part[0] . ' ' . $this->translateAgeUnit($part[1], $part[0]),
+            $parts,
+        );
+
+        return implode(' ' . $this->translate('provider.scheduler.age.and') . ' ', $rendered);
+    }
+
+    private function translateAgeUnit(string $unit, int $value): string
+    {
+        return $this->translate('provider.scheduler.age.' . $unit . '.' . ($value === 1 ? 'one' : 'other'));
     }
 
     public function renderEditLink(int $uid, string $label): ?string

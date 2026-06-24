@@ -391,6 +391,42 @@
                 <source>Scheduler last ran at %s.</source>
                 <target>Der Scheduler lief zuletzt am %s.</target>
             </trans-unit>
+            <trans-unit id="provider.scheduler.age.and">
+                <source>and</source>
+                <target>und</target>
+            </trans-unit>
+            <trans-unit id="provider.scheduler.age.day.one">
+                <source>day</source>
+                <target>Tag</target>
+            </trans-unit>
+            <trans-unit id="provider.scheduler.age.day.other">
+                <source>days</source>
+                <target>Tagen</target>
+            </trans-unit>
+            <trans-unit id="provider.scheduler.age.hour.one">
+                <source>hour</source>
+                <target>Stunde</target>
+            </trans-unit>
+            <trans-unit id="provider.scheduler.age.hour.other">
+                <source>hours</source>
+                <target>Stunden</target>
+            </trans-unit>
+            <trans-unit id="provider.scheduler.age.minute.one">
+                <source>minute</source>
+                <target>Minute</target>
+            </trans-unit>
+            <trans-unit id="provider.scheduler.age.minute.other">
+                <source>minutes</source>
+                <target>Minuten</target>
+            </trans-unit>
+            <trans-unit id="provider.scheduler.age.second.one">
+                <source>second</source>
+                <target>Sekunde</target>
+            </trans-unit>
+            <trans-unit id="provider.scheduler.age.second.other">
+                <source>seconds</source>
+                <target>Sekunden</target>
+            </trans-unit>
             <trans-unit id="provider.scheduler.failed.none">
                 <source>No task reported an execution failure.</source>
                 <target>Keine Aufgabe hat einen Ausführungsfehler gemeldet.</target>

@@ -105,7 +105,6 @@ final class SchedulerProviderTest extends Framework\TestCase
     }
 
     #[Test]
-    // @todo: remove date calcuation. replace with fluid viewhelper
     public function staleHeartbeatReasonStatesTheRealAgeNotASingleSecond(): void
     {
         // 10 000 s = 2 h 46 m 40 s; formatAge drops seconds when minutes > 0 → "2 hours and 46 minutes".
@@ -126,7 +125,7 @@ final class SchedulerProviderTest extends Framework\TestCase
     }
 
     #[Test]
-    public function staleHeartbeatStaysHealthyWhileATaskIsRunning(): void
+    public function staleHeartbeatReasonContainsCompoundAge(): void
     {
         $result = $this->createProvider(
             lastRunEnd: self::NOW - 10_000,
