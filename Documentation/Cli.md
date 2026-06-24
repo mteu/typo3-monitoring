@@ -58,10 +58,10 @@ The command outputs:
 ### monitoring:report
 
 Evaluates the current monitoring status and dispatches push notifications to
-active [reporters](reporters.md) (e.g. the [EmailReporter](Reporter/EmailReporter.md)).
+active [reporters](Reporters.md) (e.g. the [EmailReporter](Reporter/EmailReporter.md)).
 Meant to be run on a schedule (cron or a scheduler task); it is a thin wrapper
 around the `ReportDispatcher` and applies the dedup/reminder logic described in
-the [Reporter guide](reporters.md).
+the [Reporter guide](Reporters.md).
 
 **Command**: `monitoring:report`
 **Alias**: None

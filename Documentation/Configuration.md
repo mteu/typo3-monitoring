@@ -48,11 +48,17 @@ return [
 - **`defaultLifetime`**: Fleet-wide default lifetime (seconds) for cached
   monitoring results (default: `900`, i.e. 15 minutes). Individual
   `CacheableMonitoringProvider` implementations may override this via
-  `getCacheLifetime()`. See [providers.md](providers.md#caching).
+  `getCacheLifetime()`. See [providers.md](Providers.md#caching).
 
 ### Token Authorizer
+
+> [!WARNING]
+> The generated token is a long-lived shared secret. It contains no nonce, timestamp, or expiry, so it is valid
+> indefinitely and can be replayed by anyone who observes it. Rotating the `secret` value is the only way to revoke
+> access if you don't want to rotate the TYPO3 encryption key. Treat the token with the same care as a password.
+
 - **`enabled`**: Enable token authentication (default: `false`)
-- **`secret`**: HMAC secret key (default: `''`)
+- **`secret`**: HMAC secret key — treat as a high-value credential; rotation invalidates all outstanding tokens (default: `''`)
 - **`authHeaderName`**: HTTP header name (default: `''`)
 - **`priority`**: Authorization priority (default: `10`)
 
@@ -67,8 +73,8 @@ return [
   acts as an authoritative kill-switch (a disabled provider is never executed).
   How that value is sourced is up to each provider; the recommended approach is a
   typed extension-configuration object, as the shipped `SchedulerProvider` does.
-  See [migration.md](migration_v1.md) and
-  [providers.md](providers.md#enablement-and-activation) for details.
+  See [migration.md](Migration/Migrate_to_v1.md) and
+  [providers.md](Providers.md#enablement-and-activation) for details.
 
 ## Configuration Access
 
