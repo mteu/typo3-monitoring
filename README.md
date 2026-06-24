@@ -20,34 +20,29 @@ This packages provides the TYPO3 CMS Extension `EXT:monitoring` which extends th
 gives an insight into the health state of custom TYPO3 components through an API endpoint and a CLI command, e.g. for
 post-deployment checks.
 
-## 🦊 TYPO3 Support
+## 🚀 Features
+
+- [Extensible monitoring system](Documentation/README.md) for custom authorization, monitoring checks, and push notifications.
+- Delivers health reports in several ways:
+    - Structured JSON responses for the overall health status
+    - Command-line interface for running monitoring checks
+    - Backend Dashboard
+    - Optional [Push notification](Documentation/Reporters.md) to external channels (e.g. the built-in [EmailReporter](Documentation/Reporter/EmailReporter.md))
+- Built-in providers this package ships:
+    - [Scheduler Provider](Documentation/Providers/Scheduler.md) (Monitors TYPO3 Scheduler tasks.)
+- Caching for expensive monitoring operations
+
+### Supported versions
 
 |           | TYPO3 v12 | TYPO3 v13 | TYPO3 v14 |
 |-----------|-----------|-----------|-----------|
 | =< v0.4.x | ✅         | ✅         | ❌         |
 | v0.5.x    | ❌         | ✅         | ✅         |
 
-## 🚀 Features
-
-- [Extensible monitoring system](Documentation/Architecture.md) with automatic service discovery (using DI) for custom
-  authorization and monitoring checks.
-- Supports caching for expensive monitoring operations
-- Delivers health reports in several ways:
-  - Structured JSON responses for the overall health status
-  - Command-line interface for running monitoring checks
-  - Backend Module
-  - [Push reporters](Documentation/reporters.md) that actively notify external
-    channels (e.g. the built-in [EmailReporter](Documentation/Reporter/EmailReporter.md))
-    via the `monitoring:report` command
-- Built-in providers this package ships:
-  - [Scheduler Provider](Documentation/Providers/Scheduler.md) (Monitors TYPO3 Scheduler tasks.)
-
 
 ## 🔥 Quick Start
 
 ### Installation
-
-Install via Composer:
 
 ```bash
 composer require mteu/typo3-monitoring
@@ -57,205 +52,47 @@ composer require mteu/typo3-monitoring
 
 ```php
 # config/system/settings.php
-
-<?php
-
 return [
-    // ..
     'EXTENSIONS' => [
         'monitoring' => [
             'api' => [
                 'endpoint' => '/monitor/health',
-                'enforceHttps' => false,
-                'includeServicesHealth' => true,
+                'enforceHttps' => true,
             ],
             'authorizer' => [
                 'mteu\Monitoring\Authorization\TokenAuthorizer' => [
                     'enabled' => true,
                     'secret' => 'your-secure-secret',
                     'authHeaderName' => 'X-TYPO3-MONITORING-AUTH',
-                    'priority' => 10,
-                ],
-                'mteu\Monitoring\Authorization\AdminUserAuthorizer' => [
-                    'enabled' => true,
-                    'priority' => -10,
                 ],
             ],
         ],
     ],
-    // ..
 ];
 ```
 
+See [Documentation/configuration.md](Documentation/Configuration.md) for all available settings.
+
 ### Endpoint
-Access your monitoring endpoint while authenticated as backend user with the role of Admin or System Maintainer:
+
 ```
 GET https://<your-site>/monitor/health
 ```
 
-The monitoring endpoint returns JSON with the following structure:
+Access requires authentication — either a TYPO3 backend administrator session or a token header. See [Documentation/authorization.md](Documentation/Authorization.md) for details, including the security properties of the token.
 
-```json
-{
-  "status": "healthy",
-  "services": {
-    "service_one": {
-      "status": "healthy"
-    },
-    "service_two": {
-      "status": "healthy",
-      "subResults": {
-        "SubCheck A": { "status": "healthy" },
-        "SubCheck B": { "status": "healthy" }
-      }
-    }
-  }
-}
-```
-
-- `status`: Overall health status — `"healthy"`, `"degraded"`, or `"unhealthy"` (the worst status across all services).
-- `services`: Object keyed by service name. Each entry holds a `status` and, for providers that report sub-checks, a
-  `subResults` map of nested status objects. See the [API Reference](Documentation/api.md) for details.
-
-HTTP status codes:
-- `200` All services healthy or degraded
-- `401` Unauthorized access
-- `403` Unsupported protocol (only when `api.enforceHttps` is enabled)
-- `404` Endpoint not configured
-- `405` Method not allowed (only `GET` and `HEAD` are accepted)
-- `503` One or more services unhealthy
-
-### Authentication
-
-This extension ships two authentication methods natively:
-
-#### Admin User Authentication
-Access the endpoint while logged in as a TYPO3 backend administrator.
-
-#### Token-based Authentication
-Add the configured auth header (default: `X-TYPO3-MONITORING-AUTH`) with an HMAC signature:
-
-```bash
-curl -s -H "X-TYPO3-MONITORING-AUTH: <auth-token>" \
-     https://<your-site>/monitor/health | jq '.'
-```
-
-**Token Generation:**
-The HMAC token is generated using TYPO3's HashService with the endpoint path and your configured secret (which acts more like a salt).
-
-```php
-use TYPO3\CMS\Core\Crypto\HashService;
-
-final readonly class TokenGenerator
-{
-    public function __construct(
-        private HashService $hashService,
-    ) {}
-
-    public function generate(string $endpoint, string $secret): string
-    {
-        return $this->hashService->hmac($endpoint, $secret);
-    }
-}
-
-// $token = $tokenGenerator->generate('/monitor/health', 'your-secure-secret');
-```
+The endpoint returns a JSON health report. See the [API Reference](Documentation/Api.md) for the full response schema and HTTP status codes.
 
 ## 🧑‍💻 Development
-
-### Creating Custom Providers
-
-Implement the `MonitoringProvider` interface:
-
-```php
-<?php
-
-use mteu\Monitoring\Provider\MonitoringProvider;
-use mteu\Monitoring\Result\MonitoringResult;
-use Symfony\Component\DependencyInjection\Attribute\AutoconfigureTag;
-
-#[AutoconfigureTag('monitoring.provider')]
-final class MyMonitoringProvider implements MonitoringProvider
-{
-    public function getName(): string
-    {
-        return 'MyService';
-    }
-
-    public function getDescription(): string
-    {
-        return 'Monitors my custom service';
-    }
-
-    public function isEnabled(): bool
-    {
-        // Operator intent (kill-switch). A disabled provider is never executed.
-        return true;
-    }
-
-    public function isActive(): bool
-    {
-        // Technical readiness; delegate to isEnabled() or AND-in preconditions.
-        return $this->isEnabled();
-    }
-
-    public function execute(): MonitoringResult
-    {
-        // Your monitoring logic here
-        return new MonitoringResult(
-            $this->getName(),
-            true,
-        );
-    }
-}
-```
-
-### Creating Custom Authorizers
-
-Implement the `Authorizer` interface:
-
-```php
-<?php
-
-use mteu\Monitoring\Authorization\Authorizer;
-use Psr\Http\Message\ServerRequestInterface;
-use Symfony\Component\DependencyInjection\Attribute\AutoconfigureTag;
-
-#[AutoconfigureTag('monitoring.authorizer')]
-final class MyAuthorizer implements Authorizer
-{
-    public function isActive(): bool
-    {
-        // Whether this authorizer should be considered at all.
-        return true;
-    }
-
-    public function isAuthorized(ServerRequestInterface $request): bool
-    {
-        // Your authorization logic here
-        return true;
-    }
-
-    public function getDescription(): string
-    {
-        // Shown in the backend module.
-        return 'My custom authorizer';
-    }
-
-    public static function getPriority(): int
-    {
-        return 100; // Higher priority = checked first
-    }
-}
-```
-
-## 🤝 Contributing
-Contributions are very welcome! Please have a look at the [Contribution Guide](CONTRIBUTING.md). It lays out the
-workflow of submitting new features or bugfixes.
+For guides on creating custom providers and authorizers, see the [Documentation](Documentation/README.md).
 
 ## 📙 Documentation
 Please have a look at the extension [documentation](Documentation/README.md). It provides a detailed look into
 the possibilities you have in extending and customizing this extension for your specific TYPO3 components.
+
+## 🤝 Contributing
+Contributions are very welcome! Please have a look at the [Contribution Guide](CONTRIBUTING.md). It lays out the
+workflow of submitting new features or bugfixes.
 
 ## 🔒 Security
 Please refer to the [Security Policy](SECURITY.md) if you discover a security vulnerability in

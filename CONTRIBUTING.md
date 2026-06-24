@@ -161,6 +161,6 @@ When reporting bugs, please include:
 ## 💡 Questions?
 
 - Check existing [Documentation](Documentation/README.md)
-- Review [Provider Development Guide](Documentation/providers.md)
+- Review [Provider Development Guide](Documentation/Providers.md)
 - Look at existing code for patterns
 - Open an issue for discussion

@@ -1,7 +1,7 @@
 # EmailReporter
 
 Sends the monitoring status by email through TYPO3's core mailer
-(`MailerInterface`). See [Reporters](../reporters.md) for the general dispatch
+(`MailerInterface`). See [Reporters](../Reporters.md) for the general dispatch
 flow and thresholds.
 
 ## Configuration

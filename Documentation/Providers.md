@@ -104,10 +104,10 @@ final class ExpensiveProvider implements CacheableMonitoringProvider
 
 Cached results are automatically managed by the monitoring system:
 
-- **Automatic Expiration Checks**: On each request, cached results are checked for expiration
-- **Automatic Cleanup**: When a cached result expires, it is automatically removed from cache
-- **Fresh Execution**: After expiration, the provider's `execute()` method is called to generate fresh results
-- **Re-caching**: The new result is automatically cached according to the provider's `getCacheLifetime()`
+- Automatic Expiration Checks: On each request, cached results are checked for expiration
+- Automatic Cleanup: When a cached result expires, it is automatically removed from cache
+- Fresh Execution: After expiration, the provider's `execute()` method is called to generate fresh results
+- Re-caching: The new result is automatically cached according to the provider's `getCacheLifetime()`
 
 This ensures monitoring results are always fresh while maintaining performance benefits. You don't need to handle cache expiration manually - the system handles it transparently.
 
@@ -253,12 +253,3 @@ final class MultiComponentProvider implements MonitoringProvider
     }
 }
 ```
-
-## Best Practices
-
-- Keep checks lightweight and fast
-- Handle exceptions gracefully
-- Use caching for expensive operations
-- Don't expose sensitive information in error messages
-- Implement proper timeouts for external calls
-

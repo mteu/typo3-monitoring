@@ -106,7 +106,7 @@ public function isActive(): bool
 (`SchedulerProviderConfiguration`), keeping the configuration read in one
 strongly-typed place.
 
-See [providers.md](providers.md#enablement-and-activation) for the full
+See [providers.md](../Providers.md#enablement-and-activation) for the full
 enablement-vs-activation model.
 
 ---
@@ -203,4 +203,4 @@ External consumers must update. Key changes:
 ```
 
 `Result::toArray()` and `jsonSerialize()` likewise emit `status` instead of
-`isHealthy`. See [api.md](api.md) for the full response reference.
+`isHealthy`. See [api.md](../Api.md) for the full response reference.
