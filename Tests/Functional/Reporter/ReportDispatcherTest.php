@@ -29,6 +29,7 @@ use mteu\Monitoring\Reporter\NotificationDecision;
 use mteu\Monitoring\Reporter\ReportDispatcher;
 use mteu\Monitoring\Reporter\Reporter;
 use mteu\Monitoring\Reporter\ReportThreshold;
+use mteu\Monitoring\Result\Status;
 use mteu\Monitoring\Tests\Functional\Fixtures\ConfigurableProvider;
 use mteu\Monitoring\Tests\Functional\Fixtures\RecordingReporter;
 use mteu\Monitoring\Tests\Functional\Fixtures\ThrowingReporter;
@@ -238,6 +239,58 @@ final class ReportDispatcherTest extends MonitoringFunctionalTestCase
         self::assertSame(0, $reporter->receivedCount());
     }
 
+    #[Test]
+    public function degradedProviderDoesNotNotifyUnderTheDefaultFloor(): void
+    {
+        $reporter = new RecordingReporter(ReportThreshold::Always);
+        $provider = new ConfigurableProvider('alpha');
+        $provider->setStatus(Status::Degraded);
+
+        // notifyFrom defaults to Unhealthy: a degraded result stays a silent 200.
+        self::assertSame(
+            NotificationDecision::None,
+            $this->dispatch([$provider], [$reporter], 1_000),
+        );
+        self::assertSame(0, $reporter->receivedCount());
+    }
+
+    #[Test]
+    public function degradedProviderNotifiesWhenFloorIsLoweredToDegraded(): void
+    {
+        $reporter = new RecordingReporter(ReportThreshold::Always);
+        $provider = new ConfigurableProvider('alpha');
+        $provider->setStatus(Status::Degraded);
+
+        self::assertSame(
+            NotificationDecision::Unhealthy,
+            $this->dispatch([$provider], [$reporter], 1_000, notifyFrom: Status::Degraded),
+        );
+        self::assertSame(1, $reporter->receivedCount());
+    }
+
+    #[Test]
+    public function recoveryFiresWhenStatusDropsBelowTheFloor(): void
+    {
+        $reporter = new RecordingReporter(ReportThreshold::Always);
+        $provider = new ConfigurableProvider('alpha');
+        $provider->setStatus(Status::Degraded);
+
+        // Degraded crosses the lowered floor and pages.
+        self::assertSame(
+            NotificationDecision::Unhealthy,
+            $this->dispatch([$provider], [$reporter], 1_000, notifyFrom: Status::Degraded),
+        );
+
+        // Dropping to healthy clears the failure set: recovery, even though the
+        // floor is Degraded rather than Unhealthy.
+        $provider->setStatus(Status::Healthy);
+        self::assertSame(
+            NotificationDecision::Recovered,
+            $this->dispatch([$provider], [$reporter], 1_005, notifyFrom: Status::Degraded),
+        );
+        self::assertSame(2, $reporter->receivedCount());
+    }
+
     /**
      * Runs a freshly wired dispatcher at the given wall-clock timestamp so the
      * dedup state machine sees advancing time across runs within one test.
@@ -251,6 +304,7 @@ final class ReportDispatcherTest extends MonitoringFunctionalTestCase
         int $timestamp,
         bool $notifyOnRecovery = true,
         bool $failOpenOnMissingState = true,
+        Status $notifyFrom = Status::Unhealthy,
     ): NotificationDecision {
         return $this->dispatchResult(
             $providers,
@@ -258,6 +312,7 @@ final class ReportDispatcherTest extends MonitoringFunctionalTestCase
             $timestamp,
             $notifyOnRecovery,
             $failOpenOnMissingState,
+            $notifyFrom,
         )->decision;
     }
 
@@ -274,6 +329,7 @@ final class ReportDispatcherTest extends MonitoringFunctionalTestCase
         int $timestamp,
         bool $notifyOnRecovery = true,
         bool $failOpenOnMissingState = true,
+        Status $notifyFrom = Status::Unhealthy,
     ): DispatchResult {
         $context = new Context();
         $context->setAspect('date', new DateTimeAspect((new \DateTimeImmutable())->setTimestamp($timestamp)));
@@ -291,6 +347,7 @@ final class ReportDispatcherTest extends MonitoringFunctionalTestCase
                     reminderInterval: self::REMINDER_INTERVAL,
                     notifyOnRecovery: $notifyOnRecovery,
                     failOpenOnMissingState: $failOpenOnMissingState,
+                    notifyFrom: $notifyFrom,
                 ),
             ),
             $context,
