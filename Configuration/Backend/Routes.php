@@ -16,13 +16,9 @@ declare(strict_types=1);
  */
 
 return [
-    'monitoring' => [
-        'path' => '/monitoring',
-        'target' => \mteu\Monitoring\Backend\Controller\MonitoringController::class,
-    ],
     'monitoring_flush_provider_cache' => [
         'path' => '/monitoring/flush-provider-cache',
         'methods' => ['POST'],
-        'target' => \mteu\Monitoring\Backend\Controller\FlushProviderCacheController::class,
+        'target' => mteu\Monitoring\Backend\Controller\FlushProviderCacheController::class,
     ],
 ];
