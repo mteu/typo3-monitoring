@@ -1,7 +1,7 @@
 # Reporter Development Guide
 
 Reporters **push** monitoring status out (email, Slack, Teams, …) for setups
-where no external system scrapes the [HTTP endpoint](api.md). They are
+where no external system scrapes the [HTTP endpoint](Api.md). They are
 evaluated by the `ReportDispatcher`, which is triggered on demand via the
 `monitoring:report` CLI command (cron-friendly), not on every request.
 
@@ -25,7 +25,7 @@ deliberately outside the `system` cache group, so flushing system caches
 cannot make the dispatcher forget it already alerted. A failed delivery does
 not advance the reminder clock, so it is retried on the next run.
 
-See [Configuration](configuration.md) for the `reportDispatcher` settings
+See [Configuration](Configuration.md) for the `reportDispatcher` settings
 (`reminderInterval`, `notifyOnRecovery`, `failOpenOnMissingState`).
 
 ## Thresholds

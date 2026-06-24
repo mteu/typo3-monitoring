@@ -6,17 +6,17 @@ checks.
 
 The extension defines these main interfaces:
 
-- `MonitoringProvider`: For implementing monitoring checks, see [Provider Development](providers.md).
-- `Authorizer`: For implementing authorization strategies, see [Authorization](authorization.md).
-- `Reporter`: For pushing status to external channels, see [Reporter Development](reporters.md).
+- `MonitoringProvider`: For implementing monitoring checks, see [Provider Development](Providers.md).
+- `Authorizer`: For implementing authorization strategies, see [Authorization](Authorization.md).
+- `Reporter`: For pushing status to external channels, see [Reporter Development](Reporters.md).
 
 All interfaces support automatic service discovery through PHP attributes.
 
 ## Further reading
 
-1. [Configuration](configuration.md)
-2. [Provider Development](providers.md)
-3. [Authorization](authorization.md)
-4. [Reporter Development](reporters.md)
-5. [API Reference](api.md)
-6. [Command-Line Interface](command-line.md)
+1. [Configuration](Configuration.md)
+2. [Provider Development](Providers.md)
+3. [Authorization](Authorization.md)
+4. [Reporter Development](Reporters.md)
+5. [API Reference](Api.md)
+6. [Command-Line Interface](Cli.md)
