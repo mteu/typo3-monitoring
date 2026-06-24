@@ -297,6 +297,33 @@
             <trans-unit id="provider.scheduler.heartbeat.ok">
                 <source>Scheduler last ran at %s.</source>
             </trans-unit>
+            <trans-unit id="provider.scheduler.age.and">
+                <source>and</source>
+            </trans-unit>
+            <trans-unit id="provider.scheduler.age.day.one">
+                <source>day</source>
+            </trans-unit>
+            <trans-unit id="provider.scheduler.age.day.other">
+                <source>days</source>
+            </trans-unit>
+            <trans-unit id="provider.scheduler.age.hour.one">
+                <source>hour</source>
+            </trans-unit>
+            <trans-unit id="provider.scheduler.age.hour.other">
+                <source>hours</source>
+            </trans-unit>
+            <trans-unit id="provider.scheduler.age.minute.one">
+                <source>minute</source>
+            </trans-unit>
+            <trans-unit id="provider.scheduler.age.minute.other">
+                <source>minutes</source>
+            </trans-unit>
+            <trans-unit id="provider.scheduler.age.second.one">
+                <source>second</source>
+            </trans-unit>
+            <trans-unit id="provider.scheduler.age.second.other">
+                <source>seconds</source>
+            </trans-unit>
             <trans-unit id="provider.scheduler.failed.none">
                 <source>No task reported an execution failure.</source>
             </trans-unit>
