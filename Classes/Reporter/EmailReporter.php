@@ -189,10 +189,12 @@ final readonly class EmailReporter implements Reporter
         };
         $lines[] = '';
 
-        foreach ($context->results as $result) {
-            $status = $result->isHealthy()
-                ? $this->translate($languageService, 'reporter.email.status.ok')
-                : $this->translate($languageService, 'reporter.email.status.failed');
+        foreach ($context->results as $name => $result) {
+            // Base the per-line marker on the failure set o a degraded provider that crossed the notify floor is
+            // shown as FAILED, not OK, when the severity floor is set to degraded.
+            $status = \in_array($name, $context->unhealthyProviderNames, true)
+                ? $this->translate($languageService, 'reporter.email.status.failed')
+                : $this->translate($languageService, 'reporter.email.status.ok');
             $reason = $result->getReason();
             $lines[] = $this->translate(
                 $languageService,

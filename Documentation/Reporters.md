@@ -26,7 +26,30 @@ cannot make the dispatcher forget it already alerted. A failed delivery does
 not advance the reminder clock, so it is retried on the next run.
 
 See [Configuration](Configuration.md) for the `reportDispatcher` settings
-(`reminderInterval`, `notifyOnRecovery`, `failOpenOnMissingState`).
+(`reminderInterval`, `notifyOnRecovery`, `failOpenOnMissingState`, `notifyFrom`).
+
+## Severity floor (`notifyFrom`)
+
+A provider can report `healthy`, `degraded` or `unhealthy`. The dispatcher
+builds its failure set from every result whose status is **at least** the
+configured `reportDispatcher.notifyFrom` floor:
+
+| `notifyFrom` | Pages on            | `degraded` behaviour                          |
+|--------------|---------------------|-----------------------------------------------|
+| `unhealthy`  | `unhealthy` only    | silent — stays HTTP 200, never notifies (default) |
+| `degraded`   | `degraded` + `unhealthy` | enters the failure set and notifies      |
+
+The floor is **global**: it is a single severity gate in front of the one
+shared dedup/reminder/recovery state machine, not a per-reporter setting.
+Lowering it to `degraded` makes degradation page through exactly the same
+fingerprint/reminder/recovery machinery as an outage. Recovery (`Recovered`)
+then fires when the status drops back **below the floor**, which is not
+necessarily fully healthy — the recovery copy is worded accordingly.
+
+This is distinct from the per-reporter **threshold** below: `notifyFrom` decides
+*what counts as a failure* (a severity gate), while a reporter's threshold
+decides *which decisions* (`Unhealthy` / `Reminder` / `Recovered`) it wants
+once that failure has been determined.
 
 ## Thresholds
 
@@ -37,6 +60,10 @@ Each reporter declares which decisions it wants via `ReportThreshold`:
 | `always`       | `Unhealthy`, `Reminder`, `Recovered` |
 | `unhealthy`    | `Unhealthy`, `Reminder`           |
 | `state-change` | `Unhealthy`, `Recovered`          |
+
+> `ReportThreshold::Unhealthy` keeps its name for backward compatibility; read
+> it as "the failure decision", where *failure* means a result met the
+> `notifyFrom` floor — not literally the `unhealthy` status.
 
 ## Custom Reporter
 

@@ -231,12 +231,45 @@ final class EmailReporterTest extends TestCase
         $reporter->report($context);
 
         self::assertInstanceOf(Email::class, $message);
-        self::assertSame('[Monitoring] All monitored services recovered', $message->getSubject());
+        self::assertSame('[Monitoring] Monitored services recovered', $message->getSubject());
         self::assertSame(
-            "All monitored services are healthy again.\n"
+            "Monitored services have recovered and are no longer above the alerting threshold.\n"
             . "\n"
             . "[OK] db\n"
             . "[OK] scheduler\n",
+            $message->getTextBody(),
+        );
+    }
+
+    #[Test]
+    public function reportMarksADegradedProviderInTheFailureSetAsFailed(): void
+    {
+        // With notifyFrom=Degraded a degraded provider crosses the floor and is listed in the failure set,
+        // so its line must read FAILED — not OK, which isHealthy() would have produced for a degraded result.
+        $reporter = $this->reporter(
+            enabled: true,
+            recipients: 'ops@example.com',
+            sentMessage: $message,
+        );
+
+        $context = new ReportContext(
+            NotificationDecision::Unhealthy,
+            [
+                'scheduler' => new MonitoringResult('scheduler', Status::Degraded, 'Overdue task'),
+                'cache' => new MonitoringResult('cache', Status::Healthy),
+            ],
+            ['scheduler'],
+            'fp',
+        );
+
+        $reporter->report($context);
+
+        self::assertInstanceOf(Email::class, $message);
+        self::assertSame(
+            "The following services are reporting an unhealthy state:\n"
+            . "\n"
+            . "[FAILED] scheduler — Overdue task\n"
+            . "[OK] cache\n",
             $message->getTextBody(),
         );
     }
