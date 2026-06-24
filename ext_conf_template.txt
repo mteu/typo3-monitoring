@@ -50,6 +50,10 @@ provider {
         heartbeatThreshold=900
         # cat=provider/50/30; type=int+; label=Overdue threshold (seconds):Grace period after a task's scheduled next execution time before it is reported as overdue. Tasks configured for manual execution are excluded automatically. Set to 0 to disable. Defaults to 300 (5 minutes).
         overdueThreshold=300
+        # cat=provider/50/40; type=options[Unhealthy (alerts)=unhealthy,Degraded (no alert)=degraded]; label=Overdue task severity:Health state reported when a task is overdue. Unhealthy is an outage (HTTP 503, may notify). Degraded keeps overdue tasks visible on the endpoint (HTTP 200) without notifying. Failed tasks are always unhealthy.
+        overdueSeverity=unhealthy
+        # cat=provider/50/50; type=options[Unhealthy (alerts)=unhealthy,Degraded (no alert)=degraded]; label=Stale heartbeat severity:Health state reported when cron has not invoked the scheduler within the heartbeat threshold. A heartbeat that never ran at all is always unhealthy.
+        heartbeatStaleSeverity=unhealthy
     }
 }
 reportDispatcher {
@@ -59,6 +63,8 @@ reportDispatcher {
     notifyOnRecovery=1
     # cat=reporter/30/30; type=boolean; label=Fail-open on missing state:If notification state is absent (e.g. cache flushed) while status is unhealthy, send (fail-open) rather than stay silent.
     failOpenOnMissingState=1
+    # cat=reporter/30/40; type=options[Unhealthy (default)=unhealthy,Degraded=degraded]; label=Notify from severity:Lowest severity that enters the failure set and is allowed to notify. Unhealthy (default) keeps degraded results as silent HTTP 200; Degraded lets degradation page through the existing reminder/recovery machine.
+    notifyFrom=unhealthy
 }
 
 reporter {

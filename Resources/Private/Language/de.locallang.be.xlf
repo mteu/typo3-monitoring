@@ -464,8 +464,8 @@
                 <target>Eine oder mehrere Scheduler-Prüfungen sind fehlgeschlagen. Details siehe Teilergebnisse.</target>
             </trans-unit>
             <trans-unit id="reporter.email.subject.recovered">
-                <source>All monitored services recovered</source>
-                <target>Alle überwachten Dienste wiederhergestellt</target>
+                <source>Monitored services recovered</source>
+                <target>Überwachte Dienste wiederhergestellt</target>
             </trans-unit>
             <trans-unit id="reporter.email.subject.reminder">
                 <source>Still unhealthy: %s</source>
@@ -476,8 +476,8 @@
                 <target>Fehlerhaft: %s</target>
             </trans-unit>
             <trans-unit id="reporter.email.body.recovered">
-                <source>All monitored services are healthy again.</source>
-                <target>Alle überwachten Dienste sind wieder fehlerfrei.</target>
+                <source>Monitored services have recovered and are no longer above the alerting threshold.</source>
+                <target>Die überwachten Dienste haben sich erholt und liegen nicht mehr über der Benachrichtigungsschwelle.</target>
             </trans-unit>
             <trans-unit id="reporter.email.body.reminder">
                 <source>The following services are still reporting an unhealthy state:</source>

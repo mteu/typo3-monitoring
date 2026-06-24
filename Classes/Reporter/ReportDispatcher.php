@@ -30,9 +30,8 @@ use TYPO3\CMS\Core\Context\Context;
 /**
  * ReportDispatcher.
  *
- * Shared "brain" used by both the CLI command and the (optional) scheduler
- * task: evaluates active providers, runs the dedup state machine, and fans
- * out to active reporters according to each reporter's threshold.
+ * Shared "brain" used by both the CLI command and the (optional) scheduler task.
+ * Evaluates active providers and dispatches active reporters according to each reporter's threshold.
  *
  * @author Martin Adler <mteu@mailbox.org>
  * @license GPL-2.0-or-later
@@ -59,9 +58,11 @@ final readonly class ReportDispatcher
     {
         $results = $this->collectResults();
 
+        $dispatcherConfiguration = $this->configuration->reporterDispatcherConfiguration;
+
         $unhealthyNames = [];
         foreach ($results as $name => $result) {
-            if (!$result->isHealthy()) {
+            if ($result->getStatus()->isAtLeast($dispatcherConfiguration->notifyFrom)) {
                 $unhealthyNames[] = $name;
             }
         }
@@ -73,8 +74,6 @@ final readonly class ReportDispatcher
         $now = $this->now();
 
         $state = $this->stateCacheManager->load();
-
-        $dispatcherConfiguration = $this->configuration->reporterDispatcherConfiguration;
 
         $decision = $this->decide(
             $healthyNow,
@@ -144,8 +143,7 @@ final readonly class ReportDispatcher
             return;
         }
 
-        // Only advance the reminder clock when a notification was actually
-        // delivered, so a failed send is retried on the next run.
+        // Only advance the reminder clock when a notification was actually delivered, so a failed send is retried on the next run.
         $lastNotifiedAt = $anySent ? $now : $previousLastNotified;
         $this->stateCacheManager->save(new NotificationState($fingerprint, $lastNotifiedAt, false));
     }
@@ -195,9 +193,6 @@ final readonly class ReportDispatcher
     }
 
     /**
-     * Keyed by the provider's name (matching the middleware's status map) so
-     * two instances of the same provider class do not collide.
-     *
      * @return array<non-empty-string, Result>
      */
     private function collectResults(): array

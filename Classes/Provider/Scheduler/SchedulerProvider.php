@@ -132,7 +132,7 @@ final readonly class SchedulerProvider implements MonitoringProvider
         if ($age > $this->configuration->heartbeatThreshold) {
             return new MonitoringResult(
                 'Scheduler',
-                Status::Unhealthy,
+                $this->configuration->heartbeatStaleSeverity,
                 $this->translate(
                     'provider.scheduler.heartbeat.stale',
                     $this->formatAge($age),
@@ -192,7 +192,7 @@ final readonly class SchedulerProvider implements MonitoringProvider
 
         return new MonitoringResult(
             'Overdue Tasks',
-            Status::Unhealthy,
+            $this->configuration->overdueSeverity,
             $this->translate(
                 $count > 1 ? 'provider.scheduler.overdue.plural' : 'provider.scheduler.overdue.singular',
                 $count,

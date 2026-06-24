@@ -17,6 +17,7 @@ declare(strict_types=1);
 
 namespace mteu\Monitoring\Configuration\Provider;
 
+use mteu\Monitoring\Result\Status;
 use mteu\TypedExtConf\Attribute\ExtConfProperty;
 use mteu\TypedExtConf\Attribute\ExtensionConfig;
 
@@ -32,22 +33,34 @@ final readonly class SchedulerProviderConfiguration implements ProviderConfigura
     public function __construct(
         #[ExtConfProperty(path: 'provider.mteu\\Monitoring\\Provider\\SchedulerProvider.enabled')]
         private bool $enabled = true,
+
         /**
-         * Maximum age (in seconds) of the last scheduler run before the
-         * heartbeat is considered unhealthy. This detects a broken cron job
-         * that no longer invokes the scheduler at all. Set to 0 to disable
-         * the heartbeat check.
+         * Maximum age (in seconds) of the last scheduler run before the heartbeat is considered
+         * unhealthy. Set to 0 to disable the heartbeat check.
          */
         #[ExtConfProperty(path: 'provider.mteu\\Monitoring\\Provider\\SchedulerProvider.heartbeatThreshold')]
         public int $heartbeatThreshold = 900,
+
         /**
-         * Grace period (in seconds) after a task's scheduled next execution
-         * time before it is reported as overdue. Only tasks with an explicit
-         * next-execution time are considered; tasks configured for manual
-         * execution are excluded automatically. Set to 0 to disable.
+         * Grace period (in seconds) after a task's scheduled next execution time before it is
+         * reported as overdue. Only tasks with an explicit next-execution time are considered;
+         * tasks configured for manual execution are excluded automatically. Set to 0 to disable.
          */
         #[ExtConfProperty(path: 'provider.mteu\\Monitoring\\Provider\\SchedulerProvider.overdueThreshold')]
         public int $overdueThreshold = 300,
+
+        /**
+         * Severity reported when a task is overdue. Failed tasks are always unhealthy.
+         */
+        #[ExtConfProperty(path: 'provider.mteu\\Monitoring\\Provider\\SchedulerProvider.overdueSeverity')]
+        public Status $overdueSeverity = Status::Unhealthy,
+
+        /**
+         * Severity reported when the scheduler heartbeat is stale (cron has not invoked the scheduler
+         * within {@see self::$heartbeatThreshold}).A heartbeat that has never run at all is always unhealthy.
+         */
+        #[ExtConfProperty(path: 'provider.mteu\\Monitoring\\Provider\\SchedulerProvider.heartbeatStaleSeverity')]
+        public Status $heartbeatStaleSeverity = Status::Unhealthy,
     ) {}
 
     public function isEnabled(): bool

@@ -17,6 +17,7 @@ declare(strict_types=1);
 
 namespace mteu\Monitoring\Configuration\Reporter;
 
+use mteu\Monitoring\Result\Status;
 use mteu\TypedExtConf\Attribute\ExtConfProperty;
 use mteu\TypedExtConf\Attribute\ExtensionConfig;
 
@@ -38,5 +39,12 @@ final readonly class ReportDispatcherConfiguration
         public bool $notifyOnRecovery = true,
         #[ExtConfProperty(path: 'reportDispatcher.failOpenOnMissingState')]
         public bool $failOpenOnMissingState = true,
+
+        /**
+         * Severity floor at which a provider result enters the failure set and is allowed to notify.
+         * Defaults to {@see Status::Unhealthy} so a `degraded` result stays a silent HTTP 200.
+         */
+        #[ExtConfProperty(path: 'reportDispatcher.notifyFrom')]
+        public Status $notifyFrom = Status::Unhealthy,
     ) {}
 }
