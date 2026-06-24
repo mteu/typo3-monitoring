@@ -37,6 +37,8 @@ return [
                     'enabled' => true,
                     'heartbeatThreshold' => 900,
                     'overdueThreshold' => 300,
+                    'overdueSeverity' => 'unhealthy',
+                    'heartbeatStaleSeverity' => 'unhealthy',
                 ],
             ],
         ],
@@ -49,10 +51,20 @@ return [
 | `enabled`            | `true`  | Enables the provider. When `false` the provider reports as inactive.                                |
 | `heartbeatThreshold` | `900`   | Max age (seconds) of the last scheduler run before the heartbeat is unhealthy. `0` disables it.     |
 | `overdueThreshold`   | `300`   | Grace period (seconds) added to a task's next-execution time before it is overdue. `0` disables it. |
+| `overdueSeverity`        | `unhealthy` | Status reported for an overdue task: `unhealthy` (an outage — HTTP 503, may notify) or `degraded` (visible on the endpoint at HTTP 200, no notification). |
+| `heartbeatStaleSeverity` | `unhealthy` | Status reported when the heartbeat is stale: `unhealthy` or `degraded`. A heartbeat that never ran at all is always `unhealthy`. |
 
 Tune the thresholds to your cron frequency: `heartbeatThreshold` should comfortably
 exceed how often cron runs the scheduler, and `overdueThreshold` should absorb the
 expected runtime of your longest scheduled task.
+
+The severity knobs let you classify, per condition, what counts as `degraded`
+versus `unhealthy` — for example "an overdue task is FYI (`degraded`), a failed
+task is an outage (`unhealthy`)". Failed tasks are always `unhealthy` and have no
+knob. A `degraded` sub-result keeps the Scheduler's aggregate status at
+`degraded` (HTTP 200) and, by default, does **not** notify; pair it with
+`reportDispatcher.notifyFrom = degraded` (see [Reporters](../Reporters.md)) if
+you do want degradation to page.
 
 ## Example output
 

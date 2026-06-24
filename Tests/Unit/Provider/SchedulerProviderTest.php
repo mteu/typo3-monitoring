@@ -21,6 +21,7 @@ use mteu\Monitoring\Configuration\Provider\SchedulerProviderConfiguration;
 use mteu\Monitoring\Provider\Scheduler\SchedulerProvider;
 use mteu\Monitoring\Provider\Scheduler\SchedulerTask;
 use mteu\Monitoring\Result\MonitoringResult;
+use mteu\Monitoring\Result\Status;
 use mteu\Monitoring\Tests\Unit\Fixtures\Language\XliffLanguageServiceFactoryTrait;
 use mteu\Monitoring\Tests\Unit\Fixtures\Scheduler\InMemorySchedulerHeartbeat;
 use mteu\Monitoring\Tests\Unit\Fixtures\Scheduler\InMemorySchedulerTaskRepository;
@@ -231,6 +232,67 @@ final class SchedulerProviderTest extends Framework\TestCase
         $overdue = $result->getSubResults()[1];
         self::assertTrue($overdue->isHealthy());
         self::assertStringContainsString('disabled', (string)$overdue->getReason());
+    }
+
+    #[Test]
+    public function overdueTasksAreUnhealthyByDefault(): void
+    {
+        $overdue = $this->createProvider(overdueCount: 2)->execute()->getSubResults()[1];
+
+        self::assertSame(Status::Unhealthy, $overdue->getStatus());
+    }
+
+    #[Test]
+    public function overdueSeverityCanBeDowngradedToDegraded(): void
+    {
+        $result = $this->createProvider(
+            configuration: new SchedulerProviderConfiguration(overdueSeverity: Status::Degraded),
+            overdueCount: 2,
+        )->execute();
+
+        $overdue = $result->getSubResults()[1];
+        self::assertSame(Status::Degraded, $overdue->getStatus());
+
+        // Degraded is not an outage: the aggregated result stays a non-failing 200.
+        self::assertSame(Status::Degraded, $result->getStatus());
+        self::assertTrue($result->isHealthy());
+    }
+
+    #[Test]
+    public function staleHeartbeatSeverityCanBeDowngradedToDegraded(): void
+    {
+        $result = $this->createProvider(
+            configuration: new SchedulerProviderConfiguration(heartbeatStaleSeverity: Status::Degraded),
+            lastRunEnd: self::NOW - 10_000,
+        )->execute();
+
+        $heartbeat = $result->getSubResults()[0];
+        self::assertSame(Status::Degraded, $heartbeat->getStatus());
+        self::assertTrue($result->isHealthy());
+    }
+
+    #[Test]
+    public function failedTasksStayUnhealthyEvenWhenOverdueSeverityIsDegraded(): void
+    {
+        $result = $this->createProvider(
+            configuration: new SchedulerProviderConfiguration(overdueSeverity: Status::Degraded),
+            failedCount: 1,
+        )->execute();
+
+        self::assertSame(Status::Unhealthy, $result->getSubResults()[2]->getStatus());
+        self::assertFalse($result->isHealthy());
+    }
+
+    #[Test]
+    public function heartbeatThatNeverRanStaysUnhealthyEvenWhenStaleSeverityIsDegraded(): void
+    {
+        $result = $this->createProvider(
+            configuration: new SchedulerProviderConfiguration(heartbeatStaleSeverity: Status::Degraded),
+            lastRunEnd: null,
+        )->execute();
+
+        self::assertSame(Status::Unhealthy, $result->getSubResults()[0]->getStatus());
+        self::assertFalse($result->isHealthy());
     }
 
     #[Test]

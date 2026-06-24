@@ -53,4 +53,13 @@ final class SchedulerProviderConfigurationTest extends Framework\TestCase
 
         self::assertTrue($subject->isOverdueCheckEnabled());
     }
+
+    #[Test]
+    public function severitiesDefaultToUnhealthyToPreserveExistingBehaviour(): void
+    {
+        $subject = new Src\Configuration\Provider\SchedulerProviderConfiguration();
+
+        self::assertSame(Src\Result\Status::Unhealthy, $subject->overdueSeverity);
+        self::assertSame(Src\Result\Status::Unhealthy, $subject->heartbeatStaleSeverity);
+    }
 }

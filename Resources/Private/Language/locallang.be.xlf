@@ -352,7 +352,7 @@
                 <source>One or more scheduler health checks failed. See sub-results for details.</source>
             </trans-unit>
             <trans-unit id="reporter.email.subject.recovered">
-                <source>All monitored services recovered</source>
+                <source>Monitored services recovered</source>
             </trans-unit>
             <trans-unit id="reporter.email.subject.reminder">
                 <source>Still unhealthy: %s</source>
@@ -361,7 +361,7 @@
                 <source>Unhealthy: %s</source>
             </trans-unit>
             <trans-unit id="reporter.email.body.recovered">
-                <source>All monitored services are healthy again.</source>
+                <source>Monitored services have recovered and are no longer above the alerting threshold.</source>
             </trans-unit>
             <trans-unit id="reporter.email.body.reminder">
                 <source>The following services are still reporting an unhealthy state:</source>

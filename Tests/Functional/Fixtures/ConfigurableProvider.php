@@ -32,6 +32,8 @@ use mteu\Monitoring\Result\Status;
  */
 final class ConfigurableProvider implements MonitoringProvider
 {
+    private ?Status $status = null;
+
     public function __construct(
         /** @var non-empty-string $identifier */
         private readonly string $identifier,
@@ -42,6 +44,16 @@ final class ConfigurableProvider implements MonitoringProvider
     public function setHealthy(bool $healthy): void
     {
         $this->healthy = $healthy;
+        $this->status = null;
+    }
+
+    /**
+     * Pins an explicit status, overriding the healthy/unhealthy toggle. Lets a
+     * test emit a `degraded` result to exercise the notify-from severity floor.
+     */
+    public function setStatus(Status $status): void
+    {
+        $this->status = $status;
     }
 
     public function getName(): string
@@ -66,6 +78,8 @@ final class ConfigurableProvider implements MonitoringProvider
 
     public function execute(): Result
     {
-        return new MonitoringResult($this->identifier, $this->healthy ? Status::Healthy : Status::Unhealthy);
+        $status = $this->status ?? ($this->healthy ? Status::Healthy : Status::Unhealthy);
+
+        return new MonitoringResult($this->identifier, $status);
     }
 }
