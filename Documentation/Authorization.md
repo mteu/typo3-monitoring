@@ -7,6 +7,11 @@ Authorizers are evaluated in priority order. The first one that grants access al
 ### Token Authorization
 HMAC-based authentication using TYPO3's HashService.
 
+> [!WARNING]
+> The generated token is a long-lived shared secret. It contains no nonce, timestamp, or expiry, so it is valid
+> indefinitely and can be replayed by anyone who observes it. Rotating the `secret` value is the only way to revoke
+> access if you don't want to rotate the TYPO3 encryption key. Treat the token with the same care as a password.
+
 **Configuration:**
 ```php
 'EXTENSIONS' => [

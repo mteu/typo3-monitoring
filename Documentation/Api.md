@@ -121,7 +121,7 @@ returned:
 
 > Only returned when `api.enforceHttps` is enabled. By default the extension
 > does not enforce HTTPS in PHP — TLS termination is expected to happen at the
-> web server / ingress. See [Configuration](configuration.md) for details and
+> web server / ingress. See [Configuration](Configuration.md) for details and
 > the trusted-proxy caveats.
 
 **405 Method Not Allowed (non-GET/HEAD request)**
