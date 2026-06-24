@@ -71,7 +71,7 @@ return [
 ];
 ```
 
-See [Documentation/configuration.md](Documentation/Configuration.md) for all available settings.
+See [Documentation/Configuration.md](Documentation/Configuration.md) for all available settings.
 
 ### Endpoint
 
@@ -79,7 +79,7 @@ See [Documentation/configuration.md](Documentation/Configuration.md) for all ava
 GET https://<your-site>/monitor/health
 ```
 
-Access requires authentication — either a TYPO3 backend administrator session or a token header. See [Documentation/authorization.md](Documentation/Authorization.md) for details, including the security properties of the token.
+Access requires authentication — either a TYPO3 backend administrator session or a token header. See [Documentation/Authorization.md](Documentation/Authorization.md) for details, including the security properties of the token.
 
 The endpoint returns a JSON health report. See the [API Reference](Documentation/Api.md) for the full response schema and HTTP status codes.
 
