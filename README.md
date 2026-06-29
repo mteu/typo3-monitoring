@@ -4,14 +4,19 @@
 [![Tests](https://github.com/mteu/typo3-monitoring/actions/workflows/tests.yaml/badge.svg?branch=main)](https://github.com/mteu/typo3-monitoring/actions/workflows/tests.yaml)
 [![Coverage](https://coveralls.io/repos/github/mteu/typo3-monitoring/badge.svg?branch=main)](https://coveralls.io/github/mteu/typo3-monitoring?branch=main)
 
+
 <img src="Resources/Public/Icons/Extension.svg" width="64" height="64" alt="Extension Icon">
 
 # TYPO3 Monitoring
 
-![TYPO3 versions](https://typo3-badges.dev/badge/monitoring/typo3/shields.svg)
-![Latest version](https://typo3-badges.dev/badge/monitoring/version/shields.svg)
-![Stability](https://typo3-badges.dev/badge/monitoring/stability/shields.svg)
+
+![TYPO3 Support](https://badgen.net/badge/TYPO3/v13/FF8700?icon=typo3)
+![TYPO3 Support](https://badgen.net/badge/TYPO3/v14/FF8700?icon=typo3)
 [![PHP Version Require](https://poser.pugx.org/mteu/typo3-monitoring/require/php)](https://packagist.org/packages/mteu/typo3-monitoring)
+![Stability](https://typo3-badges.dev/badge/monitoring/stability/badgen.svg)
+![Latest version](https://typo3-badges.dev/badge/monitoring/version/badgen.svg)
+![Total downloads](https://typo3-badges.dev/badge/monitoring/downloads/badgen.svg)
+<!-- Generated with 🧡 at typo3-badges.dev -->
 
 </div>
 
