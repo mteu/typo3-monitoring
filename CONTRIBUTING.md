@@ -49,6 +49,59 @@ composer test:unit
 composer test:functional
 ```
 
+#### Testing Against Supported TYPO3 Versions
+
+This extension supports **TYPO3 13.4 & 14.3** on **PHP 8.3, 8.4 and 8.5**. A plain
+`composer install` resolves only the highest combination, so `composer test` then
+covers just one of the combinations CI gates on. For version-sensitive changes,
+verify both lines locally the same way CI does:
+
+```bash
+# Test against TYPO3 v13
+composer update --with=typo3/cms-core:^13.4
+composer test
+
+# Test against TYPO3 v14
+composer update --with=typo3/cms-core:^14.3
+composer test
+
+# Mirror the "lowest" dependency leg of the CI matrix
+composer update --prefer-lowest --with=typo3/cms-core:^13.4
+composer test
+```
+
+The full PHP × TYPO3 × dependencies matrix is enforced in CI
+(`.github/workflows/tests.yaml`).
+
+#### Optional: Run v13 and v14 Side by Side (DDEV)
+
+For manual testing it can help to have both TYPO3 versions running at the same time.
+The committed `.ddev/` config is wired for the
+[`konradmichalik/ddev-typo3-multi-version-extension`][ddev-addon] add-on, which
+provisions an isolated instance per version with this extension symlinked into each.
+
+Requires Docker + DDEV. First-time setup:
+
+```bash
+# macOS only: avoids a BSD-sed "illegal byte sequence" in the add-on's post-install
+export LC_ALL=C LANG=C
+
+ddev add-on get konradmichalik/ddev-typo3-multi-version-extension
+ddev restart
+ddev install 13 && ddev install 14    # or: ddev install all
+```
+
+Daily use:
+
+```bash
+ddev launch 13             # v13 frontend
+ddev launch 14 /typo3      # v14 backend, side by side with v13
+ddev 13 typo3 cache:flush  # run a command in a single version
+ddev all composer update   # run across every installed version
+```
+
+[ddev-addon]: https://github.com/konradmichalik/ddev-typo3-multi-version-extension
+
 #### Code Quality (CGL) Commands
 ```bash
 # Check code style compliance
@@ -60,17 +113,18 @@ composer fix
 
 #### Static Code Analysis (SCA) Commands
 ```bash
-# Run PHPStan analysis with 4GB memory limit
-composer sca:php
-
-# Alternative direct command
-./vendor/bin/phpstan analyse -c Tests/CGL/phpstan.neon --memory-limit=4G
+# Run static analysis (PHPStan with a 4GB memory limit, plus Rector migration checks)
+composer sca
 ```
+
+> Note: `composer sca` also runs `rector process`, which **applies** migration
+> changes to your working tree (it is not a dry run). Commit or stash first if you
+> want to review what it changes.
 
 #### Complete Quality Check
 ```bash
 # Run all quality checks in sequence
-composer lint && composer sca:php && composer test
+composer lint && composer sca && composer test
 ```
 
 ### 4. Testing Requirements
@@ -119,8 +173,9 @@ git push origin feature/your-feature-name
 Before submitting, ensure:
 
 - [ ] **All tests pass**: `composer test`
+- [ ] **Works on both TYPO3 v13 and v14** (test against each, or rely on the CI matrix)
 - [ ] **Code style compliant**: `composer lint`
-- [ ] **Static analysis clean**: `composer sca:php`
+- [ ] **Static analysis clean**: `composer sca`
 - [ ] **New features have tests** (unit or functional)
 - [ ] **Documentation updated** if needed
 - [ ] **Commit messages** are clear and descriptive
@@ -157,10 +212,3 @@ When reporting bugs, please include:
 - Steps to reproduce
 - Expected vs actual behavior
 - Any relevant error messages
-
-## 💡 Questions?
-
-- Check existing [Documentation](Documentation/README.md)
-- Review [Provider Development Guide](Documentation/Providers.md)
-- Look at existing code for patterns
-- Open an issue for discussion
