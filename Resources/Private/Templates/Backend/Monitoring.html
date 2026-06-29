@@ -26,14 +26,37 @@
         <f:then>
             <f:if condition="{providerUnhealthyCount} == 0">
                 <f:then>
-                    <f:comment><!-- {f:constant(name: 'TYPO3\CMS\Core\Type\ContextualFeedbackSeverity::OK')} --></f:comment>
-                    <f:be.infobox
-                        title="{f:translate(key: 'LLL:EXT:monitoring/Resources/Private/Language/locallang.be.xlf:monitoring.overview.overallStatus.healthy.title')}"
-                        iconName="actions-check"
-                        state="0"
-                    >
-                        <f:translate key="LLL:EXT:monitoring/Resources/Private/Language/locallang.be.xlf:monitoring.overview.overallStatus.healthy.subtitle" />
-                    </f:be.infobox>
+                    <f:if condition="{providerDegradedCount} > 0">
+                        <f:then>
+                            <f:comment><!-- {f:constant(name: 'TYPO3\CMS\Core\Type\ContextualFeedbackSeverity::WARNING')} --></f:comment>
+                            <f:be.infobox
+                                title="{f:translate(key: 'LLL:EXT:monitoring/Resources/Private/Language/locallang.be.xlf:monitoring.overview.overallStatus.degraded.title')}"
+                                iconName="actions-exclamation-triangle"
+                                state="1"
+                            >
+                                <f:if condition="{providerDegradedCount} > 1">
+                                    <f:then>
+                                        <f:translate key="LLL:EXT:monitoring/Resources/Private/Language/locallang.be.xlf:monitoring.overview.overallStatus.degraded.subtitle.plural" arguments="{0: providerDegradedCount}"/>
+                                    </f:then>
+                                    <f:else>
+                                        <f:translate key="LLL:EXT:monitoring/Resources/Private/Language/locallang.be.xlf:monitoring.overview.overallStatus.degraded.subtitle.singular"/>
+                                    </f:else>
+                                </f:if>
+
+                                <a href="{serviceCards.providers.url}" style="text-decoration: underline"><f:translate key="LLL:EXT:monitoring/Resources/Private/Language/locallang.be.xlf:monitoring.overview.overallStatus.degraded.link"/></a>
+                            </f:be.infobox>
+                        </f:then>
+                        <f:else>
+                            <f:comment><!-- {f:constant(name: 'TYPO3\CMS\Core\Type\ContextualFeedbackSeverity::OK')} --></f:comment>
+                            <f:be.infobox
+                                title="{f:translate(key: 'LLL:EXT:monitoring/Resources/Private/Language/locallang.be.xlf:monitoring.overview.overallStatus.healthy.title')}"
+                                iconName="actions-check"
+                                state="0"
+                            >
+                                <f:translate key="LLL:EXT:monitoring/Resources/Private/Language/locallang.be.xlf:monitoring.overview.overallStatus.healthy.subtitle" />
+                            </f:be.infobox>
+                        </f:else>
+                    </f:if>
                 </f:then>
                 <f:else>
                     <f:comment><!-- {f:constant(name: 'TYPO3\CMS\Core\Type\ContextualFeedbackSeverity::ERROR')} --></f:comment>
