@@ -24,6 +24,7 @@ use mteu\Monitoring\Handler\MonitoringExecutionHandler;
 use mteu\Monitoring\Provider\CacheableMonitoringProvider;
 use mteu\Monitoring\Provider\MonitoringProvider;
 use mteu\Monitoring\Reporter\Reporter;
+use mteu\Monitoring\Result\Status;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use Symfony\Component\DependencyInjection\Attribute\AutowireIterator;
@@ -84,7 +85,8 @@ final readonly class MonitoringController extends AbstractSubModuleController
         $templateVariables = [
             'endpoint' => $params->getRequestHost() . $this->monitoringConfiguration->endpoint,
             'providers' => $providers,
-            'providerUnhealthyCount' => count(array_filter($providers, static fn(array $p) => ($p['isActive'] ?? false) && ($p['isHealthy'] ?? true) === false)),
+            'providerUnhealthyCount' => count(array_filter($providers, static fn(array $provider) => ($provider['isActive'] ?? false) && ($provider['isHealthy'] ?? true) === false)),
+            'providerDegradedCount' => count(array_filter($providers, static fn(array $provider) => ($provider['isActive'] ?? false) && ($provider['status'] ?? null) === Status::Degraded->value)),
             'providerInterface' => MonitoringProvider::class,
             'flushProviderCacheUri' => (string)$this->uriBuilder->buildUriFromRoute('monitoring_flush_provider_cache'),
             'serviceCards' => $this->buildCardsTemplateVariables(),
