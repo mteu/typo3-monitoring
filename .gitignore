@@ -1,14 +1,7 @@
 /.build
-/.Build
-/public
 /.php-cs-fixer.cache
 /.phpunit.result.cache
 /config
-/fileadmin
 /packages
 /tailor-version-artefact
 /var
-# DDEV add-on files (.ddev/commands, docker-compose.*, web-build, …) are meant to
-# be committed so the whole team gets the multi-version setup. DDEV's own
-# generated .ddev/.gitignore excludes the ephemeral/local bits.
-.Build/
