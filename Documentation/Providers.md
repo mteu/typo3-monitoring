@@ -255,4 +255,4 @@ final class MultiComponentProvider implements MonitoringProvider
 ```
 
 ## Example
-Find a set of example potentially return `Results` in [Documentation/Provider/Examples](Providers).
+Find a set of examples returning various `Results` combinations in [Documentation/Provider/Examples](Providers).
