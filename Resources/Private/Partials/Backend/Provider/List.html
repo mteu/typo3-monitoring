@@ -21,8 +21,31 @@
     <f:translate key="LLL:EXT:monitoring/Resources/Private/Language/locallang.be.xlf:providers.list.description" />
 </p>
 
-<f:for each="{providers}" as="provider" key="providerClass" iteration="iterator">
-    <f:render partial="Backend/Provider/Item" arguments="{_all}" />
+<f:for each="{enabledProviders}" as="provider" key="providerClass" iteration="iterator">
+    <f:render partial="Backend/Provider/Item" arguments="{provider: provider, providerClass: providerClass, iterator: iterator, groupKey: 'enabled', flushProviderCacheUri: flushProviderCacheUri}" />
 </f:for>
+
+<f:if condition="{disabledProviders}">
+    <div class="panel-group" role="tablist" aria-multiselectable="true">
+        <div class="panel panel-default">
+            <div class="panel-heading" role="tab" id="monitoring-disabled-providers-heading">
+                <h3 class="panel-title">
+                    <button class="panel-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#monitoring-disabled-providers" aria-expanded="false" aria-controls="monitoring-disabled-providers">
+                        <span class="caret"></span>
+                        <f:translate key="LLL:EXT:monitoring/Resources/Private/Language/locallang.be.xlf:providers.list.disabled.title" />
+                        <span class="badge badge-info ms-2">{disabledProviders -> f:count()}</span>
+                    </button>
+                </h3>
+            </div>
+            <div class="panel-collapse collapse" id="monitoring-disabled-providers" role="tabpanel" aria-labelledby="monitoring-disabled-providers-heading">
+                <div class="panel-body">
+                    <f:for each="{disabledProviders}" as="provider" key="providerClass" iteration="iterator">
+                        <f:render partial="Backend/Provider/Item" arguments="{provider: provider, providerClass: providerClass, iterator: iterator, groupKey: 'disabled', flushProviderCacheUri: flushProviderCacheUri}" />
+                    </f:for>
+                </div>
+            </div>
+        </div>
+    </div>
+</f:if>
 
 </html>
