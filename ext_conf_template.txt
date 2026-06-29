@@ -8,6 +8,7 @@
 # customsubcategory=30=Report Dispatcher
 # customsubcategory=40=Email Reporter
 # customsubcategory=50=Scheduler Provider
+# customsubcategory=60=Solr Provider
 
 api {
     # cat=endpoint/1/10; type=string; label=Endpoint Route
@@ -54,6 +55,14 @@ provider {
         overdueSeverity=unhealthy
         # cat=provider/50/50; type=options[Unhealthy (alerts)=unhealthy,Degraded (no alert)=degraded]; label=Stale heartbeat severity:Health state reported when cron has not invoked the scheduler within the heartbeat threshold. A heartbeat that never ran at all is always unhealthy.
         heartbeatStaleSeverity=unhealthy
+    }
+    mteu\Monitoring\Provider\SolrProvider {
+        # cat=provider/60/10; type=boolean; label=Enable Solr Provider:Monitors the Apache Solr connections configured for EXT:solr in the site configuration. Disabled by default and inactive when the solr extension is not installed.
+        enabled=0
+        # cat=provider/60/20; type=int+; label=Timeout (seconds):Maximum time to wait for a host or a core to respond before it is treated as unreachable. Defaults to 5.
+        timeout=5
+        # cat=provider/60/30; type=options[Degraded (no alert)=degraded,Unhealthy (alerts)=unhealthy]; label=Indexing error severity:Health state reported when the index queue contains indexing errors. Degraded keeps them visible on the endpoint (HTTP 200) without notifying; Unhealthy is an outage (HTTP 503, may notify).
+        indexingErrorSeverity=degraded
     }
 }
 reportDispatcher {

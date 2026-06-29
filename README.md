@@ -29,6 +29,7 @@ post-deployment checks.
     - Optional [Push notification](Documentation/Reporters.md) to external channels (e.g. the built-in [EmailReporter](Documentation/Reporter/EmailReporter.md))
 - Built-in providers this package ships:
     - [Scheduler Provider](Documentation/Providers/Scheduler.md) (Monitors TYPO3 Scheduler tasks.)
+    - [Solr Provider](Documentation/Providers/Solr.md) (Monitors Apache Solr host, core and index queue health.)
 - Caching for expensive monitoring operations
 
 ### Supported versions
