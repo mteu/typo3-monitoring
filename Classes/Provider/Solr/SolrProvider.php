@@ -38,7 +38,7 @@ use TYPO3\CMS\Core\Utility\ExtensionManagementUtility;
  *   2. cores: Does every configured core answer a ping?
  *   3. indexing errors: Did the index queue record indexing failures?
  *
- * The provider is disabled by default and only active when EXT:solr is loaded.
+ * The provider is disabled by default and only active when EXT:solr is loaded and configured in the site settings.
  *
  * @internal
  *
@@ -74,7 +74,8 @@ final readonly class SolrProvider implements MonitoringProvider
         return 'Monitors the Apache Solr connections configured for EXT:solr in the site '
             . 'configuration: whether each Solr node is reachable, whether every configured '
             . 'core answers a ping, and whether the index queue recorded indexing errors. '
-            . 'Inactive when the solr extension is not installed.';
+            . 'Inactive when the solr extension is not installed or no Solr connection is '
+            . 'configured in any site.';
     }
 
     public function isEnabled(): bool
@@ -84,26 +85,21 @@ final readonly class SolrProvider implements MonitoringProvider
 
     public function isActive(): bool
     {
-        return ExtensionManagementUtility::isLoaded('solr');
+        return ExtensionManagementUtility::isLoaded('solr')
+            && $this->connectionProvider->getConnections() !== [];
     }
 
     public function execute(): Result
     {
         $result = new MonitoringResult($this->getName(), Status::Healthy);
 
+        // Guaranteed non-empty: the handler only executes an active provider,
+        // and isActive() requires at least one configured connection.
         $connections = $this->connectionProvider->getConnections();
+        $hostReachability = $this->probeHosts($connections);
 
-        if ($connections === []) {
-            $result->addSubResult(
-                new MonitoringResult('Connections', Status::Healthy, $this->translate('provider.solr.connections.none')),
-            );
-        } else {
-            $hostReachability = $this->probeHosts($connections);
-
-            $result->addSubResult($this->buildHostResult($hostReachability));
-            $result->addSubResult($this->buildCoreResult($connections, $hostReachability));
-        }
-
+        $result->addSubResult($this->buildHostResult($hostReachability));
+        $result->addSubResult($this->buildCoreResult($connections, $hostReachability));
         $result->addSubResult($this->checkIndexingErrors());
 
         if (!$result->isHealthy()) {
