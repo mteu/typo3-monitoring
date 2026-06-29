@@ -18,7 +18,7 @@
 
             <f:if condition="{panelExpandable}">
                 <f:then>
-                    <button class="panel-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapsible-panel-complex-{iterator.index}" aria-expanded="false" title="{class}">
+                    <button class="panel-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapsible-panel-complex-{groupKey}-{iterator.index}" aria-expanded="false" title="{class}">
                         <span class="caret"></span>
                         <div class="panel-title">
                             {provider.name}
@@ -49,14 +49,14 @@
                             </div>
                         </f:then>
                         <f:else>
-                            <span class="badge badge-warning">
+                            <span class="badge badge-info">
                                 <f:translate key="LLL:EXT:monitoring/Resources/Private/Language/locallang.be.xlf:status.inactive" />
                             </span>
                         </f:else>
                     </f:if>
                 </f:then>
                 <f:else>
-                    <span class="badge badge-info">
+                    <span class="badge badge-notice">
                         <f:translate key="LLL:EXT:monitoring/Resources/Private/Language/locallang.be.xlf:status.disabled" />
                     </span>
                 </f:else>
@@ -65,7 +65,7 @@
 
         </div>
     </h3>
-    <div class="panel-collapse collapse" id="collapsible-panel-complex-{iterator.index}" aria-expanded="false">
+    <div class="panel-collapse collapse" id="collapsible-panel-complex-{groupKey}-{iterator.index}" aria-expanded="false">
         <div class="panel-body">
             <f:if condition="{provider.description}">
                 <p>
@@ -89,9 +89,9 @@
                             </f:if>
                         </f:then>
                         <f:else>
-                            <f:format.raw>
+                            <f:sanitize.html>
                                 <f:translate key="LLL:EXT:monitoring/Resources/Private/Language/locallang.be.xlf:provider.inactive.message" arguments="{0: '<pre>{providerClass}</pre>'}" />
-                            </f:format.raw>
+                            </f:sanitize.html>
                         </f:else>
                     </f:if>
                 </f:else>

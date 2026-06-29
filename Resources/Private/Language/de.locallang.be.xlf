@@ -35,6 +35,22 @@
 				<source>All active providers report a healthy state.</source>
 				<target>Alle aktiven Provider melden einen gesunden Zustand.</target>
 			</trans-unit>
+			<trans-unit id="monitoring.overview.overallStatus.degraded.title">
+				<source>Degraded</source>
+				<target>Eingeschränkt</target>
+			</trans-unit>
+			<trans-unit id="monitoring.overview.overallStatus.degraded.link">
+				<source>View providers</source>
+				<target>Zur Provider-Übersicht</target>
+			</trans-unit>
+			<trans-unit id="monitoring.overview.overallStatus.degraded.subtitle.plural">
+				<source>%d providers report a degraded state. At least one provider needs attention.</source>
+				<target>%d Provider melden einen eingeschränkten Zustand. Mindestens ein Provider benötigt Aufmerksamkeit.</target>
+			</trans-unit>
+			<trans-unit id="monitoring.overview.overallStatus.degraded.subtitle.singular">
+				<source>At least one provider needs attention.</source>
+				<target>Mindestens ein Provider benötigt Aufmerksamkeit.</target>
+			</trans-unit>
 			<trans-unit id="monitoring.overview.overallStatus.unhealthy.title">
 				<source>Unhealthy</source>
 				<target>Checks mit Fehlern</target>
@@ -202,6 +218,10 @@
             <trans-unit id="providers.list.description">
                 <source>Providers define and execute the actual health checks and make their results available to the endpoint and reporters. This list shows all registered providers with their status.</source>
                 <target>Provider definieren und führen die eigentlichen Health-Checks aus und stellen ihre Ergebnisse dem Endpoint und den Reportern zur Verfügung. Diese Liste zeigt alle registrierten Provider mit ihrem Status.</target>
+            </trans-unit>
+            <trans-unit id="providers.list.disabled.title">
+                <source>Disabled Providers</source>
+                <target>Deaktivierte Provider</target>
             </trans-unit>
             <trans-unit id="providers.list.title">
                 <source>Available Providers</source>
