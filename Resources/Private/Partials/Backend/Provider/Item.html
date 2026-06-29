@@ -18,7 +18,7 @@
 
             <f:if condition="{panelExpandable}">
                 <f:then>
-                    <button class="panel-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapsible-panel-complex-{iterator.index}" aria-expanded="false" title="{class}">
+                    <button class="panel-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapsible-panel-complex-{groupKey}-{iterator.index}" aria-expanded="false" title="{class}">
                         <span class="caret"></span>
                         <div class="panel-title">
                             {provider.name}
@@ -65,7 +65,7 @@
 
         </div>
     </h3>
-    <div class="panel-collapse collapse" id="collapsible-panel-complex-{iterator.index}" aria-expanded="false">
+    <div class="panel-collapse collapse" id="collapsible-panel-complex-{groupKey}-{iterator.index}" aria-expanded="false">
         <div class="panel-body">
             <f:if condition="{provider.description}">
                 <p>
