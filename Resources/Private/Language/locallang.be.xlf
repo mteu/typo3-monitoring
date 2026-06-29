@@ -27,6 +27,18 @@
             <trans-unit id="monitoring.overview.overallStatus.healthy.subtitle">
 				<source>All active providers report a healthy state.</source>
 			</trans-unit>
+            <trans-unit id="monitoring.overview.overallStatus.degraded.title">
+				<source>Degraded</source>
+			</trans-unit>
+			<trans-unit id="monitoring.overview.overallStatus.degraded.link">
+				<source>View providers</source>
+			</trans-unit>
+			<trans-unit id="monitoring.overview.overallStatus.degraded.subtitle.plural">
+				<source>%d providers report a degraded state. At least one provider needs attention.</source>
+			</trans-unit>
+			<trans-unit id="monitoring.overview.overallStatus.degraded.subtitle.singular">
+				<source>At least one provider needs attention.</source>
+			</trans-unit>
             <trans-unit id="monitoring.overview.overallStatus.unhealthy.title">
 				<source>Unhealthy</source>
 			</trans-unit>
