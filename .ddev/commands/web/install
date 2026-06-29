@@ -1,0 +1,33 @@
+#!/usr/bin/env bash
+
+## #ddev-generated
+## Description: Install TYPO3 instances. Pass -v/--verbose to stream all command output.
+## Usage: install [version|all] [-v|--verbose]
+## Example: "ddev install" or "ddev install 12" or "ddev install all" or "ddev install 14 -v"
+## MutagenSync: true
+
+TYPO3=""
+for arg in "$@"; do
+    case "$arg" in
+        -v|--verbose) export VERBOSE=1 ;;
+        *) [ -z "$TYPO3" ] && TYPO3="$arg" ;;
+    esac
+done
+
+. .ddev/.setup/scripts/utils.sh
+
+if [ "$TYPO3" == "all" ]; then
+    mapfile -t versions < <(get_supported_typo3_versions)
+    for version in "${versions[@]}"; do
+        .ddev/commands/web/.install-$version
+    done
+else
+    if [ -z "$TYPO3" ]; then
+        TYPO3=$(get_lowest_supported_typo3_versions)
+    else
+        if ! check_typo3_version "$TYPO3"; then
+            exit 1
+        fi
+    fi
+    ".ddev/commands/web/.install-$TYPO3"
+fi
