@@ -70,9 +70,16 @@ final readonly class ProviderController extends AbstractSubModuleController
         /** @var NormalizedParams $params */
         $params = $request->getAttribute('normalizedParams');
 
+        $providers = $this->buildProviderTemplateVariables($request);
+
+        $enabledProviders = array_filter($providers, static fn(array $provider): bool => $provider['isEnabled']);
+        $disabledProviders = array_filter($providers, static fn(array $provider): bool => !$provider['isEnabled']);
+
         $templateVariables = [
             'endpoint' => $params->getRequestHost() . $this->monitoringConfiguration->endpoint,
-            'providers' => $this->buildProviderTemplateVariables($request),
+            'providers' => $providers,
+            'enabledProviders' => $enabledProviders,
+            'disabledProviders' => $disabledProviders,
             'providerInterface' => MonitoringProvider::class,
             'flushProviderCacheUri' => (string)$this->uriBuilder->buildUriFromRoute('monitoring_flush_provider_cache'),
         ];
