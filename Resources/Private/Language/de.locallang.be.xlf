@@ -219,6 +219,10 @@
                 <source>Providers define and execute the actual health checks and make their results available to the endpoint and reporters. This list shows all registered providers with their status.</source>
                 <target>Provider definieren und führen die eigentlichen Health-Checks aus und stellen ihre Ergebnisse dem Endpoint und den Reportern zur Verfügung. Diese Liste zeigt alle registrierten Provider mit ihrem Status.</target>
             </trans-unit>
+            <trans-unit id="providers.list.disabled.title">
+                <source>Disabled Providers</source>
+                <target>Deaktivierte Provider</target>
+            </trans-unit>
             <trans-unit id="providers.list.title">
                 <source>Available Providers</source>
                 <target>Verfügbare Provider</target>
