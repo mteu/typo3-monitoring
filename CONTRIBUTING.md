@@ -73,35 +73,6 @@ composer test
 The full PHP × TYPO3 × dependencies matrix is enforced in CI
 (`.github/workflows/tests.yaml`).
 
-#### Optional: Run v13 and v14 Side by Side (DDEV)
-
-For manual testing it can help to have both TYPO3 versions running at the same time.
-The committed `.ddev/` config is wired for the
-[`konradmichalik/ddev-typo3-multi-version-extension`][ddev-addon] add-on, which
-provisions an isolated instance per version with this extension symlinked into each.
-
-Requires Docker + DDEV. First-time setup:
-
-```bash
-# macOS only: avoids a BSD-sed "illegal byte sequence" in the add-on's post-install
-export LC_ALL=C LANG=C
-
-ddev add-on get konradmichalik/ddev-typo3-multi-version-extension
-ddev restart
-ddev install 13 && ddev install 14    # or: ddev install all
-```
-
-Daily use:
-
-```bash
-ddev launch 13             # v13 frontend
-ddev launch 14 /typo3      # v14 backend, side by side with v13
-ddev 13 typo3 cache:flush  # run a command in a single version
-ddev all composer update   # run across every installed version
-```
-
-[ddev-addon]: https://github.com/konradmichalik/ddev-typo3-multi-version-extension
-
 #### Code Quality (CGL) Commands
 ```bash
 # Check code style compliance
