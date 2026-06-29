@@ -1,4 +1,6 @@
 /.build
+/.Build
+/public
 /.php-cs-fixer.cache
 /.phpunit.result.cache
 /config
@@ -6,5 +8,7 @@
 /packages
 /tailor-version-artefact
 /var
-/.ddev/*
-!/.ddev/config.yaml
+# DDEV add-on files (.ddev/commands, docker-compose.*, web-build, …) are meant to
+# be committed so the whole team gets the multi-version setup. DDEV's own
+# generated .ddev/.gitignore excludes the ephemeral/local bits.
+.Build/

@@ -1,0 +1,9 @@
+type: php
+docroot: .Build
+webserver_type: apache-fpm
+additional_hostnames:
+  - 13.typo3-monitoring
+  - 14.typo3-monitoring
+hooks:
+   post-start:
+    - exec: mkdir -p /var/www/html/.Build/ && cp /var/www/html/.ddev/.setup/templates/* /var/www/html/.Build/
