@@ -96,8 +96,7 @@ final readonly class EmailReporter implements Reporter
     /**
      * Turns configured recipient strings into validated Address objects, letting
      * Symfony's Address perform the RFC compliance check. Malformed entries are
-     * logged and dropped so a single configuration typo cannot abort the dispatch
-     * run with an uncaught RfcComplianceException.
+     * logged and dropped so a single configuration typo cannot abort the dispatch.
      *
      * @param list<non-empty-string> $recipients
      * @return list<Address>

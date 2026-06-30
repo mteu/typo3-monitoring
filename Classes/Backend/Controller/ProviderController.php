@@ -90,8 +90,6 @@ final readonly class ProviderController extends AbstractSubModuleController
     }
 
     /**
-     * Build template variables for all monitoring providers
-     *
      * @return array<class-string<\mteu\Monitoring\Provider\MonitoringProvider>, array{
      *     name: string,
      *     isCached: bool,

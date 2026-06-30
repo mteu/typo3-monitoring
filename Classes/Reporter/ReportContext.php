@@ -22,9 +22,8 @@ use mteu\Monitoring\Result\Result;
 /**
  * ReportContext.
  *
- * Immutable payload handed to every {@see Reporter} so it can render an
- * accurate message ("new failure" / "still failing" / "recovered") without
- * re-deriving dispatcher state.
+ * Immutable payload handed to every {@see Reporter} so it can render an accurate message
+ * ("new failure" / "still failing" / "recovered") without re-deriving dispatcher state.
  *
  * @author Martin Adler <mteu@mailbox.org>
  * @license GPL-2.0-or-later

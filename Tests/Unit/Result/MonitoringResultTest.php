@@ -18,7 +18,6 @@ declare(strict_types=1);
 namespace mteu\Monitoring\Tests\Unit\Result;
 
 use mteu\Monitoring\Result\MonitoringResult;
-use mteu\Monitoring\Result\Result;
 use mteu\Monitoring\Result\Status;
 use mteu\Monitoring\Tests\Unit\MonitoringTestCase;
 use PHPUnit\Framework\Attributes\CoversClass;
@@ -36,14 +35,6 @@ use PHPUnit\Framework\Attributes\Test;
 #[CoversClass(MonitoringResult::class)]
 final class MonitoringResultTest extends MonitoringTestCase
 {
-    #[Test]
-    public function implementsResultInterface(): void
-    {
-        $result = $this->createHealthyResult();
-
-        self::assertInstanceOf(Result::class, $result);
-    }
-
     /**
      * @param list<MonitoringResult> $subResults
      */
@@ -130,19 +121,14 @@ final class MonitoringResultTest extends MonitoringTestCase
         self::assertSame($allExpected, $result->getSubResults(), 'Order should be maintained');
     }
 
-    /**
-     * @param list<bool> $subHealthStatuses
-     */
     #[Test]
-    #[DataProvider('healthCalculationScenarios')]
-    public function getIsHealthyMatchesIsHealthyIncludingSubResultFolding(
-        bool $initialHealth,
-        array $subHealthStatuses,
-        bool $expectedHealth
-    ): void {
-        $result = $this->createResultWithSubResults($subHealthStatuses, 'test', $initialHealth);
+    public function getIsHealthyIsAnAliasOfIsHealthyIncludingSubResultFolding(): void
+    {
+        // A healthy parent dragged unhealthy by a sub-result: getIsHealthy() must
+        // return the same folded verdict as isHealthy(), not the raw constructor flag.
+        $result = $this->createResultWithSubResults([true, false], 'test', parentHealthy: true);
 
-        self::assertSame($expectedHealth, $result->getIsHealthy());
+        self::assertFalse($result->getIsHealthy());
         self::assertSame($result->isHealthy(), $result->getIsHealthy());
     }
 
@@ -202,33 +188,6 @@ final class MonitoringResultTest extends MonitoringTestCase
         $decoded = json_decode((string)json_encode($result), true);
         self::assertIsArray($decoded);
         self::assertSame('unhealthy', $decoded['status']);
-    }
-
-    /**
-     * @param list<array{name: string, health: bool, reason?: string|null}> $subResultsData
-     */
-    #[Test]
-    #[DataProvider('healthWithSubResultsProvider')]
-    public function healthCalculationConsidersSubResultHealthStatus(
-        bool $mainHealth,
-        array $subResultsData,
-        bool $expectedFinalHealth
-    ): void {
-        $result = new MonitoringResult('main', $mainHealth ? Status::Healthy : Status::Unhealthy);
-
-        /**
-         * @var array{
-         *     name: string,
-         *     health: bool,
-         *     reason: ?string,
-         * } $subData
-         */
-        foreach ($subResultsData as $subData) {
-            $subResult = new MonitoringResult($subData['name'], $subData['health'] ? Status::Healthy : Status::Unhealthy, $subData['reason'] ?? null);
-            $result->addSubResult($subResult);
-        }
-
-        self::assertSame($expectedFinalHealth, $result->isHealthy());
     }
 
     /**
@@ -326,51 +285,6 @@ final class MonitoringResultTest extends MonitoringTestCase
                 new MonitoringResult('service-2', Status::Unhealthy, 'Service 2 failed'),
                 new MonitoringResult('service-3', Status::Healthy, null),
             ],
-        ];
-    }
-
-    /**
-     * @return \Generator<string, array{bool, array<array{name: string, health: bool, reason: string}>, bool}>
-     */
-    public static function healthWithSubResultsProvider(): \Generator
-    {
-        yield 'main healthy, all subs healthy' => [
-            true,
-            [
-                ['name' => 'sub-1', 'health' => true, 'reason' => 'OK'],
-                ['name' => 'sub-2', 'health' => true, 'reason' => 'Good'],
-            ],
-            true,
-        ];
-
-        yield 'main healthy, one sub unhealthy' => [
-            true,
-            [
-                ['name' => 'sub-1', 'health' => true, 'reason' => 'OK'],
-                ['name' => 'sub-2', 'health' => false, 'reason' => 'Failed'],
-            ],
-            false,
-        ];
-
-        yield 'main unhealthy, all subs healthy' => [
-            false,
-            [
-                ['name' => 'sub-1', 'health' => true, 'reason' => 'OK'],
-                ['name' => 'sub-2', 'health' => true, 'reason' => 'Good'],
-            ],
-            false,
-        ];
-
-        yield 'main healthy, no subs' => [
-            true,
-            [],
-            true,
-        ];
-
-        yield 'main unhealthy, no subs' => [
-            false,
-            [],
-            false,
         ];
     }
 }

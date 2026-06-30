@@ -107,7 +107,7 @@ final readonly class ReporterController extends AbstractSubModuleController
     }
 
     /**
-     * @return string[]
+     * @return array<string, string>
      */
     public function getEmailReporterAdditionalInformation(): array
     {

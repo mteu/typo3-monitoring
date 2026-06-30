@@ -22,7 +22,7 @@ use Symfony\Component\DependencyInjection\Attribute\AutoconfigureTag;
 /**
  * Reporter.
  *
- * A push channel that delivers monitoring status (email, Slack, Teams, …).
+ * A push channel that delivers monitoring status (email, Slack, Teams, SMS, fax).
  * Register a custom reporter by implementing this interface — the
  * {@see \Symfony\Component\DependencyInjection\Attribute\AutoconfigureTag}
  * makes it discoverable automatically.

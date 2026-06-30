@@ -18,6 +18,8 @@ declare(strict_types=1);
 namespace mteu\Monitoring\Provider\Scheduler;
 
 /**
+ * SchedulerTaskRepository.
+ *
  * Data access for scheduler task health. Each method maps to one access
  * pattern. Counts drive health; samples are best-effort reason decoration.
  *
