@@ -20,12 +20,12 @@ namespace mteu\Monitoring\Tests\Unit\Fixtures\Scheduler;
 use mteu\Monitoring\Provider\Scheduler\SchedulerHeartbeat;
 
 /**
- * InMemorySchedulerHeartbeat.
+ * SchedulerHeartbeatStub.
  *
  * @author Martin Adler <mteu@mailbox.org>
  * @license GPL-2.0-or-later
  */
-final readonly class InMemorySchedulerHeartbeat implements SchedulerHeartbeat
+final readonly class SchedulerHeartbeatStub implements SchedulerHeartbeat
 {
     public function __construct(
         private ?int $lastRunEndTime,

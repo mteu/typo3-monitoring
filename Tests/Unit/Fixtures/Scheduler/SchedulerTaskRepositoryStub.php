@@ -21,12 +21,12 @@ use mteu\Monitoring\Provider\Scheduler\SchedulerTask;
 use mteu\Monitoring\Provider\Scheduler\SchedulerTaskRepository;
 
 /**
- * InMemorySchedulerTaskGateway.
+ * SchedulerTaskRepositoryStub.
  *
  * @author Martin Adler <mteu@mailbox.org>
  * @license GPL-2.0-or-later
  */
-final readonly class InMemorySchedulerTaskRepository implements SchedulerTaskRepository
+final readonly class SchedulerTaskRepositoryStub implements SchedulerTaskRepository
 {
     /**
      * @param list<SchedulerTask> $failedSample
