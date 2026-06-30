@@ -100,9 +100,9 @@ final class AdminUserAuthorizerTest extends Framework\TestCase
                 static fn(string $aspect, string $property): bool =>
                     $aspect === 'backend.user'
                         ? match ($property) {
-                            'isAdmin'    => $isAdmin,
+                            'isAdmin' => $isAdmin,
                             'isLoggedIn' => $isLoggedIn,
-                            default      => false,
+                            default => false,
                         }
                 : false,
             );
