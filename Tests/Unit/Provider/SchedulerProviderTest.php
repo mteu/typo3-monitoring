@@ -23,8 +23,8 @@ use mteu\Monitoring\Provider\Scheduler\SchedulerTask;
 use mteu\Monitoring\Result\MonitoringResult;
 use mteu\Monitoring\Result\Status;
 use mteu\Monitoring\Tests\Unit\Fixtures\Language\XliffLanguageServiceFactoryTrait;
-use mteu\Monitoring\Tests\Unit\Fixtures\Scheduler\InMemorySchedulerHeartbeat;
-use mteu\Monitoring\Tests\Unit\Fixtures\Scheduler\InMemorySchedulerTaskRepository;
+use mteu\Monitoring\Tests\Unit\Fixtures\Scheduler\SchedulerHeartbeatStub;
+use mteu\Monitoring\Tests\Unit\Fixtures\Scheduler\SchedulerTaskRepositoryStub;
 use PHPUnit\Framework;
 use PHPUnit\Framework\Attributes\Test;
 use Psr\Log\NullLogger;
@@ -403,14 +403,14 @@ final class SchedulerProviderTest extends Framework\TestCase
     ): SchedulerProvider {
         return new SchedulerProvider(
             $configuration ?? new SchedulerProviderConfiguration(),
-            new InMemorySchedulerTaskRepository(
+            new SchedulerTaskRepositoryStub(
                 failedCount: $failedCount,
                 overdueCount: $overdueCount,
                 failedSample: $failedSample,
                 overdueSample: $overdueSample,
                 hasRunningTask: $hasRunningTask,
             ),
-            new InMemorySchedulerHeartbeat($lastRunEnd),
+            new SchedulerHeartbeatStub($lastRunEnd),
             new MockClock((new \DateTimeImmutable())->setTimestamp(self::NOW)),
             new NullLogger(),
             self::createStub(Router::class),
@@ -428,14 +428,14 @@ final class SchedulerProviderTest extends Framework\TestCase
 
         return new SchedulerProvider(
             new SchedulerProviderConfiguration(),
-            new InMemorySchedulerTaskRepository(
+            new SchedulerTaskRepositoryStub(
                 failedCount: 0,
                 overdueCount: 0,
                 failedSample: [],
                 overdueSample: [],
                 hasRunningTask: false,
             ),
-            new InMemorySchedulerHeartbeat(self::NOW - 60),
+            new SchedulerHeartbeatStub(self::NOW - 60),
             new MockClock((new \DateTimeImmutable())->setTimestamp(self::NOW)),
             new NullLogger(),
             $router,

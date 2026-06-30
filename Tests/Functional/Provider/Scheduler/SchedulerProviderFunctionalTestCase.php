@@ -20,8 +20,8 @@ namespace mteu\Monitoring\Tests\Functional\Provider\Scheduler;
 use mteu\Monitoring\Configuration\Provider\SchedulerProviderConfiguration;
 use mteu\Monitoring\Provider\Scheduler\SchedulerProvider;
 use mteu\Monitoring\Tests\Functional\MonitoringFunctionalTestCase;
-use mteu\Monitoring\Tests\Unit\Fixtures\Scheduler\InMemorySchedulerHeartbeat;
-use mteu\Monitoring\Tests\Unit\Fixtures\Scheduler\InMemorySchedulerTaskRepository;
+use mteu\Monitoring\Tests\Unit\Fixtures\Scheduler\SchedulerHeartbeatStub;
+use mteu\Monitoring\Tests\Unit\Fixtures\Scheduler\SchedulerTaskRepositoryStub;
 use Psr\Log\NullLogger;
 use Symfony\Component\Clock\MockClock;
 use TYPO3\CMS\Backend\Routing\Exception\RouteNotFoundException;
@@ -49,8 +49,8 @@ abstract class SchedulerProviderFunctionalTestCase extends MonitoringFunctionalT
     ): SchedulerProvider {
         return new SchedulerProvider(
             $configuration ?? new SchedulerProviderConfiguration(),
-            new InMemorySchedulerTaskRepository(),
-            new InMemorySchedulerHeartbeat(self::NOW - 60),
+            new SchedulerTaskRepositoryStub(),
+            new SchedulerHeartbeatStub(self::NOW - 60),
             new MockClock((new \DateTimeImmutable())->setTimestamp(self::NOW)),
             new NullLogger(),
             self::createStub(Router::class),

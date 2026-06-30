@@ -85,8 +85,8 @@
 		"lint": "@cgl lint",
 		"sca": "@cgl sca",
 		"test": [
-			"@test:functional",
-			"@test:unit"
+			"@test:unit",
+			"@test:functional"
 		],
 		"test:coverage": [
 			"rm -rf .build/coverage/php && mkdir -p .build/coverage/php",
