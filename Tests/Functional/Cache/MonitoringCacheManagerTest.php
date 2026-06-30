@@ -71,12 +71,17 @@ final class MonitoringCacheManagerTest extends MonitoringFunctionalTestCase
     #[Test]
     public function appliesDefaultLifetimeWhenZeroProvided(): void
     {
-        $defaultLifetime = $this->cacheManager->getCacheLifetime();
-        self::assertSame(900, $defaultLifetime, 'Default lifetime should be 15 minutes (900 seconds)');
+        self::assertSame(900, $this->cacheManager->getCacheLifetime(), 'Default lifetime should be 15 minutes (900 seconds)');
 
-        $result = new MonitoringResult('test-service', Status::Healthy);
-        $stored = $this->cacheManager->setCachedResult('default-test', $result, [], 0);
+        $stored = $this->cacheManager->setCachedResult('default-test', new MonitoringResult('test-service', Status::Healthy), [], 0);
         self::assertTrue($stored, 'Should store with default lifetime when 0 provided');
+
+        // A lifetime of 0 must resolve to the 900s default, not "no expiry": the
+        // stored entry's expiration has to sit ~900s out, not at "now".
+        $expiresAt = $this->cacheManager->getCacheExpirationTime('default-test');
+        self::assertNotNull($expiresAt);
+        $secondsUntilExpiry = $expiresAt->getTimestamp() - (new \DateTimeImmutable())->getTimestamp();
+        self::assertEqualsWithDelta(900, $secondsUntilExpiry, 10, 'Zero lifetime must fall back to the 900s default');
     }
 
     #[Test]
@@ -95,12 +100,18 @@ final class MonitoringCacheManagerTest extends MonitoringFunctionalTestCase
     }
 
     #[Test]
-    public function flushProviderCacheInvalidatesCorrectEntries(): void
+    public function flushProviderCacheInvalidatesOnlyTheTargetedProvidersEntries(): void
     {
-        $result = new MonitoringResult('provider-test', Status::Healthy);
         $providerClass = 'mteu\\Monitoring\\Provider\\TestProvider';
+        // flushProviderCache() flushes by the provider class turned into a cache tag.
+        $providerTag = str_replace('\\', '_', $providerClass);
 
-        $flushed = $this->cacheManager->flushProviderCache($providerClass);
-        self::assertTrue($flushed, 'Provider cache flush should succeed');
+        $this->cacheManager->setCachedResult('target', new MonitoringResult('target', Status::Healthy), [$providerTag]);
+        $this->cacheManager->setCachedResult('bystander', new MonitoringResult('bystander', Status::Healthy), ['other_provider_tag']);
+
+        self::assertTrue($this->cacheManager->flushProviderCache($providerClass), 'Provider cache flush should succeed');
+
+        self::assertNull($this->cacheManager->getCachedResult('target'), 'The targeted provider entry must be evicted');
+        self::assertNotNull($this->cacheManager->getCachedResult('bystander'), 'Entries tagged for other providers must survive');
     }
 }

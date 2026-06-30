@@ -24,9 +24,7 @@ use TYPO3Fluid\Fluid\Core\ViewHelper\AbstractViewHelper;
  * StatusContextViewHelper.
  *
  * Maps a {@see Status} value to its Bootstrap contextual class so badges and
- * panels can colour a health state consistently:
- *
- *   healthy => success, degraded => warning, unhealthy => danger
+ * panels can colour a health state consistently.
  *
  * Register in Fluid:
  * {namespace monitoring=mteu\Monitoring\ViewHelper\Backend}

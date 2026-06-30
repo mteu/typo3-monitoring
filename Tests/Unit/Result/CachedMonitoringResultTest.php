@@ -19,7 +19,6 @@ namespace mteu\Monitoring\Tests\Unit\Result;
 
 use mteu\Monitoring\Result\CachedMonitoringResult;
 use mteu\Monitoring\Result\MonitoringResult;
-use mteu\Monitoring\Result\Result;
 use mteu\Monitoring\Result\Status;
 use mteu\Monitoring\Tests\Unit\MonitoringTestCase;
 use PHPUnit\Framework\Attributes\CoversClass;
@@ -29,7 +28,7 @@ use PHPUnit\Framework\Attributes\Test;
 /**
  * CachedMonitoringResultTest.
  *
- * Tests the CachedMonitoringResult business logic and Result interface implementation.
+ * Tests the CachedMonitoringResult business logic and its delegation to the wrapped result.
  *
  * @author Martin Adler <mteu@mailbox.org>
  * @license GPL-2.0-or-later
@@ -37,15 +36,6 @@ use PHPUnit\Framework\Attributes\Test;
 #[CoversClass(CachedMonitoringResult::class)]
 final class CachedMonitoringResultTest extends MonitoringTestCase
 {
-    #[Test]
-    public function implementsResultInterface(): void
-    {
-        $result = $this->createHealthyResult();
-        $cached = new CachedMonitoringResult($result, new \DateTimeImmutable(), 300);
-
-        self::assertInstanceOf(Result::class, $cached);
-    }
-
     #[Test]
     public function constructorInitializesPropertiesCorrectly(): void
     {

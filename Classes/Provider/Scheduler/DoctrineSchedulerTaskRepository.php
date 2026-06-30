@@ -135,9 +135,8 @@ final readonly class DoctrineSchedulerTaskRepository implements SchedulerTaskRep
     }
 
     /**
-     * The tasktype column only exists since TYPO3 v14, where scheduler tasks
-     * became real records; on v13 the task class is part of the serialized
-     * task object and no type column is available.
+     * The tasktype column only exists since TYPO3 v14, where scheduler tasks became real records; on v13 the task class
+     * is part of the serialized task object and no type column is available.
      *
      * @return list<string>
      */

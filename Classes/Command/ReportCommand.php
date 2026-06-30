@@ -27,9 +27,7 @@ use Symfony\Component\Console\Output\OutputInterface;
 /**
  * ReportCommand.
  *
- * Cron-friendly trigger for the push reporters. Thin wrapper around
- * {@see ReportDispatcher} so it stays identical to the (optional)
- * scheduler task.
+ * Thin wrapper around {@see ReportDispatcher} so it stays identical to the (optional) scheduler task.
  *
  * @author Martin Adler <mteu@mailbox.org>
  * @license GPL-2.0-or-later
@@ -54,8 +52,7 @@ final class ReportCommand extends Command
     {
         $result = $this->dispatcher->dispatch();
 
-        // A notification was due but no active reporter delivered it (e.g. the
-        // EmailReporter has no recipient configured).
+        // A notification was due but no active reporter delivered it (e.g. the EmailReporter has no recipient configured).
         if ($result->isUndelivered()) {
             $output->writeln(sprintf(
                 '<error>No report dispatched: a %s notification was due but no active reporter '

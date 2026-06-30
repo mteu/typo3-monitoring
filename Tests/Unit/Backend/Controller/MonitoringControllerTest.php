@@ -87,6 +87,37 @@ final class MonitoringControllerTest extends Framework\TestCase
         self::assertTrue($entry['isHealthy']);
     }
 
+    #[Test]
+    public function unhealthyCountIgnoresInactiveProvidersAndDegradedCountIsSeparate(): void
+    {
+        // Shape mirrors buildProviderTemplateVariables() output. A degraded provider
+        // stays isHealthy (degraded is not an outage), so it must not inflate the
+        // unhealthy tally; an inactive provider never ran and must count for neither.
+        $providers = [
+            'active-unhealthy' => ['isActive' => true, 'isHealthy' => false, 'status' => 'unhealthy'],
+            'active-degraded' => ['isActive' => true, 'isHealthy' => true, 'status' => 'degraded'],
+            'active-healthy' => ['isActive' => true, 'isHealthy' => true, 'status' => 'healthy'],
+            'inactive' => ['isActive' => false],
+        ];
+
+        self::assertSame(1, $this->countProviders('countUnhealthyProviders', $providers));
+        self::assertSame(1, $this->countProviders('countDegradedProviders', $providers));
+    }
+
+    /**
+     * @param array<string, array<string, mixed>> $providers
+     */
+    private function countProviders(string $method, array $providers): int
+    {
+        $reflection = new \ReflectionClass(MonitoringController::class);
+        $controller = $reflection->newInstanceWithoutConstructor();
+
+        $result = $reflection->getMethod($method)->invoke($controller, $providers);
+        self::assertIsInt($result);
+
+        return $result;
+    }
+
     /**
      * Invokes the private buildProviderTemplateVariables() on a controller
      * created without its constructor, injecting only the four properties the

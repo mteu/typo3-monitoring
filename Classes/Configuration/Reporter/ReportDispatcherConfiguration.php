@@ -24,7 +24,7 @@ use mteu\TypedExtConf\Attribute\ExtensionConfig;
 /**
  * ReportDispatcherConfiguration.
  *
- * Global behaviour of the dedup state machine shared by all reporters.
+ * Global behavior shared by all reporters.
  *
  * @author Martin Adler <mteu@mailbox.org>
  * @license GPL-2.0-or-later

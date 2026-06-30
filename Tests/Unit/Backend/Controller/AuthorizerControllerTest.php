@@ -18,11 +18,18 @@ declare(strict_types=1);
 namespace mteu\Monitoring\Tests\Unit\Backend\Controller;
 
 use mteu\Monitoring\Authorization\Authorizer;
+use mteu\Monitoring\Authorization\TokenAuthorizer;
 use mteu\Monitoring\Backend\Controller\AuthorizerController;
-use PHPUnit\Framework;
+use mteu\Monitoring\Configuration\Authorizer\AdminUserAuthorizerConfiguration;
+use mteu\Monitoring\Configuration\Authorizer\TokenAuthorizerConfiguration;
+use mteu\Monitoring\Configuration\MonitoringConfiguration;
+use mteu\Monitoring\Configuration\Reporter\EmailReporterConfiguration;
+use mteu\Monitoring\Configuration\Reporter\ReportDispatcherConfiguration;
 use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\Attributes\Test;
 use Psr\Http\Message\ServerRequestInterface;
+use TYPO3\CMS\Core\Crypto\HashService;
+use TYPO3\TestingFramework\Core\Unit\UnitTestCase;
 
 /**
  * AuthorizerControllerTest.
@@ -33,8 +40,20 @@ use Psr\Http\Message\ServerRequestInterface;
  * @license GPL-2.0-or-later
  */
 #[CoversClass(AuthorizerController::class)]
-final class AuthorizerControllerTest extends Framework\TestCase
+final class AuthorizerControllerTest extends UnitTestCase
 {
+    protected bool $resetSingletonInstances = true;
+
+    private const string ENCRYPTION_KEY = '0123456789abcdef0123456789abcdef';
+
+    protected function setUp(): void
+    {
+        parent::setUp();
+
+        // HashService::hmac() salts with the encryption key; pin it so the generated auth token is deterministic.
+        $GLOBALS['TYPO3_CONF_VARS'] = ['SYS' => ['encryptionKey' => self::ENCRYPTION_KEY]];
+    }
+
     #[Test]
     public function collectAuthorizerStatusesReturnsEmptyArrayWhenNoAuthorizersAreRegistered(): void
     {
@@ -96,6 +115,99 @@ final class AuthorizerControllerTest extends Framework\TestCase
         self::assertSame(30, $statuses[$activeAuthorizer::class]['priority']);
         self::assertFalse($statuses[$inactiveAuthorizer::class]['isActive']);
         self::assertSame(10, $statuses[$inactiveAuthorizer::class]['priority']);
+    }
+
+    #[Test]
+    public function authTokenIsExposedOnlyWhenTheTokenAuthorizerIsEnabledWithASecret(): void
+    {
+        $config = $this->configurationWithToken(enabled: true, secret: 's3cret', authHeaderName: 'X-Auth');
+        $hashService = new HashService();
+
+        $variables = $this->buildAuthorizerTemplateVariables(
+            [new TokenAuthorizer($config, $hashService)],
+            $config,
+            $hashService,
+        );
+
+        $token = $variables[TokenAuthorizer::class];
+        self::assertSame('X-Auth', $token['authHeaderName']);
+        // The exposed token is the HMAC of the endpoint signed with the secret.
+        self::assertSame($hashService->hmac('/monitor/health', 's3cret'), $token['authToken']);
+        self::assertArrayNotHasKey('emptySecret', $token);
+    }
+
+    #[Test]
+    public function emptySecretIsFlaggedAndNoTokenIsLeakedToTheTemplate(): void
+    {
+        $config = $this->configurationWithToken(enabled: true, secret: '', authHeaderName: 'X-Auth');
+        $hashService = new HashService();
+
+        $variables = $this->buildAuthorizerTemplateVariables(
+            [new TokenAuthorizer($config, $hashService)],
+            $config,
+            $hashService,
+        );
+
+        $token = $variables[TokenAuthorizer::class];
+        self::assertTrue($token['emptySecret']);
+        self::assertTrue($token['isEnabled']);
+        self::assertArrayNotHasKey('authToken', $token);
+        self::assertArrayNotHasKey('authHeaderName', $token);
+    }
+
+    #[Test]
+    public function configuredSecretIsNotExposedWhileTheTokenAuthorizerIsDisabled(): void
+    {
+        $config = $this->configurationWithToken(enabled: false, secret: 's3cret', authHeaderName: 'X-Auth');
+        $hashService = new HashService();
+
+        $variables = $this->buildAuthorizerTemplateVariables(
+            [new TokenAuthorizer($config, $hashService)],
+            $config,
+            $hashService,
+        );
+
+        $token = $variables[TokenAuthorizer::class];
+        self::assertArrayNotHasKey('authToken', $token);
+        self::assertArrayNotHasKey('authHeaderName', $token);
+        self::assertArrayNotHasKey('emptySecret', $token);
+    }
+
+    private function configurationWithToken(bool $enabled, string $secret, string $authHeaderName): MonitoringConfiguration
+    {
+        return new MonitoringConfiguration(
+            new TokenAuthorizerConfiguration(enabled: $enabled, secret: $secret, authHeaderName: $authHeaderName),
+            new AdminUserAuthorizerConfiguration(),
+            new EmailReporterConfiguration(),
+            new ReportDispatcherConfiguration(),
+            '/monitor/health',
+        );
+    }
+
+    /**
+     * Invokes the private buildAuthorizerTemplateVariables() on a controller
+     * created without its constructor, injecting only the properties it reads.
+     *
+     * @param list<Authorizer> $authorizers
+     * @return array<class-string, array<string, mixed>>
+     */
+    private function buildAuthorizerTemplateVariables(
+        array $authorizers,
+        MonitoringConfiguration $configuration,
+        HashService $hashService,
+    ): array {
+        $reflection = new \ReflectionClass(AuthorizerController::class);
+        $controller = $reflection->newInstanceWithoutConstructor();
+
+        $reflection->getProperty('authorizers')->setValue($controller, $authorizers);
+        $reflection->getProperty('monitoringConfiguration')->setValue($controller, $configuration);
+        $reflection->getProperty('hashService')->setValue($controller, $hashService);
+
+        $result = $reflection->getMethod('buildAuthorizerTemplateVariables')->invoke($controller);
+        self::assertIsArray($result);
+
+        /** @var array<class-string, array<string, mixed>> $result */
+        return $result;
     }
 
     /**

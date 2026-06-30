@@ -85,8 +85,8 @@ final readonly class MonitoringController extends AbstractSubModuleController
         $templateVariables = [
             'endpoint' => $params->getRequestHost() . $this->monitoringConfiguration->endpoint,
             'providers' => $providers,
-            'providerUnhealthyCount' => count(array_filter($providers, static fn(array $provider) => ($provider['isActive'] ?? false) && ($provider['isHealthy'] ?? true) === false)),
-            'providerDegradedCount' => count(array_filter($providers, static fn(array $provider) => ($provider['isActive'] ?? false) && ($provider['status'] ?? null) === Status::Degraded->value)),
+            'providerUnhealthyCount' => $this->countUnhealthyProviders($providers),
+            'providerDegradedCount' => $this->countDegradedProviders($providers),
             'providerInterface' => MonitoringProvider::class,
             'flushProviderCacheUri' => (string)$this->uriBuilder->buildUriFromRoute('monitoring_flush_provider_cache'),
             'serviceCards' => $this->buildCardsTemplateVariables(),
@@ -100,8 +100,6 @@ final readonly class MonitoringController extends AbstractSubModuleController
     }
 
     /**
-     * Build template variables for all monitoring providers
-     *
      * @return array<class-string<\mteu\Monitoring\Provider\MonitoringProvider>, array{
      *     name: string,
      *     isCached: bool,
@@ -163,6 +161,32 @@ final readonly class MonitoringController extends AbstractSubModuleController
         }
 
         return $providerTemplateVariables;
+    }
+
+    /**
+     * @param array<class-string<MonitoringProvider>, array{isActive?: bool, isHealthy?: bool}> $providers
+     */
+    private function countUnhealthyProviders(array $providers): int
+    {
+        return count(
+            array_filter(
+                $providers,
+                static fn(array $provider): bool => ($provider['isActive'] ?? false) && ($provider['isHealthy'] ?? true) === false,
+            ),
+        );
+    }
+
+    /**
+     * @param array<class-string<MonitoringProvider>, array{isActive?: bool, status?: string}> $providers
+     */
+    private function countDegradedProviders(array $providers): int
+    {
+        return count(
+            array_filter(
+                $providers,
+                static fn(array $provider): bool => ($provider['isActive'] ?? false) && ($provider['status'] ?? null) === Status::Degraded->value,
+            ),
+        );
     }
 
     /**

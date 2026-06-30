@@ -45,8 +45,6 @@ final readonly class MonitoringCacheManager
     ) {}
 
     /**
-     * Retrieves a cached monitoring result by cache key.
-     *
      * @param string $cacheKey The cache key to retrieve
      * @return Result|null The cached result or null if not found or expired
      */
@@ -76,8 +74,6 @@ final readonly class MonitoringCacheManager
     }
 
     /**
-     * Gets cache expiration time for a specific cache key.
-     *
      * @param string $cacheKey The cache key to check
      * @return \DateTimeImmutable|null The expiration time or null if not found
      */
@@ -101,10 +97,7 @@ final readonly class MonitoringCacheManager
     }
 
     /**
-     * Stores a monitoring result in cache with optional tags and custom lifetime.
-
      * @param string[] $cacheTags Optional cache tags for invalidation
-     *
      * @throws \DateInvalidTimeZoneException
      * @throws \DateMalformedStringException
      */
