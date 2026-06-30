@@ -20,4 +20,10 @@ $config->setHeader('This file is part of the TYPO3 CMS extension "monitoring".')
 $config->setParallelConfig(\PhpCsFixer\Runner\Parallel\ParallelConfigFactory::detect());
 $config->getFinder()->in(dirname(__DIR__, 2));
 
+$config->addRules([
+    'binary_operator_spaces' => [
+        'default' => 'single_space',
+    ],
+]);
+
 return $config;
