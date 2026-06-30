@@ -212,8 +212,8 @@
                 <target>%d Provider anzeigen</target>
             </trans-unit>
             <trans-unit id="providers.card.linkLabel.zero">
-                <source>No providers registered</source>
-                <target>Keine Provider registriert</target>
+                <source>There are currently no monitoring providers active.</source>
+                <target>Es sind derzeit keine Monitoring Provider aktiv.</target>
             </trans-unit>
             <trans-unit id="providers.list.description">
                 <source>Providers define and execute the actual health checks and make their results available to the endpoint and reporters. This list shows all registered providers with their status.</source>
