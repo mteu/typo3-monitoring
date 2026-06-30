@@ -36,14 +36,6 @@ post-deployment checks.
     - [Scheduler Provider](Documentation/Providers/Scheduler.md) (Monitors TYPO3 Scheduler tasks.)
 - Caching for expensive monitoring operations
 
-### Supported versions
-
-|           | TYPO3 v12 | TYPO3 v13 | TYPO3 v14 |
-|-----------|-----------|-----------|-----------|
-| =< v0.4.x | ✅         | ✅         | ❌         |
-| v0.5.x    | ❌         | ✅         | ✅         |
-
-
 ## 🔥 Quick Start
 
 ### Installation
