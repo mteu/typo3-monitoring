@@ -23,8 +23,10 @@ use mteu\Monitoring\Handler\ProviderExecutionOutcome;
 use mteu\Monitoring\Result\MonitoringResult;
 use mteu\Monitoring\Result\Status;
 use mteu\Monitoring\Tests\Functional\Fixtures\CacheableProvider;
+use mteu\Monitoring\Tests\Functional\Fixtures\ConfigurableProvider;
 use mteu\Monitoring\Tests\Functional\Fixtures\NonCacheableProvider;
 use mteu\Monitoring\Tests\Functional\Fixtures\ShortCacheProvider;
+use mteu\Monitoring\Tests\Functional\Fixtures\ThrowingProvider;
 use mteu\Monitoring\Tests\Functional\MonitoringFunctionalTestCase;
 use PHPUnit\Framework\Attributes\AllowMockObjectsWithoutExpectations;
 use PHPUnit\Framework\Attributes\CoversClass;
@@ -221,6 +223,40 @@ final class MonitoringExecutionHandlerTest extends MonitoringFunctionalTestCase
         $outcome = $this->executionHandler->executeProviderWithMetadata($nonCacheableProvider);
 
         self::assertFalse($outcome->fromCache);
+    }
+
+    #[Test]
+    public function collectResultsSkipsInactiveAndDisabledProviders(): void
+    {
+        $active = new ConfigurableProvider('active-provider');
+        $inactive = new ConfigurableProvider('inactive-provider', active: false);
+
+        $results = $this->executionHandler->collectResults([$active, $inactive]);
+
+        self::assertArrayHasKey('active-provider', $results);
+        self::assertArrayNotHasKey('inactive-provider', $results);
+    }
+
+    #[Test]
+    public function collectResultsIsolatesThrowingProviderAsUnhealthy(): void
+    {
+        $healthy = new NonCacheableProvider();
+        $throwing = new ThrowingProvider();
+
+        $results = $this->executionHandler->collectResults([$throwing, $healthy]);
+
+        self::assertCount(2, $results);
+
+        self::assertArrayHasKey('throwing-provider', $results);
+        self::assertSame(Status::Unhealthy, $results['throwing-provider']->getStatus());
+        self::assertStringContainsString(
+            'Provider exploded during execution',
+            (string)$results['throwing-provider']->getReason(),
+        );
+
+        // A misbehaving provider must not prevent the healthy one from reporting.
+        self::assertArrayHasKey('test-non-cacheable-provider', $results);
+        self::assertTrue($results['test-non-cacheable-provider']->isHealthy());
     }
 
     #[Test]

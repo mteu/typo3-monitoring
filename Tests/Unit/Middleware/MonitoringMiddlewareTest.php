@@ -40,6 +40,7 @@ use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use Psr\Http\Server\RequestHandlerInterface;
 use Psr\Log\LoggerInterface;
+use Psr\Log\NullLogger;
 use TYPO3\CMS\Core\Cache\CacheManager;
 use TYPO3\CMS\Core\Cache\Exception\NoSuchCacheException;
 use TYPO3\CMS\Core\Cache\Frontend\FrontendInterface;
@@ -308,7 +309,7 @@ final class MonitoringMiddlewareTest extends Framework\TestCase
             $cacheManager = new MonitoringCacheManager($typo3CacheManager);
         }
 
-        return new MonitoringExecutionHandler($cacheManager);
+        return new MonitoringExecutionHandler($cacheManager, new NullLogger());
     }
 
     #[Test]

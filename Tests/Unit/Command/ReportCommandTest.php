@@ -166,7 +166,7 @@ final class ReportCommandTest extends TestCase
         $dispatcher = new ReportDispatcher(
             $providers,
             $reporters,
-            new MonitoringExecutionHandler(new MonitoringCacheManager(new CacheManager())),
+            new MonitoringExecutionHandler(new MonitoringCacheManager(new CacheManager()), new NullLogger()),
             new NotificationStateCacheManager($this->inMemoryCacheManager()),
             new MonitoringConfiguration(
                 new TokenAuthorizerConfiguration(),
