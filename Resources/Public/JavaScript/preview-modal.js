@@ -1,12 +1,12 @@
 import Modal from '@typo3/backend/modal.js';
 import RegularEvent from '@typo3/core/event/regular-event.js';
 
-class SophisticatedModal {
+class PreviewModal {
   constructor() {
     new RegularEvent('click', (event, target) => {
       event.preventDefault();
 
-      const url = target.dataset.sophisticatedModalUrl;
+      const url = target.dataset.previewModalUrl;
 
       if (!url) {
         return;
@@ -14,12 +14,12 @@ class SophisticatedModal {
 
       Modal.advanced({
         type: Modal.types.iframe,
-        title: target.dataset.sophisticatedModalTitle ?? '',
+        title: target.dataset.previewModalTitle ?? '',
         content: url,
         size: Modal.sizes.large,
       });
-    }).delegateTo(document, '[data-sophisticated-modal]');
+    }).delegateTo(document, '[data-preview-modal]');
   }
 }
 
-export default new SophisticatedModal();
+export default new PreviewModal();
