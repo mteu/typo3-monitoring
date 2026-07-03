@@ -35,32 +35,30 @@ use PHPUnit\Framework\TestCase;
 final class ProviderControllerTest extends TestCase
 {
     /**
-     * The list view sorts providers by this rank (ascending), so operators see
-     * actionable ones first: failing (0) before healthy (1) before inactive (2)
-     * before disabled (3). isEnabled() outranks isActive(), and an active
-     * provider without a recorded verdict is treated as not-yet-healthy.
-     *
-     * @param array{isEnabled: bool, isActive: bool, isHealthy?: bool} $provider
+     * @param array{name: string} $a
+     * @param array{name: string} $b
      */
     #[Test]
-    #[DataProvider('sortRankProvider')]
-    public function providerSortRankReflectsActionability(array $provider, int $expectedRank): void
+    #[DataProvider('nameComparisonProvider')]
+    public function providersAreOrderedAlphabeticallyByName(array $a, array $b, int $expectedSign): void
     {
         $reflection = new \ReflectionClass(ProviderController::class);
         $controller = $reflection->newInstanceWithoutConstructor();
 
-        self::assertSame($expectedRank, $reflection->getMethod('getProviderSortRank')->invoke($controller, $provider));
+        $result = $reflection->getMethod('compareByName')->invoke($controller, $a, $b);
+        self::assertIsInt($result);
+
+        self::assertSame($expectedSign, $result <=> 0);
     }
 
     /**
-     * @return \Generator<string, array{array{isEnabled: bool, isActive: bool, isHealthy?: bool}, int}>
+     * @return \Generator<string, array{array{name: string}, array{name: string}, int}>
      */
-    public static function sortRankProvider(): \Generator
+    public static function nameComparisonProvider(): \Generator
     {
-        yield 'active unhealthy sorts first' => [['isEnabled' => true, 'isActive' => true, 'isHealthy' => false], 0];
-        yield 'active without a verdict is treated as not healthy' => [['isEnabled' => true, 'isActive' => true], 0];
-        yield 'active healthy' => [['isEnabled' => true, 'isActive' => true, 'isHealthy' => true], 1];
-        yield 'enabled but inactive' => [['isEnabled' => true, 'isActive' => false], 2];
-        yield 'disabled sorts last even when active' => [['isEnabled' => false, 'isActive' => true], 3];
+        yield 'earlier name sorts first' => [['name' => 'AlphaProvider'], ['name' => 'BetaProvider'], -1];
+        yield 'later name sorts after' => [['name' => 'BetaProvider'], ['name' => 'AlphaProvider'], 1];
+        yield 'identical names are equal' => [['name' => 'HealthyProvider'], ['name' => 'HealthyProvider'], 0];
+        yield 'comparison is case-insensitive' => [['name' => 'alphaProvider'], ['name' => 'AlphaProvider'], 0];
     }
 }

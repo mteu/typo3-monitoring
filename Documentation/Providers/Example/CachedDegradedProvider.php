@@ -17,12 +17,13 @@ declare(strict_types=1);
 
 namespace ExampleProvider;
 
+use mteu\Monitoring\Provider\CacheableMonitoringProvider;
 use mteu\Monitoring\Result\MonitoringResult;
 use mteu\Monitoring\Result\Result;
 use mteu\Monitoring\Result\Status;
 
 /**
- * DisabledProvider.
+ * CachedDegradedProvider.
  *
  * @author Martin Adler <mteu@mailbox.org>
  * @license GPL-2.0-or-later
@@ -31,7 +32,7 @@ final class CachedDegradedProvider implements CacheableMonitoringProvider
 {
     public function getName(): string
     {
-        return 'DegradedProvider';
+        return 'CachedDegradedProvider';
     }
 
     public function getDescription(): string

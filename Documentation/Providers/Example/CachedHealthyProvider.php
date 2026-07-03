@@ -17,21 +17,22 @@ declare(strict_types=1);
 
 namespace ExampleProvider;
 
+use mteu\Monitoring\Provider\CacheableMonitoringProvider;
 use mteu\Monitoring\Result\MonitoringResult;
 use mteu\Monitoring\Result\Result;
 use mteu\Monitoring\Result\Status;
 
 /**
- * HealthyProvider.
+ * CachedHealthyProvider.
  *
- * @author Martin Adler <m.adler@mailbox.org>
+ * @author Martin Adler <mteu@mailbox.org>
  * @license GPL-2.0-or-later
  */
 final class CachedHealthyProvider implements CacheableMonitoringProvider
 {
     public function getName(): string
     {
-        return 'HealthyProvider';
+        return 'CachedHealthyProvider';
     }
 
     public function getDescription(): string
