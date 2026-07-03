@@ -25,7 +25,7 @@ use mteu\Monitoring\Result\Status;
 /**
  * DegradedBySubResultProvider.
  *
- * @author Martin Adler <martin.adler@init.de>
+ * @author Martin Adler <mteu@mailbox.org>
  * @license GPL-2.0-or-later
  */
 final class DegradedBySubResultProvider implements MonitoringProvider
