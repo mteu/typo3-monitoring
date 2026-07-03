@@ -20,7 +20,10 @@ namespace mteu\Monitoring\Handler;
 use mteu\Monitoring\Cache\MonitoringCacheManager;
 use mteu\Monitoring\Provider\CacheableMonitoringProvider;
 use mteu\Monitoring\Provider\MonitoringProvider;
+use mteu\Monitoring\Result\MonitoringResult;
 use mteu\Monitoring\Result\Result;
+use mteu\Monitoring\Result\Status;
+use Psr\Log\LoggerInterface;
 
 /**
  * MonitoringExecutionHandler.
@@ -32,7 +35,46 @@ final readonly class MonitoringExecutionHandler
 {
     public function __construct(
         private MonitoringCacheManager $cacheManager,
+        private LoggerInterface $logger,
     ) {}
+
+    /**
+     * Executes every enabled and active provider, isolating exceptions so a
+     * single misbehaving provider is recorded as an unhealthy result instead
+     * of aborting the whole run.
+     *
+     * @param iterable<MonitoringProvider> $providers
+     * @return array<non-empty-string, Result>
+     */
+    public function collectResults(iterable $providers): array
+    {
+        $results = [];
+
+        foreach ($providers as $provider) {
+            if (!$provider->isEnabled() || !$provider->isActive()) {
+                continue;
+            }
+
+            $name = $provider->getName();
+
+            try {
+                $results[$name] = $this->executeProvider($provider);
+            } catch (\Throwable $e) {
+                $this->logger->error('Monitoring provider threw during execution', [
+                    'provider' => $name,
+                    'exception' => $e->getMessage(),
+                ]);
+
+                $results[$name] = new MonitoringResult(
+                    $name,
+                    Status::Unhealthy,
+                    sprintf('Provider threw during execution: %s', $e->getMessage()),
+                );
+            }
+        }
+
+        return $results;
+    }
 
     /**
      * Executes a provider and returns the pure result only

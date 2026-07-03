@@ -21,7 +21,6 @@ use mteu\Monitoring\Cache\NotificationStateCacheManager;
 use mteu\Monitoring\Configuration\MonitoringConfiguration;
 use mteu\Monitoring\Handler\MonitoringExecutionHandler;
 use mteu\Monitoring\Provider\MonitoringProvider;
-use mteu\Monitoring\Result\Result;
 use Psr\Log\LoggerInterface;
 use Symfony\Component\DependencyInjection\Attribute\Autoconfigure;
 use Symfony\Component\DependencyInjection\Attribute\AutowireIterator;
@@ -56,7 +55,7 @@ final readonly class ReportDispatcher
 
     public function dispatch(): DispatchResult
     {
-        $results = $this->collectResults();
+        $results = $this->executionHandler->collectResults($this->monitoringProviders);
 
         $dispatcherConfiguration = $this->configuration->reporterDispatcherConfiguration;
 
@@ -190,22 +189,6 @@ final readonly class ReportDispatcher
             ReportThreshold::StateChange => $decision === NotificationDecision::Unhealthy
                 || $decision === NotificationDecision::Recovered,
         };
-    }
-
-    /**
-     * @return array<non-empty-string, Result>
-     */
-    private function collectResults(): array
-    {
-        $results = [];
-
-        foreach ($this->monitoringProviders as $provider) {
-            if ($provider->isEnabled() && $provider->isActive()) {
-                $results[$provider->getName()] = $this->executionHandler->executeProvider($provider);
-            }
-        }
-
-        return $results;
     }
 
     private function now(): int
