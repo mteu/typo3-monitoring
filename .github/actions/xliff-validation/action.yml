@@ -1,0 +1,244 @@
+name: 'XLIFF Validation'
+description: 'Validate XLIFF 1.2 translation files for well-formedness and (optionally) schema conformance.'
+author: 'mteu'
+branding:
+  icon: 'check-circle'
+  color: 'blue'
+
+inputs:
+  paths:
+    description: 'Newline-separated list of directories to search. Defaults to the repository root.'
+    required: false
+    default: '.'
+  extensions:
+    description: 'Space-separated list of file extensions to validate (without leading dot).'
+    required: false
+    default: 'xlf xliff'
+  exclude:
+    description: 'Newline-separated list of path fragments to prune (e.g. .build, vendor).'
+    required: false
+    default: |
+      .build
+      vendor
+      node_modules
+  schema-file:
+    description: 'Path to XSD schema for optional schema validation. Leave empty to skip.'
+    required: false
+    default: '.github/schemas/xliff-core-1.2-transitional.xsd'
+  fail-on-schema:
+    description: 'If true, schema-validation failures fail the step. Otherwise they become warnings.'
+    required: false
+    default: 'false'
+  install-libxml2:
+    description: 'If true, apt-get install libxml2-utils. Set to false when xmllint is already on PATH.'
+    required: false
+    default: 'true'
+
+outputs:
+  files-validated:
+    description: 'Number of XLIFF files discovered and validated.'
+    value: ${{ steps.wellformed.outputs.files-validated }}
+  wellformed-failures:
+    description: 'Number of files that failed well-formedness validation.'
+    value: ${{ steps.wellformed.outputs.failures }}
+  schema-failures:
+    description: 'Number of files that failed schema validation.'
+    value: ${{ steps.schema.outputs.failures }}
+
+runs:
+  using: 'composite'
+  steps:
+    - name: Install libxml2-utils
+      if: inputs.install-libxml2 == 'true'
+      shell: bash
+      run: |
+        set -euo pipefail
+        if command -v xmllint >/dev/null 2>&1; then
+          echo "xmllint already installed: $(xmllint --version 2>&1 | head -1)"
+          exit 0
+        fi
+        sudo apt-get update -qq
+        sudo apt-get install -qq -y libxml2-utils
+
+    - name: Validate XLIFF well-formedness
+      id: wellformed
+      shell: bash
+      env:
+        INPUT_PATHS: ${{ inputs.paths }}
+        INPUT_EXTENSIONS: ${{ inputs.extensions }}
+        INPUT_EXCLUDE: ${{ inputs.exclude }}
+      run: |
+        set -euo pipefail
+
+        # Build find args from inputs
+        prune_args=()
+        while IFS= read -r ex; do
+          [ -z "$ex" ] && continue
+          prune_args+=( -path "*/$ex/*" -o )
+        done <<< "$INPUT_EXCLUDE"
+        # Drop trailing -o
+        if [ ${#prune_args[@]} -gt 0 ]; then
+          unset 'prune_args[${#prune_args[@]}-1]'
+        fi
+
+        name_args=()
+        first=1
+        for ext in $INPUT_EXTENSIONS; do
+          if [ $first -eq 1 ]; then
+            name_args+=( -name "*.${ext}" )
+            first=0
+          else
+            name_args+=( -o -name "*.${ext}" )
+          fi
+        done
+
+        # Collect all files (newline-separated PATHS input)
+        tmp_list="$(mktemp)"
+        trap 'rm -f "$tmp_list"' EXIT
+        while IFS= read -r root; do
+          [ -z "$root" ] && continue
+          if [ ! -e "$root" ]; then
+            echo "::warning::Path '$root' does not exist, skipping"
+            continue
+          fi
+          if [ ${#prune_args[@]} -gt 0 ]; then
+            find "$root" \( "${prune_args[@]}" \) -prune -o \( "${name_args[@]}" \) -type f -print0 >> "$tmp_list"
+          else
+            find "$root" \( "${name_args[@]}" \) -type f -print0 >> "$tmp_list"
+          fi
+        done <<< "$INPUT_PATHS"
+
+        total=0
+        failures=0
+
+        while IFS= read -r -d '' file; do
+          total=$((total + 1))
+          err="$(xmllint --noout "$file" 2>&1)" || rc=$? && rc=${rc:-0}
+          if [ "$rc" -ne 0 ]; then
+            failures=$((failures + 1))
+            # Try to parse "file:line: ..." for annotation
+            line="$(printf '%s\n' "$err" | sed -n 's|^[^:]*:\([0-9]\+\):.*|\1|p' | head -1)"
+            msg="$(printf '%s' "$err" | tr '\n' ' ' | sed 's/  */ /g')"
+            if [ -n "$line" ]; then
+              echo "::error file=${file},line=${line}::XLIFF well-formedness: ${msg}"
+            else
+              echo "::error file=${file}::XLIFF well-formedness: ${msg}"
+            fi
+            printf '%s\n' "$err"
+          fi
+        done < "$tmp_list"
+
+        {
+          echo "files-validated=${total}"
+          echo "failures=${failures}"
+        } >> "$GITHUB_OUTPUT"
+
+        if [ "$total" -eq 0 ]; then
+          echo "No XLIFF files found."
+        else
+          echo "Checked ${total} file(s), ${failures} well-formedness failure(s)."
+        fi
+
+        if [ "$failures" -gt 0 ]; then
+          exit 1
+        fi
+
+    - name: Validate XLIFF against schema
+      id: schema
+      if: always() && steps.wellformed.outcome == 'success'
+      shell: bash
+      env:
+        INPUT_PATHS: ${{ inputs.paths }}
+        INPUT_EXTENSIONS: ${{ inputs.extensions }}
+        INPUT_EXCLUDE: ${{ inputs.exclude }}
+        INPUT_SCHEMA: ${{ inputs.schema-file }}
+        INPUT_FAIL_ON_SCHEMA: ${{ inputs.fail-on-schema }}
+      run: |
+        set -euo pipefail
+
+        if [ -z "$INPUT_SCHEMA" ] || [ ! -f "$INPUT_SCHEMA" ]; then
+          echo "Schema file not configured or not found ('$INPUT_SCHEMA'); skipping schema validation."
+          echo "failures=0" >> "$GITHUB_OUTPUT"
+          exit 0
+        fi
+
+        # Same discovery as the well-formedness step
+        prune_args=()
+        while IFS= read -r ex; do
+          [ -z "$ex" ] && continue
+          prune_args+=( -path "*/$ex/*" -o )
+        done <<< "$INPUT_EXCLUDE"
+        if [ ${#prune_args[@]} -gt 0 ]; then
+          unset 'prune_args[${#prune_args[@]}-1]'
+        fi
+
+        name_args=()
+        first=1
+        for ext in $INPUT_EXTENSIONS; do
+          if [ $first -eq 1 ]; then
+            name_args+=( -name "*.${ext}" )
+            first=0
+          else
+            name_args+=( -o -name "*.${ext}" )
+          fi
+        done
+
+        tmp_list="$(mktemp)"
+        trap 'rm -f "$tmp_list"' EXIT
+        while IFS= read -r root; do
+          [ -z "$root" ] && continue
+          [ ! -e "$root" ] && continue
+          if [ ${#prune_args[@]} -gt 0 ]; then
+            find "$root" \( "${prune_args[@]}" \) -prune -o \( "${name_args[@]}" \) -type f -print0 >> "$tmp_list"
+          else
+            find "$root" \( "${name_args[@]}" \) -type f -print0 >> "$tmp_list"
+          fi
+        done <<< "$INPUT_PATHS"
+
+        total=0
+        failures=0
+        level="warning"
+        if [ "$INPUT_FAIL_ON_SCHEMA" = "true" ]; then
+          level="error"
+        fi
+
+        while IFS= read -r -d '' file; do
+          total=$((total + 1))
+          err="$(xmllint --noout --schema "$INPUT_SCHEMA" "$file" 2>&1)" || rc=$? && rc=${rc:-0}
+          if [ "$rc" -ne 0 ]; then
+            failures=$((failures + 1))
+            line="$(printf '%s\n' "$err" | sed -n 's|^[^:]*:\([0-9]\+\):.*|\1|p' | head -1)"
+            msg="$(printf '%s' "$err" | tr '\n' ' ' | sed 's/  */ /g')"
+            if [ -n "$line" ]; then
+              echo "::${level} file=${file},line=${line}::XLIFF schema: ${msg}"
+            else
+              echo "::${level} file=${file}::XLIFF schema: ${msg}"
+            fi
+          fi
+        done < "$tmp_list"
+
+        echo "failures=${failures}" >> "$GITHUB_OUTPUT"
+
+        if [ "$failures" -gt 0 ] && [ "$INPUT_FAIL_ON_SCHEMA" = "true" ]; then
+          echo "Schema validation failed (${failures}/${total}); fail-on-schema is true."
+          exit 1
+        fi
+
+        echo "Schema validation: ${failures}/${total} failure(s) (non-blocking)."
+
+    - name: Step summary
+      if: always()
+      shell: bash
+      env:
+        FILES: ${{ steps.wellformed.outputs.files-validated }}
+        WF_FAIL: ${{ steps.wellformed.outputs.failures }}
+        SCHEMA_FAIL: ${{ steps.schema.outputs.failures }}
+      run: |
+        {
+          echo "### XLIFF Validation"
+          echo ""
+          echo "| Check | Files | Failures |"
+          echo "|-------|------:|---------:|"
+          echo "| Well-formedness | ${FILES:-0} | ${WF_FAIL:-0} |"
+          echo "| Schema (transitional) | ${FILES:-0} | ${SCHEMA_FAIL:-n/a} |"
+        } >> "$GITHUB_STEP_SUMMARY"

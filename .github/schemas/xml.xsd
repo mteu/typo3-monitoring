@@ -1,0 +1,91 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  W3C XML Namespace Schema
+  Downloaded from: https://www.w3.org/2001/xml.xsd
+
+  This schema defines the xml namespace attributes (xml:lang, xml:space, etc.)
+  Required by xliff-core-1.2-transitional.xsd
+-->
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema" targetNamespace="http://www.w3.org/XML/1998/namespace" xml:lang="en">
+
+    <xs:annotation>
+        <xs:documentation>
+            See http://www.w3.org/XML/1998/namespace.html and
+            http://www.w3.org/TR/REC-xml for information about this namespace.
+
+            This schema document describes the XML namespace, in a form
+            suitable for import by other schema documents.  See
+            http://www.w3.org/TR/xmlschema-1/ for more information.
+
+            Note that local names in the XML namespace are intended to be defined in
+            restricted sets. The defaults here appear for a starting point, but some
+            users may wish to add to this set of elements.  It is appropriate to use
+            the registry mechanism in Appendix F of the XML Schema specification to
+            define any extended meanings for these element types or to add any new
+            element types in the XML namespace.  The XML Schema Group is planning to
+            produce a schema document that is a source of interesting alternative
+            definitions for the 'special' attributes defined below, for use as a
+            schema annotation.
+
+            In order to avoid namespace pollution, this schema deliberately does not
+            define elementFormDefault="qualified".
+        </xs:documentation>
+    </xs:annotation>
+
+    <xs:attribute name="lang" type="xs:language">
+        <xs:annotation>
+            <xs:documentation>
+                In due course, we should install the relevant ISO 2- and 3-letter
+                codes as the enumerated possible values.... but not yet (as of 2002-05-12)
+            </xs:documentation>
+        </xs:annotation>
+    </xs:attribute>
+
+    <xs:attribute name="space" default="preserve">
+        <xs:simpleType>
+            <xs:restriction base="xs:NCName">
+                <xs:enumeration value="default"/>
+                <xs:enumeration value="preserve"/>
+            </xs:restriction>
+        </xs:simpleType>
+    </xs:attribute>
+
+    <xs:attribute name="base" type="xs:anyURI">
+        <xs:annotation>
+            <xs:documentation>
+                See http://www.w3.org/TR/xmlbase/ for information about this attribute.
+            </xs:documentation>
+        </xs:annotation>
+    </xs:attribute>
+
+    <xs:attribute name="id" type="xs:ID">
+        <xs:annotation>
+            <xs:documentation>
+                See http://www.w3.org/TR/xml-id/ for information about this attribute.
+            </xs:documentation>
+        </xs:annotation>
+    </xs:attribute>
+
+    <xs:group name="specialAttrs">
+        <xs:annotation>
+            <xs:documentation>
+                This group is for use in schemas whose elements use these particular
+                attributes; it replaces having to write out the same attribute
+                references over and over.
+            </xs:documentation>
+        </xs:annotation>
+        <xs:sequence>
+            <xs:choice minOccurs="0" maxOccurs="unbounded">
+                <xs:annotation/>
+            </xs:choice>
+        </xs:sequence>
+    </xs:group>
+
+    <xs:attributeGroup name="specialAttrGroup">
+        <xs:attribute ref="xml:lang" use="optional"/>
+        <xs:attribute ref="xml:space" use="optional"/>
+        <xs:attribute ref="xml:base" use="optional"/>
+        <xs:attribute ref="xml:id" use="optional"/>
+    </xs:attributeGroup>
+
+</xs:schema>
