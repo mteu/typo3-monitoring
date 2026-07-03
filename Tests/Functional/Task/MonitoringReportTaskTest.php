@@ -18,11 +18,28 @@ declare(strict_types=1);
 namespace mteu\Monitoring\Tests\Functional\Task;
 
 use EliasHaeussler\PHPUnitAttributes\Attribute\RequiresPackage;
+use mteu\Monitoring\Cache\NotificationStateCacheManager;
+use mteu\Monitoring\Configuration\Authorizer\AdminUserAuthorizerConfiguration;
+use mteu\Monitoring\Configuration\Authorizer\TokenAuthorizerConfiguration;
+use mteu\Monitoring\Configuration\MonitoringConfiguration;
+use mteu\Monitoring\Configuration\Reporter\EmailReporterConfiguration;
+use mteu\Monitoring\Configuration\Reporter\ReportDispatcherConfiguration;
+use mteu\Monitoring\Handler\MonitoringExecutionHandler;
+use mteu\Monitoring\Reporter\ReportDispatcher;
+use mteu\Monitoring\Reporter\Reporter;
+use mteu\Monitoring\Reporter\ReportThreshold;
 use mteu\Monitoring\Task\MonitoringReportTask;
+use mteu\Monitoring\Tests\Functional\Fixtures\ConfigurableProvider;
+use mteu\Monitoring\Tests\Functional\Fixtures\RecordingReporter;
 use mteu\Monitoring\Tests\Functional\MonitoringFunctionalTestCase;
 use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\Attributes\Test;
+use Psr\Log\NullLogger;
+use TYPO3\CMS\Core\Cache\CacheManager;
+use TYPO3\CMS\Core\Context\Context;
+use TYPO3\CMS\Core\Context\DateTimeAspect;
 use TYPO3\CMS\Core\Localization\LanguageServiceFactory;
+use TYPO3\CMS\Core\Utility\GeneralUtility;
 use TYPO3\CMS\Scheduler\Service\TaskService;
 
 /**
@@ -39,13 +56,25 @@ final class MonitoringReportTaskTest extends MonitoringFunctionalTestCase
     ];
 
     #[Test]
-    public function executeDelegatesToDispatcherAndReturnsTrue(): void
+    public function executeReturnsFalseWhenNotificationDueButNoReporterDelivers(): void
     {
-        $task = new MonitoringReportTask();
+        $this->registerDispatcher(
+            [new ConfigurableProvider('alpha', healthy: false)],
+            [new RecordingReporter(ReportThreshold::Always, active: false)],
+        );
 
-        // With no recipients/webhook configured the dispatcher returns
-        // NotificationDecision::None and the task should still succeed.
-        self::assertTrue($task->execute());
+        self::assertFalse((new MonitoringReportTask())->execute());
+    }
+
+    #[Test]
+    public function executeReturnsTrueWhenAnActiveReporterDelivers(): void
+    {
+        $this->registerDispatcher(
+            [new ConfigurableProvider('alpha', healthy: false)],
+            [new RecordingReporter(ReportThreshold::Always)],
+        );
+
+        self::assertTrue((new MonitoringReportTask())->execute());
     }
 
     /**
@@ -87,5 +116,34 @@ final class MonitoringReportTaskTest extends MonitoringFunctionalTestCase
         self::assertInstanceOf(TaskService::class, $taskService);
 
         return $taskService;
+    }
+
+    /**
+     * @param list<ConfigurableProvider> $providers
+     * @param list<Reporter> $reporters
+     */
+    private function registerDispatcher(array $providers, array $reporters): void
+    {
+        $this->get(CacheManager::class)->getCache('typo3_monitoring_notification')->flush();
+
+        $context = new Context();
+        $context->setAspect('date', new DateTimeAspect((new \DateTimeImmutable())->setTimestamp(1_000)));
+
+        $dispatcher = new ReportDispatcher(
+            $providers,
+            $reporters,
+            $this->get(MonitoringExecutionHandler::class),
+            $this->get(NotificationStateCacheManager::class),
+            new MonitoringConfiguration(
+                new TokenAuthorizerConfiguration(),
+                new AdminUserAuthorizerConfiguration(),
+                new EmailReporterConfiguration(),
+                new ReportDispatcherConfiguration(),
+            ),
+            $context,
+            new NullLogger(),
+        );
+
+        GeneralUtility::addInstance(ReportDispatcher::class, $dispatcher);
     }
 }
