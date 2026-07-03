@@ -37,9 +37,8 @@ use TYPO3\CMS\Core\Type\ContextualFeedbackSeverity;
 /**
  * FlushProviderCacheController.
  *
- * Dedicated POST endpoint for flushing a single monitoring provider's cache. Validates a
- * backend form-protection token bound to the provider class before mutating state, so
- * cross-site requests can't trigger a flush against an authenticated backend session.
+ * Dedicated POST endpoint for flushing a single monitoring provider's cache. Requires the
+ * requesting backend user to be a system maintainer.
  *
  * @author Martin Adler <mteu@mailbox.org>
  * @license GPL-2.0-or-later
@@ -79,6 +78,19 @@ final readonly class FlushProviderCacheController
         $languageService = $this->getLanguageService();
         $messageQueue = $this->flashMessageService->getMessageQueueByIdentifier(self::FLASHMESSAGE_QUEUE_IDENTIFIER);
         $redirectUri = $this->uriBuilder->buildUriFromRoute('monitoring_providers');
+
+        $backendUser = $GLOBALS['BE_USER'] ?? null;
+
+        if (!$backendUser instanceof BackendUserAuthentication || !$backendUser->isSystemMaintainer()) {
+            $messageQueue->addMessage(new FlashMessage(
+                $languageService->sL(self::LOCALLANG_FILE . ':provider.cache.flush.forbidden.message'),
+                $languageService->sL(self::LOCALLANG_FILE . ':provider.cache.flush.forbidden.title'),
+                ContextualFeedbackSeverity::ERROR,
+                true,
+            ));
+
+            return new RedirectResponse($redirectUri);
+        }
 
         $formProtection = $this->formProtectionFactory->createFromRequest($request);
 

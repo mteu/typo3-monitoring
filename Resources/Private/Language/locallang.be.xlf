@@ -132,6 +132,12 @@
             <trans-unit id="provider.cache.flush.error.title">
                 <source>Cache Flush Failed</source>
             </trans-unit>
+            <trans-unit id="provider.cache.flush.forbidden.message">
+                <source>You are not permitted to flush the monitoring provider cache.</source>
+            </trans-unit>
+            <trans-unit id="provider.cache.flush.forbidden.title">
+                <source>Cache Flush Forbidden</source>
+            </trans-unit>
             <trans-unit id="provider.cache.flush.success.message">
                 <source>Cache for provider "%s" has been flushed successfully.</source>
             </trans-unit>
