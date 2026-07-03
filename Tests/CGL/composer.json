@@ -51,6 +51,7 @@
 		"lint": [
 			"@lint:composer",
 			"@lint:editorconfig",
+			"@lint:xliff",
 			"@lint:php"
 		],
 		"lint:composer": "@fix:composer --dry-run",
