@@ -38,6 +38,7 @@ final readonly class SchedulerTaskRepositoryStub implements SchedulerTaskReposit
         private array $failedSample = [],
         private array $overdueSample = [],
         private bool $hasRunningTask = false,
+        private bool $throwOnHasRunningTask = false,
     ) {}
 
     public function countFailedTasks(): int
@@ -52,6 +53,10 @@ final readonly class SchedulerTaskRepositoryStub implements SchedulerTaskReposit
 
     public function hasRunningTask(): bool
     {
+        if ($this->throwOnHasRunningTask) {
+            throw new \RuntimeException('Running-task query failed', 1783028166);
+        }
+
         return $this->hasRunningTask;
     }
 
