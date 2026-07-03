@@ -24,11 +24,8 @@ use TYPO3\CMS\Scheduler\Task\AbstractTask;
 /**
  * MonitoringReportTask.
  *
- * Backend Scheduler trigger for the push reporters. Thin shell delegating
- * to {@see ReportDispatcher} so it stays identical to the cron-friendly
- * {@see \mteu\Monitoring\Command\ReportCommand}. Scheduler tasks are not
- * DI-constructed in v13/14, so the dispatcher is resolved via the container
- * at runtime.
+ * Backend Scheduler trigger for the push reporters. Thin shell delegating to {@see ReportDispatcher} so it stays
+ * identical to the cron-friendly {@see \mteu\Monitoring\Command\ReportCommand}.
  *
  * @author Martin Adler <mteu@mailbox.org>
  * @license GPL-2.0-or-later
@@ -37,8 +34,10 @@ final class MonitoringReportTask extends AbstractTask
 {
     public function execute(): bool
     {
-        GeneralUtility::makeInstance(ReportDispatcher::class)->dispatch();
+        $result = GeneralUtility::makeInstance(ReportDispatcher::class)->dispatch();
 
-        return true;
+        // A notification was due but no active reporter delivered it (e.g. the EmailReporter has no recipient
+        // configured). Show the task as failed so the Scheduler flags the misconfiguration.
+        return !$result->isUndelivered();
     }
 }
