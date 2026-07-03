@@ -17,22 +17,21 @@ declare(strict_types=1);
 
 namespace ExampleProvider;
 
-use mteu\Monitoring\Provider\MonitoringProvider;
 use mteu\Monitoring\Result\MonitoringResult;
 use mteu\Monitoring\Result\Result;
 use mteu\Monitoring\Result\Status;
 
 /**
- * ActiveDisabledProvider.
+ * HealthyProvider.
  *
- * @author Martin Adler <mteu@mailbox.org>
+ * @author Martin Adler <m.adler@mailbox.org>
  * @license GPL-2.0-or-later
  */
-final class ActiveDisabledProvider implements MonitoringProvider
+final class CachedHealthyProvider implements CacheableMonitoringProvider
 {
     public function getName(): string
     {
-        return 'ActiveDisabledProvider';
+        return 'HealthyProvider';
     }
 
     public function getDescription(): string
@@ -42,7 +41,7 @@ final class ActiveDisabledProvider implements MonitoringProvider
 
     public function isEnabled(): bool
     {
-        return false;
+        return true;
     }
 
     public function isActive(): bool
@@ -55,6 +54,17 @@ final class ActiveDisabledProvider implements MonitoringProvider
         return new MonitoringResult(
             $this->getName(),
             Status::Healthy,
+            '',
         );
+    }
+
+    public function getCacheKey(): string
+    {
+        return strtolower(self::getName());
+    }
+
+    public function getCacheLifetime(): int
+    {
+        return 900;
     }
 }

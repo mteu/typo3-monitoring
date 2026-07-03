@@ -28,6 +28,7 @@ use PHPUnit\Framework\TestCase;
 use Psr\Http\Message\ServerRequestInterface;
 use Psr\Http\Message\UriInterface;
 use TYPO3\CMS\Backend\Routing\UriBuilder;
+use TYPO3\CMS\Core\Authentication\BackendUserAuthentication;
 use TYPO3\CMS\Core\Cache\CacheManager;
 use TYPO3\CMS\Core\Cache\Exception\NoSuchCacheException;
 use TYPO3\CMS\Core\Cache\Frontend\FrontendInterface;
@@ -89,7 +90,21 @@ final class FlushProviderCacheControllerTest extends TestCase
         $this->formProtectionFactory = self::createStub(FormProtectionFactory::class);
         $this->formProtectionFactory->method('createFromRequest')->willReturn($this->formProtection);
 
-        $GLOBALS['BE_USER'] = null;
+        // Default to an authorized system maintainer so the branches under test are reachable.
+        $GLOBALS['BE_USER'] = $this->createBackendUser(isSystemMaintainer: true);
+    }
+
+    protected function tearDown(): void
+    {
+        unset($GLOBALS['BE_USER']);
+    }
+
+    private function createBackendUser(bool $isSystemMaintainer): BackendUserAuthentication&Stub
+    {
+        $backendUser = self::createStub(BackendUserAuthentication::class);
+        $backendUser->method('isSystemMaintainer')->willReturn($isSystemMaintainer);
+
+        return $backendUser;
     }
 
     private function createController(): FlushProviderCacheController
@@ -125,6 +140,54 @@ final class FlushProviderCacheControllerTest extends TestCase
 
         $this->expectException(MethodNotAllowedException::class);
         ($this->createController())($request);
+    }
+
+    #[Test]
+    public function rejectsNonSystemMaintainerBeforeValidatingToken(): void
+    {
+        $GLOBALS['BE_USER'] = $this->createBackendUser(isSystemMaintainer: false);
+
+        // The authorization gate must short-circuit ahead of the cache; the distinct
+        // "flush.forbidden" flash (vs. "flush.csrf") proves the CSRF branch was not reached.
+        $this->coreCacheManager->expects(self::never())->method('getCache');
+        $this->flashMessageQueue
+            ->expects(self::once())
+            ->method('addMessage')
+            ->with(self::callback(static fn(FlashMessage $m): bool =>
+                $m->getSeverity() === ContextualFeedbackSeverity::ERROR
+                && str_contains($m->getTitle(), 'flush.forbidden')));
+
+        $response = ($this->createController())(
+            $this->createPostRequest([
+                'providerClass' => 'Vendor\\SomeProvider',
+                'formToken' => 'valid',
+            ]),
+        );
+
+        self::assertInstanceOf(RedirectResponse::class, $response);
+    }
+
+    #[Test]
+    public function rejectsMissingBackendUserBeforeValidatingToken(): void
+    {
+        $GLOBALS['BE_USER'] = null;
+
+        $this->coreCacheManager->expects(self::never())->method('getCache');
+        $this->flashMessageQueue
+            ->expects(self::once())
+            ->method('addMessage')
+            ->with(self::callback(static fn(FlashMessage $m): bool =>
+                $m->getSeverity() === ContextualFeedbackSeverity::ERROR
+                && str_contains($m->getTitle(), 'flush.forbidden')));
+
+        $response = ($this->createController())(
+            $this->createPostRequest([
+                'providerClass' => 'Vendor\\SomeProvider',
+                'formToken' => 'valid',
+            ]),
+        );
+
+        self::assertInstanceOf(RedirectResponse::class, $response);
     }
 
     #[Test]

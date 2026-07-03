@@ -5,3 +5,16 @@
 /packages
 /tailor-version-artefact
 /var
+
+# Manual E2E testing
+Classes/Provider/ActiveDisabledProvider.php
+Classes/Provider/CachedDegradedProvider.php
+Classes/Provider/CachedHealthyProvider.php
+Classes/Provider/DegradedBySubResultProvider.php
+Classes/Provider/DegradedProvider.php
+Classes/Provider/DegradedWithHealthySubResultProvider.php
+Classes/Provider/HealthyProvider.php
+Classes/Provider/InactiveDisabledProvider.php
+Classes/Provider/InactiveEnabledProvider.php
+Classes/Provider/UnhealthyBySubResultProvider.php
+Classes/Provider/UnhealthyBySubResultTwoProvider.php
