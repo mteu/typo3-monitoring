@@ -35,9 +35,6 @@ use PHPUnit\Framework\TestCase;
 final class ProviderControllerTest extends TestCase
 {
     /**
-     * The list view orders providers alphabetically by display name so their
-     * position stays stable across health transitions.
-     *
      * @param array{name: string} $a
      * @param array{name: string} $b
      */
@@ -49,6 +46,7 @@ final class ProviderControllerTest extends TestCase
         $controller = $reflection->newInstanceWithoutConstructor();
 
         $result = $reflection->getMethod('compareByName')->invoke($controller, $a, $b);
+        self::assertIsInt($result);
 
         self::assertSame($expectedSign, $result <=> 0);
     }
