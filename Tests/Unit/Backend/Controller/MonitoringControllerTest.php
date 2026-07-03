@@ -28,6 +28,7 @@ use PHPUnit\Framework\Attributes\AllowMockObjectsWithoutExpectations;
 use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\Attributes\Test;
 use Psr\Http\Message\ServerRequestInterface;
+use Psr\Log\NullLogger;
 use TYPO3\CMS\Core\Cache\CacheManager;
 use TYPO3\CMS\Core\FormProtection\AbstractFormProtection;
 use TYPO3\CMS\Core\FormProtection\FormProtectionFactory;
@@ -130,6 +131,7 @@ final class MonitoringControllerTest extends Framework\TestCase
     {
         $executionHandler = new MonitoringExecutionHandler(
             new MonitoringCacheManager($this->createMock(CacheManager::class)),
+            new NullLogger(),
         );
 
         $formProtectionFactory = $this->createMock(FormProtectionFactory::class);
