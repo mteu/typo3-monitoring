@@ -140,6 +140,19 @@ final class SchedulerProviderTest extends Framework\TestCase
     }
 
     #[Test]
+    public function heartbeatDegradesToUnhealthyWhenTheRunningTaskQueryThrows(): void
+    {
+        $result = $this->createProvider(throwOnHasRunningTask: true)->execute();
+
+        $heartbeat = $result->getSubResults()[0];
+        self::assertSame('Scheduler', $heartbeat->getName());
+        self::assertSame(Status::Unhealthy, $heartbeat->getStatus());
+        self::assertStringContainsString('Running-task query failed', (string)$heartbeat->getReason());
+
+        self::assertFalse($result->isHealthy());
+    }
+
+    #[Test]
     public function missingLastRunStaysHealthyWhileATaskIsRunning(): void
     {
         $result = $this->createProvider(
@@ -400,6 +413,7 @@ final class SchedulerProviderTest extends Framework\TestCase
         array $failedSample = [],
         ?string $taskLinkBaseUri = null,
         bool $hasRunningTask = false,
+        bool $throwOnHasRunningTask = false,
     ): SchedulerProvider {
         return new SchedulerProvider(
             $configuration ?? new SchedulerProviderConfiguration(),
@@ -409,6 +423,7 @@ final class SchedulerProviderTest extends Framework\TestCase
                 failedSample: $failedSample,
                 overdueSample: $overdueSample,
                 hasRunningTask: $hasRunningTask,
+                throwOnHasRunningTask: $throwOnHasRunningTask,
             ),
             new SchedulerHeartbeatStub($lastRunEnd),
             new MockClock((new \DateTimeImmutable())->setTimestamp(self::NOW)),

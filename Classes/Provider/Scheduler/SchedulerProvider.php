@@ -60,7 +60,7 @@ final readonly class SchedulerProvider implements MonitoringProvider
 
     public function __construct(
         private SchedulerProviderConfiguration $configuration,
-        private SchedulerTaskRepository $taskGateway,
+        private SchedulerTaskRepository $taskRepository,
         private SchedulerHeartbeat $heartbeat,
         private ClockInterface $clock,
         private LoggerInterface $logger,
@@ -113,7 +113,13 @@ final readonly class SchedulerProvider implements MonitoringProvider
             return new MonitoringResult('Scheduler', Status::Healthy, $this->translate('provider.scheduler.heartbeat.disabled'));
         }
 
-        if ($this->taskGateway->hasRunningTask()) {
+        try {
+            $hasRunningTask = $this->taskRepository->hasRunningTask();
+        } catch (\Throwable $exception) {
+            return $this->reportQueryFailure('Scheduler', $exception);
+        }
+
+        if ($hasRunningTask) {
             return new MonitoringResult('Scheduler', Status::Healthy, $this->translate('provider.scheduler.heartbeat.running'));
         }
 
@@ -152,7 +158,7 @@ final readonly class SchedulerProvider implements MonitoringProvider
     private function checkFailedTasks(): Result
     {
         try {
-            $count = $this->taskGateway->countFailedTasks();
+            $count = $this->taskRepository->countFailedTasks();
         } catch (\Throwable $exception) {
             return $this->reportQueryFailure('Failed Tasks', $exception);
         }
@@ -181,7 +187,7 @@ final readonly class SchedulerProvider implements MonitoringProvider
         $overdueBefore = $this->clock->now()->getTimestamp() - $this->configuration->overdueThreshold;
 
         try {
-            $count = $this->taskGateway->countOverdueTasks($overdueBefore);
+            $count = $this->taskRepository->countOverdueTasks($overdueBefore);
         } catch (\Throwable $exception) {
             return $this->reportQueryFailure('Overdue Tasks', $exception);
         }
@@ -208,7 +214,7 @@ final readonly class SchedulerProvider implements MonitoringProvider
     private function safeFailedSample(): array
     {
         try {
-            return $this->renderSample($this->taskGateway->getFailedTaskSample(self::SAMPLE_SIZE));
+            return $this->renderSample($this->taskRepository->getFailedTaskSample(self::SAMPLE_SIZE));
         } catch (\Throwable $exception) {
             $this->logger->warning('Could not fetch failed scheduler task sample.', [
                 'exception' => $exception->getMessage(),
@@ -224,7 +230,7 @@ final readonly class SchedulerProvider implements MonitoringProvider
     private function safeOverdueSample(int $overdueBefore): array
     {
         try {
-            return $this->renderSample($this->taskGateway->getOverdueTaskSample($overdueBefore, self::SAMPLE_SIZE));
+            return $this->renderSample($this->taskRepository->getOverdueTaskSample($overdueBefore, self::SAMPLE_SIZE));
         } catch (\Throwable $exception) {
             $this->logger->warning('Could not fetch overdue scheduler task sample.', [
                 'exception' => $exception->getMessage(),
