@@ -24,8 +24,7 @@ const openMonitoringModule = async (page: Page): Promise<FrameLocator> => {
 /**
  * The docheader submodule switcher differs per major: v13 renders a
  * MenuRegistry select box, v14 a DropDownButton in the button bar.
- */
-/**
+ *
  * Opens the v14 docheader dropdown, a native popover toggled through the
  * button's popovertarget attribute. Retry the click in case it raced the
  * frame still loading.

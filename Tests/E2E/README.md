@@ -12,7 +12,7 @@ registered system maintainer:
 cd Tests/E2E
 npm ci
 PLAYWRIGHT_BASE_URL=https://typo3-monitoring.ddev.site \
-T3_MAJOR=14 \
+T3_MAJOR=14.3 \
 T3_ADMIN_USERNAME=admin \
 T3_ADMIN_PASSWORD=password \
 npx playwright test
@@ -21,7 +21,7 @@ npx playwright test
 | Variable              | Default                              | Purpose                                       |
 |-----------------------|--------------------------------------|-----------------------------------------------|
 | `PLAYWRIGHT_BASE_URL` | `https://typo3-monitoring.ddev.site` | Base URL of the instance                      |
-| `T3_MAJOR`            | `14`                                 | TYPO3 major version under test (`13` or `14`) |
+| `T3_MAJOR`            | `14.3`                               | TYPO3 major version under test (`13` or `14`) |
 | `T3_ADMIN_USERNAME`   | `admin`                              | Backend admin username                        |
 | `T3_ADMIN_PASSWORD`   | `password`                           | Backend admin password                        |
 

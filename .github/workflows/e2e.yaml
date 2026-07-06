@@ -1,4 +1,4 @@
-name: E2E
+name: Tests
 on:
   push:
     branches:
@@ -18,9 +18,9 @@ jobs:
       fail-fast: false
       matrix:
         include:
-          - typo3-version: "13"
+          - typo3-version: "13.4"
             typo3-constraint: "^13.4.23"
-          - typo3-version: "14"
+          - typo3-version: "14.3"
             typo3-constraint: "^14.3.0"
 
     steps:

@@ -46,8 +46,8 @@ $monitoring = [
 
 if ($isV14OrHigher) {
     // v14: adds an "Overview" entry to the core-rendered submodule dropdown.
-    // v13 core does not know this key (it is silently ignored there); the
-    // Overview entry is added manually in AbstractSubModuleController instead.
+    // v13 core does not know this key (it is silently ignored there); the  Overview entry is added manually in
+    // AbstractSubModuleController instead.
     $monitoring['showSubmoduleOverview'] = true;
 }
 
@@ -72,11 +72,10 @@ $children = [
 ];
 
 if (!$isV14OrHigher) {
-    // v13 core forcibly rewrites any request to a module that has submodules
-    // to its last-used/first submodule (BackendModuleValidator), which would
-    // defeat opening the overview first. Keep the sub-areas standalone and
-    // out of the module menu there; the docheader submodule dropdown is
-    // built manually in AbstractSubModuleController from these identifiers.
+    // v13 core forcibly rewrites any request to a module that has submodules to its last-used/first submodule
+    // (BackendModuleValidator), which would defeat opening the overview first. Keep the sub-areas standalone and
+    // out of the module menu there. The docheader submodule dropdown is built manually in AbstractSubModuleController
+    // from these identifiers.
     foreach ($children as &$child) {
         unset($child['parent']);
         $child['standalone'] = true;
