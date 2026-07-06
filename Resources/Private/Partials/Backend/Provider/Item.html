@@ -5,8 +5,6 @@
     xmlns:monitoring="http://typo3.org/ns/mteu/Monitoring/ViewHelper/Backend"
 >
 
-<f:layout name="Module" />
-
 <f:variable name="providerHealthState" value="{provider.status -> monitoring:statusContext()}" />
 <f:variable name="providerActivationState" value="{f:if(condition: provider.isActive, then: providerHealthState, else: 'default')}" />
 <f:variable name="providerEnablementState" value="{f:if(condition: provider.isEnabled, then: providerActivationState, else: 'placeholder')}" />
