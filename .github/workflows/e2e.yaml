@@ -1,0 +1,120 @@
+name: Tests
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+    branches:
+      - '**'
+
+permissions:
+  contents: read
+
+jobs:
+  e2e:
+    name: E2E (TYPO3 ${{ matrix.typo3-version }})
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - typo3-version: "13.4"
+            typo3-constraint: "^13.4.23"
+          - typo3-version: "14.3"
+            typo3-constraint: "^14.3.0"
+
+    steps:
+      - uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0 # v7
+
+      # Prepare environment
+      - name: Setup PHP
+        uses: shivammathur/setup-php@f3e473d116dcccaddc5834248c87452386958240 # v2
+        with:
+          php-version: "8.4"
+          extensions: sqlite3, pdo_sqlite
+          coverage: none
+
+      # Compose a throwaway TYPO3 project with the extension from this checkout
+      - name: Create TYPO3 instance
+        run: |
+          mkdir -p /tmp/typo3-app && cd /tmp/typo3-app
+          composer init --name=e2e/app --description="e2e" --type=project --no-interaction
+          composer config allow-plugins.typo3/class-alias-loader true
+          composer config allow-plugins.typo3/cms-composer-installers true
+          composer config repositories.monitoring path "$GITHUB_WORKSPACE"
+          composer config minimum-stability dev
+          composer config prefer-stable true
+          composer require --no-progress \
+            "typo3/cms-core:${{ matrix.typo3-constraint }}" \
+            "typo3/cms-backend:*" \
+            "typo3/cms-extbase:*" \
+            "typo3/cms-fluid:*" \
+            "typo3/cms-frontend:*" \
+            "typo3/cms-install:*" \
+            "mteu/typo3-monitoring:@dev"
+
+      - name: Set up TYPO3
+        run: |
+          cd /tmp/typo3-app
+          TYPO3_DB_DRIVER=sqlite \
+          TYPO3_SETUP_ADMIN_USERNAME=admin \
+          TYPO3_SETUP_ADMIN_PASSWORD='Password.123' \
+          TYPO3_SETUP_ADMIN_EMAIL=admin@example.com \
+          TYPO3_PROJECT_NAME="Monitoring E2E" \
+          TYPO3_SERVER_TYPE=other \
+          vendor/bin/typo3 setup --force --no-interaction
+          # The monitoring module requires access=systemMaintainer; the setup
+          # command does not register one, so grant it to the created admin.
+          php -r '
+            $pdo = new PDO("sqlite:" . glob("var/sqlite/*.sqlite")[0]);
+            $uids = array_map(
+              static fn (array $row): int => (int)$row[0],
+              $pdo->query("select uid from be_users where admin=1 and username<>\"_cli_\"")->fetchAll(PDO::FETCH_NUM),
+            );
+            $file = "config/system/settings.php";
+            $settings = include $file;
+            $settings["SYS"]["systemMaintainers"] = $uids;
+            $settings["SYS"]["trustedHostsPattern"] = ".*";
+            file_put_contents($file, "<?php\nreturn " . var_export($settings, true) . ";\n");
+          '
+
+      - name: Start PHP server
+        run: |
+          cd /tmp/typo3-app
+          cat > router.php <<'PHP'
+          <?php
+          $path = parse_url($_SERVER['REQUEST_URI'], PHP_URL_PATH);
+          $file = __DIR__ . '/public' . $path;
+          if ($path !== '/' && is_file($file)) {
+              return false;
+          }
+          $_SERVER['SCRIPT_NAME'] = '/index.php';
+          $_SERVER['SCRIPT_FILENAME'] = __DIR__ . '/public/index.php';
+          require __DIR__ . '/public/index.php';
+          PHP
+          php -S 127.0.0.1:8080 -t public router.php &
+          timeout 30 bash -c 'until curl -sf -o /dev/null http://127.0.0.1:8080/typo3; do sleep 1; done'
+
+      # Run the Playwright tests
+      - name: Install Playwright
+        working-directory: Tests/E2E
+        run: |
+          npm ci
+          npx playwright install --with-deps chromium
+
+      - name: Run E2E tests
+        working-directory: Tests/E2E
+        env:
+          PLAYWRIGHT_BASE_URL: http://127.0.0.1:8080
+          T3_MAJOR: ${{ matrix.typo3-version }}
+        run: npx playwright test
+
+      - name: Upload Playwright report
+        if: failure()
+        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7
+        with:
+          name: playwright-report-typo3-${{ matrix.typo3-version }}
+          path: |
+            Tests/E2E/playwright-report
+            Tests/E2E/test-results
+          retention-days: 7

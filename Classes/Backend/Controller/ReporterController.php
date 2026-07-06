@@ -25,6 +25,8 @@ use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use Symfony\Component\DependencyInjection\Attribute\AutowireIterator;
 use TYPO3\CMS\Backend\Attribute\AsController;
+use TYPO3\CMS\Backend\Module\ModuleProvider;
+use TYPO3\CMS\Backend\Routing\UriBuilder;
 use TYPO3\CMS\Backend\Template\ModuleTemplateFactory;
 use TYPO3\CMS\Core\Http\AllowedMethodsTrait;
 use TYPO3\CMS\Core\Http\Error\MethodNotAllowedException;
@@ -50,13 +52,15 @@ final readonly class ReporterController extends AbstractSubModuleController
     public function __construct(
         ModuleTemplateFactory $moduleTemplateFactory,
         LanguageServiceFactory $languageServiceFactory,
+        ModuleProvider $moduleProvider,
+        UriBuilder $uriBuilder,
 
         /** @var Reporter[] $reporters */
         #[AutowireIterator(tag: 'monitoring.reporter', defaultPriorityMethod: 'getPriority')]
         private iterable $reporters,
         private MonitoringConfiguration $monitoringConfiguration,
     ) {
-        parent::__construct($moduleTemplateFactory, $languageServiceFactory);
+        parent::__construct($moduleTemplateFactory, $languageServiceFactory, $moduleProvider, $uriBuilder);
     }
 
     /**
