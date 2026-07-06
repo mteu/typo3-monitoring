@@ -24,6 +24,8 @@ use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use Symfony\Component\DependencyInjection\Attribute\AutowireIterator;
 use TYPO3\CMS\Backend\Attribute\AsController;
+use TYPO3\CMS\Backend\Module\ModuleProvider;
+use TYPO3\CMS\Backend\Routing\UriBuilder;
 use TYPO3\CMS\Backend\Template\ModuleTemplateFactory;
 use TYPO3\CMS\Core\Crypto\HashService;
 use TYPO3\CMS\Core\Http\AllowedMethodsTrait;
@@ -45,6 +47,8 @@ final readonly class AuthorizerController extends AbstractSubModuleController
     public function __construct(
         ModuleTemplateFactory $moduleTemplateFactory,
         LanguageServiceFactory $languageServiceFactory,
+        ModuleProvider $moduleProvider,
+        UriBuilder $uriBuilder,
 
         /** @var Authorizer[] $authorizers */
         #[AutowireIterator(tag: 'monitoring.authorizer', defaultPriorityMethod: 'getPriority')]
@@ -52,7 +56,7 @@ final readonly class AuthorizerController extends AbstractSubModuleController
         private MonitoringConfiguration $monitoringConfiguration,
         private HashService $hashService,
     ) {
-        parent::__construct($moduleTemplateFactory, $languageServiceFactory);
+        parent::__construct($moduleTemplateFactory, $languageServiceFactory, $moduleProvider, $uriBuilder);
     }
 
     /**

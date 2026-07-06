@@ -26,6 +26,7 @@ use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use Symfony\Component\DependencyInjection\Attribute\AutowireIterator;
 use TYPO3\CMS\Backend\Attribute\AsController;
+use TYPO3\CMS\Backend\Module\ModuleProvider;
 use TYPO3\CMS\Backend\Routing\UriBuilder;
 use TYPO3\CMS\Backend\Template\ModuleTemplateFactory;
 use TYPO3\CMS\Core\FormProtection\FormProtectionFactory;
@@ -48,16 +49,17 @@ final readonly class ProviderController extends AbstractSubModuleController
     public function __construct(
         ModuleTemplateFactory $moduleTemplateFactory,
         LanguageServiceFactory $languageServiceFactory,
+        ModuleProvider $moduleProvider,
+        UriBuilder $uriBuilder,
         /** @var MonitoringProvider[] $monitoringProviders */
         #[AutowireIterator(tag: 'monitoring.provider')]
         private iterable $monitoringProviders,
         private MonitoringExecutionHandler $executionHandler,
         private MonitoringCacheManager $cacheManager,
         private MonitoringConfiguration $monitoringConfiguration,
-        private UriBuilder $uriBuilder,
         private FormProtectionFactory $formProtectionFactory,
     ) {
-        parent::__construct($moduleTemplateFactory, $languageServiceFactory);
+        parent::__construct($moduleTemplateFactory, $languageServiceFactory, $moduleProvider, $uriBuilder);
     }
 
     /**
@@ -150,31 +152,17 @@ final readonly class ProviderController extends AbstractSubModuleController
             }
         }
 
-        uasort(
-            $providerTemplateVariables,
-            fn(array $a, array $b): int => $this->getProviderSortRank($a) <=> $this->getProviderSortRank($b)
-        );
+        uasort($providerTemplateVariables, $this->compareByName(...));
 
         return $providerTemplateVariables;
     }
 
     /**
-     * @param array{
-     *     isEnabled: bool,
-     *     isActive: bool,
-     *     isHealthy?: bool,
-     * } $provider
+     * @param array{name: string} $a
+     * @param array{name: string} $b
      */
-    private function getProviderSortRank(array $provider): int
+    private function compareByName(array $a, array $b): int
     {
-        if (!$provider['isEnabled']) {
-            return 3;
-        }
-
-        if (!$provider['isActive']) {
-            return 2;
-        }
-
-        return ($provider['isHealthy'] ?? false) ? 1 : 0;
+        return strcasecmp($a['name'], $b['name']);
     }
 }

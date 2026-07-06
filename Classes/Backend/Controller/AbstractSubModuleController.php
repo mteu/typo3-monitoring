@@ -18,12 +18,18 @@ declare(strict_types=1);
 namespace mteu\Monitoring\Backend\Controller;
 
 use Psr\Http\Message\ServerRequestInterface;
+use TYPO3\CMS\Backend\Module\ModuleInterface;
+use TYPO3\CMS\Backend\Module\ModuleProvider;
+use TYPO3\CMS\Backend\Routing\UriBuilder;
+use TYPO3\CMS\Backend\Template\Components\Menu\Menu;
+use TYPO3\CMS\Backend\Template\Components\Menu\MenuItem;
 use TYPO3\CMS\Backend\Template\ModuleTemplate;
 use TYPO3\CMS\Backend\Template\ModuleTemplateFactory;
 use TYPO3\CMS\Core\Authentication\BackendUserAuthentication;
 use TYPO3\CMS\Core\Information\Typo3Version;
 use TYPO3\CMS\Core\Localization\LanguageService;
 use TYPO3\CMS\Core\Localization\LanguageServiceFactory;
+use TYPO3\CMS\Core\Utility\GeneralUtility;
 
 /**
  * AbstractSubModuleController.
@@ -39,21 +45,25 @@ abstract readonly class AbstractSubModuleController
     public function __construct(
         protected ModuleTemplateFactory $moduleTemplateFactory,
         protected LanguageServiceFactory $languageServiceFactory,
+        protected ModuleProvider $moduleProvider,
+        protected UriBuilder $uriBuilder,
     ) {}
 
     final protected function createModuleTemplate(ServerRequestInterface $request, string $bookmarkRoute = ''): ModuleTemplate
     {
         $template = $this->moduleTemplateFactory->create($request);
-        $template->makeDocHeaderModuleMenu();
+        $isV14OrHigher = (new Typo3Version())->getMajorVersion() >= 14;
 
-        $docHeaderComponent = $template->getDocHeaderComponent();
+        if ($isV14OrHigher) {
+            $template->makeDocHeaderModuleMenu();
+        } else {
+            // v13 core builds this menu from the submodules only, so build it
+            // manually to prepend an "Overview" entry for the parent module.
+            $this->makeDocHeaderModuleMenuWithOverview($template, $request);
+        }
 
-        //if (method_exists($docHeaderComponent, 'disableAutomaticReloadButton')) {
-        //    $docHeaderComponent->disableAutomaticReloadButton();
-        //}
-
-        if ($bookmarkRoute !== '' && (new Typo3Version())->getMajorVersion() >= 14) {
-            $docHeaderComponent->setShortcutContext(
+        if ($bookmarkRoute !== '' && $isV14OrHigher) {
+            $template->getDocHeaderComponent()->setShortcutContext(
                 $bookmarkRoute,
                 $this->getLanguageService()->sL(self::LOCALLANG_FILE . ':route.label.' . $bookmarkRoute),
             );
@@ -62,6 +72,54 @@ abstract readonly class AbstractSubModuleController
         return $template->assignMultiple([
             'monitoringMessageQueueIdentifier' => self::FLASHMESSAGE_QUEUE_IDENTIFIER,
         ]);
+    }
+
+    /**
+     * v13 pendant of ModuleTemplate::makeDocHeaderModuleMenu() with an
+     * additional first entry linking back to the overview module.
+     *
+     * The sub-area modules are not registered as children of "monitoring" on
+     * v13 (see Configuration/Backend/Modules.php), so the menu is built from
+     * their identifiers instead of the module tree.
+     */
+    private function makeDocHeaderModuleMenuWithOverview(ModuleTemplate $template, ServerRequestInterface $request): void
+    {
+        $currentModule = $request->getAttribute('module');
+        $backendUser = $GLOBALS['BE_USER'] ?? null;
+
+        if (!$currentModule instanceof ModuleInterface || !$backendUser instanceof BackendUserAuthentication) {
+            return;
+        }
+
+        $languageService = $this->getLanguageService();
+        $menu = GeneralUtility::makeInstance(Menu::class);
+        $menu->setIdentifier('moduleMenu');
+        $menu->setLabel(
+            $languageService->sL('LLL:EXT:backend/Resources/Private/Language/locallang.xlf:moduleMenu.dropdown.label'),
+        );
+
+        $menuItems = [
+            'monitoring' => $languageService->sL('LLL:EXT:monitoring/Resources/Private/Language/locallang.mod.xlf:module.overview.labels.title'),
+        ];
+
+        foreach (['monitoring_providers', 'monitoring_authorizers', 'monitoring_reporters'] as $identifier) {
+            $module = $this->moduleProvider->getModule($identifier, $backendUser);
+            if ($module !== null) {
+                $menuItems[$identifier] = $languageService->sL($module->getTitle());
+            }
+        }
+
+        foreach ($menuItems as $identifier => $title) {
+            $item = GeneralUtility::makeInstance(MenuItem::class)
+                ->setHref((string)$this->uriBuilder->buildUriFromRoute($identifier))
+                ->setTitle($title);
+            if ($identifier === $currentModule->getIdentifier()) {
+                $item->setActive(true);
+            }
+            $menu->addMenuItem($item);
+        }
+
+        $template->getDocHeaderComponent()->getMenuRegistry()->addMenu($menu);
     }
 
     final protected function getLanguageService(): LanguageService

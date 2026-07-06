@@ -45,17 +45,14 @@ $monitoring = [
 ];
 
 if ($isV14OrHigher) {
-    // v14: container renders its own overview
+    // v14: adds an "Overview" entry to the core-rendered submodule dropdown.
+    // v13 core does not know this key (it is silently ignored there); the  Overview entry is added manually in
+    // AbstractSubModuleController instead.
     $monitoring['showSubmoduleOverview'] = true;
-} else {
-    // Mark the module standalone so its menu link is
-    $monitoring['standalone'] = true;
 }
 
 $modules = ['monitoring' => $monitoring];
 
-// On v14 these are submodules of the container (grouped menu).
-// On v13 they are NOT children of a standalone module, so we're registering them as standalone destinations for the cards.
 $childCommon = static fn(string $target, string $path, string $prefix): array => [
     'parent' => 'monitoring',
     'access' => 'systemMaintainer',
@@ -68,30 +65,23 @@ $childCommon = static fn(string $target, string $path, string $prefix): array =>
     'routes' => ['_default' => ['target' => $target]],
 ];
 
-if ($isV14OrHigher) {
-    $modules['monitoring_providers'] = $childCommon(ProviderController::class, '/module/system/monitoring/providers', $l10n . 'module.providers');
-    $modules['monitoring_authorizers'] = $childCommon(AuthorizerController::class, '/module/system/monitoring/authorizers', $l10n . 'module.authorizers');
-    $modules['monitoring_reporters'] = $childCommon(ReporterController::class, '/module/system/monitoring/reporters', $l10n . 'module.reporters');
-} else {
-    // v13: standalone sub-areas, hidden from the module menu, reachable only
-    // via the overview cards (buildUriFromRoute in the controller).
-    $standalone = static function (string $target, string $path) use ($l10n): array {
-        return [
-            'access' => 'systemMaintainer',
-            'workspaces' => 'live',
-            'standalone' => true,
-            'appearance' => ['renderInModuleMenu' => false],
-            'path' => $path,
-            'labels' => [
-                'title' => $l10n . 'module.labels.title',
-                'description' => $l10n . 'module.labels.description',
-            ],
-            'routes' => ['_default' => ['target' => $target]],
-        ];
-    };
-    $modules['monitoring_providers'] = $standalone(ProviderController::class, '/module/system/monitoring/providers');
-    $modules['monitoring_authorizers'] = $standalone(AuthorizerController::class, '/module/system/monitoring/authorizers');
-    $modules['monitoring_reporters'] = $standalone(ReporterController::class, '/module/system/monitoring/reporters');
+$children = [
+    'monitoring_providers' => $childCommon(ProviderController::class, '/module/system/monitoring/providers', $l10n . 'module.providers'),
+    'monitoring_authorizers' => $childCommon(AuthorizerController::class, '/module/system/monitoring/authorizers', $l10n . 'module.authorizers'),
+    'monitoring_reporters' => $childCommon(ReporterController::class, '/module/system/monitoring/reporters', $l10n . 'module.reporters'),
+];
+
+if (!$isV14OrHigher) {
+    // v13 core forcibly rewrites any request to a module that has submodules to its last-used/first submodule
+    // (BackendModuleValidator), which would defeat opening the overview first. Keep the sub-areas standalone and
+    // out of the module menu there. The docheader submodule dropdown is built manually in AbstractSubModuleController
+    // from these identifiers.
+    foreach ($children as &$child) {
+        unset($child['parent']);
+        $child['standalone'] = true;
+        $child['appearance'] = ['renderInModuleMenu' => false];
+    }
+    unset($child);
 }
 
-return $modules;
+return array_merge($modules, $children);

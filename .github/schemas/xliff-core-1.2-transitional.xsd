@@ -1,0 +1,112 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  XLIFF 1.2 Transitional Schema
+  Downloaded from: https://docs.oasis-open.org/xliff/v1.2/os/xliff-core-1.2-transitional.xsd
+
+  This schema validates XLIFF 1.2 documents with transitional constraints.
+  It allows extensions (like TYPO3's custom attributes) that strict validation would reject.
+
+  Original specification: https://docs.oasis-open.org/xliff/v1.2/xliff-core-1.2-transitional.xsd
+-->
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:xliff="urn:oasis:names:tc:xliff:document:1.2" xmlns:xml="http://www.w3.org/XML/1998/namespace" targetNamespace="urn:oasis:names:tc:xliff:document:1.2" elementFormDefault="qualified">
+    <!-- Import XML namespace -->
+    <xs:import namespace="http://www.w3.org/XML/1998/namespace" schemaLocation="xml.xsd"/>
+
+    <!-- Root element -->
+    <xs:element name="xliff" type="xliff:xliffType"/>
+
+    <xs:complexType name="xliffType">
+        <xs:sequence>
+            <xs:element name="file" type="xliff:fileType" maxOccurs="unbounded"/>
+        </xs:sequence>
+        <xs:attribute name="version" use="required" fixed="1.2"/>
+        <xs:anyAttribute processContents="lax"/>
+    </xs:complexType>
+
+    <!-- File element -->
+    <xs:complexType name="fileType">
+        <xs:sequence>
+            <xs:element name="header" type="xliff:headerType" minOccurs="0"/>
+            <xs:element name="body" type="xliff:bodyType"/>
+        </xs:sequence>
+        <xs:attribute name="original" type="xs:string" use="required"/>
+        <xs:attribute name="source-language" type="xs:language" use="required"/>
+        <xs:attribute name="target-language" type="xs:language"/>
+        <xs:attribute name="datatype" type="xs:string" default="plaintext"/>
+        <xs:attribute name="date" type="xs:dateTime"/>
+        <xs:attribute name="product-name" type="xs:string"/>
+        <xs:attribute name="product-version" type="xs:string"/>
+        <xs:anyAttribute processContents="lax"/>
+    </xs:complexType>
+
+    <!-- Header element -->
+    <xs:complexType name="headerType">
+        <xs:sequence>
+            <xs:any minOccurs="0" maxOccurs="unbounded" processContents="lax"/>
+        </xs:sequence>
+        <xs:anyAttribute processContents="lax"/>
+    </xs:complexType>
+
+    <!-- Body element -->
+    <xs:complexType name="bodyType">
+        <xs:sequence>
+            <xs:element name="trans-unit" type="xliff:transUnitType" minOccurs="0" maxOccurs="unbounded"/>
+            <xs:element name="group" type="xliff:groupType" minOccurs="0" maxOccurs="unbounded"/>
+        </xs:sequence>
+        <xs:anyAttribute processContents="lax"/>
+    </xs:complexType>
+
+    <!-- Trans-unit element -->
+    <xs:complexType name="transUnitType">
+        <xs:sequence>
+            <xs:element name="source" type="xliff:sourceType"/>
+            <xs:element name="target" type="xliff:targetType" minOccurs="0"/>
+            <xs:element name="note" type="xliff:noteType" minOccurs="0" maxOccurs="unbounded"/>
+            <xs:any minOccurs="0" maxOccurs="unbounded" processContents="lax"/>
+        </xs:sequence>
+        <xs:attribute name="id" type="xs:string" use="required"/>
+        <xs:attribute name="restype" type="xs:string"/>
+        <xs:attribute name="translate" type="xs:string" default="yes"/>
+        <xs:attribute name="xml:lang" type="xs:language"/>
+        <xs:anyAttribute processContents="lax"/>
+    </xs:complexType>
+
+    <!-- Source element -->
+    <xs:complexType name="sourceType" mixed="true">
+        <xs:sequence>
+            <xs:any minOccurs="0" maxOccurs="unbounded" processContents="lax"/>
+        </xs:sequence>
+        <xs:attribute name="xml:lang" type="xs:language"/>
+        <xs:anyAttribute processContents="lax"/>
+    </xs:complexType>
+
+    <!-- Target element -->
+    <xs:complexType name="targetType" mixed="true">
+        <xs:sequence>
+            <xs:any minOccurs="0" maxOccurs="unbounded" processContents="lax"/>
+        </xs:sequence>
+        <xs:attribute name="xml:lang" type="xs:language"/>
+        <xs:anyAttribute processContents="lax"/>
+    </xs:complexType>
+
+    <!-- Note element -->
+    <xs:complexType name="noteType" mixed="true">
+        <xs:sequence>
+            <xs:any minOccurs="0" maxOccurs="unbounded" processContents="lax"/>
+        </xs:sequence>
+        <xs:attribute name="annotates" type="xs:string"/>
+        <xs:attribute name="from" type="xs:string"/>
+        <xs:anyAttribute processContents="lax"/>
+    </xs:complexType>
+
+    <!-- Group element -->
+    <xs:complexType name="groupType">
+        <xs:sequence>
+            <xs:element name="trans-unit" type="xliff:transUnitType" minOccurs="0" maxOccurs="unbounded"/>
+            <xs:element name="group" type="xliff:groupType" minOccurs="0" maxOccurs="unbounded"/>
+        </xs:sequence>
+        <xs:attribute name="id" type="xs:string" use="required"/>
+        <xs:attribute name="restype" type="xs:string"/>
+        <xs:anyAttribute processContents="lax"/>
+    </xs:complexType>
+</xs:schema>

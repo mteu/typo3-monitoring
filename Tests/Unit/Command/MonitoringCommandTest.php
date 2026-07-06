@@ -25,6 +25,7 @@ use mteu\Monitoring\Result\MonitoringResult;
 use mteu\Monitoring\Result\Status;
 use PHPUnit\Framework;
 use PHPUnit\Framework\Attributes\Test;
+use Psr\Log\NullLogger;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Tester\CommandTester;
 use TYPO3\CMS\Core\Cache\CacheManager;
@@ -225,7 +226,7 @@ final class MonitoringCommandTest extends Framework\TestCase
      */
     private function createExecutionHandler(): MonitoringExecutionHandler
     {
-        return new MonitoringExecutionHandler(new MonitoringCacheManager(new CacheManager()));
+        return new MonitoringExecutionHandler(new MonitoringCacheManager(new CacheManager()), new NullLogger());
     }
 
     private function createProvider(string $name, bool $isActive, bool $isHealthy): MonitoringProvider

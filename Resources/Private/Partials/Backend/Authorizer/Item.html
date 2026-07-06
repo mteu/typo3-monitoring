@@ -42,12 +42,12 @@
             <f:case value="AdminUserAuthorizer">
                 {authorizer.description}
 
-                <f:be.pageRenderer includeJavaScriptModules="{0: '@mteu/typo3-monitoring/sophisticated-modal.js'}" />
+                <f:be.pageRenderer includeJavaScriptModules="{0: '@mteu/typo3-monitoring/preview-modal.js'}" />
                 <a
                     style="text-decoration: underline; cursor: pointer"
-                    data-sophisticated-modal
-                    data-sophisticated-modal-url="{endpoint}"
-                    data-sophisticated-modal-title="{f:translate(key: 'LLL:EXT:monitoring/Resources/Private/Language/locallang.be.xlf:auth.button.preview')}"
+                    data-preview-modal
+                    data-preview-modal-url="{endpoint}"
+                    data-preview-modal-title="{f:translate(key: 'LLL:EXT:monitoring/Resources/Private/Language/locallang.be.xlf:auth.button.preview')}"
                 >
                     <f:translate key="LLL:EXT:monitoring/Resources/Private/Language/locallang.be.xlf:auth.button.preview" />
                 </a>

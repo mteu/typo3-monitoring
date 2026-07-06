@@ -26,6 +26,8 @@ use mteu\Monitoring\Configuration\Reporter\ReportDispatcherConfiguration;
 use mteu\Monitoring\Tests\Functional\MonitoringFunctionalTestCase;
 use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\Attributes\Test;
+use TYPO3\CMS\Backend\Module\ModuleProvider;
+use TYPO3\CMS\Backend\Routing\UriBuilder;
 use TYPO3\CMS\Backend\Template\ModuleTemplateFactory;
 use TYPO3\CMS\Core\Localization\LanguageServiceFactory;
 
@@ -92,6 +94,8 @@ final class ReporterControllerTest extends MonitoringFunctionalTestCase
         $controller = new ReporterController(
             $this->get(ModuleTemplateFactory::class),
             $this->get(LanguageServiceFactory::class),
+            $this->get(ModuleProvider::class),
+            $this->get(UriBuilder::class),
             [],
             new MonitoringConfiguration(
                 new TokenAuthorizerConfiguration(),

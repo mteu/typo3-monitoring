@@ -1,0 +1,13 @@
+{
+  "name": "monitoring-e2e",
+  "private": true,
+  "description": "Playwright end-to-end tests for the TYPO3 monitoring backend module",
+  "scripts": {
+    "test": "playwright test",
+    "test:ui": "playwright test --ui"
+  },
+  "devDependencies": {
+    "@playwright/test": "~1.56.1",
+    "@types/node": "^26.0.0"
+  }
+}

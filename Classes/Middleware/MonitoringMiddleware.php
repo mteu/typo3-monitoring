@@ -121,7 +121,7 @@ final readonly class MonitoringMiddleware implements MiddlewareInterface
         }
 
         try {
-            $results = $this->collectResults();
+            $results = $this->executionHandler->collectResults($this->monitoringProviders);
             $overallStatus = $this->overallStatus($results);
 
             $responseArray = [
@@ -175,22 +175,6 @@ final readonly class MonitoringMiddleware implements MiddlewareInterface
         }
 
         return false;
-    }
-
-    /**
-     * @return array<non-empty-string, Result>
-     */
-    private function collectResults(): array
-    {
-        $results = [];
-
-        foreach ($this->monitoringProviders as $provider) {
-            if ($provider->isEnabled() && $provider->isActive()) {
-                $results[$provider->getName()] = $this->executionHandler->executeProvider($provider);
-            }
-        }
-
-        return $results;
     }
 
     /**

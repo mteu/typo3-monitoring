@@ -15,34 +15,41 @@ declare(strict_types=1);
  * The TYPO3 project - inspiring people to share!
  */
 
-namespace ExampleProvider;
+namespace mteu\Monitoring\Tests\Functional\Fixtures;
 
 use mteu\Monitoring\Provider\MonitoringProvider;
-use mteu\Monitoring\Result\MonitoringResult;
 use mteu\Monitoring\Result\Result;
-use mteu\Monitoring\Result\Status;
 
 /**
- * ActiveDisabledProvider.
+ * ThrowingProvider.
+ *
+ * Always blows up on execution so tests can assert that provider execution is
+ * isolated: a single misbehaving provider must be recorded as unhealthy rather
+ * than 500ing the health endpoint or aborting the report dispatcher.
  *
  * @author Martin Adler <mteu@mailbox.org>
  * @license GPL-2.0-or-later
  */
-final class ActiveDisabledProvider implements MonitoringProvider
+final class ThrowingProvider implements MonitoringProvider
 {
+    public function __construct(
+        /** @var non-empty-string $identifier */
+        private readonly string $identifier = 'throwing-provider',
+    ) {}
+
     public function getName(): string
     {
-        return 'ActiveDisabledProvider';
+        return $this->identifier;
     }
 
     public function getDescription(): string
     {
-        return '';
+        return 'Provider that always throws for exception-isolation tests';
     }
 
     public function isEnabled(): bool
     {
-        return false;
+        return true;
     }
 
     public function isActive(): bool
@@ -52,9 +59,6 @@ final class ActiveDisabledProvider implements MonitoringProvider
 
     public function execute(): Result
     {
-        return new MonitoringResult(
-            $this->getName(),
-            Status::Healthy,
-        );
+        throw new \RuntimeException('Provider exploded during execution', 1751407200);
     }
 }

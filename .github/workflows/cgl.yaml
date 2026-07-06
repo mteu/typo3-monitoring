@@ -51,6 +51,9 @@ jobs:
       - name: Lint YAML
         run: composer cgl lint:yaml
 
+      - name: Lint XLIFF
+        uses: ./.github/actions/xliff-validation
+
       # SCA
       - name: SCA PHP
         run: composer cgl sca:php -- --error-format github

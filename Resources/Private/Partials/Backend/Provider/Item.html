@@ -8,7 +8,7 @@
 <f:variable name="providerHealthState" value="{provider.status -> monitoring:statusContext()}" />
 <f:variable name="providerActivationState" value="{f:if(condition: provider.isActive, then: providerHealthState, else: 'default')}" />
 <f:variable name="providerEnablementState" value="{f:if(condition: provider.isEnabled, then: providerActivationState, else: 'placeholder')}" />
-<f:variable name="panelExpandable" value="{f:if(condition: '{provider.description} || {provider.subResults}', then: true, else: false)}" />
+<f:variable name="panelExpandable" value="{f:if(condition: '{provider.description} || {provider.subResults} || {provider.isCached}', then: true, else: false)}" />
 
 <div class="panel panel-{providerEnablementState}">
     <h3 class="panel-heading">
