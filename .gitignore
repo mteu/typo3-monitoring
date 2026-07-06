@@ -5,7 +5,6 @@
 /packages
 /tailor-version-artefact
 /var
-
 # Manual E2E testing
 Classes/Provider/ActiveDisabledProvider.php
 Classes/Provider/CachedDegradedProvider.php
