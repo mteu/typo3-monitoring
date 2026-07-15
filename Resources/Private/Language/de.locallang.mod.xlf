@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xliff version="1.2" xmlns="urn:oasis:names:tc:xliff:document:1.2">
+    <file source-language="en" target-language="de" datatype="plaintext" original="EXT:monitoring/Resources/Private/Language/locallang.mod.xlf" product-name="monitoring">
+       <header/>
+       <body>
+          <trans-unit id="module.labels.title">
+             <source>Monitoring</source>
+             <target>Monitoring</target>
+          </trans-unit>
+          <trans-unit id="module.labels.description">
+             <source>Displays an overview and status of the active monitoring.</source>
+             <target>Zeigt eine Übersicht und den Status des aktiven Monitorings an.</target>
+          </trans-unit>
+          <trans-unit id="module.overview.labels.title">
+             <source>Overview</source>
+             <target>Übersicht</target>
+          </trans-unit>
+          <trans-unit id="module.overview.labels.description">
+             <source>Displays an overview and status of the active monitoring.</source>
+             <target>Zeigt eine Übersicht und den Status des aktiven Monitorings an.</target>
+          </trans-unit>
+          <trans-unit id="module.providers.labels.title">
+             <source>Providers</source>
+             <target>Provider</target>
+          </trans-unit>
+          <trans-unit id="module.providers.labels.description">
+             <source>Overview of the registered monitoring providers.</source>
+             <target>Übersicht der registrierten Monitoring-Provider.</target>
+          </trans-unit>
+          <trans-unit id="module.authorizers.labels.title">
+             <source>Authorizers</source>
+             <target>Authorizer</target>
+          </trans-unit>
+          <trans-unit id="module.authorizers.labels.description">
+             <source>Overview of the registered monitoring authorizers.</source>
+             <target>Übersicht der registrierten Monitoring-Authorizer.</target>
+          </trans-unit>
+          <trans-unit id="module.reporters.labels.title">
+             <source>Reporters</source>
+             <target>Reporter</target>
+          </trans-unit>
+          <trans-unit id="module.reporters.labels.description">
+             <source>Overview of the registered monitoring reporters.</source>
+             <target>Übersicht der registrierten Monitoring-Reporter.</target>
+          </trans-unit>
+       </body>
+    </file>
+</xliff>

@@ -131,10 +131,10 @@
                 <source>Status</source>
                 <target>Status</target>
             </trans-unit>
-            <trans-unit id="documentation.card.body">
-                <source>Extending with custom monitoring checks, authorizers, or reporters is easier than you think.</source>
-                <target>Die Erweiterung um eigene Monitoring-Checks, Authorizer oder Reporter ist einfacher als gedacht.</target>
-            </trans-unit>
+			<trans-unit id="documentation.card.body">
+				<source>This extension can be flexibly extended with custom monitoring checks, authorizers, and reporters.</source>
+				<target>Diese Extension lässt sich flexibel um eigene Monitoring-Checks, Authorizer oder Reporter erweitern.</target>
+			</trans-unit>
             <trans-unit id="documentation.card.linkLabel">
                 <source>Read on GitHub</source>
                 <target>Auf GitHub lesen</target>
@@ -161,7 +161,7 @@
             </trans-unit>
             <trans-unit id="provider.cache.flush.csrf.message">
                 <source>The cache flush request could not be verified. Please retry from the monitoring module.</source>
-                <target>Die Anfrage zum Leeren des Caches konnte nicht verifiziert werden. Bitte über das Monitoring-Modul erneut versuchen.</target>
+                <target>Der Request zum Leeren des Caches konnte nicht verifiziert werden. Bitte über das Monitoring-Modul erneut versuchen.</target>
             </trans-unit>
             <trans-unit id="provider.cache.flush.csrf.title">
                 <source>Cache Flush Rejected</source>
@@ -173,7 +173,7 @@
             </trans-unit>
             <trans-unit id="provider.cache.flush.error.title">
                 <source>Cache Flush Failed</source>
-                <target>Cache-Leerung fehlgeschlagen</target>
+                <target>Cache-Leeren fehlgeschlagen</target>
             </trans-unit>
             <trans-unit id="provider.cache.flush.success.message">
                 <source>Cache for provider "%s" has been flushed successfully.</source>
@@ -193,11 +193,11 @@
             </trans-unit>
             <trans-unit id="provider.inactive.message">
                 <source>Although enabled, this provider is inactive at the moment. Please review %s to activate.</source>
-                <target>Obwohl aktiviert, ist dieser Provider derzeit inaktiv. Bitte %s prüfen, um ihn zu aktivieren.</target>
+                <target>Obwohl aktiviert ist dieser Provider derzeit inaktiv. Bitte %s prüfen, um ihn zu aktivieren.</target>
             </trans-unit>
             <trans-unit id="provider.scheduler.description">
                 <source>Monitors the TYPO3 scheduler: whether cron still triggers it (heartbeat), whether any enabled task recorded an execution failure, and whether any scheduled task is overdue (manually-triggered tasks are excluded). Inactive when the scheduler extension is not installed.</source>
-                <target>Überwacht den TYPO3-Scheduler: ob Cron ihn noch auslöst (Heartbeat), ob eine aktivierte Aufgabe einen Ausführungsfehler verzeichnet hat und ob eine geplante Aufgabe überfällig ist (manuell ausgelöste Aufgaben werden ausgenommen). Inaktiv, wenn die Scheduler-Extension nicht installiert ist.</target>
+                <target>Überwacht den TYPO3-Scheduler: ob Cron ihn noch auslöst, ob ein aktivierter Task einen Fehler verzeichnet hat und ob eine geplante Aufgabe überfällig ist (manuell ausgelöste Tasks werden ausgenommen). Inaktiv, wenn die Scheduler-Extension nicht installiert ist.</target>
             </trans-unit>
             <trans-unit id="providers.card.body">
                 <source>Providers define and execute the actual health checks and make their results available to the endpoint and reporters.</source>

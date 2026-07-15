@@ -100,7 +100,7 @@
                 <source>Status</source>
             </trans-unit>
             <trans-unit id="documentation.card.body">
-                <source>Extending with custom monitoring checks, authorizers, or reporters is easier than you think.</source>
+				<source>This extension can be flexibly extended with custom monitoring checks, authorizers, and reporters.</source>
             </trans-unit>
             <trans-unit id="documentation.card.linkLabel">
                 <source>Read on GitHub</source>
