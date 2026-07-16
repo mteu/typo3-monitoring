@@ -37,7 +37,7 @@ final readonly class TokenAuthorizerConfiguration implements AuthorizerConfigura
         #[ExtConfProperty(path: 'authorizer.mteu\\Monitoring\\Authorization\\TokenAuthorizer.secret', required: true)]
         public string $secret = '',
         #[ExtConfProperty(path: 'authorizer.mteu\\Monitoring\\Authorization\\TokenAuthorizer.authHeaderName')]
-        public string $authHeaderName = '',
+        public string $authHeaderName = 'X-TYPO3-MONITORING-AUTH',
     ) {}
 
     public function isEnabled(): bool
