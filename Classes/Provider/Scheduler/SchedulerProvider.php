@@ -249,10 +249,11 @@ final readonly class SchedulerProvider implements MonitoringProvider
         $labels = [];
 
         foreach ($tasks as $task) {
+            // The label is derived from the user-controlled tx_scheduler_task.description column.
             $labels[] = $this->renderEditLink(
                 $task->uid,
                 $task->getLabel()
-            ) ?? $task->getLabel();
+            ) ?? $this->escapeHtml($task->getLabel());
         }
 
         return $labels;
@@ -346,9 +347,14 @@ final readonly class SchedulerProvider implements MonitoringProvider
 
         return sprintf(
             '<a href="%s">%s</a>',
-            $uri,
-            $label,
+            $this->escapeHtml($uri),
+            $this->escapeHtml($label),
         );
+    }
+
+    private function escapeHtml(string $value): string
+    {
+        return htmlspecialchars($value, ENT_QUOTES | ENT_HTML5);
     }
 
     public function buildEditLink(int $uid): ?string

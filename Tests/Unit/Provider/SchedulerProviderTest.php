@@ -336,6 +336,34 @@ final class SchedulerProviderTest extends Framework\TestCase
     }
 
     #[Test]
+    public function taskLabelIsHtmlEscapedInTheLinkedSample(): void
+    {
+        $result = $this->createProvider(
+            failedCount: 1,
+            failedSample: [new SchedulerTask(42, '<script>alert(1)</script>')],
+            taskLinkBaseUri: 'https://example.com/typo3/record/edit',
+        )->execute();
+
+        $reason = (string)$result->getSubResults()[2]->getReason();
+        self::assertStringContainsString('&lt;script&gt;alert(1)&lt;/script&gt;', $reason);
+        self::assertStringNotContainsString('<script>', $reason);
+    }
+
+    #[Test]
+    public function taskLabelIsHtmlEscapedInThePlainSampleFallback(): void
+    {
+        $result = $this->createProvider(
+            failedCount: 1,
+            failedSample: [new SchedulerTask(42, '<script>alert(1)</script>')],
+            taskLinkBaseUri: null,
+        )->execute();
+
+        $reason = (string)$result->getSubResults()[2]->getReason();
+        self::assertStringContainsString('&lt;script&gt;alert(1)&lt;/script&gt;', $reason);
+        self::assertStringNotContainsString('<script>', $reason);
+    }
+
+    #[Test]
     public function usesSchedulerModuleRouteWhenItExists(): void
     {
         $uriBuilder = self::createMock(BackendUriBuilder::class);
