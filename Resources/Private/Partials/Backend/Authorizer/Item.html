@@ -26,7 +26,7 @@
 
                 <a class="t3js-modal-trigger"
                    data-title="{f:translate(key: 'LLL:EXT:monitoring/Resources/Private/Language/locallang.be.xlf:auth.token.button.example')}"
-                   data-content="curl -s -H '{authorizer.authHeaderName -> f:if(condition: authorizer.authHeaderName, then: authorizer.authHeaderName, else: 'X-TYPO3-MONITORING')}:{authorizer.authToken -> f:if(condition: authorizer.authToken, then: authorizer.authToken, else: '<authentication-token>')}' {endpoint -> f:if(condition: endpoint, then: endpoint, else: 'https://your-site.com/your-monitoring-endpoint')} | jq '.'"
+                   data-content="curl -s -H '{authorizer.authHeaderName -> f:if(condition: authorizer.authHeaderName, then: authorizer.authHeaderName, else: 'X-TYPO3-MONITORING-AUTH')}:{authorizer.authToken -> f:if(condition: authorizer.authToken, then: authorizer.authToken, else: '<authentication-token>')}' {endpoint -> f:if(condition: endpoint, then: endpoint, else: 'https://your-site.com/your-monitoring-endpoint')} | jq '.'"
                    style="text-decoration: underline; cursor: pointer"
                 >
                     <f:translate key="LLL:EXT:monitoring/Resources/Private/Language/locallang.be.xlf:auth.token.button.example" />
