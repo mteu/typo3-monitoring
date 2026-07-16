@@ -81,7 +81,7 @@ final class MonitoringResult implements Result
         return $this->getStatus()->value;
     }
 
-    public function setStatus(Status $status): Result
+    public function setStatus(Status $status): self
     {
         $this->status = $status;
 
@@ -93,7 +93,7 @@ final class MonitoringResult implements Result
         return $this->reason;
     }
 
-    public function setReason(string $reason): Result
+    public function setReason(string $reason): self
     {
         $this->reason = $reason;
 
@@ -113,6 +113,9 @@ final class MonitoringResult implements Result
         return $this->subResults;
     }
 
+    /**
+     * Appends a sub-result and returns that sub-result (not the parent), so nested trees can be built fluently.
+     */
     public function addSubResult(Result $result): Result
     {
         $this->subResults[] = $result;
