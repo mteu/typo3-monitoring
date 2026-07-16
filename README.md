@@ -69,6 +69,30 @@ return [
 
 See [Documentation/Configuration.md](Documentation/Configuration.md) for all available settings.
 
+### Generate the token
+
+The `secret` you configure is **not** the value you send. The token is an HMAC of
+the endpoint path keyed with that secret — send the token, not the secret.
+
+The easiest way to get a ready-to-use value: open the **Monitoring → Authorizers**
+backend module, which displays the current token for your configured endpoint.
+
+Or generate it programmatically (endpoint path first, then secret):
+
+```php
+use TYPO3\CMS\Core\Crypto\HashService;
+
+$token = (new HashService())->hmac('/monitor/health', 'your-secure-secret');
+```
+
+Then send it in the configured header:
+
+```bash
+curl -H "X-TYPO3-MONITORING-AUTH: <token>" https://<your-site>/monitor/health
+```
+
+See [Documentation/Authorization.md](Documentation/Authorization.md) for the token's security properties.
+
 ### Endpoint
 
 ```
