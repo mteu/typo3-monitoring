@@ -30,8 +30,9 @@ HMAC-based authentication using TYPO3's HashService.
 
 **Token Generation:**
 ```php
-$hashService = GeneralUtility::makeInstance(HashService::class);
-$token = $hashService->hmac('/monitor/health', 'your-secure-secret');
+use TYPO3\CMS\Core\Crypto\HashService;
+
+$token = (new HashService())->hmac('/monitor/health', 'your-secure-secret');
 ```
 
 **Usage:**
