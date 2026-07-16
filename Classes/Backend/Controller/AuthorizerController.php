@@ -108,8 +108,6 @@ final readonly class AuthorizerController extends AbstractSubModuleController
     }
 
     /**
-     * Process authorizers and build template variables
-     *
      * @return array{}|non-empty-array<class-string, array{
      *     isActive: bool,
      *     priority: int,

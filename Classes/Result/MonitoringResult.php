@@ -20,7 +20,7 @@ namespace mteu\Monitoring\Result;
 /**
  * MonitoringResult.
  *
- * Opinionated implementation of mteu\Monitoring\Result
+ * Opinionated, reusable implementation of {@see Result}
  *
  * @author Martin Adler <mteu@mailbox.org>
  * @license GPL-2.0-or-later

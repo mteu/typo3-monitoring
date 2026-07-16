@@ -33,7 +33,7 @@ enum NotificationDecision
     /** Unhealthy and either a new outage or a changed failure set: notify now. */
     case Unhealthy;
 
-    /** Same failure set, reminder interval elapsed: send a reminder. */
+    /** Same failure set, a reminder interval elapsed: send a reminder. */
     case Reminder;
 
     /** Status returned to healthy after an outage: send a one-off recovery notice. */

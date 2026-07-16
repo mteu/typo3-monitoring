@@ -131,12 +131,6 @@ final readonly class MonitoringCacheManager
         }
     }
 
-    /**
-     * Gets the default cache lifetime in seconds.
-     *
-     * Reads `cache.defaultLifetime` from the extension configuration when
-     * available, falling back to 15 minutes when no configuration is wired.
-     */
     public function getCacheLifetime(): int
     {
         if ($this->configuration === null) {
@@ -160,9 +154,6 @@ final readonly class MonitoringCacheManager
         }
     }
 
-    /**
-     * Flush cache for a specific provider class.
-     */
     public function flushProviderCache(string $providerClass): bool
     {
         return $this->flushByTags([str_replace('\\', '_', $providerClass)]);
@@ -191,7 +182,7 @@ final readonly class MonitoringCacheManager
     }
 
     /**
-     * @throws NoSuchCacheException If the cache is not configured
+     * @throws NoSuchCacheException
      */
     public function getCache(): FrontendInterface
     {

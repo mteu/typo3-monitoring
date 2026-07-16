@@ -20,8 +20,7 @@ namespace mteu\Monitoring\Provider\Scheduler;
 /**
  * SchedulerTaskRepository.
  *
- * Data access for scheduler task health. Each method maps to one access
- * pattern. Counts drive health; samples are best-effort reason decoration.
+ * Data access for scheduler task health. Each method maps to one access pattern.
  *
  * @author Martin Adler <mteu@mailbox.org>
  * @license GPL-2.0-or-later

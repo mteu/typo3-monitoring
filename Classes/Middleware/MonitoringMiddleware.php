@@ -160,7 +160,7 @@ final readonly class MonitoringMiddleware implements MiddlewareInterface
     }
 
     /**
-     * Checks if request is authorized by any of the registered authorizers. First one take the win.
+     * Checks if the request is authorized by any of the registered authorizers. The first one takes the win!
      */
     private function isAuthorized(ServerRequestInterface $request): bool
     {
@@ -188,9 +188,8 @@ final readonly class MonitoringMiddleware implements MiddlewareInterface
     }
 
     /**
-     * Reduces each provider result to its status, recursively listing the
-     * status of every sub-result. Reasons and deeper detail stay in the
-     * backend module.
+     * Reduces each provider result to its status, recursively listing the status of every sub-result. Reasons and
+     * deeper detail stay in the backend module.
      *
      * @param array<non-empty-string, Result> $results
      * @return array<non-empty-string, array{status: string, subResults?: array<string, mixed>}>

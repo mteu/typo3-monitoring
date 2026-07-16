@@ -22,9 +22,8 @@ use Symfony\Component\DependencyInjection\Attribute\AsAlias;
 use TYPO3\CMS\Core\Context\Context;
 
 /**
- * PSR-20 clock backed by the TYPO3 Context date aspect, so domain code never
- * calls time() or new \DateTime() directly and still honours TYPO3's simulated
- * time (workspaces/preview).
+ * PSR-20 clock backed by the TYPO3 Context date aspect, so domain code never calls time() or new \DateTime() directly
+ * and still honours TYPO3's simulated time (workspaces/preview).
  *
  * @author Martin Adler <mteu@mailbox.org>
  * @license GPL-2.0-or-later

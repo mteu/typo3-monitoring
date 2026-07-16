@@ -21,7 +21,7 @@ namespace mteu\Monitoring\Result;
  * CachedMonitoringResult.
  *
  * Wrapper for cached monitoring results that includes expiration information.
- * Implements Result interface using decorator pattern to delegate to wrapped result.
+ * Implements {@see Result} interface using decorator pattern to delegate to wrapped result.
  *
  * @author Martin Adler <mteu@mailbox.org>
  * @license GPL-2.0-or-later
