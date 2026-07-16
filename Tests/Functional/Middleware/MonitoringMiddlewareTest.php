@@ -25,7 +25,9 @@ use mteu\Monitoring\Configuration\Reporter\EmailReporterConfiguration;
 use mteu\Monitoring\Configuration\Reporter\ReportDispatcherConfiguration;
 use mteu\Monitoring\Handler\MonitoringExecutionHandler;
 use mteu\Monitoring\Middleware\MonitoringMiddleware;
+use mteu\Monitoring\Provider\MonitoringProvider;
 use mteu\Monitoring\Tests\Functional\Fixtures\ConfigurableProvider;
+use mteu\Monitoring\Tests\Functional\Fixtures\HtmlReasonProvider;
 use mteu\Monitoring\Tests\Functional\MonitoringFunctionalTestCase;
 use PHPUnit\Framework\Attributes\AllowMockObjectsWithoutExpectations;
 use PHPUnit\Framework\Attributes\Test;
@@ -94,8 +96,60 @@ final class MonitoringMiddlewareTest extends MonitoringFunctionalTestCase
         );
     }
 
+    #[Test]
+    #[AllowMockObjectsWithoutExpectations]
+    public function endpointJsonNeverExposesProviderReasons(): void
+    {
+        $handler = $this->createMock(RequestHandlerInterface::class);
+        $handler->expects(self::never())->method('handle');
+
+        $response = $this->process(new HtmlReasonProvider(), $handler);
+
+        self::assertSame(503, $response->getStatusCode());
+
+        $body = (string)$response->getBody();
+
+        // Providers may put HTML in their reasons for the backend module (the shipped
+        // SchedulerProvider does). The public endpoint only summarizes status, so neither the
+        // reason text nor any markup it carries may ever appear in the payload.
+        self::assertStringNotContainsString('<script>', $body);
+        self::assertStringNotContainsString('<a href', $body);
+        self::assertStringNotContainsString('top-level reason', $body);
+        self::assertStringNotContainsString('sub reason', $body);
+
+        /** @var array{status: string, services: array<string, array<string, mixed>>} $decoded */
+        $decoded = json_decode($body, true, flags: JSON_THROW_ON_ERROR);
+        self::assertSame('unhealthy', $decoded['status']);
+        self::assertNodeExposesStatusOnly($decoded['services']['html-reason-provider']);
+    }
+
+    /**
+     * Asserts a summarized service node exposes only `status` (and optionally nested `subResults`),
+     * never a `reason`/`description`, recursively.
+     *
+     * @param array<string, mixed> $node
+     */
+    private static function assertNodeExposesStatusOnly(array $node): void
+    {
+        self::assertArrayNotHasKey('reason', $node);
+        self::assertArrayNotHasKey('description', $node);
+        self::assertSame(
+            [],
+            array_diff(array_keys($node), ['status', 'subResults']),
+            'Only "status" and "subResults" may be exposed on the endpoint.',
+        );
+
+        if (array_key_exists('subResults', $node)) {
+            /** @var array<string, array<string, mixed>> $subResults */
+            $subResults = $node['subResults'];
+            foreach ($subResults as $subResult) {
+                self::assertNodeExposesStatusOnly($subResult);
+            }
+        }
+    }
+
     private function process(
-        ConfigurableProvider $provider,
+        MonitoringProvider $provider,
         RequestHandlerInterface $handler,
     ): ResponseInterface {
         $middleware = new MonitoringMiddleware(
