@@ -55,6 +55,13 @@ final readonly class MonitoringExecutionHandler
 
             $name = $provider->getName();
 
+            if (array_key_exists($name, $results)) {
+                $this->logger->warning('Duplicate monitoring provider name. An earlier result is overwritten', [
+                    'provider' => $name,
+                    'class' => $provider::class,
+                ]);
+            }
+
             try {
                 $results[$name] = $this->executeProvider($provider);
             } catch (\Throwable $e) {

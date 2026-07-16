@@ -12,8 +12,11 @@ namespace My\Extension\Provider;
 
 use mteu\Monitoring\Provider\MonitoringProvider;
 use mteu\Monitoring\Result\MonitoringResult;
+use mteu\Monitoring\Result\Result;
 use mteu\Monitoring\Result\Status;
 use Symfony\Component\DependencyInjection\Attribute\AutoconfigureTag;
+use TYPO3\CMS\Core\Core\Environment;
+use TYPO3\CMS\Core\Utility\ExtensionManagementUtility;
 
 #[AutoconfigureTag('monitoring.provider')]
 final class MyServiceProvider implements MonitoringProvider
@@ -30,22 +33,24 @@ final class MyServiceProvider implements MonitoringProvider
 
     public function isEnabled(): bool
     {
-        // Operator intent. Return true to be on by default, or back this with
-        // your own configuration so it can be toggled. A hardcoded `return true` is fine;
-        // otherwise back it with whatever fits your deployment — extension configuration,
-        // an environment variable, a YAML/PHP settings file, a database flag, daytime.
+        // Operator intent. A hardcoded `return true` is fine to be on by default;
+        // otherwise back it with whatever fits your deployment — extension
+        // configuration, an environment variable, a YAML/PHP settings file, a
+        // database flag.
         //
-        // Note: A provider whose `isEnabled()` returns `false` is never executed —
-        // not on the health endpoint, the CLI, nor the reporter — regardless of what `isActive()` returns.
-        return $this->configuration->isEnabled();
+        // Note: a provider whose `isEnabled()` returns `false` is never executed —
+        // not on the health endpoint, the CLI, nor the reporter — regardless of
+        // what `isActive()` returns.
+        return true;
     }
 
     public function isActive(): bool
     {
-        // Enforce technical preconditions as needed or delegate to `isEnabled()` by returning true.
-        return
-            \TYPO3\CMS\Core\Utility\ExtensionManagementUtility::isLoaded('required_ext') &&
-            (Environment::getContext())->isProduction();
+        // Enforce technical preconditions as needed, or delegate to `isEnabled()`
+        // by returning true.
+        return ExtensionManagementUtility::isLoaded('required_ext')
+            && Environment::getContext()->isProduction();
+    }
 
     public function execute(): Result
     {
@@ -74,6 +79,28 @@ surfaced distinctly in the JSON response and the backend module. When a result
 has sub-results, its overall status is aggregated automatically as the worst of
 its own status and all sub-statuses.
 
+## Enablement and activation
+
+A provider is only executed when **both** gates return `true`. They answer
+different questions and are intentionally separate:
+
+- **`isEnabled()` — operator intent (the kill-switch).** Whether someone has
+  switched this provider on. Source it however fits your deployment: a hardcoded
+  `return true`, a typed extension-configuration object (as the shipped
+  `SchedulerProvider` does), an environment variable, a settings file, or a
+  database flag. A provider whose `isEnabled()` returns `false` is never
+  executed — not on the health endpoint, the CLI, nor the reporter — regardless
+  of `isActive()`.
+- **`isActive()` — runtime readiness.** Whether the technical preconditions for
+  a meaningful check are met right now: a required extension is loaded, a
+  dependency is reachable, the context is production. When a precondition is
+  unmet, return `false` so the provider is skipped instead of reporting a
+  misleading failure.
+
+A provider that is enabled but not active is simply skipped. Delegating
+`isActive()` to `isEnabled()` (`return $this->isEnabled();`) is fine when there
+are no technical preconditions to enforce.
+
 ## Advanced Features
 
 ### Caching
@@ -81,16 +108,19 @@ Implement `CacheableMonitoringProvider` for expensive operations:
 
 ```php
 use mteu\Monitoring\Provider\CacheableMonitoringProvider;
-use mteu\Monitoring\Trait\SlugifyCacheKeyTrait;
 
 #[AutoconfigureTag('monitoring.provider')]
 final class ExpensiveProvider implements CacheableMonitoringProvider
 {
-    use SlugifyCacheKeyTrait;
+    // ...plus the MonitoringProvider methods shown above
+    // (getName(), getDescription(), isEnabled(), isActive(), execute()).
 
     public function getCacheKey(): string
     {
-        return $this->slugifyCacheKey($this->getName());
+        // Any stable identifier that is safe as a cache key (a-z, 0-9,
+        // underscore/hyphen). Backslashes are sanitized by the handler, but
+        // keeping the key simple avoids surprises.
+        return 'my_service_health';
     }
 
     public function getCacheLifetime(): int
@@ -152,7 +182,7 @@ final class DatabaseConnectionProvider implements MonitoringProvider
 
     public function isEnabled(): bool
     {
-        return $extensionConfiguration->isEnabled();
+        return $this->extensionConfiguration->isEnabled();
     }
 
     public function isActive(): bool
@@ -255,4 +285,4 @@ final class MultiComponentProvider implements MonitoringProvider
 ```
 
 ## Example
-Find a set of examples returning various `Results` combinations in [Documentation/Provider/Examples](Providers).
+Find a set of examples returning various `Result` combinations in [Documentation/Providers/Example](Providers/Example).
