@@ -27,9 +27,13 @@
                 <source>Copied to clipboard</source>
                 <target>In die Zwischenablage kopiert</target>
             </trans-unit>
-             <trans-unit id="monitoring.overview.overallStatus.healthy.title">
-				<source>Congratulations</source>
-				<target>Glückwunsch</target>
+            <trans-unit id="monitoring.overview.overallStatus.healthy.title">
+				<source>Looking good</source>
+				<target>Alles gut</target>
+			</trans-unit>
+			<trans-unit id="monitoring.overview.overallStatus.warning.subtitle">
+				<source>No active monitoring providers are configured yet.</source>
+				<target>Es sind noch keine aktiven Monitoring Provider konfiguriert.</target>
 			</trans-unit>
 			<trans-unit id="monitoring.overview.overallStatus.healthy.subtitle">
 				<source>All active providers report a healthy state.</source>
