@@ -35,8 +35,8 @@ final readonly class MonitoringConfiguration
 {
     /**
      * Normalized endpoint path: either an empty string (endpoint disabled) or a single leading slash with no trailing
-     * slash. Both consumers (MonitoringMiddleware::isValid(), MiddlewareStatusProvider::execute()) assume this exact
-     * shape, so it is normalized here.
+     * slash. Consumers such as MonitoringMiddleware::isValid() and the HMAC message in TokenAuthorizer::isAuthorized()
+     * assume this exact shape, so it is normalized here.
      */
     public string $endpoint;
 
