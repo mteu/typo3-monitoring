@@ -9,7 +9,7 @@ The tests expect an already running TYPO3 instance with this extension installed
 registered system maintainer:
 
 ```bash
-cd Tests/E2E
+cd Tests/Acceptance
 npm ci
 PLAYWRIGHT_BASE_URL=https://typo3-monitoring.ddev.site \
 T3_MAJOR=14.3 \

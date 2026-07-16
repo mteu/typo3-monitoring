@@ -20,8 +20,8 @@ namespace mteu\Monitoring\Reporter;
 /**
  * NotificationState.
  *
- * Persisted between dispatcher runs so the dedup state machine can decide
- * whether the current status warrants a (renewed) notification.
+ * Persisted between dispatcher runs so the dedup state machine can decide whether the current status warrants a
+ * (renewed) notification.
  *
  * @author Martin Adler <mteu@mailbox.org>
  * @license GPL-2.0-or-later

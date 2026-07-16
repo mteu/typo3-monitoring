@@ -20,8 +20,7 @@ namespace mteu\Monitoring\Reporter;
 /**
  * ReportThreshold.
  *
- * Per-reporter policy controlling which dispatch decisions actually trigger a
- * notification for that reporter.
+ * Per-reporter policy controlling which dispatch decisions actually trigger a notification for that reporter.
  *
  * @author Martin Adler <mteu@mailbox.org>
  * @license GPL-2.0-or-later

@@ -31,9 +31,8 @@ use TYPO3\CMS\Core\Utility\GeneralUtility;
 /**
  * EmailReporter.
  *
- * Sends the monitoring status via TYPO3's core mailer. SMTP/transport
- * credentials come from `$GLOBALS['TYPO3_CONF_VARS']['MAIL']` and are never
- * stored in extension configuration.
+ * Sends the monitoring status via TYPO3's core mailer. SMTP/transport credentials come from
+ * `$GLOBALS['TYPO3_CONF_VARS']['MAIL']` and are never stored in extension configuration.
  *
  * @author Martin Adler <mteu@mailbox.org>
  * @license GPL-2.0-or-later

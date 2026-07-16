@@ -40,10 +40,6 @@ interface Reporter
      */
     public function getThreshold(): ReportThreshold;
 
-    /**
-     * Delivers the report. Returns true only if the notification was sent
-     * successfully; returning false makes the dispatcher retry on the next run.
-     */
     public function report(ReportContext $context): bool;
 
     /**

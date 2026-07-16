@@ -77,10 +77,6 @@ abstract readonly class AbstractSubModuleController
     /**
      * v13 pendant of ModuleTemplate::makeDocHeaderModuleMenu() with an
      * additional first entry linking back to the overview module.
-     *
-     * The sub-area modules are not registered as children of "monitoring" on
-     * v13 (see Configuration/Backend/Modules.php), so the menu is built from
-     * their identifiers instead of the module tree.
      */
     private function makeDocHeaderModuleMenuWithOverview(ModuleTemplate $template, ServerRequestInterface $request): void
     {

@@ -54,8 +54,8 @@ enum Status: string
     }
 
     /**
-     * Returns the worst (highest-severity) status of the given set, defaulting
-     * to {@see Status::Healthy} when the set is empty.
+     * Returns the worst (highest-severity) status of the given set, defaulting to {@see Status::Healthy}
+     * when the set is empty.
      */
     public static function worst(self ...$statuses): self
     {

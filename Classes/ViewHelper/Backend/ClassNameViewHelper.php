@@ -66,7 +66,6 @@ final class ClassNameViewHelper extends AbstractViewHelper
             return '';
         }
 
-        // Remove leading backslash if present
         $fqcn = ltrim($fqcn, '\\');
 
         // Extract the last segment after the last backslash

@@ -39,9 +39,7 @@ final readonly class MonitoringExecutionHandler
     ) {}
 
     /**
-     * Executes every enabled and active provider, isolating exceptions so a
-     * single misbehaving provider is recorded as an unhealthy result instead
-     * of aborting the whole run.
+     * Executes every enabled and active provider.
      *
      * @param iterable<MonitoringProvider> $providers
      * @return array<non-empty-string, Result>
@@ -76,17 +74,11 @@ final readonly class MonitoringExecutionHandler
         return $results;
     }
 
-    /**
-     * Executes a provider and returns the pure result only
-     */
     public function executeProvider(MonitoringProvider $provider): Result
     {
         return $this->executeProviderWithMetadata($provider)->result;
     }
 
-    /**
-     * Executes a provider and reports whether the result was served from cache.
-     */
     public function executeProviderWithMetadata(MonitoringProvider $provider, bool $useCache = true): ProviderExecutionOutcome
     {
         return $provider instanceof CacheableMonitoringProvider

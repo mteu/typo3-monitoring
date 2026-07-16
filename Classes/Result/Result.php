@@ -27,9 +27,6 @@ interface Result extends \JsonSerializable
 {
     public function getName(): string;
 
-    /**
-     * The reported health state, aggregated over any sub-results.
-     */
     public function getStatus(): Status;
 
     /**
@@ -41,8 +38,6 @@ interface Result extends \JsonSerializable
     public function getReason(): ?string;
 
     /**
-     * Returns any sub-results of this monitoring result
-     *
      * @return Result[]
      */
     public function getSubResults(): array;

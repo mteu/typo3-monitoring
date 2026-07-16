@@ -20,9 +20,9 @@
 
 </div>
 
-This packages provides the TYPO3 CMS Extension `EXT:monitoring` which extends the CMS with a monitoring system that
-gives an insight into the health state of custom TYPO3 components through an API endpoint and a CLI command, e.g. for
-post-deployment checks.
+This package provides the TYPO3 CMS extension `EXT:monitoring`, which equips TYPO3 with a highly extensible monitoring system
+for tracking the health state of custom components. It delivers health reports via an API endpoint, a CLI command, and a
+backend dashboard, with optional push notifications to external channels.
 
 ## 🚀 Features
 

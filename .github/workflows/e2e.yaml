@@ -12,7 +12,7 @@ permissions:
 
 jobs:
   e2e:
-    name: E2E (TYPO3 ${{ matrix.typo3-version }})
+    name: Acceptance Tests (TYPO3 ${{ matrix.typo3-version }})
     runs-on: ubuntu-latest
     strategy:
       fail-fast: false
@@ -97,13 +97,13 @@ jobs:
 
       # Run the Playwright tests
       - name: Install Playwright
-        working-directory: Tests/E2E
+        working-directory: Tests/Acceptance
         run: |
           npm ci
           npx playwright install --with-deps chromium
 
       - name: Run E2E tests
-        working-directory: Tests/E2E
+        working-directory: Tests/Acceptance
         env:
           PLAYWRIGHT_BASE_URL: http://127.0.0.1:8080
           T3_MAJOR: ${{ matrix.typo3-version }}
@@ -115,6 +115,6 @@ jobs:
         with:
           name: playwright-report-typo3-${{ matrix.typo3-version }}
           path: |
-            Tests/E2E/playwright-report
-            Tests/E2E/test-results
-          retention-days: 7
+            Tests/Acceptance/playwright-report
+            Tests/Acceptance/test-results
+          retention-days: 2

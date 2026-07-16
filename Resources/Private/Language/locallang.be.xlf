@@ -22,8 +22,11 @@
                 <source>Copied to clipboard</source>
             </trans-unit>
             <trans-unit id="monitoring.overview.overallStatus.healthy.title">
-            	<source>Congratulations</source>
+            	<source>Looking good</source>
             </trans-unit>
+            <trans-unit id="monitoring.overview.overallStatus.warning.subtitle">
+				<source>No active monitoring providers are configured yet.</source>
+			</trans-unit>
             <trans-unit id="monitoring.overview.overallStatus.healthy.subtitle">
 				<source>All active providers report a healthy state.</source>
 			</trans-unit>
@@ -100,7 +103,7 @@
                 <source>Status</source>
             </trans-unit>
             <trans-unit id="documentation.card.body">
-                <source>Extending with custom monitoring checks, authorizers, or reporters is easier than you think.</source>
+				<source>This extension can be flexibly extended with custom monitoring checks, authorizers, and reporters.</source>
             </trans-unit>
             <trans-unit id="documentation.card.linkLabel">
                 <source>Read on GitHub</source>
