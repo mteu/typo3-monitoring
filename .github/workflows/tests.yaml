@@ -12,7 +12,7 @@ permissions:
 
 jobs:
   tests:
-    name: Tests (PHP ${{ matrix.php-version }}, TYPO3 ${{ matrix.typo3-version }} with ${{ matrix.dependencies }} dependencies)
+    name: Unit & Functional Tests (PHP ${{ matrix.php-version }}, TYPO3 ${{ matrix.typo3-version }} with ${{ matrix.dependencies }} dependencies)
     runs-on: ubuntu-latest
     strategy:
       fail-fast: false
