@@ -5,7 +5,8 @@ where no external system scrapes the [HTTP endpoint](Api.md). They are
 evaluated by the `ReportDispatcher`, which is triggered on demand via the
 `monitoring:report` CLI command (cron-friendly), not on every request.
 
-Reporters are auto-discovered via `#[AutoconfigureTag('monitoring.reporter')]`.
+Reporters are auto-discovered via `#[AutoconfigureTag('monitoring.reporter')]` on the `Reporter`
+interface. Implementations just need to implement the interface.
 
 ## The dispatch flow
 
@@ -76,9 +77,7 @@ namespace My\Extension\Reporter;
 use mteu\Monitoring\Reporter\Reporter;
 use mteu\Monitoring\Reporter\ReportContext;
 use mteu\Monitoring\Reporter\ReportThreshold;
-use Symfony\Component\DependencyInjection\Attribute\AutoconfigureTag;
 
-#[AutoconfigureTag('monitoring.reporter')]
 final class MyReporter implements Reporter
 {
     public function isActive(): bool

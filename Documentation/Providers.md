@@ -1,6 +1,7 @@
 # Provider Development Guide
 
-Providers perform monitoring checks and are auto-discovered via `#[AutoconfigureTag('monitoring.provider')]`.
+Providers perform monitoring checks and are auto-discovered via `#[AutoconfigureTag('monitoring.provider')]`
+on the `MonitoringProvider` interface. Implementations just need to implement the interface.
 
 ## Basic Provider
 
@@ -14,11 +15,9 @@ use mteu\Monitoring\Provider\MonitoringProvider;
 use mteu\Monitoring\Result\MonitoringResult;
 use mteu\Monitoring\Result\Result;
 use mteu\Monitoring\Result\Status;
-use Symfony\Component\DependencyInjection\Attribute\AutoconfigureTag;
 use TYPO3\CMS\Core\Core\Environment;
 use TYPO3\CMS\Core\Utility\ExtensionManagementUtility;
 
-#[AutoconfigureTag('monitoring.provider')]
 final class MyServiceProvider implements MonitoringProvider
 {
     public function getName(): string
@@ -109,7 +108,6 @@ Implement `CacheableMonitoringProvider` for expensive operations:
 ```php
 use mteu\Monitoring\Provider\CacheableMonitoringProvider;
 
-#[AutoconfigureTag('monitoring.provider')]
 final class ExpensiveProvider implements CacheableMonitoringProvider
 {
     // ...plus the MonitoringProvider methods shown above
@@ -155,14 +153,12 @@ use mteu\Monitoring\Provider\MonitoringProvider;
 use mteu\Monitoring\Result\MonitoringResult;
 use mteu\Monitoring\Result\Status;
 use mteu\Monitoring\Result\Result;
-use Symfony\Component\DependencyInjection\Attribute\AutoconfigureTag;
 use TYPO3\CMS\Core\Database\ConnectionPool;
 use TYPO3\CMS\Core\Configuration\ExtensionConfiguration;
 
 /**
  * Silly example since a missing DB connection would fail in bootstrapping already.
  */
-#[AutoconfigureTag('monitoring.provider')]
 final class DatabaseConnectionProvider implements MonitoringProvider
 {
     public function __construct(
@@ -226,9 +222,7 @@ use mteu\Monitoring\Provider\MonitoringProvider;
 use mteu\Monitoring\Result\MonitoringResult;
 use mteu\Monitoring\Result\Status;
 use mteu\Monitoring\Result\Result;
-use Symfony\Component\DependencyInjection\Attribute\AutoconfigureTag;
 
-#[AutoconfigureTag('monitoring.provider')]
 final class MultiComponentProvider implements MonitoringProvider
 {
     public function getName(): string
