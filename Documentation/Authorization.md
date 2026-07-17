@@ -2,6 +2,9 @@
 
 Authorizers are evaluated in priority order. The first one that grants access allows the request.
 
+Authorizers are auto-discovered via `#[AutoconfigureTag('monitoring.authorizer')]` on the `Authorizer`
+interface. Implementations just need to implement the interface.
+
 ## Built-in Authorizers
 
 ### Token Authorization
@@ -61,9 +64,7 @@ namespace My\Extension\Authorization;
 
 use mteu\Monitoring\Authorization\Authorizer;
 use Psr\Http\Message\ServerRequestInterface;
-use Symfony\Component\DependencyInjection\Attribute\AutoconfigureTag;
 
-#[AutoconfigureTag('monitoring.authorizer')]
 final class CustomAuthorizer implements Authorizer
 {
     public function isActive(): bool
