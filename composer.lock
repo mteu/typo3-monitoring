@@ -6708,16 +6708,16 @@
         },
         {
             "name": "helhum/typo3-console",
-            "version": "v9.0.0",
+            "version": "v9.0.1",
             "source": {
                 "type": "git",
                 "url": "https://github.com/TYPO3-Console/TYPO3-Console.git",
-                "reference": "a4ede24b93c69e5e05309c1cf47c598c4cda37df"
+                "reference": "faedb5d61d9e08a8816dcb95673baca9c294b984"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/TYPO3-Console/TYPO3-Console/zipball/a4ede24b93c69e5e05309c1cf47c598c4cda37df",
-                "reference": "a4ede24b93c69e5e05309c1cf47c598c4cda37df",
+                "url": "https://api.github.com/repos/TYPO3-Console/TYPO3-Console/zipball/faedb5d61d9e08a8816dcb95673baca9c294b984",
+                "reference": "faedb5d61d9e08a8816dcb95673baca9c294b984",
                 "shasum": ""
             },
             "require": {
@@ -6816,7 +6816,7 @@
                     "type": "github"
                 }
             ],
-            "time": "2026-05-19T11:25:15+00:00"
+            "time": "2026-07-07T11:03:57+00:00"
         },
         {
             "name": "justinrainbow/json-schema",
