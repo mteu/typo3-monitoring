@@ -29,12 +29,16 @@ use mteu\TypedExtConf\Attribute\ExtConfProperty;
  */
 final readonly class TokenAuthorizerConfiguration implements AuthorizerConfiguration
 {
+    /**
+     * No property is required: the middleware runs on every frontend request, so a missing configuration block
+     * must not break page delivery. The defaults keep the authorizer inactive.
+     */
     public function __construct(
-        #[ExtConfProperty(path: 'authorizer.mteu\\Monitoring\\Authorization\\TokenAuthorizer.enabled', required: true)]
+        #[ExtConfProperty(path: 'authorizer.mteu\\Monitoring\\Authorization\\TokenAuthorizer.enabled')]
         public bool $enabled = false,
         #[ExtConfProperty(path: 'authorizer.mteu\\Monitoring\\Authorization\\TokenAuthorizer.priority')]
         public int $priority = 10,
-        #[ExtConfProperty(path: 'authorizer.mteu\\Monitoring\\Authorization\\TokenAuthorizer.secret', required: true)]
+        #[ExtConfProperty(path: 'authorizer.mteu\\Monitoring\\Authorization\\TokenAuthorizer.secret')]
         public string $secret = '',
         #[ExtConfProperty(path: 'authorizer.mteu\\Monitoring\\Authorization\\TokenAuthorizer.authHeaderName')]
         public string $authHeaderName = 'X-TYPO3-MONITORING-AUTH',
