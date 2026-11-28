@@ -92,6 +92,28 @@ composer sca
 > changes to your working tree (it is not a dry run). Commit or stash first if you
 > want to review what it changes.
 
+#### Mutation Testing
+Mutation testing uses [Infection](https://infection.github.io/) together with
+PHPStan: a mutant that PHPStan rejects counts as killed and its tests are skipped.
+The unit test suite (`Tests/Mutation/phpunit.xml`) drives the run, configured in
+`infection.json5`.
+
+Infection is not a Composer dependency. Install the PHAR so `infection` is on your `PATH` (e.g. via
+[Phive](https://phar.io/): `phive install --global infection`), and enable a
+coverage driver (PCOV or Xdebug).
+
+```bash
+# Mutate the full codebase
+composer test:mutation
+
+# Mutate only lines changed against main (what CI runs on pull requests)
+composer test:mutation -- --git-diff-lines --git-diff-base=origin/main
+```
+
+CI runs the full codebase on every push to `main` and only the changed lines
+on pull requests (`.github/workflows/mutation.yaml`). The run fails below the
+`minMsi` / `minCoveredMsi` thresholds in `infection.json5`.
+
 #### Complete Quality Check
 ```bash
 # Run all quality checks in sequence

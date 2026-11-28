@@ -98,6 +98,7 @@
 		"test:coverage:merge": "phpcov merge --html .build/coverage/merged --clover .build/coverage/clover.xml .build/coverage/php",
 		"test:coverage:unit": "phpunit -c phpunit.unit.xml --coverage-text",
 		"test:functional": "phpunit -c phpunit.functional.xml --no-coverage",
+		"test:mutation": "infection --threads=max",
 		"test:unit": "phpunit -c phpunit.unit.xml --no-coverage"
 	}
 }
