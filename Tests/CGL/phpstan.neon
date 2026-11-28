@@ -17,6 +17,12 @@ parameters:
 	level: max
 	treatPhpDocTypesAsCertain: false
 
+	symplify:
+		naming: false
+		static: false
+		modern: false
+		symfony: false
+
 	ergebnis:
 		noExtends:
 			classesAllowedToBeExtended:
