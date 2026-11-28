@@ -116,7 +116,7 @@ final class MonitoringExecutionHandlerTest extends MonitoringFunctionalTestCase
 
         // Second execution - cache hit
         $result2 = $this->executionHandler->executeProvider($this->provider);
-        self::assertSame(1, $this->provider->getExecutionCount());
+        self::assertSame(1, $this->provider->getExecutionCount(), 'Provider should not execute again on a cache hit');
 
         // Flush cache for this provider
         $flushed = $this->cacheManager->flushProviderCache($this->provider::class);

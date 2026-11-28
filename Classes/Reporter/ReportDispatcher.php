@@ -133,7 +133,7 @@ final readonly class ReportDispatcher
         ?NotificationState $state,
         int $now,
     ): void {
-        $previousLastNotified = $state !== null ? $state->lastNotifiedAt : 0;
+        $previousLastNotified = $state->lastNotifiedAt ?? 0;
 
         if ($healthyNow) {
             $lastNotifiedAt = $decision === NotificationDecision::Recovered ? $now : $previousLastNotified;

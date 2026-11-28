@@ -12,6 +12,19 @@
 			"rangeStrategy": "pin",
 			"automerge": true,
 			"automergeType": "pr"
+		},
+		{
+			"description": "Update PHPStan, its extensions and Rector in one PR. Their pins depend on each other (for example, ssch/typo3-rector needs a newer rector/rector, which needs a newer phpstan/phpstan), so separate PRs cannot install.",
+			"matchFileNames": [
+				"Tests/CGL/composer.json"
+			],
+			"matchPackageNames": [
+				"/phpstan/",
+				"ssch/typo3-rector"
+			],
+			"groupName": "PHPStan and Rector",
+			"groupSlug": "phpstan-rector",
+			"separateMinorPatch": false
 		}
 	]
 }
