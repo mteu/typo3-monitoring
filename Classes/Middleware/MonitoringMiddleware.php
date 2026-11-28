@@ -89,6 +89,8 @@ final readonly class MonitoringMiddleware implements MiddlewareInterface
         }
 
         if ($this->monitoringConfiguration->enforceHttps && !$this->isHttps($request)) {
+            $this->logRejectedRequest($request, 'unsupported-protocol');
+
             try {
                 return $this->jsonResponse(
                     [
@@ -105,6 +107,8 @@ final readonly class MonitoringMiddleware implements MiddlewareInterface
         }
 
         if (!$this->isAuthorized($request)) {
+            $this->logRejectedRequest($request, 'unauthorized');
+
             try {
                 return $this->jsonResponse(
                     [
@@ -157,6 +161,32 @@ final readonly class MonitoringMiddleware implements MiddlewareInterface
         }
 
         return $request->getUri()->getScheme() === 'https';
+    }
+
+    /**
+     * Never log the presented credentials. The remote address helps to tell a misconfigured monitoring client from
+     * a scan.
+     */
+    private function logRejectedRequest(ServerRequestInterface $request, string $reason): void
+    {
+        $this->logger->warning('Monitoring endpoint rejected a request', [
+            'reason' => $reason,
+            'method' => $request->getMethod(),
+            'remoteAddress' => $this->resolveRemoteAddress($request),
+        ]);
+    }
+
+    private function resolveRemoteAddress(ServerRequestInterface $request): string
+    {
+        $normalizedParams = $request->getAttribute('normalizedParams');
+
+        if ($normalizedParams instanceof NormalizedParams) {
+            return $normalizedParams->getRemoteAddress();
+        }
+
+        $remoteAddress = $request->getServerParams()['REMOTE_ADDR'] ?? '';
+
+        return is_string($remoteAddress) ? $remoteAddress : '';
     }
 
     /**
