@@ -29,6 +29,7 @@ jobs:
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
         with:
+          persist-credentials: false
           fetch-depth: 0
 
       # Prepare environment
@@ -36,7 +37,7 @@ jobs:
         uses: shivammathur/setup-php@eb7c497e18156a6bbabfef1d3a82760b9eda3962 # v2
         with:
           php-version: ${{ matrix.php-version }}
-          tools: composer:v${{ matrix.composer-version }}
+          tools: composer:v2
           coverage: pcov
 
       # Install dependencies
@@ -60,6 +61,7 @@ jobs:
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
         with:
+          persist-credentials: false
           fetch-depth: 0
 
       # Prepare environment
@@ -84,9 +86,6 @@ jobs:
         run: composer test:coverage
 
       # Upload artifact
-      - name: Fix coverage path
-        working-directory: .build/coverage
-        run: sed -i "s#${{ github.workspace }}#${{ github.workspace }}#g" clover.xml
       - name: Upload coverage artifact
         uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7
         with:
@@ -101,6 +100,7 @@ jobs:
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
         with:
+          persist-credentials: false
           fetch-depth: 0
 
       # Download artifact
