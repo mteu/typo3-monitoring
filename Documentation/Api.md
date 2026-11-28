@@ -103,6 +103,13 @@ returned:
 
 ### Error Responses
 
+Every `401` and `403` response is logged at `warning` level through the TYPO3
+logging framework, with the reason, the request method and the remote address.
+The presented token is never logged. `405` responses are not logged.
+
+For a rate limit on failed attempts, configure your web server, for example
+`limit_req` in nginx.
+
 **401 Unauthorized**
 ```json
 {

@@ -28,6 +28,7 @@ use mteu\Monitoring\Result\CachedMonitoringResult;
 use mteu\Monitoring\Result\MonitoringResult;
 use mteu\Monitoring\Result\Result;
 use mteu\Monitoring\Result\Status;
+use mteu\Monitoring\Tests\Unit\Fixtures\Log\CollectingLogger;
 use mteu\TypedExtConf\Mapper\TreeMapperFactory;
 use mteu\TypedExtConf\Provider\TypedExtensionConfigurationProvider;
 use PHPUnit\Framework;
@@ -40,6 +41,7 @@ use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use Psr\Http\Server\RequestHandlerInterface;
 use Psr\Log\LoggerInterface;
+use Psr\Log\LogLevel;
 use Psr\Log\NullLogger;
 use TYPO3\CMS\Core\Cache\CacheManager;
 use TYPO3\CMS\Core\Cache\Exception\NoSuchCacheException;
@@ -954,5 +956,66 @@ final class MonitoringMiddlewareTest extends Framework\TestCase
             true,  // should call handler
             false, // should not create response
         ];
+    }
+
+    /**
+     * @return \Generator<string, array{non-empty-string, non-empty-string, bool, int, string|null}>
+     */
+    public static function rejectedRequestLoggingProvider(): \Generator
+    {
+        yield 'unauthorized' => ['GET', 'https', false, 401, 'unauthorized'];
+        yield 'plain http while https is enforced' => ['GET', 'http', true, 403, 'unsupported-protocol'];
+        yield 'disallowed method stays quiet' => ['POST', 'https', true, 405, null];
+        yield 'authorized request stays quiet' => ['GET', 'https', true, 200, null];
+    }
+
+    #[Test]
+    #[AllowMockObjectsWithoutExpectations]
+    #[DataProvider('rejectedRequestLoggingProvider')]
+    public function rejectedRequestsAreLoggedWithRemoteAddressButWithoutCredentials(
+        string $method,
+        string $scheme,
+        bool $authorizerGrantsAccess,
+        int $expectedStatusCode,
+        ?string $expectedReason,
+    ): void {
+        $this->configuration = $this->createConfigurationFromData([
+            'api' => ['endpoint' => '/monitor/health', 'enforceHttps' => '1'],
+            'authorizer' => ['mteu\\Monitoring\\Authorization\\TokenAuthorizer' => ['enabled' => '1', 'secret' => 'test-secret', 'priority' => '10', 'authHeaderName' => 'X-Auth']],
+        ]);
+        $logger = new CollectingLogger();
+        $callOrder = [];
+
+        $middleware = new MonitoringMiddleware(
+            [$this->createHealthyProvider()],
+            [$this->createCallbackAuthorizer('only', $authorizerGrantsAccess, $callOrder)],
+            $this->configuration,
+            $this->responseFactory,
+            $logger,
+            $this->createExecutionHandler(),
+        );
+
+        $request = (new ServerRequest(
+            new Uri($scheme . '://example.com/monitor/health'),
+            $method,
+            serverParams: ['REMOTE_ADDR' => '192.0.2.7'],
+        ))->withHeader('X-TYPO3-MONITORING-AUTH', 'presented-token-value');
+
+        $response = $middleware->process($request, $this->handler);
+
+        self::assertSame($expectedStatusCode, $response->getStatusCode());
+
+        $warnings = $logger->recordsWithLevel(LogLevel::WARNING);
+        if ($expectedReason === null) {
+            self::assertSame([], $warnings);
+            return;
+        }
+
+        self::assertCount(1, $warnings);
+        self::assertSame(
+            ['reason' => $expectedReason, 'method' => $method, 'remoteAddress' => '192.0.2.7'],
+            $warnings[0]['context'],
+        );
+        self::assertStringNotContainsString('presented-token-value', json_encode($logger->records(), JSON_THROW_ON_ERROR));
     }
 }
