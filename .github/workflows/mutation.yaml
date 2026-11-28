@@ -1,0 +1,74 @@
+name: Mutation tests
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+    branches:
+      - '**'
+
+permissions:
+  contents: read
+
+jobs:
+  mutation:
+    name: Mutation tests (${{ github.event_name == 'push' && 'full codebase' || 'changed lines' }})
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
+        with:
+          persist-credentials: false
+          fetch-depth: 0
+
+      # Prepare environment
+      - name: Setup PHP
+        uses: shivammathur/setup-php@eb7c497e18156a6bbabfef1d3a82760b9eda3962 # v2
+        with:
+          php-version: "8.5"
+          tools: composer:v2, infection:0.35.6
+          coverage: pcov
+
+      # Install dependencies (post-install-cmd also installs Tests/CGL, which provides PHPStan)
+      - name: Install Composer dependencies
+        uses: ramsey/composer-install@65e4f84970763564f46a70b8a54b90d033b3bdda # 4.0.0
+
+      # Run mutation tests
+      - name: Run mutation tests on full codebase
+        if: github.event_name == 'push'
+        run: infection --threads=max --no-progress --with-uncovered
+
+      - name: Run mutation tests on changed lines
+        if: github.event_name == 'pull_request'
+        env:
+          BASE_REF: ${{ github.base_ref }}
+        run: >-
+          infection --threads=max --no-progress
+          --git-diff-lines --git-diff-base="origin/${BASE_REF}"
+          --ignore-msi-with-no-mutations
+          --logger-github
+
+      # Report
+      - name: Print mutation summary
+        if: ${{ !cancelled() }}
+        run: |
+          if [ -f .build/infection/summary.log ]; then
+            {
+              echo '### Mutation testing summary'
+              echo '```'
+              cat .build/infection/summary.log
+              echo '```'
+            } >> "$GITHUB_STEP_SUMMARY"
+            cat .build/infection/summary.log
+          fi
+
+      - name: Upload mutation report
+        if: ${{ !cancelled() }}
+        uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7
+        with:
+          name: mutation-report
+          path: |
+            .build/infection/infection.log
+            .build/infection/infection.html
+            .build/infection/summary.log
+          if-no-files-found: ignore
+          retention-days: 7

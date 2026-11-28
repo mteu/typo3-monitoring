@@ -9,6 +9,7 @@
 /CODEOWNERS                         export-ignore
 /composer.lock                      export-ignore
 /CONTRIBUTING.md                    export-ignore
+/infection.json5                    export-ignore
 /packaging_exclude.php              export-ignore
 /phpunit.deprecation-baseline.xml   export-ignore
 /phpunit.functional.xml             export-ignore

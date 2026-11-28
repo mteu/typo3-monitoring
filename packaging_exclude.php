@@ -34,6 +34,7 @@ return [
         'editorconfig',
         'gitattributes',
         'gitignore',
+        'infection.json5',
         'packaging_exclude.php',
         'php-cs-fixer.php',
         'phpunit.deprecation-baseline.xml',

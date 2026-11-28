@@ -1,0 +1,30 @@
+{
+    $schema: "https://raw.githubusercontent.com/infection/infection/0.35.6/resources/schema.json",
+    bootstrap: ".build/vendor/autoload.php",
+    source: {
+        directories: [
+            "Classes",
+        ],
+    },
+    phpUnit: {
+        configDir: "Tests/Mutation",
+        customPath: ".build/vendor/bin/phpunit",
+    },
+    phpStan: {
+        configDir: "Tests/CGL",
+        customPath: "Tests/CGL/vendor/bin/phpstan",
+    },
+    staticAnalysisTool: "phpstan",
+    staticAnalysisToolOptions: "--memory-limit=4G",
+    tmpDir: ".build/infection/tmp",
+    logs: {
+        text: ".build/infection/infection.log",
+        html: ".build/infection/infection.html",
+        summary: ".build/infection/summary.log",
+    },
+    minMsi: 45,
+    minCoveredMsi: 77,
+    mutators: {
+        "@default": true,
+    },
+}
