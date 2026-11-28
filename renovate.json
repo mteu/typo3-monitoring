@@ -5,6 +5,14 @@
 	],
 	"packageRules": [
 		{
+			"description": "Give the community time to spot a compromised release before it is auto-merged",
+			"matchManagers": [
+				"composer",
+				"npm"
+			],
+			"minimumReleaseAge": "3 days"
+		},
+		{
 			"description": "Pin exact versions for CGL dependencies",
 			"matchFileNames": [
 				"Tests/CGL/composer.json"
