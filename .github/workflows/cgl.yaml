@@ -30,6 +30,14 @@ jobs:
       - name: Validate composer.json
         run: composer validate --no-check-lock
 
+      # Audit lock files against known advisories
+      - name: Audit Composer dependencies
+        run: composer audit --locked
+
+      - name: Audit npm dependencies
+        working-directory: Tests/Acceptance
+        run: npm audit --package-lock-only --audit-level=high
+
       # Install dependencies
       - name: Install Composer dependencies
         uses: ramsey/composer-install@65e4f84970763564f46a70b8a54b90d033b3bdda # 4.0.0
